@@ -28,10 +28,8 @@
   }
   // R2 / F2 are two quarter turns, shown one after the other and a little slower than a single turn
   let dur = $state(300);
-  function step() {
-    if (busy) return;
-    if (i >= moves.length) { seek(0); return; }
-    const tok = moves[i];
+  // one move, quarter by quarter (a double move turns twice), then finish
+  function animate(tok: string, finish: () => void) {
     const { m, turns } = parseMove(tok);
     const reps = Math.abs(turns);
     const one = turns < 0 ? `${m}'` : m;
@@ -40,17 +38,31 @@
     busy = true;
     let done = 0;
     const run = () => {
-      if (done >= reps) { anim = null; i += 1; busy = false; return; }
+      if (done >= reps) { anim = null; finish(); busy = false; return; }
       anim = quarter;
       setTimeout(() => {
         pos = applyMove(pos, one);
         done += 1;
         anim = null;
         if (done < reps) setTimeout(run, 60);
-        else { i += 1; busy = false; }
+        else { finish(); busy = false; }
       }, dur);
     };
     run();
+  }
+
+  function step() {
+    if (busy) return;
+    if (i >= moves.length) { seek(0); return; }
+    animate(moves[i], () => { i += 1; });
+  }
+
+  // going back plays the same move in reverse
+  function back() {
+    if (busy || i <= 0) return;
+    const { m, turns } = parseMove(moves[i - 1]);
+    const inverse = turns === 2 ? `${m}2` : turns === 1 ? `${m}'` : m;
+    animate(inverse, () => { i -= 1; });
   }
   const manual = (fn: () => void) => () => { touchedAt = Date.now(); fn(); };
   // arrows drive the walkthrough itself while it is on screen (the shell's arrow navigation stands down,
@@ -83,7 +95,7 @@
 <div class="walk">
   <div class="holder"><Cube3D stickers={pos} {anim} {size} {dur} /></div>
   <div class="row" style="gap:8px;justify-content:center">
-    <button class="btn" style="min-width:56px" aria-label="Previous move" onclick={manual(() => seek(i - 1))}>‹</button>
+    <button class="btn" style="min-width:56px" aria-label="Previous move" onclick={manual(back)}>‹</button>
     <button class="btn" style="min-width:96px" onclick={manual(() => (playing = !playing))}>{playing ? 'Pause' : 'Play'}</button>
     <button class="btn" style="min-width:56px" aria-label="Next move" onclick={manual(step)}>›</button>
     <button class="btn" style="min-width:72px" aria-label="Start again" onclick={manual(() => seek(0))}>↺</button>
