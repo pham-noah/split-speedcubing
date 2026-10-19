@@ -29,6 +29,7 @@
   let typed = $state('');
   let q = $state('');   // filter by name or code, handy for F2L and long ZBLL lists
   let show = $state<'all' | 'new' | 'learning' | 'mastered' | 'due'>('all');
+  let visible = $state(12);   // cells rendered right away, the rest follow in idle time
   let hist = $state(false);
   let walkIndex = $state(0);
 
@@ -52,6 +53,26 @@
     return true;
   };
   const list = $derived(store.casesFor(set).filter(c => (set !== 'F2L' || c.slot === slotFilter) && matches(c) && keep(c)));
+  const shownList = $derived(list.slice(0, visible));
+  // a different set or filter starts from a short list again
+  $effect(() => {
+    set; slotFilter; q; show;
+    visible = 12;
+  });
+  // grow the grid a few cells at a time while the browser is idle, so switching is instant
+  $effect(() => {
+    const total = list.length;
+    if (visible >= total) return;
+    const idle = (window as any).requestIdleCallback ?? ((fn: () => void) => setTimeout(fn, 120));
+    let stop = false;
+    const grow = () => {
+      if (stop || visible >= total) return;
+      visible = Math.min(total, visible + 12);
+      if (visible < total) idle(grow);
+    };
+    idle(grow);
+    return () => { stop = true; };
+  });
   const mode = $derived(set === 'F2L' ? 'f2l' : set === 'OLL' ? 'oll' : 'pll');
   const sel = $derived(selId ? list.find(c => c.id === selId) ?? null : null);
   const card = $derived(sel ? store.card(sel.id) : null);
@@ -217,7 +238,7 @@
     {#if list.length}
       <div class="mu">{mastered} mastered · {learning} learning · {list.length - mastered - learning} new{#if dueNow} · {dueNow} due now{/if}</div>
       <div class="grid">
-        {#each list as c (c.id)}
+        {#each shownList as c (c.id)}
           {@const m = mastery(store.card(c.id))}
           {@const code = shownCode(c)}
           <button class="cell {m}" class:sel={selId === c.id} class:dim={hint && typed.length > 0 && !code.startsWith(typed)} onclick={() => pick(c.id)} aria-label="{c.name}, {m}">

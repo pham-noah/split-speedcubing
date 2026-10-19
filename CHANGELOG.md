@@ -9,6 +9,7 @@ Browser/trainer update.
 ### Added
 - 3D scramble walkthrough: the scramble played move by move on a draggable cube, with step / play / reset. Auto-play is a setting (off by default) with a speed choice, and the cube itself can be hidden.
 - Case codes: press F in the Library, every case shows a short code (Jb -> jb, OLL 29 -> 29) and typing it opens that case; Enter trains it.
+- The case grid renders a screenful immediately and fills the rest of the list in idle time (same look, faster switch).
 - Training reveals the case you just did: its name and diagram/cube appear in the side panel after an attempt.
 - Start on tap (Settings → Timer), an undo bar after deleting a solve (Solve and History), and the last solve shown against your session average under the timer.
 - Session finished summary on End: attempts, best, average.

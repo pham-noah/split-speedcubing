@@ -107,6 +107,18 @@ describe('whole app in a simulated browser', () => {
     expect(document.querySelector('h1')!.textContent).toContain('Today');
   });
 
+  it('Library: the grid renders a screenful first and fills in the rest', async () => {
+    byText('Library', q('nav')!)!.click(); await tick();
+    for (let i = 0; i < 40 && !document.querySelector('.grid .cell'); i++) { await wait(25); flushSync(); }
+    const f2l = [...document.querySelectorAll<HTMLButtonElement>('.seg button')].find(b => b.textContent?.trim() === 'F2L')!;
+    f2l.click(); await tick();
+    const first = document.querySelectorAll('.grid .cell').length;
+    expect(first).toBeLessThanOrEqual(12);
+    for (let i = 0; i < 60 && document.querySelectorAll('.grid .cell').length <= first; i++) { await wait(60); flushSync(); }
+    const later = document.querySelectorAll('.grid .cell').length;
+    expect(later).toBeGreaterThan(first);      // the rest arrive without a click
+  });
+
   it('Settings: panels can be hidden and shortcut capture works', async () => {
     byText('Settings', q('nav')!)!.click(); await tick();
     for (let i = 0; i < 40 && !document.querySelector('input[type=checkbox]'); i++) { await wait(25); flushSync(); }
