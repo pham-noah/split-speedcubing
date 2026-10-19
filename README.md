@@ -13,7 +13,7 @@ One codebase (Svelte 5 + TypeScript + Vite) for three targets: browser/PWA, Andr
 ```bash
 npm install
 npm run dev        # http://localhost:5173
-npm test           # 214 tests: simulator, every PLL/OLL/F2L alg, stats, FSRS (+ personalisation), storage, sessions, importers, shortcuts, back handling, contrast, and a full-app UI test with an axe accessibility audit
+npm test           # 223 tests: simulator, every PLL/OLL/F2L alg, stats, FSRS (+ personalisation), storage, sessions, importers, shortcuts, back handling, contrast, and a full-app UI test with an axe accessibility audit
 npm run e2e        # 27 checks in a real Chrome against a running build (see Testing)
 npm run check      # type-check
 npm run build      # production build into dist/
@@ -82,13 +82,13 @@ src/views/         Solve, Train, Library, Drills (stub), Settings
 - **Solve:** timer with hold-to-start (touch or keyboard), optional 15 s inspection (beeps at 8 s and 12 s, +2 after 15 s, DNF after 17 s), +2 / DNF / delete, best / ao5 / ao12, cubing.js scrambles.
 - **Sessions:** tap the session name on the Solve screen to create, switch, rename or delete sessions. Each keeps its own solves, history and averages; training progress is shared.
 - **History:** every solve with its scramble, penalty editing, delete, best single / ao5 / ao12, and a progress chart.
-- **Train:** opens on a **Today** screen (cases due, new cases, this week's recognition and execution averages, quick drills, "weak spots" = your 10 slowest cases). Then PLL, OLL, F2L (41 cases x 4 slots) and ZBLL (your own imported list) with case-specific scrambles, recognition vs execution timing, 1-4 grading, and FSRS spaced repetition. On wide screens a side panel shows the algorithm, recent attempts and shortcuts.
+- **Train:** opens on a **Today** screen (cases due, new cases, this week's recognition and execution averages, last 30 days at a glance, progress per set, quick drills, "weak spots" = your 10 slowest cases, plus "lapsed" = the ones FSRS marked as lapses). Then PLL, OLL, F2L (41 cases x 4 slots) and ZBLL (your own imported list) with case-specific scrambles, recognition vs execution timing, 1-4 grading, and FSRS spaced repetition. On wide screens a side panel shows the algorithm, recent attempts and shortcuts.
 - **Library:** PLL / OLL / F2L (slot filter) / ZBLL tabs, mastery grid; PLL cases are drawn as movement arrows, F2L as 3D cubes with only the pair in colour; several algorithms per case, pick your default, add your own (checked by the simulator to really solve that case), per-algorithm stats, estimated recall, case codes (press F) and a Trainer view for one case inside the Library.
 - **Attempts panel:** every screen has a right-hand column with the recent attempts or solves and three deltas — previous, ao5, ao12 — green when faster, red when slower. History carries the same deltas on every row.
 - **Drills:** Cross only, 2-look OLL, 2-look PLL, BLD memo.
 - **First launch:** a short three-step intro (replay it from Settings) and helpful empty states.
 - **Android Back button:** closes the top-most thing first (open case, history, a trainer session, an inspection), then goes to the previous tab, and exits only from the first screen. Esc does the same on desktop.
-- **Keyboard shortcuts, rebindable:** every action is a named command (timer, +2, DNF, delete, history, grading, skip, go to each tab, back). Rebind in Settings; conflicts are refused.
+- **Keyboard shortcuts, rebindable:** every action is a named command (timer, +2, DNF, delete, history, grading, skip, go to each tab, back). Rebind in Settings; conflicts are refused. The ones you will actually use: **Space** start/stop (and Enter or Space to begin a session, Enter or Space to train the selected case), **W** next case / new scramble, **Z / X / C** +2, DNF and delete on whatever was recorded last — on Solve, Train, Library and Drills alike, **A / D** previous or next case set (Library) and previous or next drill mode (Drills), **S** back to the timer from History or Sessions, **F** the find overlay in the Library (type a code *or* a case name; Enter opens the first match) and the two-look toggle inside the OLL and PLL drills, **End** shows or hides the scramble cube.
 - **Hideable panels:** switch off parts of the Solve and Train screens you do not use (Settings, Screen layout).
 - **Import:** csTimer exports (sessions, times, +2/DNF, scrambles, dates; other puzzles are skipped), CSV (TwistyTimer-style and generic), plain lists of times, and best-effort JSON (CubeDesk). Imported sessions are added as new sessions; running an import twice skips duplicates.
 - **Settings:** themes (Midnight, AMOLED, High contrast), text size, hold time, inspection, hide time while solving, target recall, backup export/restore.

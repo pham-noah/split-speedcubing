@@ -131,6 +131,10 @@
     <button class="btn" style="align-self:center;min-height:0;padding:6px 12px;font-size:.8rem" onclick={() => (store.cubeHidden = false)}>Show the cube</button>
   {/if}
 
+  {#if mode === 'bld' && recent.length}
+    <div class="mu" style="text-align:center" role="status">last {recent.length} memos · {okOnly.length} correct ({Math.round((okOnly.length / recent.length) * 100)}%)</div>
+  {/if}
+
   {#if isLookMode}
     <div class="mu" style="text-align:center" role="status">
       {#if twoLook}

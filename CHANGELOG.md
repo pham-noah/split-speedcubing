@@ -9,6 +9,9 @@ Browser/trainer update.
 ### Added
 - 3D scramble walkthrough: the scramble played move by move on a draggable cube, with step / play / reset. Auto-play is a setting (off by default) with a speed choice, and the cube itself can be hidden.
 - Case codes: press F in the Library, every case shows a short code (Jb -> jb, OLL 29 -> 29) and typing it opens that case; Enter trains it.
+- Train home: last 30 days at a glance (solves, training attempts, minutes on the clock, days practised).
+- Sessions: average time and when each session was last used.
+- BLD memo drills show how many of the last ten memos were correct.
 - +2 / DNF / Delete on Train, Library and Drills (Z / X / C), matching the timer screen.
 - W is the next-case / new-scramble key everywhere; N no longer used.
 - S returns to the timer from Sessions and History.

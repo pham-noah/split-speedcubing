@@ -1,6 +1,6 @@
 <script lang="ts">
   import { store } from '../store.svelte';
-  import { averageOf, best, formatTime } from '../core/stats';
+  import { averageOf, best, effective, formatTime } from '../core/stats';
   import ShortcutsSide from './ShortcutsSide.svelte';
   let { onClose }: { onClose: () => void } = $props();
   let name = $state('');
@@ -8,7 +8,12 @@
   let editName = $state('');
   const info = (id: string) => {
     const s = store.data.solves.filter(x => x.session === id);
-    return `${s.length} solves · best ${formatTime(best(s))} · ao12 ${formatTime(averageOf(s, 12))}`;
+    const times = s.map(effective).filter(Number.isFinite);
+    const mean = times.length ? times.reduce((a, b) => a + b, 0) / times.length : null;
+    const last = s.reduce((m, x) => Math.max(m, x.ts), 0);
+    const days = last ? Math.floor((Date.now() - last) / 86400000) : null;
+    const when = days == null ? 'never' : days <= 0 ? 'today' : days === 1 ? 'yesterday' : `${days} days ago`;
+    return `${s.length} solves · best ${formatTime(best(s))} · avg ${formatTime(mean)} · ao12 ${formatTime(averageOf(s, 12))} · last ${when}`;
   };
   function create() { store.addSession(name); name = ''; onClose(); }
   // S returns to the timer, like Escape

@@ -122,6 +122,22 @@
     const learning = cards.filter(c => c.seen && mastery(c) !== 'mastered').length;
     return { set, total: cards.length || 1, mastered, learning, fresh: cards.length - mastered - learning };
   }));
+  // the last 30 days at a glance: how much you practised and how long you were on the clock
+  const month = $derived.by(() => {
+    const since = Date.now() - 30 * 86400000;
+    const solves = store.solves.filter(s => s.ts >= since);
+    const timed = solves.filter(s => s.pen !== 'DNF');
+    const ms = timed.reduce((n, s) => n + s.ms + (s.pen === '+2' ? 2000 : 0), 0);
+    const attempts = Object.values(store.data.cards).flatMap(c => c.attempts).filter(a => a.ts >= since);
+    const drillMs = store.data.drills.filter(d => d.ts >= since).reduce((n, d) => n + d.ms, 0);
+    const attMs = attempts.reduce((n, a) => n + a.total, 0);
+    return {
+      solves: solves.length,
+      attempts: attempts.length,
+      minutes: Math.round((ms + attMs + drillMs) / 60000),
+      days: new Set(solves.map(s => new Date(s.ts).toDateString())).size,
+    };
+  });
   const alg = $derived(current ? (drill ?? store.algFor(current.id)) : '');
   const scramble = $derived(current ? caseScramble(alg, auf, current.set === 'F2L') : '');
   const scrTokens = $derived(scramble.split(/\s+/).filter(Boolean));
@@ -221,6 +237,16 @@
       </div>
       {#if !week.n}<div class="mu" style="text-align:center">Your averages appear here after your first training session.</div>{/if}
     {/if}
+
+    <div class="card" aria-label="Last 30 days">
+      <div class="mu">Last 30 days</div>
+      <div class="row" style="margin-top:8px;gap:10px">
+        <div style="flex:1"><div class="mono" style="font-weight:800;font-size:1.3rem">{month.solves}</div><div class="mu">solves</div></div>
+        <div style="flex:1"><div class="mono" style="font-weight:800;font-size:1.3rem">{month.attempts}</div><div class="mu">training attempts</div></div>
+        <div style="flex:1"><div class="mono" style="font-weight:800;font-size:1.3rem">{month.minutes}</div><div class="mu">minutes on the clock</div></div>
+        <div style="flex:1"><div class="mono" style="font-weight:800;font-size:1.3rem">{month.days}</div><div class="mu">days practised</div></div>
+      </div>
+    </div>
 
     <div class="card" aria-label="Progress by set">
       <div class="mu">Progress</div>
