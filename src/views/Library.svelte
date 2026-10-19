@@ -15,6 +15,7 @@
   import { formatTime } from '../lib/core/stats';
   import { makeHints } from '../lib/core/hints';
   import TrainHistory from '../lib/ui/TrainHistory.svelte';
+  import PenaltyRow from '../lib/ui/PenaltyRow.svelte';
   import { hoverEnter, hoverLeave } from '../lib/ui/hover';
 
   let set = $state<CaseSet>('PLL');
@@ -81,6 +82,8 @@
   const current = $derived(sel ? store.algFor(sel.id) : '');
   const mean = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
   const short = (n: string) => n.replace('-perm', '').replace('OLL ', '').replace('F2L ', '').replace('ZBLL ', '');
+  // OLL cells show the case name ("Sune"), not just its number; the number is still in the panel
+  const label = (c: { name: string; nick?: string }) => (set === 'OLL' ? (c.nick ?? c.name) : short(c.name));
 
   // the case being learned
   const tCase = $derived(training ? store.caseOf(training.id) : null);
@@ -128,6 +131,18 @@
   // while the codes are up, the tab keys are part of the code, not navigation
   $effect(() => { nav.hintActive = hint; return () => { nav.hintActive = false; }; });
   const shownCode = (c: { id: string }) => codes.get(c.id) ?? '';
+  // while the codes are up, typing can also spell a case name or nickname
+  const named = (c: { name: string; nick?: string }) => `${short(c.name)} ${c.nick ?? ''}`.toLowerCase();
+  // exact name first, then a name that starts with what was typed, then any word inside it
+  const nameScore = (c: { name: string; nick?: string }, needle: string) => {
+    const nick = (c.nick ?? '').toLowerCase(), nm = short(c.name).toLowerCase();
+    if (nick === needle || nm === needle) return 3;
+    if (nick.startsWith(needle) || nm.startsWith(needle)) return 2;
+    return 1;
+  };
+  const byName = (needle: string) =>
+    list.filter(c => named(c).split(/[\s'-]+/).some(w => w.startsWith(needle)))
+      .sort((a, b) => nameScore(b, needle) - nameScore(a, needle));
 
   function startTraining(id: string) {
     training = { id, alg: store.algFor(id) };
@@ -136,6 +151,17 @@
   }
   function trainCase() { if (sel) startTraining(sel.id); }
   function nextScramble() { auf = randomAuf(); result = null; }
+  function togglePen(p: '+2' | 'DNF' | '') {
+    if (!training || !p) return;
+    const now = store.card(training.id).attempts.at(-1)?.pen;
+    store.penAttempt(training.id, now === p ? '' : p);
+    result = result ? { ...result } : result;
+  }
+  function dropAttempt() {
+    if (!training) return;
+    store.deleteLastAttempt(training.id);
+    result = null;
+  }
   function endTraining() { training = null; result = null; }
   function finish(r: { ms: number; recog: number | null }) {
     if (!training) return;
@@ -150,15 +176,25 @@
   function onKey(e: KeyboardEvent) {
     if (/INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement).tagName)) return;
     if (training) {
-      return;                        // the learner owns the arrows and the keys
+      // the learner owns the arrows; penalties work like on the timer
+      if (store.is(e, 'plus2')) { togglePen('+2'); e.preventDefault(); return; }
+      if (store.is(e, 'dnf')) { togglePen('DNF'); e.preventDefault(); return; }
+      if (store.is(e, 'deleteLast')) { dropAttempt(); e.preventDefault(); return; }
+      return;
     }
     if (!hint && q && e.key === 'Escape') { q = ''; e.preventDefault(); return; }
     if (!hint && store.is(e, 'libPrev')) { stepSet(-1); e.preventDefault(); e.stopPropagation(); return; }
     if (!hint && store.is(e, 'libNext')) { stepSet(1); e.preventDefault(); e.stopPropagation(); return; }
-    if (!hint && e.key === 'Enter' && selId) { e.preventDefault(); trainCase(); return; }
+    if (!hint && (e.key === 'Enter' || e.code === 'Space') && selId) { e.preventDefault(); trainCase(); return; }
     if (!hint) {
       if (store.is(e, 'hints') && list.length) { hint = true; typed = ''; e.preventDefault(); e.stopPropagation(); }
       return;
+    }
+    if (e.key === 'Enter') {
+      const exactCode = [...codes].find(([, code]) => code === typed)?.[0];
+      const cand = exactCode ?? byName(typed)[0] ?? [...codes].find(([, code]) => code.startsWith(typed))?.[0];
+      if (cand) pick(typeof cand === 'string' ? cand : cand.id);
+      hint = false; typed = ''; e.preventDefault(); e.stopPropagation(); return;
     }
     if (e.key === 'Escape') { hint = false; typed = ''; e.preventDefault(); e.stopPropagation(); return; }
     if (e.key === 'Backspace') { typed = typed.slice(0, -1); e.preventDefault(); e.stopPropagation(); return; }
@@ -166,9 +202,15 @@
     if (!/^[a-z0-9]$/.test(ch)) { hint = false; typed = ''; return; }
     const next = typed + ch;
     const hit = [...codes].find(([, code]) => code === next);
-    if (hit) { pick(hit[0]); hint = false; typed = ''; e.preventDefault(); e.stopPropagation(); return; }
-    if ([...codes.values()].some(code => code.startsWith(next))) { typed = next; e.preventDefault(); e.stopPropagation(); return; }
-    hint = false; typed = '';
+    const names = byName(next);
+    // a single key is ambiguous: it may be a one-letter code or the start of a name, so it narrows
+    if (hit && names.length === 0 && next.length >= 2) { pick(hit[0]); hint = false; typed = ''; e.preventDefault(); e.stopPropagation(); return; }
+    const codeAlive = [...codes.values()].some(code => code.startsWith(next));
+    // open as soon as one name is clearly ahead: an exact match, or nothing tying with it
+    const clear = names.length > 0 && nameScore(names[0], next) > (names[1] ? nameScore(names[1], next) : -1);
+    if (clear) { pick(names[0].id); hint = false; typed = ''; e.preventDefault(); e.stopPropagation(); return; }
+    if (codeAlive || names.length) { typed = next; e.preventDefault(); e.stopPropagation(); return; }
+    // a key that matches nothing is ignored: a typo should not throw you out of the overlay
     e.preventDefault();
   }
 </script>
@@ -200,6 +242,7 @@
     <TimerPad holdMs={store.data.settings.holdMs} tapStart={store.data.settings.tapStart} cover={store.data.settings.coverOn} coverColor={store.data.settings.coverColor} onfinish={finish} />
     {#if result}
       <div class="mu" style="text-align:center">Last <b class="mono" style="color:var(--tx)">{formatTime(result.ms)}</b></div>
+      {#if training}<PenaltyRow pen={store.card(training.id).attempts.at(-1)?.pen ?? ''} onpen={togglePen} ondelete={dropAttempt} />{/if}
     {:else}
       <div class="mu" style="text-align:center">Hold to start, tap to stop.</div>
     {/if}
@@ -214,7 +257,10 @@
       {/each}
     </div>
 
-    {#if hint}<div class="sr" role="status" aria-live="polite">Case codes shown. Type a code to open that case. Escape closes this.</div>{/if}
+    {#if hint && typed}
+      <div class="mu" role="status" aria-live="polite">“{typed}” · {byName(typed).length + [...codes.values()].filter(code => code.startsWith(typed)).length} match · Enter opens the first</div>
+    {/if}
+    {#if hint}<div class="sr" role="status" aria-live="polite">Case codes shown. Type a code, or the start of a case name, to open it. Escape closes this.</div>{/if}
     {#if set === 'F2L'}
       <SlotPicker value={slotFilter} onpick={(s) => { slotFilter = s; selId = null; }} />
     {/if}
@@ -242,13 +288,13 @@
         {#each shownList as c (c.id)}
           {@const m = mastery(store.card(c.id))}
           {@const code = shownCode(c)}
-          <button class="cell {m}" class:sel={selId === c.id} class:dim={hint && typed.length > 0 && !code.startsWith(typed)} onclick={() => pick(c.id)} aria-label="{c.name}, {m}">
+          <button class="cell {m}" class:sel={selId === c.id} class:dim={hint && typed.length > 0 && !code.startsWith(typed) && !byName(typed).includes(c)} onclick={() => pick(c.id)} aria-label="{c.name}, {m}">
             {#if set === 'F2L'}
               <LazyBox width={81} height={76}><CaseCube alg={store.algFor(c.id)} slotId={c.slot} size={54} /></LazyBox>
             {:else}
               <CaseDiagram alg={store.algFor(c.id)} {mode} size={64} slot={c.slot} />
             {/if}
-            <span>{short(c.name)}</span>
+            <span class="clabel" title="{c.name}{c.nick ? ` · ${c.nick}` : ''}">{label(c)}</span>
             {#if hint}<span class="hint" aria-hidden="true">{typed && code.startsWith(typed) ? code.slice(typed.length) : code}</span>{/if}
           </button>
         {/each}

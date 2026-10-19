@@ -9,6 +9,13 @@ Browser/trainer update.
 ### Added
 - 3D scramble walkthrough: the scramble played move by move on a draggable cube, with step / play / reset. Auto-play is a setting (off by default) with a speed choice, and the cube itself can be hidden.
 - Case codes: press F in the Library, every case shows a short code (Jb -> jb, OLL 29 -> 29) and typing it opens that case; Enter trains it.
+- +2 / DNF / Delete on Train, Library and Drills (Z / X / C), matching the timer screen.
+- W is the next-case / new-scramble key everywhere; N no longer used.
+- S returns to the timer from Sessions and History.
+- Drills: the two look modes are now called OLL and PLL; F switches between two looks and one look, and one look stops on a single press.
+- OLL cases are labelled by name (Sune, Zamboni…) in the Library, and F can find a case by name as well as by code.
+- Space starts a Train session and trains the selected Library case.
+- A / D switch Drills modes.
 - Scramble walkthrough: the left arrow key now plays the move backwards like the ‹ button did, instead of jumping.
 - The screen stays awake while the timer runs (where the browser supports a wake lock).
 - New quick drill: Lapsed — the cases FSRS marked as lapsed (you got them wrong), up to 15 of them.

@@ -67,7 +67,7 @@
     else if (store.is(e, 'deleteLast')) removeLast();
     else if (store.is(e, 'history')) history = true;
     else if (store.is(e, 'sessions')) sessions = true;
-    else if (store.is(e, 'scramble')) newScramble();
+    else if (store.is(e, 'scramble') || e.code === 'KeyW') newScramble();
   }
   // Back closes history / sessions first
   $effect(() => { if (history || sessions) return nav.onBack(() => { history = false; sessions = false; return true; }); });

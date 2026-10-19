@@ -19,7 +19,7 @@ export const COMMANDS: Command[] = [
   { id: 'history', label: 'Open history', scope: 'solve', def: 'KeyD' },
   { id: 'sessions', label: 'Open sessions', scope: 'solve', def: 'KeyA' },
   { id: 'scramble', label: 'New scramble', scope: 'solve', def: 'KeyS' },
-  { id: 'nextCase', label: 'Skip to the next case', scope: 'train', def: 'KeyN' },
+  { id: 'nextCase', label: 'Next case (new scramble)', scope: 'train', def: 'KeyW' },
   { id: 'trainPrev', label: 'Previous case set', scope: 'train', def: 'KeyA' },
   { id: 'trainNext', label: 'Next case set', scope: 'train', def: 'KeyD' },
   { id: 'trainHistory', label: 'Open training history', scope: 'train', def: 'KeyS' },

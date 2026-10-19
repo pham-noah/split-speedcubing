@@ -11,7 +11,14 @@
     return `${s.length} solves · best ${formatTime(best(s))} · ao12 ${formatTime(averageOf(s, 12))}`;
   };
   function create() { store.addSession(name); name = ''; onClose(); }
+  // S returns to the timer, like Escape
+  function onKey(e: KeyboardEvent) {
+    if (/INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement).tagName)) return;
+    if (e.code === 'KeyS' || e.key === 'Escape') { e.preventDefault(); onClose(); }
+  }
 </script>
+
+<svelte:window onkeydown={onKey} />
 
 <main class="page">
   <div class="row sp"><h1>Sessions</h1><button class="btn" onclick={onClose}>Done</button></div>

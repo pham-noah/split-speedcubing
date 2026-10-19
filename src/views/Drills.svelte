@@ -9,11 +9,12 @@
   import ScrambleWalk from '../lib/ui/ScrambleWalk.svelte';
   import { hoverEnter, hoverLeave } from '../lib/ui/hover';
   import Deltas from '../lib/ui/Deltas.svelte';
+  import PenaltyRow from '../lib/ui/PenaltyRow.svelte';
   import type { DrillResult } from '../lib/storage/model';
 
   type Mode = DrillResult['type'];
   const MODES: { id: Mode; label: string }[] = [
-    { id: 'cross', label: 'Cross' }, { id: 'oll2', label: '2-look OLL' }, { id: 'pll2', label: '2-look PLL' }, { id: 'bld', label: 'BLD memo' },
+    { id: 'cross', label: 'Cross' }, { id: 'oll2', label: 'OLL' }, { id: 'pll2', label: 'PLL' }, { id: 'bld', label: 'BLD memo' },
   ];
   const INFO: Record<Mode, string> = {
     cross: 'Solve only the cross, then stop the timer. Plan it during inspection to get faster.',
@@ -24,11 +25,13 @@
   const MARK: Record<Mode, string> = { cross: '', bld: 'Tap when memorized', oll2: 'Tap when edges are oriented', pll2: 'Tap when corners are solved' };
 
   let mode = $state<Mode>(nav.drillMode);
+  let running = $state(false);   // A and D must not switch modes mid-drill
   let walkIndex = $state(0);
   const queue = new ScrambleQueue();
   let scramble = $state('Generating scramble…');
   let color = $state('White');
   let look = $state<TwoLook | null>(null);
+  let twoLook = $state(store.data.settings.drillTwoLook ?? true);   // F: two looks or one
   let pending = $state<{ ms: number; memo: number | null } | null>(null);
   const scrTokens = $derived(scramble.split(/\s+/).filter(Boolean));
   const COLORS = ['White', 'Yellow', 'Green', 'Blue', 'Red', 'Orange'];
@@ -57,19 +60,47 @@
     scramble = await queue.take();
   }
   function setMode(m: Mode) { mode = m; nextScramble(); }
+  // penalties on the drill you just finished
+  function togglePen(p: '+2' | 'DNF' | '') {
+    if (!p || !results.length) return;
+    const now = results.at(-1)?.pen;
+    store.penDrill(mode, now === p ? '' : p);
+  }
+  function dropDrill() {
+    if (!results.length) return;
+    store.deleteLastDrill(mode);
+  }
+  function onKey(e: KeyboardEvent) {
+    if (running) return;
+    if (/INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement).tagName)) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.code === 'KeyF' && isLookMode) {
+      twoLook = !twoLook;
+      store.update({ drillTwoLook: twoLook });
+      e.preventDefault(); e.stopPropagation(); return;
+    }
+    if (e.code === 'KeyW') { nextScramble(); e.preventDefault(); return; }
+    if (store.is(e, 'plus2')) { togglePen('+2'); e.preventDefault(); return; }
+    if (store.is(e, 'dnf')) { togglePen('DNF'); e.preventDefault(); return; }
+    if (store.is(e, 'deleteLast')) { dropDrill(); e.preventDefault(); return; }
+    const i = MODES.findIndex(m => m.id === mode);
+    if (store.is(e, 'libPrev')) { setMode(MODES[(i - 1 + MODES.length) % MODES.length].id); e.preventDefault(); }
+    else if (store.is(e, 'libNext')) { setMode(MODES[(i + 1) % MODES.length].id); e.preventDefault(); }
+  }
   nextScramble();
 
   const results = $derived(store.data.drills.filter(d => d.type === mode));
   const recent = $derived(results.slice(-10));
   const mean = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
   const okOnly = $derived(recent.filter(d => d.ok));
-  const twoStage = $derived(mode !== 'cross');
+  const isLookMode = $derived(mode === 'oll2' || mode === 'pll2');
+  const twoStage = $derived(isLookMode ? twoLook : mode !== 'cross');
 
   function finish(r: { ms: number; recog: number | null }) {
     if (mode === 'cross') { store.addDrill({ type: 'cross', ms: r.ms, memo: null, ok: true }); nextScramble(); return; }
     if (mode === 'bld') { pending = { ms: r.ms, memo: r.recog }; return; }
     // 2-look: record straight away and show what the cases were
-    store.addDrill({ type: mode, ms: r.ms, memo: r.recog, ok: true, info: `${look?.stage1?.name ?? 'skip'} + ${look?.stage2?.name ?? 'skip'}` });
+    store.addDrill({ type: mode, ms: r.ms, memo: r.recog, ok: true, info: twoLook ? `${look?.stage1?.name ?? 'skip'} + ${look?.stage2?.name ?? 'skip'}` : 'one look' });
     pending = { ms: r.ms, memo: r.recog };
   }
   function mark(ok: boolean) {
@@ -80,6 +111,8 @@
   const stage1Label = $derived(mode === 'oll2' ? 'Edges' : mode === 'pll2' ? 'Corners' : 'Memo');
   const stage2Label = $derived(mode === 'oll2' ? 'Corners' : mode === 'pll2' ? 'Edges' : 'Execution');
 </script>
+
+<svelte:window onkeydown={onKey} />
 
 <main class="page wide">
   <div class="split"><div class="col" style="gap:12px">
@@ -98,10 +131,25 @@
     <button class="btn" style="align-self:center;min-height:0;padding:6px 12px;font-size:.8rem" onclick={() => (store.cubeHidden = false)}>Show the cube</button>
   {/if}
 
+  {#if isLookMode}
+    <div class="mu" style="text-align:center" role="status">
+      {#if twoLook}
+        2-look · tap when {stage1Label.toLowerCase()}, then stop
+      {:else}
+        One look · press once to stop
+      {/if}
+      <span class="pc-only"> · F changes this</span>
+    </div>
+  {/if}
+
   {#if pending}
     <div class="time mono">{formatTime(pending.ms)}</div>
-    <div class="mu" style="text-align:center">{stage1Label} <b class="mono" style="color:var(--tx)">{formatTime(pending.memo)}</b> &nbsp; {stage2Label} <b class="mono" style="color:var(--tx)">{formatTime(pending.memo == null ? null : pending.ms - pending.memo)}</b></div>
-    {#if mode === 'bld'}
+    {#if twoStage || mode === 'bld'}
+      <div class="mu" style="text-align:center">{stage1Label} <b class="mono" style="color:var(--tx)">{formatTime(pending.memo)}</b> &nbsp; {stage2Label} <b class="mono" style="color:var(--tx)">{formatTime(pending.memo == null ? null : pending.ms - pending.memo)}</b></div>
+    {/if}
+    {#if (mode === 'oll2' || mode === 'pll2') && !twoLook}
+      <button class="btn p" onclick={nextScramble}>Next</button>
+    {:else if mode === 'bld'}
       <div class="mu" style="text-align:center">Was the solve successful?</div>
       <div class="row"><button class="btn p" onclick={() => mark(true)}>Success</button><button class="btn" onclick={() => mark(false)}>Failed</button></div>
     {:else if look}
@@ -112,7 +160,7 @@
       <button class="btn p" onclick={nextScramble}>Next</button>
     {/if}
   {:else}
-    <TimerPad twoPress={twoStage} markLabel={MARK[mode]} holdMs={store.data.settings.holdMs} tapStart={store.data.settings.tapStart} shown={results.at(-1)?.ms ?? null} cover={store.data.settings.coverOn} coverColor={store.data.settings.coverColor} onfinish={finish} />
+    <TimerPad twoPress={twoStage} markLabel={MARK[mode]} holdMs={store.data.settings.holdMs} tapStart={store.data.settings.tapStart} shown={results.at(-1)?.ms ?? null} cover={store.data.settings.coverOn} coverColor={store.data.settings.coverColor} onfinish={finish} onRunning={(b) => (running = b)} />
   {/if}
 
   <div class="row">
@@ -129,6 +177,9 @@
   <ShortcutsSide view="drills" />
   </div>
   <aside class="side" aria-label="Drill attempts">
+    {#if results.length}
+      <PenaltyRow pen={results.at(-1)?.pen ?? ''} onpen={togglePen} ondelete={dropDrill} />
+    {/if}
     <Deltas times={results.map(d => d.ms)} title="Recent {MODES.find(m => m.id === mode)?.label} attempts" />
     <ShortcutsSide view="drills" inline />
   </aside></div>

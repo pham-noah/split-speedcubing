@@ -4,6 +4,11 @@
   import ShortcutsSide from '../lib/ui/ShortcutsSide.svelte';
   let { onBack }: { onBack: () => void } = $props();
 
+  // S returns to the timer, like Escape
+  function onKey(e: KeyboardEvent) {
+    if (/INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement).tagName)) return;
+    if (e.code === 'KeyS' || e.key === 'Escape') { e.preventDefault(); onBack(); }
+  }
   const solves = $derived(store.solves);
   const list = $derived([...solves].reverse().slice(0, 200));
   let open = $state<string | null>(null);
@@ -41,6 +46,8 @@
     return out;
   });
 </script>
+
+<svelte:window onkeydown={onKey} />
 
 <main class="page wide">
   <div class="split"><div class="col" style="gap:12px">

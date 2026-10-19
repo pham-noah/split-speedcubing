@@ -41,3 +41,9 @@ export function bestAverage(solves: Solve[], n: number): number | null {
   }
   return b;
 }
+
+/** What an attempt cost: execution time plus a +2, while a DNF has no usable time. */
+export function attemptExec(a: { total: number; recog: number | null; pen?: '+2' | 'DNF' }): number {
+  if (a.pen === 'DNF') return Infinity;
+  return a.total - (a.recog ?? 0) + (a.pen === '+2' ? 2000 : 0);
+}

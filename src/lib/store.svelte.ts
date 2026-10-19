@@ -163,6 +163,33 @@ class Store {
   }
   /** forget everything learned about one case (keeps its algorithms) */
   resetCard(id: string) { delete this.data.cards[id]; this.persist(); }
+  /** the last attempt of a case: penalty, or drop it */
+  penAttempt(id: string, pen: '+2' | 'DNF' | '') {
+    const card = this.data.cards[id];
+    const last = card?.attempts.at(-1);
+    if (!last) return;
+    if (!pen) delete last.pen; else last.pen = pen;
+    this.persist();
+  }
+  deleteLastAttempt(id: string) {
+    const card = this.data.cards[id];
+    if (!card?.attempts.length) return;
+    card.attempts = card.attempts.slice(0, -1);
+    this.persist();
+  }
+  /** the last drill result of a mode */
+  penDrill(type: DrillResult['type'], pen: '+2' | 'DNF' | '') {
+    const last = [...this.data.drills].reverse().find(d => d.type === type);
+    if (!last) return;
+    if (!pen) delete last.pen; else last.pen = pen;
+    this.persist();
+  }
+  deleteLastDrill(type: DrillResult['type']) {
+    const i = this.data.drills.map(d => d.type).lastIndexOf(type);
+    if (i < 0) return;
+    this.data.drills.splice(i, 1);
+    this.persist();
+  }
   /** ask the timer to load a scramble (used by "retry this scramble" in History) */
   retry: string | null = null;
   retryScramble(scramble: string) { this.retry = scramble; }

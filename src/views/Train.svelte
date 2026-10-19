@@ -10,6 +10,7 @@
   import { hoverEnter, hoverLeave } from '../lib/ui/hover';
   import CaseDiagram from '../lib/ui/CaseDiagram.svelte';
   import CaseCube from '../lib/ui/CaseCube.svelte';
+  import PenaltyRow from '../lib/ui/PenaltyRow.svelte';
   import { caseScramble, invert, randomAuf } from '../lib/core/alg';
   import { pickNext, mastery, type Grade } from '../lib/core/srs';
   import { formatTime } from '../lib/core/stats';
@@ -78,6 +79,19 @@
     current = c; auf = randomAuf(); lastId = c?.id ?? null;
   }
   function start(isWeak = false, isLapsed = false) { weak = isWeak; lapsed = isLapsed; lastId = null; started = true; sessionStart = Date.now(); next(); }
+  // penalties apply to the attempt you just finished
+  function togglePen(p: '+2' | 'DNF' | '') {
+    if (!current) return;
+    if (!p) return;
+    const now = store.card(current.id).attempts.at(-1)?.pen;
+    store.penAttempt(current.id, now === p ? '' : p);
+    result = result ? { ...result } : result;
+  }
+  function dropAttempt() {
+    if (!current) return;
+    store.deleteLastAttempt(current.id);
+    result = null;
+  }
   function end() {
     // close with the numbers for this session rather than an empty Today screen
     summary = sessionStats.n ? {
@@ -151,10 +165,13 @@
       if (store.is(e, 'trainPrev')) { set = SET_NAMES[(SET_NAMES.indexOf(set) - 1 + SET_NAMES.length) % SET_NAMES.length]; e.preventDefault(); return; }
       if (store.is(e, 'trainNext')) { set = SET_NAMES[(SET_NAMES.indexOf(set) + 1) % SET_NAMES.length]; e.preventDefault(); return; }
       if (store.is(e, 'trainHistory')) { hist = true; e.preventDefault(); return; }
-      if (e.key === 'Enter' && list.length) { start(); e.preventDefault(); return; }
+      if ((e.key === 'Enter' || e.code === 'Space') && list.length) { start(); e.preventDefault(); return; }
       return;
     }
     if (!started) return;
+    if (store.is(e, 'plus2')) { togglePen('+2'); e.preventDefault(); return; }
+    if (store.is(e, 'dnf')) { togglePen('DNF'); e.preventDefault(); return; }
+    if (store.is(e, 'deleteLast')) { dropAttempt(); e.preventDefault(); return; }
     if (store.is(e, 'nextCase')) { lastId = current?.id ?? null; next(); }
   }
   // Back leaves the session and returns to the Today screen
@@ -254,6 +271,9 @@
             </div>
           {:else}
             <div class="mu" style="text-align:center">{drill ? 'Execution only: hold to start, release to go, then tap to stop.' : 'Press once when you recognise the case, again when you finish.'}</div>
+          {/if}
+          {#if result && current}
+            <PenaltyRow pen={store.card(current.id).attempts.at(-1)?.pen ?? ''} onpen={togglePen} ondelete={dropAttempt} />
           {/if}
           <button class="btn" onclick={() => { lastId = current?.id ?? null; next(); }}>{drill ? 'Next case' : 'Skip case'}<span class="pc-only"> ({codeLabel(store.key("nextCase"))})</span></button>
         {:else}

@@ -7,10 +7,11 @@
   import { inspectionPenalty, inspectionText } from '../core/inspection';
 
   type St = 'idle' | 'insp' | 'hold' | 'ready' | 'run';
-  let { twoPress = false, markLabel = 'Tap when recognized', disabled = false, holdMs = 300, tapStart = false, hideTime = false, inspection = false, beeps = true, shown = null, cover = false, coverColor = '', onfinish }: {
+  let { twoPress = false, markLabel = 'Tap when recognized', disabled = false, holdMs = 300, tapStart = false, hideTime = false, inspection = false, beeps = true, shown = null, cover = false, coverColor = '', onfinish, onRunning }: {
     twoPress?: boolean; markLabel?: string; disabled?: boolean; holdMs?: number; tapStart?: boolean; hideTime?: boolean;
     inspection?: boolean; beeps?: boolean; shown?: number | null; cover?: boolean; coverColor?: string;
     onfinish: (r: { ms: number; recog: number | null; pen: Penalty }) => void;
+    onRunning?: (running: boolean) => void;
   } = $props();
 
   let st = $state<St>('idle');
@@ -78,6 +79,7 @@
     raf = requestAnimationFrame(loop);
   }
   const endInspection = () => { inspActive = false; };
+  $effect(() => { onRunning?.(st === 'run' || st === 'hold' || st === 'ready'); });
 
   // a phone that dims mid-solve is worse than a slightly brighter screen
   async function keepAwake() {
