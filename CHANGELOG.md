@@ -9,6 +9,8 @@ Browser/trainer update.
 ### Added
 - 3D scramble walkthrough: the scramble played move by move on a draggable cube, with step / play / reset. Auto-play is a setting (off by default) with a speed choice, and the cube itself can be hidden.
 - Case codes: press F in the Library, every case shows a short code (Jb -> jb, OLL 29 -> 29) and typing it opens that case; Enter trains it.
+- Training history: slowest cases (avg / best / attempts) and an attempts-per-week chart for the last 8 weeks.
+- Fixed a crash in training history when two cases had an attempt in the same millisecond.
 - Settings: the 23-row shortcut editor is collapsed behind "Show all 23", cutting the page from ~4,900 px to ~1,000 px.
 - Cube thumbnails still appear on webviews without IntersectionObserver.
 - History: "Retry this scramble" loads that solve's scramble straight back into the timer.

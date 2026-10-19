@@ -24,14 +24,14 @@
       rows.sort((a, b) => a.ts - b.ts);
       byCase.set(id, rows);
     }
-    const out = new Map<number, { prev: number | null; a5: number | null; a12: number | null }>();
+    const out = new Map<string, { prev: number | null; a5: number | null; a12: number | null }>();
     for (const rows of byCase.values()) {
       const ex = rows.map(exec);
       rows.forEach((r, i) => {
         const slice = (n: number) => ex.slice(Math.max(0, i - n + 1), i + 1);
         const a5 = slice(5).length === 5 ? slice(5).reduce((a, b) => a + b, 0) / 5 : null;
         const a12 = slice(12).length === 12 ? slice(12).reduce((a, b) => a + b, 0) / 12 : null;
-        out.set(r.ts, {
+        out.set(r.id + r.ts, {
           prev: i ? ex[i] - ex[i - 1] : null,
           a5: a5 == null ? null : ex[i] - a5,
           a12: a12 == null ? null : ex[i] - a12,
@@ -52,6 +52,30 @@
   const bestExec = $derived(execs.length ? Math.min(...execs) : null);
   const avgExec = $derived(execs.length ? execs.reduce((a, b) => a + b, 0) / execs.length : null);
 
+  // per case: where the time goes, slowest first — what to drill next
+  const byCase = $derived.by(() => {
+    const out: { id: string; avg: number; best: number; n: number }[] = [];
+    for (const [id, card] of Object.entries(cards)) {
+      if (caseId && id !== caseId) continue;
+      const ex = card.attempts.map(a => a.total - (a.recog ?? 0));
+      if (!ex.length) continue;
+      out.push({ id, avg: ex.reduce((x, y) => x + y, 0) / ex.length, best: Math.min(...ex), n: ex.length });
+    }
+    return out.sort((a, b) => b.avg - a.avg).slice(0, 6);
+  });
+
+  // how many attempts a week, last 8 weeks: consistency, not speed
+  const weekly = $derived.by(() => {
+    const wk = 7 * 86400000;
+    const now = Date.now();
+    return Array.from({ length: 8 }, (_, i) => {
+      const end = now - (7 - i) * wk;
+      const start = end - wk;
+      return all.filter(r => r.ts > start && r.ts <= end).length;
+    });
+  });
+  const weekMax = $derived(Math.max(1, ...weekly));
+
   const fmt = (x: number | null) => (x == null ? '–' : `${x >= 0 ? '+' : '−'}${(Math.abs(x) / 1000).toFixed(2)}`);
   const col = (x: number | null) => (x == null ? 'var(--mu)' : x < 0 ? '#59D98A' : '#FF6B6B');
 </script>
@@ -70,6 +94,30 @@
 
     {#if !all.length}
       <div class="card mu">No attempts yet. Train a case and it lands here.</div>
+    {:else}
+      <div class="card" aria-label="Slowest cases">
+        <div class="mu">Slowest cases · execution average</div>
+        <div class="col" style="gap:6px;margin-top:8px">
+          {#each byCase as c (c.id)}
+            <div class="row sp prow" style="padding:2px 0">
+              <span style="font-weight:700">{name(c.id).replace('-perm', '').replace('OLL ', '')}</span>
+              <span class="mu mono">{formatTime(c.avg)} avg · {formatTime(c.best)} best · {c.n} attempts</span>
+            </div>
+          {/each}
+        </div>
+      </div>
+
+      <div class="card" aria-label="Attempts per week">
+        <div class="mu">Attempts a week · last 8 weeks</div>
+        <div class="row" style="align-items:flex-end;gap:6px;height:64px;margin-top:10px">
+          {#each weekly as n, i (i)}
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+              <div style="width:100%;height:{Math.round((n / weekMax) * 44) + 2}px;border-radius:3px;background:{i === 7 ? 'var(--am)' : '#3A4150'}"></div>
+              <span class="mu" style="font-size:.62rem">{n}</span>
+            </div>
+          {/each}
+        </div>
+      </div>
     {/if}
 
     <div class="row mono mu" style="font-size:.72rem;padding:0 2px">
@@ -80,8 +128,8 @@
       <span style="flex:1;text-align:right">ao12</span>
     </div>
     <div style="display:flex;flex-direction:column;gap:8px">
-      {#each all as r (r.ts)}
-        {@const d = deltas.get(r.ts)}
+      {#each all as r (r.caseId + r.ts)}
+        {@const d = deltas.get(r.caseId + r.ts)}
         <div class="card row sp">
           <span class="mu" style="flex:none;width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{name(r.caseId).replace('-perm', '').replace('OLL ', '')}</span>
           <b class="mono" style="flex:none;width:68px;font-size:1rem">{formatTime(exec(r))}</b>
