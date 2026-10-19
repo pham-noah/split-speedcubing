@@ -116,3 +116,10 @@ input,textarea{width:100%;min-height:44px;border-radius:10px;border:1px solid #3
 /* a count on a tab, e.g. cases due */
 .badge { display: inline-block; margin-left: 6px; min-width: 18px; padding: 1px 5px; border-radius: 9px;
   background: var(--am); color: var(--on-am); font: 800 .7rem "JetBrains Mono", monospace; }
+
+/* phones: the case panel opens as a sheet over the grid instead of below it */
+@media (max-width:899px){
+  #case-panel { position: fixed; left: 0; right: 0; bottom: calc(58px + env(safe-area-inset-bottom)); z-index: 45;
+    max-height: 74vh; overflow-y: auto; border-radius: 18px 18px 0 0; border-bottom: 0;
+    box-shadow: 0 -12px 30px rgba(0,0,0,.55); background: var(--card); }
+}

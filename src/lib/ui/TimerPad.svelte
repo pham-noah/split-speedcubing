@@ -7,8 +7,8 @@
   import { inspectionPenalty, inspectionText } from '../core/inspection';
 
   type St = 'idle' | 'insp' | 'hold' | 'ready' | 'run';
-  let { twoPress = false, markLabel = 'Tap when recognized', disabled = false, holdMs = 300, hideTime = false, inspection = false, beeps = true, shown = null, cover = false, coverColor = '', onfinish }: {
-    twoPress?: boolean; markLabel?: string; disabled?: boolean; holdMs?: number; hideTime?: boolean;
+  let { twoPress = false, markLabel = 'Tap when recognized', disabled = false, holdMs = 300, tapStart = false, hideTime = false, inspection = false, beeps = true, shown = null, cover = false, coverColor = '', onfinish }: {
+    twoPress?: boolean; markLabel?: string; disabled?: boolean; holdMs?: number; tapStart?: boolean; hideTime?: boolean;
     inspection?: boolean; beeps?: boolean; shown?: number | null; cover?: boolean; coverColor?: string;
     onfinish: (r: { ms: number; recog: number | null; pen: Penalty }) => void;
   } = $props();
@@ -49,7 +49,7 @@
   const label = $derived(
     st === 'hold' ? 'Keep holding' : st === 'ready' ? 'Release!' :
     st === 'run' ? (twoPress && !marked ? markLabel : 'Tap to stop') :
-    inspActive ? 'Hold to start' : inspection ? 'Tap to start inspection' : 'Hold to start'
+    inspActive ? (tapStart ? 'Tap to start' : 'Hold to start') : inspection ? 'Tap to start inspection' : (tapStart ? 'Tap to start' : 'Hold to start')
   );
   const shownText = $derived(
     st === 'run' ? (hideTime ? 'Solving…' : formatTime(now)) :
@@ -96,6 +96,14 @@
       return;
     }
     if (st === 'idle' || st === 'insp') {
+      if (tapStart) {
+        // no hold: the press itself starts the solve
+        const pen = inspActive ? inspectionPenalty(performance.now() - tI) : '';
+        endInspection();
+        st = 'run'; marked = false; recog = null; t0 = performance.now(); now = 0; pendingPen = pen;
+        cancelAnimationFrame(raf); raf = requestAnimationFrame(loop);
+        return;
+      }
       st = 'hold';
       openCover();
       holdTimer = setTimeout(() => { if (st === 'hold') st = 'ready'; }, holdMs);

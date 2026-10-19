@@ -112,7 +112,7 @@
       <button class="btn p" onclick={nextScramble}>Next</button>
     {/if}
   {:else}
-    <TimerPad twoPress={twoStage} markLabel={MARK[mode]} holdMs={store.data.settings.holdMs} shown={results.at(-1)?.ms ?? null} cover={store.data.settings.coverOn} coverColor={store.data.settings.coverColor} onfinish={finish} />
+    <TimerPad twoPress={twoStage} markLabel={MARK[mode]} holdMs={store.data.settings.holdMs} tapStart={store.data.settings.tapStart} shown={results.at(-1)?.ms ?? null} cover={store.data.settings.coverOn} coverColor={store.data.settings.coverColor} onfinish={finish} />
   {/if}
 
   <div class="row">

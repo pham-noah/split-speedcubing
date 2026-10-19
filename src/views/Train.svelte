@@ -34,6 +34,7 @@
   let hist = $state(false);
   let walkIndex = $state(0);
   let sessionStart = $state(0);   // attempts after this moment count towards the session line
+  let summary = $state<{ n: number; best: number | null; avg: number | null } | null>(null);
   let weak = $state(false);
   let slotFilter = $state<Slot | 'All'>('All');
   let current = $state<CaseDef | null>(null);
@@ -72,7 +73,20 @@
     current = c; auf = randomAuf(); lastId = c?.id ?? null;
   }
   function start(isWeak = false) { weak = isWeak; lastId = null; started = true; sessionStart = Date.now(); next(); }
-  function end() { drill = null; started = false; }
+  function end() {
+    // close with the numbers for this session rather than an empty Today screen
+    summary = sessionStats.n ? {
+      n: sessionStats.n,
+      best: sessionStats.best,
+      avg: (() => {
+        const all = Object.values(store.data.cards).flatMap(c => c.attempts).filter(a => a.ts >= sessionStart);
+        const ex = all.map(a => a.total - (a.recog ?? 0));
+        return ex.length ? ex.reduce((x, y) => x + y, 0) / ex.length : null;
+      })(),
+    } : null;
+    drill = null; started = false;
+  }
+  function dismissSummary() { summary = null; }
   if (store.focusId) {
     // the Library can ask for one algorithm of a case: pin it, and never fall back to another one
     const id = store.focusId;
@@ -153,6 +167,13 @@
       </div>
     {/if}
 
+    {#if summary}
+      <div class="card" role="status" style="border-color:var(--am);display:flex;flex-direction:column;gap:6px">
+        <div style="font-weight:800">Session finished</div>
+        <div class="mu">{summary.n} attempt{summary.n === 1 ? '' : 's'} · best {formatTime(summary.best)} · average {formatTime(summary.avg)}</div>
+        <button class="btn" style="align-self:flex-start" onclick={dismissSummary}>Done</button>
+      </div>
+    {/if}
     <div class="card hero">
       <div class="mu">Due for review</div>
       <div class="row" style="align-items:baseline;gap:8px;flex:none"><span class="n mono" style="flex:none">{due}</span><span class="mu" style="flex:none">case{due === 1 ? '' : 's'}</span></div>
@@ -196,7 +217,7 @@
             {#if !result && store.shown('train.hint')}<div class="mu" style="margin-top:6px">{HINT[set]}{#if set === 'F2L' && current.slot} Solve the <b style="color:var(--tx)">{SLOT_NAMES[current.slot]}</b> pair.{/if}</div>{/if}
           </div>
 
-          <TimerPad twoPress={!drill} holdMs={store.data.settings.holdMs} cover={store.data.settings.coverOn} coverColor={store.data.settings.coverColor} onfinish={finish} />
+          <TimerPad twoPress={!drill} holdMs={store.data.settings.holdMs} tapStart={store.data.settings.tapStart} cover={store.data.settings.coverOn} coverColor={store.data.settings.coverColor} onfinish={finish} />
           {#if result}
             <div class="mu" style="text-align:center">
               Last <b class="mono" style="color:var(--tx)">{formatTime(result.ms)}</b>{#if result.recog != null} · recog <b class="mono" style="color:var(--tx)">{formatTime(result.recog)}</b> · exec <b class="mono" style="color:var(--tx)">{formatTime(result.ms - result.recog)}</b>{/if}

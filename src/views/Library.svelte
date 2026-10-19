@@ -175,7 +175,7 @@
       {#if store.shown('solve.cube') && !store.cubeHidden}<div class="cube-panel"><ScrambleWalk alg={tScramble} autoplay={store.data.settings.walkAutoplay} speed={store.data.settings.walkSpeed} onIndex={(i) => (walkIndex = i)} onClose={() => (store.cubeHidden = true)} /></div>{:else}<button class="btn" style="min-height:0;padding:6px 12px;font-size:.8rem" onclick={() => (store.cubeHidden = false)}>Show the cube</button>{/if}
     </div>
 
-    <TimerPad holdMs={store.data.settings.holdMs} cover={store.data.settings.coverOn} coverColor={store.data.settings.coverColor} onfinish={finish} />
+    <TimerPad holdMs={store.data.settings.holdMs} tapStart={store.data.settings.tapStart} cover={store.data.settings.coverOn} coverColor={store.data.settings.coverColor} onfinish={finish} />
     {#if result}
       <div class="mu" style="text-align:center">Last <b class="mono" style="color:var(--tx)">{formatTime(result.ms)}</b></div>
     {:else}

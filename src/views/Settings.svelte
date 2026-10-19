@@ -73,6 +73,7 @@
     <div class="seg" role="group" aria-labelledby="hold-l">
       {#each [150, 300, 500] as v (v)}<button class:on={s.holdMs === v} aria-pressed={s.holdMs === v} onclick={() => store.update({ holdMs: v })}>{v} ms</button>{/each}
     </div>
+    <label class="row sp card"><span>Start on tap (no hold)</span><input type="checkbox" style="width:24px;min-height:24px;flex:none" checked={s.tapStart} onchange={(e) => store.update({ tapStart: e.currentTarget.checked })} /></label>
     <label class="row sp card"><span>15-second inspection</span><input type="checkbox" style="width:24px;min-height:24px;flex:none" checked={s.inspection} onchange={(e) => store.update({ inspection: e.currentTarget.checked })} /></label>
     <label class="row sp card"><span>Inspection beeps (8 s and 12 s)</span><input type="checkbox" style="width:24px;min-height:24px;flex:none" checked={s.beeps} onchange={(e) => store.update({ beeps: e.currentTarget.checked })} /></label>
     <label class="row sp card"><span>Hide time while solving</span><input type="checkbox" style="width:24px;min-height:24px;flex:none" checked={s.hideTime} onchange={(e) => store.update({ hideTime: e.currentTarget.checked })} /></label>

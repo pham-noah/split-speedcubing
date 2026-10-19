@@ -7,6 +7,8 @@
   const solves = $derived(store.solves);
   const list = $derived([...solves].reverse().slice(0, 200));
   let open = $state<string | null>(null);
+  let undone = $state<{ solve: (typeof solves)[number]; index: number } | null>(null);
+  let undoT: ReturnType<typeof setTimeout> | undefined;
 
   // progress chart of the last 50 solves (DNFs are skipped)
   const pts = $derived(solves.slice(-50).map(effective));
@@ -81,13 +83,25 @@
             <div class="mu">{new Date(s.ts).toLocaleString()} · raw {formatTime(s.ms)} · ao5 {formatTime(averageOf(solves.slice(0, solves.length - i), 5))}</div>
             <div class="row" style="margin-top:8px">
               <button class="btn" onclick={() => store.cyclePenalty(s.id)}>Penalty: {s.pen || 'none'}</button>
-              <button class="btn" onclick={() => { store.deleteSolve(s.id); open = null; }}>Delete</button>
+              <button class="btn" onclick={() => {
+              const index = solves.findIndex(x => x.id === s.id);
+              store.deleteSolve(s.id); open = null;
+              undone = { solve: s, index };
+              clearTimeout(undoT); undoT = setTimeout(() => (undone = null), 6000);
+            }}>Delete</button>
             </div>
           {/if}
         </div>
       {/each}
     </div>
   </div>
+  {#if undone}
+    {@const u = undone}
+    <div class="card row sp" role="status" aria-live="polite" style="border-color:var(--am)">
+      <span class="mu">Deleted {formatTime(effective(u.solve))}</span>
+      <button class="btn" onclick={() => { store.restoreSolve(u.solve, u.index); undone = null; clearTimeout(undoT); }}>Undo</button>
+    </div>
+  {/if}
   <aside class="side" aria-label="About these numbers">
     <div class="mu">Each row: the time, then how it compares with the previous solve, your ao5 and your ao12. Green is faster, red is slower.</div>
     <ShortcutsSide view="history" inline />

@@ -16,6 +16,15 @@
 
   const solves = $derived(store.solves);
   const last = $derived(solves.at(-1));
+  // how the last solve compares with the session average (finished solves only)
+  const vsAvg = $derived.by(() => {
+    const done = solves.map(effective).filter(Number.isFinite);
+    if (done.length < 2 || !last) return null;
+    const t = effective(last);
+    if (!Number.isFinite(t)) return null;
+    const avg = done.reduce((a, b) => a + b, 0) / done.length;
+    return t - avg;
+  });
   const recent = $derived(solves.slice(-5).reverse());
   let history = $state(false);
   let walkIndex = $state(0);
@@ -91,7 +100,12 @@
       <button class="btn" onclick={undoDelete}>Undo</button>
     </div>
   {/if}
-  <TimerPad holdMs={store.data.settings.holdMs} hideTime={store.data.settings.hideTime} inspection={store.data.settings.inspection} beeps={store.data.settings.beeps} shown={last ? effective(last) : null} cover={store.data.settings.coverOn} coverColor={store.data.settings.coverColor} onfinish={finish} />
+  {#if vsAvg != null}
+    <div class="mu mono" style="text-align:center;color:{vsAvg < 0 ? '#59D98A' : '#FF6B6B'}" aria-label="Compared with your session average">
+      {vsAvg < 0 ? '−' : '+'}{(Math.abs(vsAvg) / 1000).toFixed(2)} vs average
+    </div>
+  {/if}
+  <TimerPad holdMs={store.data.settings.holdMs} tapStart={store.data.settings.tapStart} hideTime={store.data.settings.hideTime} inspection={store.data.settings.inspection} beeps={store.data.settings.beeps} shown={last ? effective(last) : null} cover={store.data.settings.coverOn} coverColor={store.data.settings.coverColor} onfinish={finish} />
   {#if !solves.length}
     <div class="empty"><b>Ready for your first solve</b>Hold the big button<span class="pc-only"> (or {store.key('timer') === 'Space' ? 'the spacebar' : 'your timer key'})</span> until it says Release, then let go to start. Tap anywhere to stop.</div>
   {/if}
