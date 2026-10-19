@@ -123,3 +123,8 @@ input,textarea{width:100%;min-height:44px;border-radius:10px;border:1px solid #3
     max-height: 74vh; overflow-y: auto; border-radius: 18px 18px 0 0; border-bottom: 0;
     box-shadow: 0 -12px 30px rgba(0,0,0,.55); background: var(--card); }
 }
+
+/* a progress row stacks its counts under the set name when the screen is narrow */
+@media (max-width:899px){
+  .prow { flex-direction: column; align-items: flex-start; gap: 2px; }
+}

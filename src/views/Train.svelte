@@ -205,8 +205,8 @@
       <div class="mu">Progress</div>
       <div class="col" style="gap:6px;margin-top:8px">
         {#each progress as p (p.set)}
-          <div class="row sp" style="padding:3px 0">
-            <span style="font-weight:700">{p.set}</span>
+          <div class="row sp prow" style="padding:3px 0">
+            <span style="font-weight:700">{p.set}{#if p.set === 'F2L'} <span class="mu pc-only">{' · 4 slots'}</span>{/if}</span>
             <span class="mu mono">{p.mastered} mastered · {p.learning} learning · {p.fresh} new</span>
           </div>
           <div style="height:6px;border-radius:3px;background:#2A303B;overflow:hidden">
