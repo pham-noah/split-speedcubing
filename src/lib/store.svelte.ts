@@ -163,6 +163,9 @@ class Store {
   }
   /** forget everything learned about one case (keeps its algorithms) */
   resetCard(id: string) { delete this.data.cards[id]; this.persist(); }
+  /** ask the timer to load a scramble (used by "retry this scramble" in History) */
+  retry: string | null = null;
+  retryScramble(scramble: string) { this.retry = scramble; }
   cardsFor(set: CaseSet) {
     return Object.fromEntries(this.casesFor(set).map(c => [c.id, this.card(c.id)]));
   }

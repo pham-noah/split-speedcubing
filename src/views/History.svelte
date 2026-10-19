@@ -81,7 +81,8 @@
           {#if open === s.id}
             <div class="mu mono" style="margin:8px 0;word-break:break-word;user-select:text">{s.scramble}</div>
             <div class="mu">{new Date(s.ts).toLocaleString()} · raw {formatTime(s.ms)} · ao5 {formatTime(averageOf(solves.slice(0, solves.length - i), 5))}</div>
-            <div class="row" style="margin-top:8px">
+            <div class="row" style="margin-top:8px;gap:8px;flex-wrap:wrap">
+              <button class="btn" onclick={() => { store.retryScramble(s.scramble); onBack(); }}>Retry this scramble</button>
               <button class="btn" onclick={() => store.cyclePenalty(s.id)}>Penalty: {s.pen || 'none'}</button>
               <button class="btn" onclick={() => {
               const index = solves.findIndex(x => x.id === s.id);

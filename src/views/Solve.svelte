@@ -12,7 +12,8 @@
 
   const queue = new ScrambleQueue();
   let scramble = $state('Generating scramble…');
-  queue.take().then(s => (scramble = s));
+  if (store.retry) { scramble = store.retry; store.retry = null; }
+  queue.take().then(s => { if (scramble.startsWith('Generating')) scramble = s; });
 
   const solves = $derived(store.solves);
   const last = $derived(solves.at(-1));
