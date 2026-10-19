@@ -97,6 +97,13 @@
     drill = pin; // the case just picked stays pinned to this algorithm until Next
   }
 
+  // how far each set has come: mastered, learning, untouched
+  const progress = $derived.by(() => (['PLL', 'OLL', 'F2L', 'ZBLL'] as const).map(set => {
+    const cards = Object.values(store.cardsFor(set));
+    const mastered = cards.filter(c => mastery(c) === 'mastered').length;
+    const learning = cards.filter(c => c.seen && mastery(c) !== 'mastered').length;
+    return { set, total: cards.length || 1, mastered, learning, fresh: cards.length - mastered - learning };
+  }));
   const alg = $derived(current ? (drill ?? store.algFor(current.id)) : '');
   const scramble = $derived(current ? caseScramble(alg, auf, current.set === 'F2L') : '');
   const scrTokens = $derived(scramble.split(/\s+/).filter(Boolean));
@@ -193,6 +200,21 @@
       </div>
       {#if !week.n}<div class="mu" style="text-align:center">Your averages appear here after your first training session.</div>{/if}
     {/if}
+
+    <div class="card" aria-label="Progress by set">
+      <div class="mu">Progress</div>
+      <div class="col" style="gap:6px;margin-top:8px">
+        {#each progress as p (p.set)}
+          <div class="row sp" style="padding:3px 0">
+            <span style="font-weight:700">{p.set}</span>
+            <span class="mu mono">{p.mastered} mastered · {p.learning} learning · {p.fresh} new</span>
+          </div>
+          <div style="height:6px;border-radius:3px;background:#2A303B;overflow:hidden">
+            <div style="height:100%;width:{(p.mastered / p.total * 100).toFixed(1)}%;background:#59D98A"></div>
+          </div>
+        {/each}
+      </div>
+    </div>
 
     {#if store.shown('home.drills')}
       <div class="mu">Quick drills</div>

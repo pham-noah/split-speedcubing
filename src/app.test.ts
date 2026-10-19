@@ -87,6 +87,15 @@ describe('whole app in a simulated browser', () => {
     expect(q('nav [aria-current=page]')!.textContent).toBe('Library');
   });
 
+  it('Train: Today lists progress for every case set', async () => {
+    byText('Train', q('nav')!)!.click(); await tick();
+    for (let i = 0; i < 40 && !byText('Start session'); i++) { await wait(25); flushSync(); }
+    const text = document.body.textContent!;
+    for (const set of ['PLL', 'OLL', 'F2L']) expect(text).toContain(set);
+    expect(text).toContain('mastered');
+    expect(text).toContain('new');
+  });
+
   it('Train: Start session shows a scramble; Back returns to Today', async () => {
     byText('Train', q('nav')!)!.click(); await tick();
     for (let i = 0; i < 40 && !byText('Start session'); i++) { await wait(25); flushSync(); }
