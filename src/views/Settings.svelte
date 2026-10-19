@@ -28,10 +28,19 @@
     ['home.drills', 'Train home: quick drills'],
   ];
 
+  // how long since the last backup, with a nudge once there is something to lose
+  const backupAge = $derived.by(() => {
+    const at = store.data.settings.lastBackupAt;
+    const learned = Object.values(store.data.cards).some(c => c.attempts.length) || store.solves.length > 0;
+    if (!at) return { nudge: learned, text: learned ? 'No backup made yet.' : 'Nothing to back up yet.' };
+    const days = Math.floor((Date.now() - at) / 86400000);
+    return { nudge: days >= 14, text: days <= 0 ? 'Last backup: today.' : `Last backup: ${days} day${days === 1 ? '' : 's'} ago.` };
+  });
   function download() {
     const url = URL.createObjectURL(new Blob([store.exportJson()], { type: 'application/json' }));
     const a = Object.assign(document.createElement('a'), { href: url, download: `split-${new Date().toISOString().slice(0, 10)}.json` });
     a.click(); URL.revokeObjectURL(url);
+    store.update({ lastBackupAt: Date.now() });
     msg = 'Backup saved.';
   }
   async function upload(e: Event) {
@@ -148,6 +157,7 @@
   <section class="col" aria-labelledby="bk-h">
     <h2 id="bk-h" style="margin:0;font-size:1.15rem">Your data</h2>
     <div class="mu">Everything is stored only on this device. Make a backup before switching phones.</div>
+    <div class="mu" style="color:{backupAge.nudge ? 'var(--am)' : 'var(--mu2)'}">{backupAge.text}</div>
     <div class="row">
       <button class="btn" onclick={download}>Export backup</button>
       <label class="btn" style="display:flex;align-items:center;justify-content:center;cursor:pointer">Restore backup<input type="file" accept="application/json" onchange={upload} class="sr" /></label>

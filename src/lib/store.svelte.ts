@@ -161,6 +161,8 @@ class Store {
     c.attempts = [...c.attempts, { ts: Date.now(), total, recog, grade: g, alg: alg ?? this.algFor(id) }].slice(-60);
     this.persist();
   }
+  /** forget everything learned about one case (keeps its algorithms) */
+  resetCard(id: string) { delete this.data.cards[id]; this.persist(); }
   cardsFor(set: CaseSet) {
     return Object.fromEntries(this.casesFor(set).map(c => [c.id, this.card(c.id)]));
   }

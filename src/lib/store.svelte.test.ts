@@ -85,6 +85,16 @@ describe('store: shortcuts, panels and imports', () => {
     store.resetKeys();
     expect(store.key('plus2')).toBe('KeyZ');
   });
+  it('resetting a case forgets its progress but keeps its algorithms', () => {
+    store.resetCard('PLL-Aa');
+    store.addAlg('PLL-Aa', "x L2 D2 L' U' L D2 L' U L'");
+    store.grade('PLL-Aa', 2, 2000, 600);
+    expect(store.card('PLL-Aa').attempts.length).toBe(1);
+    const algs = store.algsFor('PLL-Aa').length;
+    store.resetCard('PLL-Aa');
+    expect(store.card('PLL-Aa').attempts.length).toBe(0);
+    expect(store.algsFor('PLL-Aa').length).toBe(algs);
+  });
   it('a deleted solve can be put back where it was', () => {
     store.erase();
     store.addSolve(9000, 'R U', '');

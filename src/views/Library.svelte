@@ -30,6 +30,7 @@
   let q = $state('');   // filter by name or code, handy for F2L and long ZBLL lists
   let show = $state<'all' | 'new' | 'learning' | 'mastered' | 'due'>('all');
   let visible = $state(12);   // cells rendered right away, the rest follow in idle time
+  let confirmReset = $state(false);   // two taps before progress is thrown away
   let hist = $state(false);
   let walkIndex = $state(0);
 
@@ -94,7 +95,7 @@
     return { n: a.length, recog: mean(a.map(x => x.recog!)), exec: mean(a.map(x => x.total - x.recog!)) };
   }
   function pick(id: string) {
-    selId = id; draft = ''; error = '';
+    selId = id; draft = ''; error = ''; confirmReset = false;
     // the case panel sits under the grid: bring it into view instead of making you scroll
     requestAnimationFrame(() => {
       const el = document.getElementById('case-panel');
@@ -286,6 +287,14 @@
         {#if error}<div role="alert" style="color:#FF8A80;font-weight:700">{error}</div>{/if}
         <button class="btn p" onclick={add}>Add algorithm</button>
         <button class="btn" onclick={trainCase}>Train this case<span class="pc-only"> (Enter)</span></button>
+        {#if !confirmReset}
+          <button class="btn" style="font-size:.85rem;opacity:.85" onclick={() => (confirmReset = true)}>Reset progress on this case</button>
+        {:else}
+          <div class="row" style="gap:8px">
+            <button class="btn" style="flex:1;border-color:#FF6B6B;color:#FF8A80" onclick={() => { store.resetCard(sel.id); confirmReset = false; }}>Really reset</button>
+            <button class="btn" style="flex:1" onclick={() => (confirmReset = false)}>Keep it</button>
+          </div>
+        {/if}
       </div>
     {/if}
   {/if}
