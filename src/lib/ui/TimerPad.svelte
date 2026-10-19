@@ -25,6 +25,7 @@
   let flashT: ReturnType<typeof setTimeout> | undefined;
   let t0 = 0, tI = 0, recog: number | null = null, holdTimer: ReturnType<typeof setTimeout> | undefined, raf = 0, beeped = 0;
   let audio: AudioContext | undefined;
+  let wake: any = null;   // keeps the phone screen on while the clock runs
   let pendingPen: Penalty = '';
 
   // dark ink on light covers, white on dark ones
@@ -78,6 +79,20 @@
   }
   const endInspection = () => { inspActive = false; };
 
+  // a phone that dims mid-solve is worse than a slightly brighter screen
+  async function keepAwake() {
+    try {
+      const nav = navigator as any;
+      if (!nav.wakeLock || wake) return;
+      wake = await nav.wakeLock.request('screen');
+      wake.addEventListener?.('release', () => { wake = null; });
+    } catch { /* not supported, or the page is in the background */ }
+  }
+  function letSleep() {
+    try { wake?.release?.(); } catch { /* already gone */ }
+    wake = null;
+  }
+
   function down() {
     if (disabled) return;
     if (st === 'run') {
@@ -86,6 +101,7 @@
       cancelAnimationFrame(raf);
       st = 'idle';
       closeCoverSoon(ms);
+      letSleep();
       onfinish({ ms, recog, pen: pendingPen });
       pendingPen = '';
       return;
@@ -100,7 +116,7 @@
         // no hold: the press itself starts the solve
         const pen = inspActive ? inspectionPenalty(performance.now() - tI) : '';
         endInspection();
-        st = 'run'; marked = false; recog = null; t0 = performance.now(); now = 0; pendingPen = pen;
+        st = 'run'; marked = false; recog = null; t0 = performance.now(); now = 0; pendingPen = pen; keepAwake();
         cancelAnimationFrame(raf); raf = requestAnimationFrame(loop);
         return;
       }
@@ -114,7 +130,7 @@
       const pen = inspActive ? inspectionPenalty(performance.now() - tI) : '';
       endInspection();
       st = 'run'; marked = false; recog = null; t0 = performance.now(); now = 0;
-      pendingPen = pen;
+      pendingPen = pen; keepAwake();
       cancelAnimationFrame(raf); raf = requestAnimationFrame(loop);
     } else if (st === 'hold') {
       clearTimeout(holdTimer);
@@ -126,7 +142,13 @@
 
   // Esc / Android Back cancels an inspection or a hold instead of leaving the screen
   $effect(() => { if (inspActive || st === 'hold' || st === 'ready') return nav.onBack(() => { cancel(); return true; }); });
-  onDestroy(() => { cancelAnimationFrame(raf); clearTimeout(holdTimer); audio?.close().catch(() => {}); });
+  // the browser drops the lock when the tab goes away: take it again if the clock is still running
+  $effect(() => {
+    const onVis = () => { if (document.visibilityState === 'visible' && st === 'run') keepAwake(); };
+    document.addEventListener('visibilitychange', onVis);
+    return () => document.removeEventListener('visibilitychange', onVis);
+  });
+  onDestroy(() => { cancelAnimationFrame(raf); clearTimeout(holdTimer); letSleep(); audio?.close().catch(() => {}); });
   const typing = (e: Event) => /INPUT|TEXTAREA/.test((e.target as HTMLElement).tagName);
 </script>
 
