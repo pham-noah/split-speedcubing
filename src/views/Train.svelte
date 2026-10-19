@@ -37,6 +37,7 @@
   let sessionStart = $state(0);   // attempts after this moment count towards the session line
   let summary = $state<{ n: number; best: number | null; avg: number | null } | null>(null);
   let weak = $state(false);
+  let lapsed = $state(false);   // the cases you got wrong last time
   let slotFilter = $state<Slot | 'All'>('All');
   let current = $state<CaseDef | null>(null);
   let auf = $state('');
@@ -58,6 +59,8 @@
   });
   // the ten slowest cases (by average execution) among those with at least two timed attempts
   const weakList = $derived(weakCases());
+  // cases FSRS has marked as lapsed: you got them wrong at some point
+  const lapsedList = $derived(list.filter(c => (store.data.cards[c.id]?.fsrs?.lapses ?? 0) > 0).slice(0, 15));
   function weakCases(): CaseDef[] {
     const avg = (c: CaseDef) => mean(store.card(c.id).attempts.filter(x => x.recog != null).slice(-8).map(x => x.total - x.recog!));
     const timed = list.filter(c => store.card(c.id).attempts.filter(x => x.recog != null).length >= 2);
@@ -70,10 +73,11 @@
     let c: CaseDef | null = null;
     if (store.focusId) { c = store.caseOf(store.focusId); set = c.set; store.focusId = null; }
     else if (weak) { c = pickNext(weakList, store.cardsFor(set), lastId, 0); }
+    else if (lapsed) { c = pickNext(lapsedList, store.cardsFor(set), lastId, 0); }
     else c = pickNext(store.casesFor(set).filter(inScope), store.cardsFor(set), lastId);
     current = c; auf = randomAuf(); lastId = c?.id ?? null;
   }
-  function start(isWeak = false) { weak = isWeak; lastId = null; started = true; sessionStart = Date.now(); next(); }
+  function start(isWeak = false, isLapsed = false) { weak = isWeak; lapsed = isLapsed; lastId = null; started = true; sessionStart = Date.now(); next(); }
   function end() {
     // close with the numbers for this session rather than an empty Today screen
     summary = sessionStats.n ? {
@@ -220,6 +224,7 @@
       <div class="mu">Quick drills</div>
       <div class="col">
         <button class="btn row-btn" disabled={weakList.length === 0} onclick={() => start(true)}>Weak spots, your slowest 10 {set} cases{weakList.length === 0 ? ' (train a few first)' : ''}</button>
+        <button class="btn row-btn" disabled={lapsedList.length === 0} onclick={() => start(false, true)}>Lapsed, the {set} cases you got wrong{lapsedList.length === 0 ? ' (none yet)' : ` (${lapsedList.length})`}</button>
         {#each DRILLS as d (d.mode)}<button class="btn row-btn" onclick={() => { nav.drillMode = d.mode; nav.go('drills'); }}>{d.label}</button>{/each}
       </div>
     {/if}
@@ -230,7 +235,7 @@
     <div class="split">
       <main style="display:flex;flex-direction:column;gap:14px">
         <h1 class="sr">Training session</h1>
-        <div class="row sp"><span class="chip">{drill && current ? `Algorithm drill · ${current.name}` : `Recognition · ${set}`}{weak ? ' · weak spots' : ''}{set === 'F2L' && slotFilter !== 'All' ? ` · ${slotFilter}` : ''}</span><button class="btn" onclick={end}>End session</button></div>
+        <div class="row sp"><span class="chip">{drill && current ? `Algorithm drill · ${current.name}` : `Recognition · ${set}`}{weak ? ' · weak spots' : ''}{lapsed ? ' · lapsed' : ''}{set === 'F2L' && slotFilter !== 'All' ? ` · ${slotFilter}` : ''}</span><button class="btn" onclick={end}>End session</button></div>
         <div class="row sp"><span class="mu">{drill ? 'One algorithm, execution only' : 'Recognition first, then execution'} · {drill ? '' : `${due} due · ${fresh} new`}{#if sessionStats.n}{' · '}{sessionStats.n} done{#if sessionStats.best != null}{' · '}best {formatTime(sessionStats.best)}{/if}{/if}</span><span class="mu">{current ? mastery(cards[current.id]) : ''}</span></div>
 
         {#if current}
