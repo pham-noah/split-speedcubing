@@ -94,6 +94,12 @@ class Store {
     if (s) this.deleteSolve(s.id);
   }
   deleteSolve(id: string) { this.data.solves = this.data.solves.filter(s => s.id !== id); this.persist(); }
+  /** put a deleted solve back where it was (undo) */
+  restoreSolve(solve: Solve, index: number) {
+    if (this.data.solves.some(s => s.id === solve.id)) return;
+    this.data.solves.splice(Math.min(index, this.data.solves.length), 0, solve);
+    this.persist();
+  }
   cyclePenalty(id: string) {
     const s = this.data.solves.find(x => x.id === id);
     if (!s) return;

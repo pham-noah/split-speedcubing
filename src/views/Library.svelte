@@ -72,7 +72,16 @@
     const a = (card?.attempts ?? []).filter(x => x.recog != null && (!alg || (x.alg ?? store.caseOf(sel!.id).alg) === alg));
     return { n: a.length, recog: mean(a.map(x => x.recog!)), exec: mean(a.map(x => x.total - x.recog!)) };
   }
-  function pick(id: string) { selId = id; draft = ''; error = ''; }
+  function pick(id: string) {
+    selId = id; draft = ''; error = '';
+    // the case panel sits under the grid: bring it into view instead of making you scroll
+    requestAnimationFrame(() => {
+      const el = document.getElementById('case-panel');
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      if (r.top > window.innerHeight - 120 || r.bottom < 0) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
   function add() {
     if (!sel) return;
     const err = store.addAlg(sel.id, draft);
@@ -225,7 +234,7 @@
     {/if}
 
     {#if sel && card}
-      <div class="card" style="display:flex;flex-direction:column;gap:10px">
+      <div class="card" id="case-panel" style="display:flex;flex-direction:column;gap:10px">
         <div class="row" style="gap:14px">
           <div style="flex:none">{#if set === 'F2L'}<CaseCube alg={current} slotId={sel.slot} size={92} />{:else}<CaseDiagram alg={current} {mode} size={110} slot={sel.slot} />{/if}</div>
           <div>

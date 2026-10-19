@@ -8,7 +8,7 @@
   import Deltas from '../lib/ui/Deltas.svelte';
   import ShortcutsSide from '../lib/ui/ShortcutsSide.svelte';
   import { ScrambleQueue } from '../lib/core/scramble';
-  import { averageOf, best, effective, formatTime, type Penalty } from '../lib/core/stats';
+  import { averageOf, best, effective, formatTime, type Penalty, type Solve } from '../lib/core/stats';
 
   const queue = new ScrambleQueue();
   let scramble = $state('Generating scramble…');
@@ -19,6 +19,8 @@
   const recent = $derived(solves.slice(-5).reverse());
   let history = $state(false);
   let walkIndex = $state(0);
+  let undone = $state<{ solve: Solve; index: number } | null>(null);
+  let undoT: ReturnType<typeof setTimeout> | undefined;
   const scrTokens = $derived(scramble.split(/\s+/).filter(Boolean));
   let sessions = $state(false);
 
@@ -30,12 +32,29 @@
     store.addSolve(r.ms, scramble, r.pen);
     await newScramble();
   }
+  // deleting is undoable for a few seconds, so a stray C does not cost you a solve
+  function removeLast() {
+    const list = store.solves;
+    const last = list.at(-1);
+    if (!last) return;
+    const index = list.length - 1;
+    store.deleteLast();
+    undone = { solve: last, index };
+    clearTimeout(undoT);
+    undoT = setTimeout(() => (undone = null), 6000);
+  }
+  function undoDelete() {
+    if (!undone) return;
+    store.restoreSolve(undone.solve, undone.index);
+    undone = null;
+    clearTimeout(undoT);
+  }
   const typing = (e: Event) => /INPUT|TEXTAREA/.test((e.target as HTMLElement).tagName);
   function onKey(e: KeyboardEvent) {
     if (typing(e) || history || sessions) return;
     if (store.is(e, 'plus2')) store.setPenalty('+2');
     else if (store.is(e, 'dnf')) store.setPenalty('DNF');
-    else if (store.is(e, 'deleteLast')) store.deleteLast();
+    else if (store.is(e, 'deleteLast')) removeLast();
     else if (store.is(e, 'history')) history = true;
     else if (store.is(e, 'sessions')) sessions = true;
     else if (store.is(e, 'scramble')) newScramble();
@@ -66,6 +85,12 @@
   {:else}
     <button class="btn" style="align-self:center;min-height:0;padding:6px 12px;font-size:.8rem" onclick={() => (store.cubeHidden = false)}>Show the cube</button>
   {/if}
+  {#if undone}
+    <div class="card row sp" role="status" aria-live="polite" style="border-color:var(--am)">
+      <span class="mu">Deleted {formatTime(undone.solve.ms)}</span>
+      <button class="btn" onclick={undoDelete}>Undo</button>
+    </div>
+  {/if}
   <TimerPad holdMs={store.data.settings.holdMs} hideTime={store.data.settings.hideTime} inspection={store.data.settings.inspection} beeps={store.data.settings.beeps} shown={last ? effective(last) : null} cover={store.data.settings.coverOn} coverColor={store.data.settings.coverColor} onfinish={finish} />
   {#if !solves.length}
     <div class="empty"><b>Ready for your first solve</b>Hold the big button<span class="pc-only"> (or {store.key('timer') === 'Space' ? 'the spacebar' : 'your timer key'})</span> until it says Release, then let go to start. Tap anywhere to stop.</div>
@@ -74,7 +99,7 @@
     <div class="row" style="justify-content:center">
       <button class="btn" class:on={last?.pen === '+2'} aria-pressed={last?.pen === '+2'} disabled={!last} onclick={() => store.setPenalty('+2')}>+2</button>
       <button class="btn" class:on={last?.pen === 'DNF'} aria-pressed={last?.pen === 'DNF'} disabled={!last} onclick={() => store.setPenalty('DNF')}>DNF</button>
-      <button class="btn" disabled={!last} onclick={() => store.deleteLast()}>Delete</button>
+      <button class="btn" disabled={!last} onclick={removeLast}>Delete</button>
     </div>
   {/if}
   {#if store.shown('solve.stats')}

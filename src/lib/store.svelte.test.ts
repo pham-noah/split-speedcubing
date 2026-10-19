@@ -85,6 +85,18 @@ describe('store: shortcuts, panels and imports', () => {
     store.resetKeys();
     expect(store.key('plus2')).toBe('KeyZ');
   });
+  it('a deleted solve can be put back where it was', () => {
+    store.erase();
+    store.addSolve(9000, 'R U', '');
+    store.addSolve(8000, 'F B', '');
+    const [first, second] = store.solves;
+    store.deleteSolve(second.id);
+    expect(store.solves.map(s => s.id)).toEqual([first.id]);
+    store.restoreSolve(second, 1);
+    expect(store.solves.map(s => s.id)).toEqual([first.id, second.id]);
+    store.restoreSolve(second, 1);            // restoring twice does nothing
+    expect(store.solves.length).toBe(2);
+  });
   it('hides and shows panels', () => {
     expect(store.shown('solve.stats')).toBe(true);
     store.setShown('solve.stats', false);
