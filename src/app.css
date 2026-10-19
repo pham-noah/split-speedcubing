@@ -112,3 +112,7 @@ input,textarea{width:100%;min-height:44px;border-radius:10px;border:1px solid #3
 /* the scramble line doubles as the walkthrough's position indicator */
 .scr .now { color: var(--am); font-weight: 800; }
 .scr .now::after { content: ''; }
+
+/* a count on a tab, e.g. cases due */
+.badge { display: inline-block; margin-left: 6px; min-width: 18px; padding: 1px 5px; border-radius: 9px;
+  background: var(--am); color: var(--on-am); font: 800 .7rem "JetBrains Mono", monospace; }

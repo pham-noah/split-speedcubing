@@ -85,6 +85,12 @@
     if (moveFocus(e)) e.preventDefault();
   }
   const tab = (v: View) => ({ 'aria-current': nav.view === v ? ('page' as const) : undefined });
+  // how many cases are actually due right now, shown on the Train tab
+  const dueCount = $derived.by(() => {
+    if (!store.ready) return 0;
+    const now = Date.now();
+    return Object.values(store.data.cards).filter(c => c.seen && c.due <= now).length;
+  });
 </script>
 
 <svelte:window onkeydown={onKey} />
@@ -94,7 +100,9 @@
     {#if Screen}{@const View = Screen}<View />{:else}<main class="page"><div class="mu">Loading…</div></main>{/if}
 
     <nav aria-label="Main">
-      <button class:on={nav.view === 'train'} {...tab('train')} onclick={() => nav.go('train')}>Train</button>
+      <button class:on={nav.view === 'train'} {...tab('train')} onclick={() => nav.go('train')}>
+        Train{#if dueCount}<span class="badge" aria-label="{dueCount} cases due">{dueCount}</span>{/if}
+      </button>
       <button class:on={nav.view === 'lib'} {...tab('lib')} onclick={() => nav.go('lib')}>Library</button>
       <div class="mid"><button class:on={nav.view === 'solve'} {...tab('solve')} onclick={() => nav.go('solve')}>Solve</button></div>
       <button class:on={nav.view === 'drills'} {...tab('drills')} onclick={() => nav.go('drills')}>Drills</button>

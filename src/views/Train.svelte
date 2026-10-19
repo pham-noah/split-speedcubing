@@ -33,6 +33,7 @@
   let drill = $state<string | null>(null);
   let hist = $state(false);
   let walkIndex = $state(0);
+  let sessionStart = $state(0);   // attempts after this moment count towards the session line
   let weak = $state(false);
   let slotFilter = $state<Slot | 'All'>('All');
   let current = $state<CaseDef | null>(null);
@@ -70,7 +71,7 @@
     else c = pickNext(store.casesFor(set).filter(inScope), store.cardsFor(set), lastId);
     current = c; auf = randomAuf(); lastId = c?.id ?? null;
   }
-  function start(isWeak = false) { weak = isWeak; lastId = null; started = true; next(); }
+  function start(isWeak = false) { weak = isWeak; lastId = null; started = true; sessionStart = Date.now(); next(); }
   function end() { drill = null; started = false; }
   if (store.focusId) {
     // the Library can ask for one algorithm of a case: pin it, and never fall back to another one
@@ -87,6 +88,12 @@
   const mode = $derived(set === 'F2L' ? 'f2l' : set === 'OLL' ? 'oll' : 'pll');
   // attempts as execution time; the side panel shows the last five with deltas
   const attempts = $derived(current ? store.card(current.id).attempts : []);
+  // what this session has produced so far
+  const sessionStats = $derived.by(() => {
+    const all = Object.values(store.data.cards).flatMap(c => c.attempts).filter(a => a.ts >= sessionStart);
+    const execs = all.map(a => a.total - (a.recog ?? 0));
+    return { n: all.length, best: execs.length ? Math.min(...execs) : null };
+  });
   const execOf = (a: { total: number; recog: number | null }) => a.total - (a.recog ?? 0);
   const avgOf = (n: number) => { const xs = attempts.map(execOf).slice(-n); return xs.length === n ? xs.reduce((p, q) => p + q, 0) / n : null; };
   const ao5 = $derived(avgOf(5)), ao12 = $derived(avgOf(12));
@@ -179,7 +186,7 @@
     <div class="split">
       <main style="display:flex;flex-direction:column;gap:14px">
         <div class="row sp"><span class="chip">{drill && current ? `Algorithm drill · ${current.name}` : `Recognition · ${set}`}{weak ? ' · weak spots' : ''}{set === 'F2L' && slotFilter !== 'All' ? ` · ${slotFilter}` : ''}</span><button class="btn" onclick={end}>End session</button></div>
-        <div class="row sp"><span class="mu">{drill ? 'One algorithm, execution only' : 'Recognition first, then execution'} · {drill ? '' : `${due} due · ${fresh} new`}</span><span class="mu">{current ? mastery(cards[current.id]) : ''}</span></div>
+        <div class="row sp"><span class="mu">{drill ? 'One algorithm, execution only' : 'Recognition first, then execution'} · {drill ? '' : `${due} due · ${fresh} new`}{#if sessionStats.n}{' · '}{sessionStats.n} done{#if sessionStats.best != null}{' · '}best {formatTime(sessionStats.best)}{/if}{/if}</span><span class="mu">{current ? mastery(cards[current.id]) : ''}</span></div>
 
         {#if current}
           <div class="card" style="text-align:center">
