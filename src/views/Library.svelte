@@ -27,6 +27,7 @@
   // Vimium-style: press F, type a case's code, and that case opens
   let hint = $state(false);
   let typed = $state('');
+  let q = $state('');   // filter by name or code, handy for F2L and long ZBLL lists
   let hist = $state(false);
   let walkIndex = $state(0);
 
@@ -35,7 +36,13 @@
   let auf = $state('');
   let result = $state<{ ms: number; recog: number | null } | null>(null);
 
-  const list = $derived(store.casesFor(set).filter(c => set !== 'F2L' || c.slot === slotFilter));
+  const matches = (c: { name: string; id: string }) => {
+    const needle = q.trim().toLowerCase();
+    if (!needle) return true;
+    const code = codesRaw.get(c.id) ?? '';
+    return c.name.toLowerCase().includes(needle) || code.includes(needle);
+  };
+  const list = $derived(store.casesFor(set).filter(c => (set !== 'F2L' || c.slot === slotFilter) && matches(c)));
   const mode = $derived(set === 'F2L' ? 'f2l' : set === 'OLL' ? 'oll' : 'pll');
   const sel = $derived(selId ? list.find(c => c.id === selId) ?? null : null);
   const card = $derived(sel ? store.card(sel.id) : null);
@@ -76,6 +83,7 @@
   const mastered = $derived(list.reduce((n, c) => n + (mastery(store.card(c.id)) === 'mastered' ? 1 : 0), 0));
   const learning = $derived(list.reduce((n, c) => { const m = mastery(store.card(c.id)); return n + (m === 'learning' ? 1 : 0); }, 0));
   const dueNow = $derived(list.filter(c => { const k = store.card(c.id); return k.seen && k.due <= Date.now(); }).length);
+  const codesRaw = $derived(makeHints(store.casesFor(set).filter(c => set !== 'F2L' || c.slot === slotFilter).map(c => ({ id: c.id, name: c.name }))));
   const codes = $derived(makeHints(list.map(c => ({ id: c.id, name: c.name }))));
   // while the codes are up, the tab keys are part of the code, not navigation
   $effect(() => { nav.hintActive = hint; return () => { nav.hintActive = false; }; });
@@ -104,6 +112,7 @@
     if (training) {
       return;                        // the learner owns the arrows and the keys
     }
+    if (!hint && q && e.key === 'Escape') { q = ''; e.preventDefault(); return; }
     if (!hint && store.is(e, 'libPrev')) { stepSet(-1); e.preventDefault(); e.stopPropagation(); return; }
     if (!hint && store.is(e, 'libNext')) { stepSet(1); e.preventDefault(); e.stopPropagation(); return; }
     if (!hint && e.key === 'Enter' && selId) { e.preventDefault(); trainCase(); return; }
@@ -181,6 +190,7 @@
       </div>
     {/if}
 
+    <input placeholder="Search a case (name or code)" value={q} oninput={(e) => (q = e.currentTarget.value)} aria-label="Search cases" style="max-width:320px" />
     {#if list.length}
       <div class="mu">{mastered} mastered · {learning} learning · {list.length - mastered - learning} new{#if dueNow} · {dueNow} due now{/if}</div>
       <div class="grid">

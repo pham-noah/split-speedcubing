@@ -17,6 +17,11 @@ if (native) {
 }
 
 // Browser install: cache everything so the web version also works offline (not used inside the Android/desktop shells).
-if (!native && !tauri && 'serviceWorker' in navigator && location.protocol.startsWith('http') && !import.meta.env.DEV) {
+// a local build must never hide behind a cached copy, so no service worker on localhost/127.0.0.1
+const local = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
+if (!native && !tauri && !local && 'serviceWorker' in navigator && location.protocol.startsWith('http') && !import.meta.env.DEV) {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
+} else if (local && 'serviceWorker' in navigator) {
+  // drop a worker left over from an earlier build
+  navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister())).catch(() => {});
 }

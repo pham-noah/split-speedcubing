@@ -18,6 +18,12 @@
     if (loaded === v) return;
     VIEWS[v]().then(m => { Screen = m.default; loaded = v; });
   });
+  // once the first screen is up, quietly fetch the others (the browser caches the chunks)
+  $effect(() => {
+    if (!Screen) return;
+    const idle = (window as any).requestIdleCallback ?? ((fn: () => void) => setTimeout(fn, 1200));
+    idle(() => { for (const [v, load] of Object.entries(VIEWS)) if (v !== loaded) load(); });
+  });
 
   store.init();
   // the HTML splash (index.html) stays up until the saved data has loaded
