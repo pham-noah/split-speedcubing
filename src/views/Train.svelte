@@ -9,6 +9,7 @@
   import TrainHistory from '../lib/ui/TrainHistory.svelte';
   import { hoverEnter, hoverLeave } from '../lib/ui/hover';
   import CaseDiagram from '../lib/ui/CaseDiagram.svelte';
+  import CaseCube from '../lib/ui/CaseCube.svelte';
   import { caseScramble, invert, randomAuf } from '../lib/core/alg';
   import { pickNext, mastery, type Grade } from '../lib/core/srs';
   import { formatTime } from '../lib/core/stats';
@@ -240,6 +241,17 @@
           <div class="mu">Algorithm</div>
           <div class="mono" style="margin-top:6px;word-break:break-word">{result || drill ? alg : 'Shown after you finish.'}</div>
         </div>
+        {#if current && (result || drill)}
+          <div style="display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center">
+            <div class="mu">You just did</div>
+            <div style="font-weight:800">{current.name}</div>
+            {#if current.set === 'F2L'}
+              <CaseCube alg={alg} slotId={current.slot} size={72} />
+            {:else}
+              <CaseDiagram alg={alg} mode={current.set === 'OLL' ? 'oll' : 'pll'} size={96} slot={current.slot} />
+            {/if}
+          </div>
+        {/if}
         {#if current}
           <Deltas times={attempts.map(execOf)} title="Recent attempts on this case" />
         {/if}
