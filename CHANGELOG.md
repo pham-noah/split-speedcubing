@@ -9,6 +9,7 @@ Browser/trainer update.
 ### Added
 - 3D scramble walkthrough: the scramble played move by move on a draggable cube, with step / play / reset. Auto-play is a setting (off by default) with a speed choice, and the cube itself can be hidden.
 - Case codes: press F in the Library, every case shows a short code (Jb -> jb, OLL 29 -> 29) and typing it opens that case; Enter trains it.
+- Scramble walkthrough: the left arrow key now plays the move backwards like the ‹ button did, instead of jumping.
 - The screen stays awake while the timer runs (where the browser supports a wake lock).
 - New quick drill: Lapsed — the cases FSRS marked as lapsed (you got them wrong), up to 15 of them.
 - Training history: slowest cases (avg / best / attempts) and an attempts-per-week chart for the last 8 weeks.

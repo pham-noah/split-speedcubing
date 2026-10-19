@@ -72,7 +72,7 @@
     if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
     e.preventDefault(); e.stopPropagation();
     touchedAt = Date.now();
-    if (e.key === 'ArrowLeft') seek(i - 1);
+    if (e.key === 'ArrowLeft') back();
     else if (e.key === 'ArrowRight') step();
     else if (e.key === 'ArrowUp') playing = !playing;
     else seek(0);
