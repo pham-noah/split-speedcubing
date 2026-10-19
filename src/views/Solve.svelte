@@ -78,6 +78,7 @@
 {:else if history}<History onBack={() => (history = false)} />
 {:else}
 <main class="page wide">
+  <h1 class="sr">Solve</h1>
   <div class="split"><div class="col" style="gap:12px">
   <div class="row sp">
     <button class="chip" style="color:inherit;cursor:pointer" onclick={() => (sessions = true)} aria-label="Sessions. Current: {store.session.name}">3x3 · {store.session.name} ▾</button>

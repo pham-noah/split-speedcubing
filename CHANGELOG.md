@@ -9,6 +9,7 @@ Browser/trainer update.
 ### Added
 - 3D scramble walkthrough: the scramble played move by move on a draggable cube, with step / play / reset. Auto-play is a setting (off by default) with a speed choice, and the cube itself can be hidden.
 - Case codes: press F in the Library, every case shows a short code (Jb -> jb, OLL 29 -> 29) and typing it opens that case; Enter trains it.
+- The web manifest exists in dev too (no more console syntax error on first load), and Solve and the training session have proper page headings.
 - Train Today shows progress for every set (mastered / learning / new) with a bar per set.
 - If a screen's code fails to download, the app says so and offers Try again instead of a blank page.
 - Reset progress on a single case from its panel (two taps, algorithms kept).

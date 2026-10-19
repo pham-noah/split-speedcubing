@@ -229,6 +229,7 @@
   <div class="page wide" style="gap:0">
     <div class="split">
       <main style="display:flex;flex-direction:column;gap:14px">
+        <h1 class="sr">Training session</h1>
         <div class="row sp"><span class="chip">{drill && current ? `Algorithm drill · ${current.name}` : `Recognition · ${set}`}{weak ? ' · weak spots' : ''}{set === 'F2L' && slotFilter !== 'All' ? ` · ${slotFilter}` : ''}</span><button class="btn" onclick={end}>End session</button></div>
         <div class="row sp"><span class="mu">{drill ? 'One algorithm, execution only' : 'Recognition first, then execution'} · {drill ? '' : `${due} due · ${fresh} new`}{#if sessionStats.n}{' · '}{sessionStats.n} done{#if sessionStats.best != null}{' · '}best {formatTime(sessionStats.best)}{/if}{/if}</span><span class="mu">{current ? mastery(cards[current.id]) : ''}</span></div>
 
