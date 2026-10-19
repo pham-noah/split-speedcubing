@@ -1,0 +1,1 @@
+First public-ready version: timer with inspection and sessions, PLL/OLL/F2L/ZBLL trainer with spaced repetition, drills, csTimer import, themes, shortcuts, fully offline.

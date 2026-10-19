@@ -1,0 +1,44 @@
+<script lang="ts">
+  import { store } from '../store.svelte';
+  import { averageOf, best, formatTime } from '../core/stats';
+  import ShortcutsSide from './ShortcutsSide.svelte';
+  let { onClose }: { onClose: () => void } = $props();
+  let name = $state('');
+  let editing = $state<string | null>(null);
+  let editName = $state('');
+  const info = (id: string) => {
+    const s = store.data.solves.filter(x => x.session === id);
+    return `${s.length} solves · best ${formatTime(best(s))} · ao12 ${formatTime(averageOf(s, 12))}`;
+  };
+  function create() { store.addSession(name); name = ''; onClose(); }
+</script>
+
+<main class="page">
+  <div class="row sp"><h1>Sessions</h1><button class="btn" onclick={onClose}>Done</button></div>
+  <div class="mu">Each session keeps its own solves and statistics. Training progress is shared.</div>
+  <div role="radiogroup" aria-label="Current session" style="display:flex;flex-direction:column;gap:8px">
+    {#each store.data.sessions as s (s.id)}
+      <div class="card" style="display:flex;flex-direction:column;gap:8px">
+        {#if editing === s.id}
+          <label class="sr" for="rn">Session name</label>
+          <input id="rn" bind:value={editName} onkeydown={(e) => { if (e.key === 'Enter') { store.renameSession(s.id, editName); editing = null; } }} />
+          <div class="row"><button class="btn p" onclick={() => { store.renameSession(s.id, editName); editing = null; }}>Save</button><button class="btn" onclick={() => (editing = null)}>Cancel</button></div>
+        {:else}
+          <button role="radio" aria-checked={store.session.id === s.id} class="btn" class:on={store.session.id === s.id} style="text-align:left;padding:10px 12px;display:flex;flex-direction:column;gap:2px" onclick={() => { store.switchSession(s.id); onClose(); }}>
+            <b>{s.name}</b><span class="mu">{store.session.id === s.id ? 'Current · ' : ''}{info(s.id)}</span>
+          </button>
+          <div class="row">
+            <button class="btn" onclick={() => { editing = s.id; editName = s.name; }}>Rename</button>
+            <button class="btn" onclick={() => { if (confirm(`Delete “${s.name}” and its ${store.countIn(s.id)} solves?`)) store.deleteSession(s.id); }}>{store.data.sessions.length > 1 ? 'Delete' : 'Clear'}</button>
+          </div>
+        {/if}
+      </div>
+    {/each}
+  </div>
+  <div class="card" style="display:flex;flex-direction:column;gap:8px">
+    <label class="mu" for="ns">New session</label>
+    <input id="ns" placeholder="Name (optional)" bind:value={name} onkeydown={(e) => { if (e.key === 'Enter') create(); }} />
+    <button class="btn p" onclick={create}>Create and switch</button>
+  </div>
+  <ShortcutsSide view="sessions" />
+</main>

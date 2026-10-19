@@ -1,0 +1,25 @@
+Split is a speedcubing timer and algorithm trainer that works completely offline. No accounts, no ads, no tracking, and the app asks for no permissions at all.
+
+<b>TIMER</b>
+• Hold-to-start timer for touch or keyboard
+• Optional 15-second inspection with beeps at 8 and 12 seconds, and the +2 / DNF rules
+• Random-state 3x3 scrambles
+• +2 and DNF penalties, best, ao5, ao12, and a history with a progress chart
+• Separate sessions for different practice
+• Import your old solves from csTimer, CSV files or a plain list of times
+
+<b>TRAIN</b>
+• PLL (21 cases), OLL (57), F2L (41 cases in each of the four slots) and ZBLL (import your own algorithms)
+• Case-specific scrambles with a random AUF, so you meet each case from different angles
+• Recognition time and execution time measured separately, so you know what to work on
+• Spaced repetition (FSRS) schedules each case just before you would forget it. It can also learn from your own history how fast you forget
+• Case diagrams generated from the algorithm itself
+• Several algorithms per case: pick your default or add your own, each one checked to really solve the case
+• Drills: cross only, 2-look OLL, 2-look PLL and BLD memo timing
+
+<b>MAKE IT YOURS</b>
+• Rebindable keyboard shortcuts and hideable panels
+• Three themes, including high contrast, and adjustable text size
+• Export and restore backups. Everything stays on your device
+
+Split is free software under the GPL-3.0-or-later licence.

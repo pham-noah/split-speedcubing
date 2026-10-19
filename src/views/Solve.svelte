@@ -1,0 +1,96 @@
+<script lang="ts">
+  import { store } from '../lib/store.svelte';
+  import { nav } from '../lib/nav.svelte';
+  import TimerPad from '../lib/ui/TimerPad.svelte';
+  import History from './History.svelte';
+  import Sessions from '../lib/ui/Sessions.svelte';
+  import ScrambleWalk from '../lib/ui/ScrambleWalk.svelte';
+  import Deltas from '../lib/ui/Deltas.svelte';
+  import ShortcutsSide from '../lib/ui/ShortcutsSide.svelte';
+  import { ScrambleQueue } from '../lib/core/scramble';
+  import { averageOf, best, effective, formatTime, type Penalty } from '../lib/core/stats';
+
+  const queue = new ScrambleQueue();
+  let scramble = $state('Generating scramble…');
+  queue.take().then(s => (scramble = s));
+
+  const solves = $derived(store.solves);
+  const last = $derived(solves.at(-1));
+  const recent = $derived(solves.slice(-5).reverse());
+  let history = $state(false);
+  let walkIndex = $state(0);
+  const scrTokens = $derived(scramble.split(/\s+/).filter(Boolean));
+  let sessions = $state(false);
+
+  async function newScramble() {
+    scramble = 'Generating scramble…';
+    scramble = await queue.take();
+  }
+  async function finish(r: { ms: number; pen: Penalty }) {
+    store.addSolve(r.ms, scramble, r.pen);
+    await newScramble();
+  }
+  const typing = (e: Event) => /INPUT|TEXTAREA/.test((e.target as HTMLElement).tagName);
+  function onKey(e: KeyboardEvent) {
+    if (typing(e) || history || sessions) return;
+    if (store.is(e, 'plus2')) store.setPenalty('+2');
+    else if (store.is(e, 'dnf')) store.setPenalty('DNF');
+    else if (store.is(e, 'deleteLast')) store.deleteLast();
+    else if (store.is(e, 'history')) history = true;
+    else if (store.is(e, 'sessions')) sessions = true;
+    else if (store.is(e, 'scramble')) newScramble();
+  }
+  // Back closes history / sessions first
+  $effect(() => { if (history || sessions) return nav.onBack(() => { history = false; sessions = false; return true; }); });
+</script>
+
+<svelte:window onkeydown={onKey} />
+
+{#if sessions}<Sessions onClose={() => (sessions = false)} />
+{:else if history}<History onBack={() => (history = false)} />
+{:else}
+<main class="page wide">
+  <div class="split"><div class="col" style="gap:12px">
+  <div class="row sp">
+    <button class="chip" style="color:inherit;cursor:pointer" onclick={() => (sessions = true)} aria-label="Sessions. Current: {store.session.name}">3x3 · {store.session.name} ▾</button>
+    <button class="btn" onclick={() => (history = true)}>History · {solves.length}</button>
+  </div>
+  {#if store.shown('solve.scramble')}
+    <div class="scr" aria-label="Scramble" aria-live="polite">{#each scrTokens as t, idx (idx)}<span class:now={idx === walkIndex}>{t}</span> {/each}</div>
+    <button class="btn" style="align-self:center;min-height:40px" onclick={newScramble}>New scramble</button>
+  {/if}
+  {#if store.shown('solve.cube') && !store.cubeHidden && scramble.includes(' ') && !scramble.startsWith('Generating')}
+    <div class="card cube-panel" style="display:flex;justify-content:center">
+      <ScrambleWalk alg={scramble} autoplay={store.data.settings.walkAutoplay} speed={store.data.settings.walkSpeed} onIndex={(i) => (walkIndex = i)} onClose={() => (store.cubeHidden = true)} />
+    </div>
+  {:else}
+    <button class="btn" style="align-self:center;min-height:0;padding:6px 12px;font-size:.8rem" onclick={() => (store.cubeHidden = false)}>Show the cube</button>
+  {/if}
+  <TimerPad holdMs={store.data.settings.holdMs} hideTime={store.data.settings.hideTime} inspection={store.data.settings.inspection} beeps={store.data.settings.beeps} shown={last ? effective(last) : null} cover={store.data.settings.coverOn} coverColor={store.data.settings.coverColor} onfinish={finish} />
+  {#if !solves.length}
+    <div class="empty"><b>Ready for your first solve</b>Hold the big button<span class="pc-only"> (or {store.key('timer') === 'Space' ? 'the spacebar' : 'your timer key'})</span> until it says Release, then let go to start. Tap anywhere to stop.</div>
+  {/if}
+  {#if store.shown('solve.penalties')}
+    <div class="row" style="justify-content:center">
+      <button class="btn" class:on={last?.pen === '+2'} aria-pressed={last?.pen === '+2'} disabled={!last} onclick={() => store.setPenalty('+2')}>+2</button>
+      <button class="btn" class:on={last?.pen === 'DNF'} aria-pressed={last?.pen === 'DNF'} disabled={!last} onclick={() => store.setPenalty('DNF')}>DNF</button>
+      <button class="btn" disabled={!last} onclick={() => store.deleteLast()}>Delete</button>
+    </div>
+  {/if}
+  {#if store.shown('solve.stats')}
+    <div class="row">
+      <div class="card"><div class="mu">Best</div><b class="mono">{formatTime(best(solves))}</b></div>
+      <div class="card"><div class="mu">ao5</div><b class="mono">{formatTime(averageOf(solves, 5))}</b></div>
+      <div class="card"><div class="mu">ao12</div><b class="mono">{formatTime(averageOf(solves, 12))}</b></div>
+    </div>
+  {/if}
+
+  </div>
+  <aside class="side" aria-label="Recent solves">
+    {#if store.shown('solve.recent')}
+      <Deltas times={solves.map(effective).filter(Number.isFinite)} title="Recent solves" />
+    {/if}
+    <ShortcutsSide view="solve" inline />
+  </aside></div>
+</main>
+{/if}

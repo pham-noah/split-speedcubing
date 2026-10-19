@@ -1,0 +1,8 @@
+node_modules
+dist
+android/app/build
+src-tauri/target
+android/local.properties
+android/.gradle
+*.keystore
+.DS_Store

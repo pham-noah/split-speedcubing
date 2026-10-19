@@ -1,0 +1,125 @@
+import { describe, it, expect, beforeAll } from 'vitest';
+
+// minimal DOM stub: the store only touches documentElement for theme and text size
+(globalThis as any).document = { documentElement: { dataset: {}, style: {} } };
+
+let store: typeof import('./store.svelte').store;
+beforeAll(async () => { store = (await import('./store.svelte')).store; });
+
+describe('store: sessions and solves', () => {
+  it('keeps solves per session and updates stats scope', () => {
+    store.addSolve(9000, 'R U');
+    store.addSolve(8000, 'F B');
+    expect(store.solves.length).toBe(2);
+    const first = store.session.id;
+    store.addSession('Practice');
+    expect(store.session.name).toBe('Practice');
+    expect(store.solves.length).toBe(0);
+    store.addSolve(7000, 'L D');
+    expect(store.solves.length).toBe(1);
+    store.switchSession(first);
+    expect(store.solves.length).toBe(2);
+    expect(store.countIn(first)).toBe(2);
+  });
+  it('penalty and delete act on the current session only', () => {
+    store.setPenalty('+2');
+    expect(store.solves.at(-1)!.pen).toBe('+2');
+    store.deleteLast();
+    expect(store.solves.length).toBe(1);
+    const other = store.data.sessions.find(s => s.id !== store.session.id)!;
+    expect(store.countIn(other.id)).toBe(1);
+  });
+  it('rename and delete a session', () => {
+    const other = store.data.sessions.find(s => s.id !== store.session.id)!;
+    store.renameSession(other.id, 'Renamed');
+    expect(store.data.sessions.find(s => s.id === other.id)!.name).toBe('Renamed');
+    store.deleteSession(other.id);
+    expect(store.data.sessions.length).toBe(1);
+    expect(store.data.solves.every(s => s.session === store.session.id)).toBe(true);
+  });
+  it('deleting the last session only empties it', () => {
+    store.deleteSession(store.session.id);
+    expect(store.data.sessions.length).toBe(1);
+    expect(store.solves.length).toBe(0);
+  });
+});
+
+describe('store: algorithms and ZBLL import', () => {
+  it('accepts a different valid alg for a case and rejects wrong ones', () => {
+    expect(store.addAlg('PLL-T', "R U R' U' R' F R2 U' R' U' R U R' F' U")).toBeNull(); // extra final AUF still solves it
+    expect(store.addAlg('PLL-T', "R U R' U'")).toContain('does not solve');
+    expect(store.addAlg('PLL-T', 'R Q')).toContain('Unknown move');
+    expect(store.algsFor('PLL-T').length).toBe(2);
+    store.setDefault('PLL-T', store.algsFor('PLL-T')[1]);
+    expect(store.algFor('PLL-T')).toContain('U');
+    store.removeAlg('PLL-T', store.algsFor('PLL-T')[1]);
+    expect(store.algsFor('PLL-T').length).toBe(1);
+  });
+  it('F2L allows an alg with a leading AUF', () => {
+    const base = store.caseOf('F2L-3').alg;
+    expect(store.addAlg('F2L-3', `U ${base}`)).toBeNull();
+  });
+  it('imports valid ZBLL lines and reports bad ones', () => {
+    const r = store.importZbll(`# comment
+Sune: R U R' U R U2 R'
+R U R' U'
+bad line Q
+Sune: R U R' U R U2 R'`);
+    expect(r.added).toBe(1);
+    expect(r.errors.length).toBe(3);
+    expect(store.casesFor('ZBLL').length).toBe(1);
+    expect(store.casesFor('ZBLL')[0].name).toBe('Sune');
+    expect(store.caseOf(store.casesFor('ZBLL')[0].id).alg).toBe("R U R' U R U2 R'");
+    store.clearZbll();
+    expect(store.casesFor('ZBLL').length).toBe(0);
+  });
+});
+
+describe('store: shortcuts, panels and imports', () => {
+  it('rebinds keys and refuses conflicts', () => {
+    expect(store.key('plus2')).toBe('KeyZ');
+    expect(store.setKey('plus2', 'KeyD')).toContain('Already used');
+    expect(store.setKey('plus2', 'KeyY')).toBeNull();
+    expect(store.key('plus2')).toBe('KeyY');
+    expect(store.is({ code: 'KeyY' }, 'plus2')).toBe(true);
+    store.resetKeys();
+    expect(store.key('plus2')).toBe('KeyZ');
+  });
+  it('hides and shows panels', () => {
+    expect(store.shown('solve.stats')).toBe(true);
+    store.setShown('solve.stats', false);
+    expect(store.shown('solve.stats')).toBe(false);
+    store.setShown('solve.stats', true);
+    expect(store.shown('solve.stats')).toBe(true);
+  });
+  it('imports sessions once and skips duplicates on a second import', () => {
+    const sessions = [{ name: 'Main', solves: [{ ms: 9000, pen: '' as const, scramble: 'R U', ts: 1700000000000 }, { ms: 8000, pen: '+2' as const, scramble: 'F B', ts: 1700000100000 }] }];
+    const before = store.data.sessions.length;
+    const a = store.importSolves(sessions, 'csTimer');
+    expect(a).toEqual({ added: 2, duplicates: 0, sessions: 1 });
+    expect(store.data.sessions.length).toBe(before + 1);
+    expect(store.data.sessions.at(-1)!.name).toBe('Main (csTimer)');
+    const b = store.importSolves(sessions, 'csTimer');
+    expect(b).toEqual({ added: 0, duplicates: 2, sessions: 0 });
+    expect(store.data.sessions.length).toBe(before + 1);
+  });
+});
+
+describe('store: personalised scheduling', () => {
+  it('declines politely with too little history and leaves the settings alone', async () => {
+    store.erase();
+    const r = await store.optimizeFsrs();
+    expect(r.applied).toBe(false);
+    expect(r.reason).toContain('Not enough');
+    expect(store.data.settings.fsrsW).toBeUndefined();
+    expect(store.fsrsPoints).toBe(0);
+  });
+  it('uses stored parameters when grading, and resetting removes them', () => {
+    const w = [0.212, 1.2931, 2.3065, 8.2956, 6.4133, 0.8334, 3.0194, 0.001, 1.8722, 0.1666, 0.796, 1.4835, 0.0614, 0.2629, 1.6483, 0.6014, 1.8729, 0.5425, 0.0912, 0.0658, 0.3];
+    store.data.settings.fsrsW = w;
+    store.grade('PLL-T', 2, 3000, 1000);
+    expect(store.card('PLL-T').seen).toBe(true);
+    store.resetFsrs();
+    expect(store.data.settings.fsrsW).toBeUndefined();
+  });
+});
