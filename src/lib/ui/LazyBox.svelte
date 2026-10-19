@@ -10,6 +10,8 @@
 
   onMount(() => {
     if (!el) return;
+    // very old webviews have no IntersectionObserver: show the cube rather than never drawing it
+    if (typeof IntersectionObserver === 'undefined') { show = true; return; }
     const io = new IntersectionObserver(entries => {
       if (entries.some(e => e.isIntersecting)) { show = true; io.disconnect(); }
     }, { rootMargin: '400px' });

@@ -4,6 +4,7 @@
 
   let capturing = $state<string | null>(null);
   let msg = $state('');
+  let openPanel = $state(false);   // the list is long: it stays closed until you want to change something
 
   // while a row is waiting for a key, take the next key press before anything else sees it
   $effect(() => {
@@ -23,7 +24,13 @@
 </script>
 
 <section class="card col" aria-labelledby="sc-h">
-  <h2 id="sc-h" style="margin:0;font-size:1.15rem">Keyboard shortcuts</h2>
+  <div class="row sp">
+    <h2 id="sc-h" style="margin:0;font-size:1.15rem">Keyboard shortcuts</h2>
+    <button class="btn" style="min-height:40px" aria-expanded={openPanel} onclick={() => (openPanel = !openPanel)}>{openPanel ? 'Done' : `Show all ${COMMANDS.length}`}</button>
+  </div>
+  {#if !openPanel}
+    <div class="mu">Every action has a key; the ones for the screen you are on are listed in the side panel. Open the list to rebind them.</div>
+  {:else}
   <div class="mu">Choose a command, then press the key you want. Escape cancels while choosing.</div>
   {#each scopes as sc (sc)}
     <div class="mu" style="margin-top:6px"><b style="color:var(--tx)">{SCOPE_NAMES[sc]}</b></div>
@@ -37,5 +44,6 @@
     {/each}
   {/each}
   <div class="row"><button class="btn" onclick={() => { store.resetKeys(); msg = 'Shortcuts reset.'; }}>Reset all shortcuts</button></div>
+  {/if}
   <div class="mu" role="status" aria-live="polite">{msg}</div>
 </section>

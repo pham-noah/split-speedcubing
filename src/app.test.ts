@@ -137,6 +137,9 @@ describe('whole app in a simulated browser', () => {
     expect(document.body.textContent).not.toContain('Best');   // the best/ao5/ao12 panel is gone (the recent-solves table has its own ao12)
     byText('Settings', q('nav')!)!.click(); await tick();
     for (let i = 0; i < 40 && !document.querySelector('input[type=checkbox]'); i++) { await wait(25); flushSync(); }
+    // the key list is collapsed until asked for
+    [...document.querySelectorAll<HTMLButtonElement>('button')].find(b => b.textContent!.trim().startsWith('Show all'))!.click();
+    await tick(); await wait(30); flushSync();
     const row = [...document.querySelectorAll<HTMLButtonElement>('button')].find(b => b.getAttribute('aria-label')?.startsWith('+2 on the last solve'))!;
     row.click(); await tick();
     window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyY', bubbles: true })); await tick(); await wait();
