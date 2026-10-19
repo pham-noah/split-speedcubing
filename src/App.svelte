@@ -13,10 +13,13 @@
   };
   let Screen = $state<any>(null);
   let loaded: View | null = null;
+  let loadError = $state<string | null>(null);
+  const Current = $derived<any>(Screen);
   $effect(() => {
     const v = nav.view;
     if (loaded === v) return;
-    VIEWS[v]().then(m => { Screen = m.default; loaded = v; });
+    VIEWS[v]().then(m => { Screen = m.default; loaded = v; })
+      .catch((err) => { loadError = String(err); });
   });
   // once the first screen is up, quietly fetch the others (the browser caches the chunks)
   $effect(() => {
@@ -97,7 +100,19 @@
 
 {#if store.ready}
   <div inert={!store.data.settings.introSeen}>
-    {#if Screen}{@const View = Screen}<View />{:else}<main class="page"><div class="mu">Loading…</div></main>{/if}
+    {#if Current}
+      <Current />
+    {:else if loadError}
+      <main class="page">
+        <div class="card col" role="alert" style="border-color:#FF6B6B;gap:10px">
+          <div style="font-weight:800;color:#FF8A80">That screen could not load</div>
+          <div class="mu">Probably a dropped connection on the first visit. Your data is untouched.</div>
+          <div class="row" style="gap:8px">
+            <button class="btn p" style="flex:1" onclick={() => { loadError = null; loaded = null; nav.go('solve'); }}>Try again</button>
+          </div>
+        </div>
+      </main>
+    {:else}<main class="page"><div class="mu">Loading…</div></main>{/if}
 
     <nav aria-label="Main">
       <button class:on={nav.view === 'train'} {...tab('train')} onclick={() => nav.go('train')}>
