@@ -28,6 +28,7 @@
   let hint = $state(false);
   let typed = $state('');
   let q = $state('');   // filter by name or code, handy for F2L and long ZBLL lists
+  let show = $state<'all' | 'new' | 'learning' | 'mastered' | 'due'>('all');
   let hist = $state(false);
   let walkIndex = $state(0);
 
@@ -42,7 +43,15 @@
     const code = codesRaw.get(c.id) ?? '';
     return c.name.toLowerCase().includes(needle) || code.includes(needle);
   };
-  const list = $derived(store.casesFor(set).filter(c => (set !== 'F2L' || c.slot === slotFilter) && matches(c)));
+  const keep = (c: { id: string }) => {
+    const k = store.card(c.id);
+    if (show === 'new') return !k.seen;
+    if (show === 'learning') return k.seen && mastery(k) !== 'mastered';
+    if (show === 'mastered') return mastery(k) === 'mastered';
+    if (show === 'due') return k.seen && k.due <= Date.now();
+    return true;
+  };
+  const list = $derived(store.casesFor(set).filter(c => (set !== 'F2L' || c.slot === slotFilter) && matches(c) && keep(c)));
   const mode = $derived(set === 'F2L' ? 'f2l' : set === 'OLL' ? 'oll' : 'pll');
   const sel = $derived(selId ? list.find(c => c.id === selId) ?? null : null);
   const card = $derived(sel ? store.card(sel.id) : null);
@@ -190,7 +199,12 @@
       </div>
     {/if}
 
-    <input placeholder="Search a case (name or code)" value={q} oninput={(e) => (q = e.currentTarget.value)} aria-label="Search cases" style="max-width:320px" />
+    <div class="seg" role="group" aria-label="Filter by progress">
+      {#each [['all', 'All'], ['new', 'New'], ['learning', 'Learning'], ['mastered', 'Mastered'], ['due', 'Due']] as [v, l] (v)}
+        <button class:on={show === v} aria-pressed={show === v} onclick={() => (show = v as typeof show)}>{l}</button>
+      {/each}
+    </div>
+    <input placeholder="Search a case (name or code)"  value={q} oninput={(e) => (q = e.currentTarget.value)} aria-label="Search cases" style="max-width:320px" />
     {#if list.length}
       <div class="mu">{mastered} mastered · {learning} learning · {list.length - mastered - learning} new{#if dueNow} · {dueNow} due now{/if}</div>
       <div class="grid">

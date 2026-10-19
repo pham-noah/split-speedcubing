@@ -9,6 +9,7 @@ Browser/trainer update.
 ### Added
 - 3D scramble walkthrough: the scramble played move by move on a draggable cube, with step / play / reset. Auto-play is a setting (off by default) with a speed choice, and the cube itself can be hidden.
 - Case codes: press F in the Library, every case shows a short code (Jb -> jb, OLL 29 -> 29) and typing it opens that case; Enter trains it.
+- Library search (name or case code) and a progress filter: All / New / Learning / Mastered / Due.
 - Case sets switch with A and D inside the Library.
 - Recognition and algorithm drills are separate modes with their own header; the per-algorithm Train button drills execution only.
 - Recent attempts everywhere: last solves (Solve) and last attempts on a case (Train) with deltas against the previous attempt, ao5 and ao12, green when faster and red when slower.

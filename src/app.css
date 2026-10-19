@@ -48,7 +48,7 @@ nav .on{color:var(--am);border-top-color:var(--am)}
 nav .mid{display:flex;justify-content:center;border:0}
 nav .mid button{width:68px;height:68px;margin-top:-26px;border-radius:50%;border:4px solid var(--bg);background:#262B36;color:var(--am);font-weight:800;font-size:.85rem}
 nav .mid button.on{background:var(--am);color:var(--on-am)}
-input,textarea{width:100%;min-height:44px;border-radius:10px;border:1px solid #3A404C;background:var(--bg);color:var(--tx);padding:8px 12px;font:600 .9rem ui-monospace,Menlo,Consolas,monospace;-webkit-user-select:text;user-select:text}
+input,textarea{width:100%;min-height:44px;border-radius:10px;border:1px solid #3A404C;background:var(--bg);color:var(--tx);padding:8px 12px;font:600 1rem ui-monospace,Menlo,Consolas,monospace;-webkit-user-select:text;user-select:text}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 @media (prefers-reduced-motion:no-preference){.big{transition:background .12s}}
 @media (min-width:900px){.page{max-width:720px}}
