@@ -93,6 +93,15 @@ describe('whole app in a simulated browser', () => {
     byText('Start session')!.click(); await tick(); await wait(30); flushSync();
     expect(q('.scr')!.textContent!.trim().length).toBeGreaterThan(3);
     expect(document.body.textContent).toContain('Press once when you recognise');
+    // one full attempt: hold to start, press to mark recognition, press to stop
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true })); await wait(350); flushSync();
+    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space', bubbles: true })); await tick(); await wait(80);
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true })); await tick(); await wait(30); flushSync();
+    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space', bubbles: true })); await tick(); await wait(30);
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true })); await tick(); await wait(40); flushSync();
+    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space', bubbles: true })); await tick(); await wait(60); flushSync();
+    // the case you just trained is revealed by name, next to its diagram
+    expect(document.body.textContent).toContain('You just did');
     await audit('train session');
     press('Escape'); await tick(); await wait();
     expect(document.querySelector('h1')!.textContent).toContain('Today');
