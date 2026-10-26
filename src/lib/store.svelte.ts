@@ -1,4 +1,5 @@
 import { SETS, BUILTIN_CASES, type CaseDef, type CaseSet } from './data';
+import { readableInk } from './ui/color';
 import { createStorage, type Storage } from './storage';
 import { defaultData, normalize, type AppData, type CardRecord, type DrillResult, type Session } from './storage/model';
 import { newCard, review, type Grade } from './core/srs';
@@ -56,10 +57,8 @@ class Store {
     document.documentElement.style.fontSize = `${s.textSize}%`;
     // accent colour: '' keeps the theme's own amber
     if (s.accent) {
-      const c = [1, 3, 5].map(i => parseInt(s.accent.slice(i, i + 2), 16) / 255).map(v => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
-      const light = 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2] > 0.55;
       document.documentElement.style.setProperty('--am', s.accent);
-      document.documentElement.style.setProperty('--on-am', light ? '#12161C' : '#FFFFFF');
+      document.documentElement.style.setProperty('--on-am', readableInk(s.accent, '#12161C', '#FFFFFF'));
     } else {
       try {
         document.documentElement.style.removeProperty('--am');

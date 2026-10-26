@@ -25,7 +25,7 @@
 
   // the same deltas as the side panel: against the previous solve, the running ao5 and ao12
   const fmt = (x: number | null) => (x == null ? '–' : `${x >= 0 ? '+' : '−'}${(Math.abs(x) / 1000).toFixed(2)}`);
-  const col = (x: number | null) => (x == null ? 'var(--mu)' : x < 0 ? '#59D98A' : '#FF6B6B');
+  const col = (x: number | null) => (x == null ? 'var(--mu)' : x < 0 ? 'var(--good)' : 'var(--bad)');
   const mean = (end: number, n: number) => {
     const xs = solves.slice(Math.max(0, end - n + 1), end + 1).map(effective).filter(Number.isFinite);
     return xs.length === n ? xs.reduce((a, b) => a + b, 0) / n : null;

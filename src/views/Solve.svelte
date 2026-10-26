@@ -110,7 +110,7 @@
     </div>
   {/if}
   {#if vsAvg != null}
-    <div class="mu mono" style="text-align:center;color:{vsAvg < 0 ? '#59D98A' : '#FF6B6B'}" aria-label="Compared with your session average">
+    <div class="mu mono" style="text-align:center;color:{vsAvg < 0 ? 'var(--good)' : 'var(--bad)'}" aria-label="Compared with your session average">
       {vsAvg < 0 ? '−' : '+'}{(Math.abs(vsAvg) / 1000).toFixed(2)} vs average
     </div>
   {/if}

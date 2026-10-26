@@ -5,6 +5,7 @@
   import { codeLabel } from '../core/shortcuts';
   import { formatTime, type Penalty } from '../core/stats';
   import { inspectionPenalty, inspectionText } from '../core/inspection';
+  import { readableInk } from './color';
 
   type St = 'idle' | 'insp' | 'hold' | 'ready' | 'run';
   let { twoPress = false, markLabel = 'Tap when recognized', disabled = false, holdMs = 300, tapStart = false, hideTime = false, inspection = false, beeps = true, shown = null, cover = false, coverColor = '', onfinish, onRunning }: {
@@ -31,9 +32,7 @@
 
   // dark ink on light covers, white on dark ones
   function readable(hex: string): string {
-    if (!/^#[0-9a-fA-F]{6}$/.test(hex)) return '#06121F';
-    const c = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255).map(v => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
-    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2] > 0.55 ? '#06121F' : '#FFFFFF';
+    return readableInk(hex, '#06121F', '#FFFFFF');
   }
   function openCover() {
     if (!cover || !bigEl) return;

@@ -159,7 +159,7 @@
   const ao5 = $derived(avgOf(5)), ao12 = $derived(avgOf(12));
   const meanUpTo = (end: number, n: number) => { const xs = attempts.slice(Math.max(0, end - n + 1), end + 1).map(execOf); return xs.length === n ? xs.reduce((p, q) => p + q, 0) / n : null; };
   const delta = (x: number | null) => (x == null ? '–' : `${x >= 0 ? '+' : '−'}${(Math.abs(x) / 1000).toFixed(2)}`);
-  const dcol = (x: number | null) => (x == null ? 'var(--mu)' : x < 0 ? '#59D98A' : '#FF6B6B'); // faster green, slower red
+  const dcol = (x: number | null) => (x == null ? 'var(--mu)' : x < 0 ? 'var(--good)' : 'var(--bad)'); // faster green, slower red
   const recent = $derived.by(() => {
     const ex = attempts.map(execOf);
     return attempts.map((a, i) => ({
@@ -265,7 +265,7 @@
             <span class="mu mono">{p.mastered} mastered · {p.learning} learning · {p.fresh} new</span>
           </div>
           <div style="height:6px;border-radius:3px;background:#2A303B;overflow:hidden">
-            <div style="height:100%;width:{(p.mastered / p.total * 100).toFixed(1)}%;background:#59D98A"></div>
+            <div style="height:100%;width:{(p.mastered / p.total * 100).toFixed(1)}%;background:var(--good)"></div>
           </div>
         {/each}
       </div>

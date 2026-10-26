@@ -28,6 +28,9 @@ describe.each(Object.entries(themes))('contrast: %s theme', (_name, t) => {
     ['big button text on blue', '#06121F', t.bl],
     ['active tab on raised tab background', t.am, '#262B36'],
     ['error text on cards', '#FF8A80', t.card],
+    // the delta colours (faster / slower, +progress bars) are tokens too, so they get checked here
+    ['faster delta on page', t.good, t.bg], ['faster delta on cards', t.good, t.card],
+    ['slower delta on page', t.bad, t.bg], ['slower delta on cards', t.bad, t.card],
   ];
   it.each(text)('%s is at least 4.5:1', (_l, fg, bg) => {
     expect(ratio(fg, bg)).toBeGreaterThanOrEqual(4.5);

@@ -77,7 +77,7 @@
   const weekMax = $derived(Math.max(1, ...weekly));
 
   const fmt = (x: number | null) => (x == null ? '–' : `${x >= 0 ? '+' : '−'}${(Math.abs(x) / 1000).toFixed(2)}`);
-  const col = (x: number | null) => (x == null ? 'var(--mu)' : x < 0 ? '#59D98A' : '#FF6B6B');
+  const col = (x: number | null) => (x == null ? 'var(--mu)' : x < 0 ? 'var(--good)' : 'var(--bad)');
 </script>
 
 <main class="page wide">
