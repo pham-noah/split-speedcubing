@@ -6,6 +6,7 @@
   const s = $derived(store.data.settings);
   const colours = () => (s.cubeColors && s.cubeColors.length === 6 ? s.cubeColors : DEFAULT_CUBE_COLORS);
   let msg = $state('');
+  let canUndo = $state(false);   // a restore just replaced the data and can be put back
   let fsrsMsg = $state('');
   let fsrsBusy = $state(false);
   let fsrsProgress = $state(0);
@@ -39,14 +40,28 @@
   function download() {
     const url = URL.createObjectURL(new Blob([store.exportJson()], { type: 'application/json' }));
     const a = Object.assign(document.createElement('a'), { href: url, download: `split-${new Date().toISOString().slice(0, 10)}.json` });
-    a.click(); URL.revokeObjectURL(url);
+    a.click();
+    // revoking in the same tick can cancel the download in Safari and Firefox
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
     store.update({ lastBackupAt: Date.now() });
     msg = 'Backup saved.';
   }
   async function upload(e: Event) {
-    const f = (e.target as HTMLInputElement).files?.[0];
+    const input = e.target as HTMLInputElement;
+    const f = input.files?.[0];
     if (!f) return;
-    try { store.importJson(await f.text()); msg = 'Backup restored.'; } catch { msg = 'That file is not a valid backup.'; }
+    try {
+      // importJson throws before it touches anything, so a wrong file costs nothing
+      store.importJson(await f.text());
+      msg = 'Backup restored.';
+      canUndo = true;
+    } catch { msg = 'That file is not a valid backup.'; }
+    input.value = '';   // picking the same file again should still fire
+  }
+  function undoRestore() {
+    if (!store.undoRestore()) return;
+    msg = 'Restore undone. Your earlier data is back.';
+    canUndo = false;
   }
 </script>
 
@@ -163,8 +178,11 @@
       <label class="btn" style="display:flex;align-items:center;justify-content:center;cursor:pointer">Restore backup<input type="file" accept="application/json" onchange={upload} class="sr" /></label>
     </div>
     <button class="btn" onclick={() => store.update({ introSeen: false })}>Show the intro again</button>
-    <button class="btn" onclick={() => { if (confirm('Erase all solves and progress on this device?')) { store.erase(); msg = 'Erased.'; } }}>Erase all data</button>
-    <div class="mu" role="status" aria-live="polite">{msg}</div>
+    <button class="btn" onclick={() => { if (confirm('Erase all solves and progress on this device?')) { store.erase(); msg = 'Erased.'; canUndo = false; } }}>Erase all data</button>
+    <div class="row sp" role="status" aria-live="polite">
+      <span class="mu" style="flex:1;min-width:0">{msg}</span>
+      {#if canUndo}<button class="btn" style="flex:none" onclick={undoRestore}>Undo restore</button>{/if}
+    </div>
   </section>
 
   <section class="card col" aria-labelledby="ab-h">

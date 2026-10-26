@@ -81,11 +81,15 @@ export function recall(c: Card, now = Date.now(), retention = DEFAULT_RETENTION,
 }
 
 // Suggest a grade from the result so the user doesn't have to rate every attempt.
-export function suggestGrade(totalMs: number, targetMs: number, ok = true): Grade {
-  if (!ok) return 0;
-  if (totalMs <= targetMs * 0.75) return 3;
-  if (totalMs <= targetMs * 1.25) return 2;
-  return 1;
+// A DNF, a recognition tap that never came (ok = false) or a very slow solve all grade as a lapse,
+// so the schedule -- and the "Lapsed" drill -- has failures to learn from.
+export function gradeForAttempt(totalMs: number, recogMs: number | null, targetMs: number, ok = true): Grade {
+  if (!ok || !Number.isFinite(totalMs) || targetMs <= 0) return 0;
+  const recog = recogMs ?? totalMs;
+  if (totalMs <= targetMs * 0.75) return 3;                              // quick all round
+  if (totalMs <= targetMs * 1.25 && recog <= targetMs) return 2;         // on target
+  if (totalMs <= targetMs * 2 && recog <= targetMs * 1.5) return 1;      // slow, but it came back
+  return 0;
 }
 
 export type Mastery = 'new' | 'learning' | 'mastered';

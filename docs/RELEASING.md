@@ -18,7 +18,7 @@ A checklist in the order that avoids rework. Items marked **you** cannot be done
 ## 1. Version bump (every release)
 - `package.json` version, `src-tauri/tauri.conf.json` + `src-tauri/Cargo.toml` version, `android/app/build.gradle` `versionName` and an **increased** `versionCode`.
 - Add a `CHANGELOG.md` entry and `fastlane/metadata/android/en-US/changelogs/<versionCode>.txt` (500 characters max).
-- `npm run check && npm test && npm run build`, then tag: `git tag v0.2.0 && git push --tags`.
+- `npm run check && npm test && npm run build && npm run version:check`, then tag: `git tag v0.2.0 && git push --tags`.
 
 ## 2. Android signing (once)
 **you** Create an upload key and keep it (and its passwords) somewhere safe. Losing it can block updates.

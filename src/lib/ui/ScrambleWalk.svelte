@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onDestroy } from 'svelte';
   import { solved, applyMove, applyAlg, tokens, turnInfo, parseMove, type State, type TurnInfo } from '../core/cube';
   import Cube3D from './Cube3D.svelte';
 
@@ -18,6 +19,7 @@
   let busy = false;
 
   function seek(n: number) {
+    stopTimers();
     busy = false;
     anim = null;
     // read the target position into a plain value first: reading $state here would make the
@@ -28,6 +30,16 @@
   }
   // R2 / F2 are two quarter turns, shown one after the other and a little slower than a single turn
   let dur = $state(300);
+  // an animation in flight owns a timer; it must not outlive the component or a seek
+  const timers = new Set<ReturnType<typeof setTimeout>>();
+  function later(fn: () => void, ms: number) {
+    const t = setTimeout(() => { timers.delete(t); fn(); }, ms);
+    timers.add(t);
+  }
+  function stopTimers() {
+    for (const t of timers) clearTimeout(t);
+    timers.clear();
+  }
   // one move, quarter by quarter (a double move turns twice), then finish
   function animate(tok: string, finish: () => void) {
     const { m, turns } = parseMove(tok);
@@ -40,11 +52,11 @@
     const run = () => {
       if (done >= reps) { anim = null; finish(); busy = false; return; }
       anim = quarter;
-      setTimeout(() => {
+      later(() => {
         pos = applyMove(pos, one);
         done += 1;
         anim = null;
-        if (done < reps) setTimeout(run, 60);
+        if (done < reps) later(run, 60);
         else { finish(); busy = false; }
       }, dur);
     };
@@ -88,6 +100,7 @@
   $effect(() => { alg; seek(0); });
   // the scramble line above shows the position, so the walkthrough keeps no timeline of its own
   $effect(() => { onIndex(i); });
+  onDestroy(stopTimers);
 </script>
 
 <svelte:window onkeydowncapture={onKey} />
@@ -106,8 +119,4 @@
 <style>
   .walk { display: flex; flex-direction: column; gap: 12px; align-items: center; }
   .holder { padding: 6px 0 2px; line-height: 0; }
-  .moves { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; max-width: 340px; }
-  .mv { font: 700 0.85rem "JetBrains Mono", monospace; padding: 2px 7px; border-radius: 6px; background: var(--card); border: 1px solid var(--line); color: var(--mu); }
-  .mv.done { opacity: 0.45; }
-  .mv.now { background: var(--am); color: var(--on-am); border-color: var(--am); }
 </style>

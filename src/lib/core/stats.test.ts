@@ -38,6 +38,11 @@ describe('stats', () => {
     expect(formatTime(Infinity)).toBe('DNF');
     expect(formatTime(null)).toBe('–');
   });
+  it('never prints NaN or a negative time', () => {
+    expect(formatTime(NaN)).toBe('–');
+    expect(formatTime(-500)).toBe('–');
+    expect(formatTime(undefined)).toBe('–');
+  });
 });
 
 import { inspectionPenalty, inspectionText } from './inspection';

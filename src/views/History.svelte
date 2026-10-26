@@ -4,10 +4,10 @@
   import ShortcutsSide from '../lib/ui/ShortcutsSide.svelte';
   let { onBack }: { onBack: () => void } = $props();
 
-  // S returns to the timer, like Escape
+  // Escape goes back; so does the "New scramble" key (S by default), which is how S has always worked here
   function onKey(e: KeyboardEvent) {
     if (/INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement).tagName)) return;
-    if (e.code === 'KeyS' || e.key === 'Escape') { e.preventDefault(); onBack(); }
+    if (store.is(e, 'back') || store.is(e, 'scramble')) { e.preventDefault(); onBack(); }
   }
   const solves = $derived(store.solves);
   const list = $derived([...solves].reverse().slice(0, 200));

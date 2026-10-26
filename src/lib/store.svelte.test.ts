@@ -127,6 +127,27 @@ describe('store: shortcuts, panels and imports', () => {
   });
 });
 
+describe('store: backups that can be undone', () => {
+  it('a restore replaces the data and can be put back', () => {
+    store.erase();
+    store.addSolve(9000, 'R U');
+    expect(store.solves.length).toBe(1);
+    store.importJson(JSON.stringify({ solves: [{ id: 'x', ms: 5000, pen: '', scramble: 'F B', event: '333', ts: 1 }], cards: {} }));
+    expect(store.solves.map(s => s.ms)).toEqual([5000]);
+    expect(store.canUndoRestore).toBe(true);
+    expect(store.undoRestore()).toBe(true);
+    expect(store.solves.map(s => s.ms)).toEqual([9000]);
+    expect(store.canUndoRestore).toBe(false);
+  });
+  it('a file that is not a backup leaves the data alone', () => {
+    const before = store.solves.length;
+    expect(() => store.importJson('not a backup')).toThrow();
+    expect(() => store.importJson(JSON.stringify({ hello: 'world' }))).toThrow();
+    expect(store.solves.length).toBe(before);
+    expect(store.canUndoRestore).toBe(false);
+  });
+});
+
 describe('store: personalised scheduling', () => {
   it('declines politely with too little history and leaves the settings alone', async () => {
     store.erase();

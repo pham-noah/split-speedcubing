@@ -10,9 +10,10 @@
   import ScrambleWalk from '../lib/ui/ScrambleWalk.svelte';
   import Deltas from '../lib/ui/Deltas.svelte';
   import TimerPad from '../lib/ui/TimerPad.svelte';
-  import { mastery, recall, dueLabel } from '../lib/core/srs';
+  import { mastery, recall, dueLabel, gradeForAttempt } from '../lib/core/srs';
+  import { CASE_TARGET_MS } from '../lib/core/targets';
   import { moveCount, caseScramble, randomAuf } from '../lib/core/alg';
-  import { formatTime } from '../lib/core/stats';
+  import { formatTime, type Penalty } from '../lib/core/stats';
   import { makeHints } from '../lib/core/hints';
   import TrainHistory from '../lib/ui/TrainHistory.svelte';
   import PenaltyRow from '../lib/ui/PenaltyRow.svelte';
@@ -163,9 +164,11 @@
     result = null;
   }
   function endTraining() { training = null; result = null; }
-  function finish(r: { ms: number; recog: number | null }) {
+  function finish(r: { ms: number; recog: number | null; pen?: Penalty }) {
     if (!training) return;
-    store.grade(training.id, 2, r.ms, r.recog, training.alg);
+    // no recognition tap here, so the time itself is what the grade is based on
+    const target = CASE_TARGET_MS[store.caseOf(training.id).set];
+    store.grade(training.id, gradeForAttempt(r.ms, r.recog, target, r.pen !== 'DNF'), r.ms, r.recog, training.alg);
     result = r;
   }
   function stepSet(step: number) {
@@ -185,7 +188,7 @@
     if (!hint && q && e.key === 'Escape') { q = ''; e.preventDefault(); return; }
     if (!hint && store.is(e, 'libPrev')) { stepSet(-1); e.preventDefault(); e.stopPropagation(); return; }
     if (!hint && store.is(e, 'libNext')) { stepSet(1); e.preventDefault(); e.stopPropagation(); return; }
-    if (!hint && (e.key === 'Enter' || e.code === 'Space') && selId) { e.preventDefault(); trainCase(); return; }
+    if (!hint && (e.key === 'Enter' || store.is(e, 'timer')) && selId) { e.preventDefault(); trainCase(); return; }
     if (!hint) {
       if (store.is(e, 'hints') && list.length) { hint = true; typed = ''; e.preventDefault(); e.stopPropagation(); }
       return;

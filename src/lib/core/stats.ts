@@ -7,6 +7,8 @@ export const effective = (s: Pick<Solve, 'ms' | 'pen'>) => (s.pen === 'DNF' ? In
 export function formatTime(ms: number | null | undefined): string {
   if (ms == null) return '–';
   if (ms === Infinity) return 'DNF';
+  // a backup or a bad import can carry a NaN or a negative time; show a dash rather than "NaN"
+  if (!Number.isFinite(ms) || ms < 0) return '–';
   const cs = Math.floor(ms / 10);
   const s = cs / 100;
   if (s >= 60) {

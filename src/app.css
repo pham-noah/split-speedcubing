@@ -26,7 +26,7 @@ h1{margin:0;font-size:2.1rem;font-weight:800;letter-spacing:-.5px}
 .btn.on{border:2px solid var(--am);color:var(--am)}
 button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible,a:focus-visible,.cell:focus-visible{outline:3px solid var(--bl);outline-offset:2px}
 .time{font-size:clamp(3rem,9vh,4.4rem);font-weight:800;letter-spacing:-2px;text-align:center;line-height:1}
-.scr{font-size:.95rem;font-weight:600;color:var(--mu);text-align:center;line-height:1.5;min-height:3em}
+.scr{font-size:.95rem;font-weight:600;color:var(--mu);text-align:center;line-height:1.5;min-height:3em;overflow-wrap:anywhere}
 .big{width:min(210px,27vh);height:min(210px,27vh);min-width:150px;min-height:150px;border-radius:50%;border:0;background:var(--bl);color:#06121F;font-size:1.3rem;font-weight:800;align-self:center;margin:6px 0;touch-action:none}
 .big[data-s=hold]{background:var(--am);color:var(--on-am)}
 .big[data-s=ready]{background:#fff;color:#000}
@@ -41,11 +41,11 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-vi
 /* case names can be long ("Spotted Chameleon"): two lines, then an ellipsis */
 .clabel{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-align:center;line-height:1.15;font-size:.72rem;max-width:100%;word-break:break-word}
 .hint{position:absolute;top:3px;right:3px;background:var(--am);color:var(--on-am);border-radius:6px;padding:1px 5px;font:800 .7rem/1.3 "JetBrains Mono",monospace;letter-spacing:.5px}
-.seg{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px}
-.seg button{flex:1;min-height:44px;border:0;border-radius:9px;background:none;font-weight:800}
+.seg{display:flex;flex-wrap:wrap;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;min-width:0}
+.seg button{flex:1 1 68px;min-width:0;min-height:44px;padding:0 8px;border:0;border-radius:9px;background:none;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .seg button.on{background:var(--am);color:var(--on-am)}
 nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;align-items:center;padding-bottom:env(safe-area-inset-bottom)}
-nav>*{flex:1;min-height:58px;background:none;border:0;border-top:3px solid transparent;color:var(--mu);font-weight:600;font-size:.75rem}
+nav>*{flex:1;min-width:0;min-height:58px;padding:0 2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background:none;border:0;border-top:3px solid transparent;color:var(--mu);font-weight:600;font-size:.75rem}
 nav .on{color:var(--am);border-top-color:var(--am)}
 nav .mid{display:flex;justify-content:center;border:0}
 nav .mid button{width:68px;height:68px;margin-top:-26px;border-radius:50%;border:4px solid var(--bg);background:#262B36;color:var(--am);font-weight:800;font-size:.85rem}
@@ -100,9 +100,9 @@ input,textarea{width:100%;min-height:44px;border-radius:10px;border:1px solid #3
   .scr{min-height:2.4em;line-height:1.4}
   .time{font-size:clamp(2.4rem,7.5vh,3.6rem)}
   .big{width:min(172px,21vh);height:min(172px,21vh);min-width:126px;min-height:126px;margin:2px 0;font-size:1.15rem}
-  .seg button{min-height:40px}
+  .seg button{min-height:40px;padding:0 4px;font-size:.85rem}
   .empty{padding:14px 10px}
-  nav>*{min-height:54px}
+  nav>*{min-height:54px;font-size:.7rem;padding:0 1px}
 }
 
 /* phones: three newest attempt rows, and the 3D walkthrough stays a desktop tool (the notation is still shown) */
@@ -110,6 +110,9 @@ input,textarea{width:100%;min-height:44px;border-radius:10px;border:1px solid #3
   .deltas .drows .drow:nth-child(n+4) { display: none; }
   .cube-panel, .alg-line { display: none !important; }
 }
+
+/* a write or read failed: say so, instead of looking like nothing happened */
+.banner{position:fixed;left:0;right:0;top:0;z-index:60;display:flex;gap:10px;align-items:center;padding:10px 14px;background:#3A1A1A;border-bottom:1px solid #FF6B6B;font-size:.9rem;content-visibility:visible}
 
 /* the scramble line doubles as the walkthrough's position indicator */
 .scr .now { color: var(--am); font-weight: 800; }

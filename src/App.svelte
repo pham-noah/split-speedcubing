@@ -99,6 +99,18 @@
 <svelte:window onkeydown={onKey} />
 
 {#if store.ready}
+  {#if store.loadError}
+    <div class="banner" role="alert">
+      <span style="flex:1;min-width:0"><b>Your saved data could not be read.</b> {store.loadError}. Anything you add now is saved normally.</span>
+      <button class="btn" style="flex:none;min-height:36px" onclick={() => store.init()}>Try again</button>
+    </div>
+  {/if}
+  {#if store.saveError}
+    <div class="banner" role="alert">
+      <span style="flex:1;min-width:0"><b>Changes are not being saved.</b> {store.saveError}. Your solves stay here while the app is open.</span>
+      <button class="btn" style="flex:none;min-height:36px" onclick={() => store.flush()}>Try again</button>
+    </div>
+  {/if}
   <div inert={!store.data.settings.introSeen}>
     {#if Current}
       <Current />

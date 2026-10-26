@@ -61,7 +61,7 @@ function parseCsTimer(root: Record<string, unknown>): ImportResult {
         ms: Math.round(ms),
         pen: penalty < 0 ? 'DNF' : penalty > 0 ? '+2' : '',
         scramble: typeof r[1] === 'string' ? r[1] : '',
-        ts: toTs(r[3]) ?? 0 + i,
+        ts: toTs(r[3]) ?? i,   // the row's date, or its position, which is what keeps the order
       });
     });
     if (out.length) sessions.push({ name: m?.name != null && String(m.name).trim() ? String(m.name) : `Session ${n}`, solves: out });
@@ -145,7 +145,7 @@ function parseCsv(text: string): ImportResult | null {
     else if (p === '2' || p === 'dnf') pen = 'DNF';
     const name = iSes >= 0 && r[iSes]?.trim() ? r[iSes].trim() : 'Imported';
     const list = sessions.get(name) ?? [];
-    list.push({ ms: t.ms, pen, scramble: iScr >= 0 ? (r[iScr] ?? '') : '', ts: (iDate >= 0 ? toTs(r[iDate]) : null) ?? 0 + k });
+    list.push({ ms: t.ms, pen, scramble: iScr >= 0 ? (r[iScr] ?? '') : '', ts: (iDate >= 0 ? toTs(r[iDate]) : null) ?? k });
     sessions.set(name, list);
   });
   const notes: string[] = [];

@@ -12,11 +12,11 @@
   import CaseCube from '../lib/ui/CaseCube.svelte';
   import PenaltyRow from '../lib/ui/PenaltyRow.svelte';
   import { caseScramble, invert, randomAuf } from '../lib/core/alg';
-  import { pickNext, mastery, type Grade } from '../lib/core/srs';
-  import { formatTime } from '../lib/core/stats';
+  import { pickNext, mastery, gradeForAttempt, type Grade } from '../lib/core/srs';
+  import { CASE_TARGET_MS } from '../lib/core/targets';
+  import { formatTime, type Penalty } from '../lib/core/stats';
   import { codeLabel } from '../lib/core/shortcuts';
 
-  const TARGET: Record<CaseSet, number> = { PLL: 3000, OLL: 3500, F2L: 3500, ZBLL: 5000 };
   const HINT: Record<CaseSet, string> = {
     PLL: 'Last layer on top (yellow), F2L solved.',
     OLL: 'Last layer on top (yellow), F2L solved.',
@@ -60,8 +60,12 @@
   });
   // the ten slowest cases (by average execution) among those with at least two timed attempts
   const weakList = $derived(weakCases());
-  // cases FSRS has marked as lapsed: you got them wrong at some point
-  const lapsedList = $derived(list.filter(c => (store.data.cards[c.id]?.fsrs?.lapses ?? 0) > 0).slice(0, 15));
+  // cases the scheduler has marked as lapsed, plus ones whose newest attempt was a DNF
+  const lapsedList = $derived(list.filter(c => {
+    const card = store.data.cards[c.id];
+    if (!card) return false;
+    return (card.fsrs?.lapses ?? 0) > 0 || card.attempts.at(-1)?.pen === 'DNF';
+  }).slice(0, 15));
   function weakCases(): CaseDef[] {
     const avg = (c: CaseDef) => mean(store.card(c.id).attempts.filter(x => x.recog != null).slice(-8).map(x => x.total - x.recog!));
     const timed = list.filter(c => store.card(c.id).attempts.filter(x => x.recog != null).length >= 2);
@@ -167,10 +171,13 @@
     })).slice(-5).reverse();
   });
 
-  // every finished attempt is recorded and scheduled as a normal review: no performance grading
-  function finish(r: { ms: number; recog: number | null }) {
+  // The attempt itself decides the review grade: no self-rating. A DNF, a case you never recognised
+  // (no first tap) or a very slow solve is a lapse, which is what the "Lapsed" drill and the
+  // optimiser need in order to learn anything from a failure.
+  function finish(r: { ms: number; recog: number | null; pen?: Penalty }) {
     if (!current) return;
-    store.grade(current.id, 2, r.ms, r.recog, drill ?? undefined);
+    const ok = r.pen !== 'DNF' && (drill ? true : r.recog != null);
+    store.grade(current.id, gradeForAttempt(r.ms, r.recog, CASE_TARGET_MS[current.set], ok), r.ms, r.recog, drill ?? undefined);
     result = r;
   }
   const typing = (e: Event) => /INPUT|TEXTAREA/.test((e.target as HTMLElement).tagName);
@@ -181,7 +188,8 @@
       if (store.is(e, 'trainPrev')) { set = SET_NAMES[(SET_NAMES.indexOf(set) - 1 + SET_NAMES.length) % SET_NAMES.length]; e.preventDefault(); return; }
       if (store.is(e, 'trainNext')) { set = SET_NAMES[(SET_NAMES.indexOf(set) + 1) % SET_NAMES.length]; e.preventDefault(); return; }
       if (store.is(e, 'trainHistory')) { hist = true; e.preventDefault(); return; }
-      if ((e.key === 'Enter' || e.code === 'Space') && list.length) { start(); e.preventDefault(); return; }
+      // Enter is the universal "activate"; the timer command starts a session too, even when rebound
+      if ((e.key === 'Enter' || store.is(e, 'timer')) && list.length) { start(); e.preventDefault(); return; }
       return;
     }
     if (!started) return;
@@ -284,7 +292,7 @@
         {#if current}
           <div class="card" style="text-align:center">
             {#if !result}<div class="mu">Scramble</div>{/if}
-            <div class="scr" style="margin-top:{result ? 0 : 8}px">{#each scrTokens as t, idx (idx)}<span class:now={idx === walkIndex}>{t}</span> {/each}</div>
+            <div class="scr" style="margin-top:{result ? 0 : 8}px">{#each scrTokens as t, idx (idx)}<span class:now={idx === walkIndex}>{t}</span>{' '}{/each}</div>
             {#if store.shown('train.cube') && !store.cubeHidden}<div class="cube-panel" style="margin-top:8px;display:flex;justify-content:center"><ScrambleWalk alg={scramble} size={84} autoplay={store.data.settings.walkAutoplay} speed={store.data.settings.walkSpeed} onIndex={(i) => (walkIndex = i)} onClose={() => (store.cubeHidden = true)} /></div>{:else}<button class="btn" style="align-self:center;min-height:0;padding:6px 12px;font-size:.8rem" onclick={() => (store.cubeHidden = false)}>Show the cube</button>{/if}
             {#if !result && store.shown('train.hint')}<div class="mu" style="margin-top:6px">{HINT[set]}{#if set === 'F2L' && current.slot} Solve the <b style="color:var(--tx)">{SLOT_NAMES[current.slot]}</b> pair.{/if}</div>{/if}
           </div>

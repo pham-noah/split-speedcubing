@@ -13,19 +13,40 @@ const uid = () => crypto.randomUUID?.() ?? String(Date.now() + Math.random());
 class Store {
   data = $state<AppData>(defaultData());
   ready = $state(false);
+  /** a write to storage failed: the screens show it rather than losing data quietly */
+  saveError = $state<string | null>(null);
+  /** the saved data could not be read; the app runs on empty data until the user tries again */
+  loadError = $state<string | null>(null);
   focusId = $state<string | null>(null); // case the user asked to train next
   focusAlg = $state<string | null>(null);
   cubeHidden = $state(false);   // the scramble cube panel, toggled with one key from anywhere // when set, train that case with exactly this algorithm (execution only)
   private storage: Storage = createStorage();
   private timer: ReturnType<typeof setTimeout> | undefined;
+  private watching = false;
+  /** the data a backup restore replaced, kept until the next restore so the last one can be undone */
+  private replaced = $state<AppData | null>(null);
 
   async init() {
     try {
       const d = await this.storage.load();
       if (d) this.data = normalize(d);
-    } catch { /* start empty */ }
+      this.loadError = null;
+    } catch (e) {
+      // keep running, but say so: silently showing an empty history looks exactly like lost data
+      this.loadError = e instanceof Error ? e.message : 'Could not read the saved data';
+    }
     this.apply();
     this.ready = true;
+    this.watchUnload();
+  }
+  /** write the pending change before the app is backgrounded or closed, instead of losing it */
+  private watchUnload() {
+    if (this.watching || typeof window === 'undefined') return;
+    this.watching = true;
+    const flush = () => { if (this.timer) void this.flush(); };
+    window.addEventListener('pagehide', flush);
+    window.addEventListener('beforeunload', flush);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
   }
 
   /** push theme and text size into the document */
@@ -48,9 +69,18 @@ class Store {
   }
   persist() {
     clearTimeout(this.timer);
-    this.timer = setTimeout(() => {
-      this.storage.save($state.snapshot(this.data) as AppData).catch(() => {});
-    }, 250);
+    this.timer = setTimeout(() => { void this.flush(); }, 250);
+  }
+  /** Write now: the debounce is short, but a phone can kill the app inside it. */
+  async flush() {
+    clearTimeout(this.timer);
+    this.timer = undefined;
+    try {
+      await this.storage.save($state.snapshot(this.data) as AppData);
+      this.saveError = null;
+    } catch (e) {
+      this.saveError = e instanceof Error ? e.message : 'Could not save to this device';
+    }
   }
 
   // ---- sessions ----
@@ -79,7 +109,9 @@ class Store {
 
   // ---- solves ----
   addSolve(ms: number, scramble: string, pen: Penalty = '') {
-    this.data.solves.push({ id: uid(), ms, pen, scramble, event: '333', ts: Date.now(), session: this.session.id });
+    // a solve started before the first scramble arrived would otherwise be saved with the placeholder text
+    const scr = scramble.startsWith('Generating') ? '' : scramble;
+    this.data.solves.push({ id: uid(), ms, pen, scramble: scr, event: '333', ts: Date.now(), session: this.session.id });
     this.persist();
   }
   setPenalty(p: Penalty) {
@@ -191,7 +223,7 @@ class Store {
     this.persist();
   }
   /** ask the timer to load a scramble (used by "retry this scramble" in History) */
-  retry: string | null = null;
+  retry = $state<string | null>(null);
   retryScramble(scramble: string) { this.retry = scramble; }
   cardsFor(set: CaseSet) {
     return Object.fromEntries(this.casesFor(set).map(c => [c.id, this.card(c.id)]));
@@ -268,7 +300,25 @@ class Store {
   // ---- settings and backups ----
   update(patch: Partial<AppData['settings']>) { Object.assign(this.data.settings, patch); this.apply(); this.persist(); }
   exportJson() { return JSON.stringify($state.snapshot(this.data), null, 1); }
-  importJson(text: string) { this.data = normalize(JSON.parse(text)); this.apply(); this.persist(); }
-  erase() { this.data = defaultData(); this.apply(); this.persist(); }
+  /** Replaces everything, but keeps what it replaced so the restore can be undone. Throws before
+   *  touching the data when the file is not a backup. */
+  importJson(text: string) {
+    const next = normalize(JSON.parse(text));
+    this.replaced = $state.snapshot(this.data) as AppData;
+    this.data = next;
+    this.apply();
+    this.persist();
+  }
+  get canUndoRestore() { return this.replaced !== null; }
+  /** put back the data the last restore replaced */
+  undoRestore(): boolean {
+    if (!this.replaced) return false;
+    this.data = this.replaced;
+    this.replaced = null;
+    this.apply();
+    this.persist();
+    return true;
+  }
+  erase() { this.data = defaultData(); this.replaced = null; this.apply(); this.persist(); }
 }
 export const store = new Store();

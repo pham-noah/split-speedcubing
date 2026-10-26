@@ -74,12 +74,12 @@
     if (running) return;
     if (/INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement).tagName)) return;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
-    if (e.code === 'KeyF' && isLookMode) {
+    if (store.is(e, 'drillTwoLook') && isLookMode) {
       twoLook = !twoLook;
       store.update({ drillTwoLook: twoLook });
       e.preventDefault(); e.stopPropagation(); return;
     }
-    if (e.code === 'KeyW') { nextScramble(); e.preventDefault(); return; }
+    if (store.is(e, 'drillNext')) { nextScramble(); e.preventDefault(); return; }
     if (store.is(e, 'plus2')) { togglePen('+2'); e.preventDefault(); return; }
     if (store.is(e, 'dnf')) { togglePen('DNF'); e.preventDefault(); return; }
     if (store.is(e, 'deleteLast')) { dropDrill(); e.preventDefault(); return; }
@@ -122,7 +122,7 @@
   </div>
   {#if mode === 'cross'}<div class="mu">Cross colour <span style="display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;background:{colorHex(color)};border:1px solid #0006"></span> <b style="color:{colorHex(color)}">{colorName(color)}</b></div>{/if}
 
-  <div class="scr mono">{#each scrTokens as t, idx (idx)}<span class:now={idx === walkIndex}>{t}</span> {/each}</div>
+  <div class="scr mono">{#each scrTokens as t, idx (idx)}<span class:now={idx === walkIndex}>{t}</span>{' '}{/each}</div>
   {#if !store.cubeHidden && scramble.includes(' ') && !scramble.startsWith('Generating')}
     <div class="cube-panel" style="display:flex;justify-content:center">
       <ScrambleWalk alg={scramble} size={90} autoplay={store.data.settings.walkAutoplay} speed={store.data.settings.walkSpeed} onIndex={(i) => (walkIndex = i)} onClose={() => (store.cubeHidden = true)} />

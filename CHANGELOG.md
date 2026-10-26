@@ -2,6 +2,33 @@
 
 All notable changes to Split. Format based on [Keep a Changelog](https://keepachangelog.com); versions follow [SemVer](https://semver.org).
 
+## [0.4.0] - 2026-10-26
+
+Trainer polish, and the trainer now grades itself.
+
+### Added
+- Train home: the last 30 days at a glance (solves, training attempts, minutes on the clock, days practised), progress per set with a bar each, session averages, BLD memo accuracy.
+- Training history: slowest cases and attempts per week.
+- Lapsed quick drill, and a penalty row (+2 / DNF / delete) on Train, Library and Drills like the timer has.
+- History: "Retry this scramble" puts that solve's scramble straight back into the timer.
+- Settings: a backup restore can be undone, and a banner appears if saving or loading ever fails.
+- Two rebindable commands for the drills (next scramble, one look / two look); W stays an alias for the new-scramble key.
+
+### Changed
+- The trainer grades every attempt from the result instead of recording "Good" every time: a DNF, a case you never recognised, or a very slow solve is recorded as a lapse, so the schedule, the Lapsed drill and the optimiser all see failures.
+- Every hardcoded key now goes through the command table, so rebinding really moves every action (S also closes History and Sessions, as before).
+- A session starts with Enter or with whatever the timer key is bound to.
+
+### Fixed
+- Scrambles were drawn without spaces between moves ("R2F2R'B'R...") because Svelte drops whitespace inside an each block; Solve, Train and Drills were all affected.
+- "Retry this scramble" did nothing: the request was a plain field read once at startup, so the timer never saw it.
+- No sideways overflow at Extra large text on a 360 px phone (tab bar, segmented controls, scramble line).
+- Data loss is no longer silent: the pending save is flushed when the app is hidden or closed, write and read errors are shown with a retry, and a backup can no longer bring in NaN/negative times, unknown penalties or duplicate solve ids.
+- The IndexedDB connection is opened once instead of once per read and per write, and is closed when another tab upgrades the schema.
+- Scramble walkthrough: animation timers are cleared when it unmounts, and a solve started before the first scramble arrived is no longer saved with the "Generating scramble..." text.
+- End-to-end suite brought back in line with the UI (penalty keys, reveal instead of a grade dialog, diagram shapes, offline step); it is 29 checks and all of them pass again.
+- The four version numbers (package.json, Cargo.toml, tauri.conf.json, Android) agree, and `npm run version:check` fails CI if they drift.
+
 ## [0.3.0] - 2026-10-19
 
 Browser/trainer update.

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { review, newCard, pickNext, suggestGrade, mastery, recall, dueLabel, DAY, MIN, type Card } from './srs';
+import { review, newCard, pickNext, gradeForAttempt, mastery, recall, dueLabel, DAY, MIN, type Card } from './srs';
 
 const now = 1_800_000_000_000;
 describe('FSRS scheduling', () => {
@@ -63,12 +63,23 @@ describe('FSRS scheduling', () => {
   });
 });
 
-describe('suggested grade and case picking', () => {
-  it('suggested grade', () => {
-    expect(suggestGrade(1000, 3000)).toBe(3);
-    expect(suggestGrade(3000, 3000)).toBe(2);
-    expect(suggestGrade(6000, 3000)).toBe(1);
-    expect(suggestGrade(1000, 3000, false)).toBe(0);
+describe('grading an attempt from its result', () => {
+  it('grades by how close the attempt was to the target', () => {
+    expect(gradeForAttempt(1000, 300, 3000)).toBe(3);
+    expect(gradeForAttempt(3000, 1000, 3000)).toBe(2);
+    expect(gradeForAttempt(6000, 2000, 3000)).toBe(1);
+    expect(gradeForAttempt(9000, 2000, 3000)).toBe(0);
+  });
+  it('a failed attempt or a very slow one is a lapse', () => {
+    expect(gradeForAttempt(1000, 300, 3000, false)).toBe(0);
+    expect(gradeForAttempt(7000, 4000, 3000)).toBe(0);
+  });
+  it('a slow recognition caps the grade at Hard', () => {
+    expect(gradeForAttempt(4000, 4000, 3000)).toBe(1);
+  });
+  it('nonsense input grades as a lapse instead of NaN', () => {
+    expect(gradeForAttempt(NaN, null, 3000)).toBe(0);
+    expect(gradeForAttempt(1000, null, 0)).toBe(0);
   });
   const items = [{ id: 'a' }, { id: 'b' }, { id: 'c' }];
   it('picks the most overdue due card first', () => {

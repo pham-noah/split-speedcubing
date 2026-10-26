@@ -12,7 +12,14 @@
 
   const queue = new ScrambleQueue();
   let scramble = $state('Generating scramble…');
-  if (store.retry) { scramble = store.retry; store.retry = null; }
+  // History asks for a scramble to be re-timed ("retry this scramble"). Solve stays mounted while
+  // History is open, so this has to be an effect on the store rather than a read at init.
+  $effect(() => {
+    const r = store.retry;
+    if (!r) return;
+    scramble = r;
+    store.retry = null;
+  });
   queue.take().then(s => { if (scramble.startsWith('Generating')) scramble = s; });
 
   const solves = $derived(store.solves);
@@ -67,7 +74,7 @@
     else if (store.is(e, 'deleteLast')) removeLast();
     else if (store.is(e, 'history')) history = true;
     else if (store.is(e, 'sessions')) sessions = true;
-    else if (store.is(e, 'scramble') || e.code === 'KeyW') newScramble();
+    else if (store.is(e, 'scramble')) newScramble();
   }
   // Back closes history / sessions first
   $effect(() => { if (history || sessions) return nav.onBack(() => { history = false; sessions = false; return true; }); });
@@ -86,7 +93,7 @@
     <button class="btn" onclick={() => (history = true)}>History · {solves.length}</button>
   </div>
   {#if store.shown('solve.scramble')}
-    <div class="scr" aria-label="Scramble" aria-live="polite">{#each scrTokens as t, idx (idx)}<span class:now={idx === walkIndex}>{t}</span> {/each}</div>
+    <div class="scr" aria-label="Scramble" aria-live="polite">{#each scrTokens as t, idx (idx)}<span class:now={idx === walkIndex}>{t}</span>{' '}{/each}</div>
     <button class="btn" style="align-self:center;min-height:40px" onclick={newScramble}>New scramble</button>
   {/if}
   {#if store.shown('solve.cube') && !store.cubeHidden && scramble.includes(' ') && !scramble.startsWith('Generating')}

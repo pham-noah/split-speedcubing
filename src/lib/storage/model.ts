@@ -1,4 +1,4 @@
-import type { Solve } from '../core/stats';
+import type { Penalty, Solve } from '../core/stats';
 import type { Card } from '../core/srs';
 
 export interface Attempt { ts: number; total: number; recog: number | null; grade: number; alg?: string; pen?: '+2' | 'DNF' }
@@ -14,6 +14,68 @@ export interface AppData { v: 1; solves: Solve[]; cards: Record<string, CardReco
 export const defaultSettings = (): Settings => ({ theme: 'midnight', textSize: 100, holdMs: 300, tapStart: false, inspection: false, beeps: true, hideTime: false, retention: 0.9, keys: {}, hidden: {}, introSeen: false, coverOn: true, coverColor: '', accent: '', walkAutoplay: false, walkSpeed: 900, cubeColors: [], swapRO: false });
 export const defaultData = (): AppData => ({ v: 1, solves: [], cards: {}, settings: defaultSettings(), drills: [], sessions: [{ id: 'default', name: 'Session 1' }], session: 'default', zbll: [] });
 
+const PENALTIES = new Set(['', '+2', 'DNF']);
+const THEMES = ['midnight', 'amoled', 'contrast'];
+const TEXT_SIZES = [100, 115, 130];
+const HOLD_TIMES = [150, 300, 500];
+
+const finite = (n: unknown): n is number => typeof n === 'number' && Number.isFinite(n);
+const positive = (n: unknown): n is number => finite(n) && n > 0;
+
+// A backup file is user-supplied JSON: every field that reaches the screens is checked here, so a
+// corrupt or hand-edited file cannot produce NaN averages, a "bogus" penalty or duplicate keys.
+function cleanSolves(raw: unknown[]): Solve[] {
+  const ids = new Set<string>();
+  const out: Solve[] = [];
+  for (const item of raw) {
+    if (!item || typeof item !== 'object') continue;
+    const s = item as Partial<Solve>;
+    if (!positive(s.ms)) continue;
+    let id = typeof s.id === 'string' && s.id ? s.id : `solve-${out.length + 1}`;
+    while (ids.has(id)) id = `${id}-copy`;
+    ids.add(id);
+    out.push({
+      id,
+      ms: s.ms,
+      pen: (typeof s.pen === 'string' && PENALTIES.has(s.pen) ? s.pen : '') as Penalty,
+      scramble: typeof s.scramble === 'string' ? s.scramble.trim() : '',
+      event: typeof s.event === 'string' && s.event ? s.event : '333',
+      ts: finite(s.ts) ? s.ts : 0,
+      ...(typeof s.session === 'string' ? { session: s.session } : {}),
+    });
+  }
+  return out;
+}
+
+function cleanSessions(raw: unknown): Session[] {
+  if (!Array.isArray(raw) || !raw.length) return [{ id: 'default', name: 'Session 1' }];
+  const ids = new Set<string>();
+  const out: Session[] = [];
+  for (const item of raw) {
+    const s = item as Partial<Session> | null;
+    if (!s || typeof s.id !== 'string' || !s.id || ids.has(s.id)) continue;
+    ids.add(s.id);
+    out.push({ id: s.id, name: typeof s.name === 'string' && s.name.trim() ? s.name.trim() : `Session ${out.length + 1}` });
+  }
+  return out.length ? out : [{ id: 'default', name: 'Session 1' }];
+}
+
+function cleanSettings(raw: Partial<Settings> | undefined): Settings {
+  const d: Settings = { ...defaultSettings(), ...(raw && typeof raw === 'object' ? raw : {}) };
+  if (!THEMES.includes(d.theme)) d.theme = 'midnight';
+  if (!TEXT_SIZES.includes(d.textSize)) d.textSize = 100;
+  if (!HOLD_TIMES.includes(d.holdMs)) d.holdMs = 300;
+  if (!finite(d.retention)) d.retention = 0.9;
+  d.retention = Math.min(0.99, Math.max(0.7, d.retention));
+  if (!Number.isFinite(d.walkSpeed) || d.walkSpeed < 150) d.walkSpeed = 900;
+  if (typeof d.coverColor !== 'string' || !/^#[0-9a-f]{6}$/i.test(d.coverColor)) d.coverColor = '';
+  if (typeof d.accent !== 'string' || !/^#[0-9a-f]{6}$/i.test(d.accent)) d.accent = '';
+  d.cubeColors = Array.isArray(d.cubeColors) ? d.cubeColors.filter(c => typeof c === 'string').slice(0, 6) : [];
+  d.keys = d.keys && typeof d.keys === 'object' ? Object.fromEntries(Object.entries(d.keys).filter(([, v]) => typeof v === 'string')) : {};
+  d.hidden = d.hidden && typeof d.hidden === 'object' ? { ...d.hidden } : {};
+  return d;
+}
+
 // Accepts anything parsed from a backup file and returns safe, complete data (throws if it is not a backup).
 export function normalize(raw: unknown): AppData {
   if (!raw || typeof raw !== 'object') throw new Error('Not a Split backup');
@@ -21,30 +83,34 @@ export function normalize(raw: unknown): AppData {
   if (!Array.isArray(r.solves) && typeof r.cards !== 'object') throw new Error('Not a Split backup');
   const out: AppData = {
     v: 1,
-    solves: (Array.isArray(r.solves) ? r.solves : []).filter(s => s && typeof s.ms === 'number'),
+    solves: cleanSolves(Array.isArray(r.solves) ? r.solves : []),
     cards: migrateCards(r.cards && typeof r.cards === 'object' ? (r.cards as Record<string, CardRecord>) : {}),
-    settings: { ...defaultSettings(), ...(r.settings ?? {}) },
-    sessions: Array.isArray(r.sessions) && r.sessions.length ? r.sessions.filter(x => x && x.id) : [{ id: 'default', name: 'Session 1' }],
+    settings: cleanSettings(r.settings),
+    sessions: cleanSessions(r.sessions),
     session: typeof r.session === 'string' ? r.session : 'default',
     zbll: Array.isArray(r.zbll) ? r.zbll.filter(c => c && c.id && c.alg) : [],
-    drills: Array.isArray(r.drills) ? r.drills.filter(d => d && typeof d.ms === 'number') : [],
+    drills: Array.isArray(r.drills) ? r.drills.filter(d => d && finite(d.ms) && d.ms >= 0) : [],
   };
   if (out.settings.fsrsW && !(out.settings.fsrsW.length === 21 && out.settings.fsrsW.every(Number.isFinite))) delete out.settings.fsrsW;
   // solves from before sessions existed belong to the first session
   const first = out.sessions[0].id;
-  for (const s of out.solves) s.session ??= first;
-  if (!out.sessions.some(x => x.id === out.session)) out.session = first;
+  const known = new Set(out.sessions.map(s => s.id));
+  for (const s of out.solves) if (!s.session || !known.has(s.session)) s.session = first;
+  if (!known.has(out.session)) out.session = first;
   return out;
 }
 
 function migrateCards(cards: Record<string, CardRecord>): Record<string, CardRecord> {
-  for (const c of Object.values(cards)) {
+  for (const [id, c] of Object.entries(cards)) {
+    if (!c || typeof c !== 'object') { delete cards[id]; continue; }
     if (c.alg) {
       c.algs = [...new Set([...(c.algs ?? []), c.alg])];
       c.defaultAlg ??= c.alg;
       delete c.alg;
     }
-    c.attempts ??= [];
+    c.attempts = Array.isArray(c.attempts) ? c.attempts.filter(a => a && finite(a.total)) : [];
+    if (!finite(c.due)) c.due = 0;
+    c.seen = !!c.seen;
   }
   return cards;
 }

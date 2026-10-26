@@ -16,10 +16,10 @@
     return `${s.length} solves · best ${formatTime(best(s))} · avg ${formatTime(mean)} · ao12 ${formatTime(averageOf(s, 12))} · last ${when}`;
   };
   function create() { store.addSession(name); name = ''; onClose(); }
-  // S returns to the timer, like Escape
+  // Escape goes back; so does the "New scramble" key (S by default), matching the timer screen
   function onKey(e: KeyboardEvent) {
     if (/INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement).tagName)) return;
-    if (e.code === 'KeyS' || e.key === 'Escape') { e.preventDefault(); onClose(); }
+    if (store.is(e, 'back') || store.is(e, 'scramble')) { e.preventDefault(); onClose(); }
   }
 </script>
 
