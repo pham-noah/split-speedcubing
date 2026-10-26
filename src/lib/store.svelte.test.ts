@@ -146,6 +146,12 @@ describe('store: backups that can be undone', () => {
     expect(store.solves.length).toBe(before);
     expect(store.canUndoRestore).toBe(false);
   });
+  it('importing the same date-less list twice adds nothing the second time', () => {
+    store.erase();
+    const list = [{ name: 'List', solves: [{ ms: 9000, pen: '' as const, scramble: '', ts: 0 }, { ms: 8000, pen: '' as const, scramble: '', ts: 1 }] }];
+    expect(store.importSolves(list, 'List')).toEqual({ added: 2, duplicates: 0, sessions: 1 });
+    expect(store.importSolves(list, 'List')).toEqual({ added: 0, duplicates: 2, sessions: 0 });
+  });
 });
 
 describe('store: personalised scheduling', () => {

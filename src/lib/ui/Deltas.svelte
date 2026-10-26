@@ -6,7 +6,7 @@
   let { times, rows = 5, title = 'Recent attempts' }: { times: number[]; rows?: number; title?: string } = $props();
 
   const fmt = (x: number | null) => (x == null ? '–' : `${x >= 0 ? '+' : '−'}${(Math.abs(x) / 1000).toFixed(2)}`);
-  const col = (x: number | null) => (x == null ? 'var(--mu)' : x < 0 ? 'var(--good)' : 'var(--bad)');
+  const col = (x: number | null) => (x == null || x === 0 ? 'var(--mu)' : x < 0 ? 'var(--good)' : 'var(--bad)');
   const cellStyle = (x: number | null) => `flex:1;text-align:right;color:${col(x)}`;
   const mean = (end: number, n: number) => {
     const xs = times.slice(Math.max(0, end - n + 1), end + 1);

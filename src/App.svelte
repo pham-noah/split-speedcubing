@@ -18,7 +18,7 @@
   $effect(() => {
     const v = nav.view;
     if (loaded === v) return;
-    VIEWS[v]().then(m => { Screen = m.default; loaded = v; })
+    VIEWS[v]().then(m => { if (nav.view !== v) return; Screen = m.default; loaded = v; })
       .catch((err) => { loadError = String(err); });
   });
   // once the first screen is up, quietly fetch the others (the browser caches the chunks)
@@ -81,6 +81,8 @@
     if (typing(e) || !store.ready || nav.hintActive) return;
     if (store.is(e, 'back')) { if (nav.back()) e.preventDefault(); return; }
     if (!store.data.settings.introSeen) return;
+    // a tab shortcut in the middle of a solve would throw the solve away: Esc stops the clock first
+    if (store.timerRunning) return;
     for (const [cmd, v] of Object.entries(GO)) if (store.is(e, cmd)) { nav.go(v); e.preventDefault(); return; }
     if (store.is(e, 'cube')) { store.cubeHidden = !store.cubeHidden; e.preventDefault(); return; }
     if (store.is(e, 'tabPrev')) { cycle(-1); e.preventDefault(); return; }

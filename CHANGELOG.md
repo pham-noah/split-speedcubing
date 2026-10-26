@@ -23,6 +23,12 @@ Trainer polish, and the trainer now grades itself.
 - Scrambles were drawn without spaces between moves ("R2F2R'B'R...") because Svelte drops whitespace inside an each block; Solve, Train and Drills were all affected.
 - "Retry this scramble" did nothing: the request was a plain field read once at startup, so the timer never saw it.
 - No sideways overflow at Extra large text on a 360 px phone (tab bar, segmented controls, scramble line).
+- A solve in progress is no longer thrown away by leaving the screen: Esc / Back stops the clock instead of navigating, tab shortcuts are ignored while the timer runs, and Esc in the Library search box clears the search or closes the case panel.
+- CI runs on the branch that exists (master), so the checks the README points at really run on every push; `*.jks` and `*.p12` are ignored so an upload key cannot be committed by accident.
+- An imported DNF with no time is no longer deleted on the next launch, and importing the same date-less file twice is recognised as duplicates (invented timestamps are anchored to the start of the day, not the clock).
+- Best ao5 / ao12 is a single pass now: it took 0.5 s per call at 20 000 solves, twice per History render.
+- A null cards field, or a backup from a newer version, is refused instead of quietly wiping the data.
+- ZBLL import reports the file's own line numbers; the weak-spot and lapsed drills follow their own order; right-click no longer starts the timer; a zero delta is not coloured as slower; a fast tab switch on a cold cache can no longer show the wrong screen.
 - Data loss is no longer silent: the pending save is flushed when the app is hidden or closed, write and read errors are shown with a retry, and a backup can no longer bring in NaN/negative times, unknown penalties or duplicate solve ids.
 - The IndexedDB connection is opened once instead of once per read and per write, and is closed when another tab upgrades the schema.
 - Scramble walkthrough: animation timers are cleared when it unmounts, and a solve started before the first scramble arrived is no longer saved with the "Generating scramble..." text.

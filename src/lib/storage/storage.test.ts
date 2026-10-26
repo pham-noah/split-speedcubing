@@ -44,4 +44,15 @@ describe('storage + backup', () => {
     expect(d.settings.accent).toBe('');
     expect(d.settings.hidden).toEqual({});
   });
+  it('keeps a DNF that has no time at all', () => {
+    const d = normalize({ solves: [{ id: 'd', ms: 0, pen: 'DNF', scramble: '', event: '333', ts: 5 }], cards: {} });
+    expect(d.solves.length).toBe(1);
+    expect(d.solves[0].pen).toBe('DNF');
+    // a zero time without the DNF penalty is still junk
+    expect(normalize({ solves: [{ id: 'z', ms: 0, pen: '', scramble: '', event: '333', ts: 5 }], cards: {} }).solves.length).toBe(0);
+  });
+  it('refuses a null cards field and a backup from a newer version', () => {
+    expect(() => normalize({ cards: null })).toThrow();
+    expect(() => normalize({ solves: [], cards: {}, v: 2 })).toThrow(/newer version/);
+  });
 });

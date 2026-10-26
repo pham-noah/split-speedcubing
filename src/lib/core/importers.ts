@@ -181,9 +181,13 @@ export function parseImport(text: string): ImportResult {
   return parseList(t);
 }
 
-/** Fill in timestamps for solves that had none, so order is kept: spaced one second apart ending now. */
+/** Fill in timestamps for solves that had none, so order is kept. They are anchored to the start of
+ *  the day rather than to the clock, so importing the same date-less file twice produces the same
+ *  timestamps and the duplicate check can actually see them. */
 export function withTimestamps(s: ImportedSession, now = Date.now()): ImportedSolve[] {
-  const missing = s.solves.filter(x => x.ts < 1e11).length;
+  const dayStart = new Date(now);
+  dayStart.setHours(0, 0, 0, 0);
+  const base = dayStart.getTime();
   let i = 0;
-  return s.solves.map(x => (x.ts >= 1e11 ? x : { ...x, ts: now - (missing - i++) * 1000 }));
+  return s.solves.map(x => (x.ts >= 1e11 ? x : { ...x, ts: base + i++ }));
 }

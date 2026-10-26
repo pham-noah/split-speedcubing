@@ -14,6 +14,8 @@ const uid = () => crypto.randomUUID?.() ?? String(Date.now() + Math.random());
 class Store {
   data = $state<AppData>(defaultData());
   ready = $state(false);
+  /** true while a timer is holding or running: the shell must not navigate away from a live solve */
+  timerRunning = $state(false);
   /** a write to storage failed: the screens show it rather than losing data quietly */
   saveError = $state<string | null>(null);
   /** the saved data could not be read; the app runs on empty data until the user tries again */
@@ -233,15 +235,19 @@ class Store {
     const errors: string[] = [];
     let added = 0;
     const have = new Set(this.data.zbll.map(c => c.alg));
-    text.split(/\r?\n/).map(l => l.trim()).filter(l => l && !l.startsWith('#')).forEach((line, i) => {
-      const m = /^([^:]{1,40}):\s*(.+)$/.exec(line);
-      const name = m ? m[1].trim() : `ZBLL ${this.data.zbll.length + added + 1}`;
-      const alg = (m ? m[2] : line).trim().replace(/\s+/g, ' ');
-      const err = validateAlg(alg) ?? (isZbllCase(alg) ? null : 'does not start from a last layer with oriented edges and solved F2L');
-      if (err) errors.push(`Line ${i + 1}: ${err}`);
-      else if (have.has(alg)) errors.push(`Line ${i + 1}: duplicate`);
-      else { this.data.zbll.push({ id: `ZBLL-${uid()}`, name, alg }); have.add(alg); added++; }
-    });
+    // keep the file's own line numbers: a comment or blank line must not shift every "Line N"
+    text.split(/\r?\n/)
+      .map((line, n) => ({ line: line.trim(), n: n + 1 }))
+      .filter(x => x.line && !x.line.startsWith('#'))
+      .forEach(({ line, n }) => {
+        const m = /^([^:]{1,40}):\s*(.+)$/.exec(line);
+        const name = m ? m[1].trim() : `ZBLL ${this.data.zbll.length + added + 1}`;
+        const alg = (m ? m[2] : line).trim().replace(/\s+/g, ' ');
+        const err = validateAlg(alg) ?? (isZbllCase(alg) ? null : 'does not start from a last layer with oriented edges and solved F2L');
+        if (err) errors.push(`Line ${n}: ${err}`);
+        else if (have.has(alg)) errors.push(`Line ${n}: duplicate`);
+        else { this.data.zbll.push({ id: `ZBLL-${uid()}`, name, alg }); have.add(alg); added++; }
+      });
     this.persist();
     return { added, errors };
   }

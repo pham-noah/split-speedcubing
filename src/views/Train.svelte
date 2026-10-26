@@ -77,8 +77,9 @@
     drill = null; // moving on ends an algorithm drill
     let c: CaseDef | null = null;
     if (store.focusId) { c = store.caseOf(store.focusId); set = c.set; store.focusId = null; }
-    else if (weak) { c = pickNext(weakList, store.cardsFor(set), lastId, 0); }
-    else if (lapsed) { c = pickNext(lapsedList, store.cardsFor(set), lastId, 0); }
+    // the weak / lapsed lists are already ordered: take the next one in that order, not the next due
+    else if (weak) c = weakList.find(x => x.id !== lastId) ?? weakList[0] ?? null;
+    else if (lapsed) c = lapsedList.find(x => x.id !== lastId) ?? lapsedList[0] ?? null;
     else c = pickNext(store.casesFor(set).filter(inScope), store.cardsFor(set), lastId);
     current = c; auf = randomAuf(); lastId = c?.id ?? null;
   }
@@ -183,6 +184,7 @@
   const typing = (e: Event) => /INPUT|TEXTAREA/.test((e.target as HTMLElement).tagName);
   function onKey(e: KeyboardEvent) {
     if (typing(e)) return;
+    if (store.timerRunning) return;   // the timer owns the keyboard while it runs
     // Today screen: A / D switch the case set, S opens the training history, Enter starts
     if (!started && !hist) {
       if (store.is(e, 'trainPrev')) { set = SET_NAMES[(SET_NAMES.indexOf(set) - 1 + SET_NAMES.length) % SET_NAMES.length]; e.preventDefault(); return; }

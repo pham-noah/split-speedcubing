@@ -5,4 +5,6 @@ src-tauri/target
 android/local.properties
 android/.gradle
 *.keystore
+*.jks
+*.p12
 .DS_Store

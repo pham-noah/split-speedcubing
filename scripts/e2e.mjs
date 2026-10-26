@@ -56,11 +56,19 @@ await hold(120); await sleep(100);
 check('a too-short hold does not start the timer', /Hold to start/.test(await page.evaluate(() => document.querySelector('.big').textContent)));
 await hold(450); await sleep(150);
 check('long hold starts the timer', /Tap to stop/.test(await page.evaluate(() => document.querySelector('.big').textContent)));
+// a tab shortcut in the middle of a solve must not walk away from it
+await page.keyboard.press('Digit2'); await sleep(250);
+const stillSolving = await page.evaluate(() => document.querySelector('.big')?.textContent ?? '');
+check('a tab shortcut does not abandon a running solve', /Tap to stop/.test(stillSolving), `(button says "${stillSolving.trim()}")`);
 await sleep(1300); await tap(); await sleep(300);
 const afterSolve = await text();
 check('solve is recorded', /History · 1/.test(afterSolve));
 const shown = await page.evaluate(() => document.querySelector('.time').textContent);
 check('displayed time is about the elapsed time', Math.abs(parseFloat(shown) - 1.3) < 0.5, `(${shown}s)`);
+// Esc stops the clock instead of navigating away, and an abandoned solve is not recorded
+await hold(450); await sleep(200); await page.keyboard.press('Escape'); await sleep(250);
+check('Escape cancels a running solve without recording it',
+  /Hold to start/.test(await page.evaluate(() => document.querySelector('.big').textContent)) && /History · 1/.test(await text()));
 
 // --- persistence across a reload (IndexedDB)
 await sleep(500); // store saves after a short debounce

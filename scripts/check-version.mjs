@@ -1,5 +1,5 @@
-// One version, four files. Run by CI (and by hand before a release) so the app, the desktop
-// shell and the APK can never disagree about what they are.
+// One version, five files. Run by CI (and by hand before a release) so the app, the desktop
+// shell, the APK and the changelog can never disagree about what they are.
 import { readFileSync } from 'node:fs';
 
 const read = p => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

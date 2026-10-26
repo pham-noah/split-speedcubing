@@ -69,6 +69,7 @@
   const typing = (e: Event) => /INPUT|TEXTAREA/.test((e.target as HTMLElement).tagName);
   function onKey(e: KeyboardEvent) {
     if (typing(e) || history || sessions) return;
+    if (store.timerRunning) return;   // the timer owns the keyboard while it runs
     if (store.is(e, 'plus2')) store.setPenalty('+2');
     else if (store.is(e, 'dnf')) store.setPenalty('DNF');
     else if (store.is(e, 'deleteLast')) removeLast();

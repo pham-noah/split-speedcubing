@@ -30,14 +30,16 @@ function cleanSolves(raw: unknown[]): Solve[] {
   for (const item of raw) {
     if (!item || typeof item !== 'object') continue;
     const s = item as Partial<Solve>;
-    if (!positive(s.ms)) continue;
+    const pen = (typeof s.pen === 'string' && PENALTIES.has(s.pen) ? s.pen : '') as Penalty;
+    // a DNF can legitimately have no time at all: importers store it as 0
+    if (!positive(s.ms) && !(s.ms === 0 && pen === 'DNF')) continue;
     let id = typeof s.id === 'string' && s.id ? s.id : `solve-${out.length + 1}`;
     while (ids.has(id)) id = `${id}-copy`;
     ids.add(id);
     out.push({
       id,
-      ms: s.ms,
-      pen: (typeof s.pen === 'string' && PENALTIES.has(s.pen) ? s.pen : '') as Penalty,
+      ms: s.ms as number,
+      pen,
       scramble: typeof s.scramble === 'string' ? s.scramble.trim() : '',
       event: typeof s.event === 'string' && s.event ? s.event : '333',
       ts: finite(s.ts) ? s.ts : 0,
@@ -80,7 +82,12 @@ function cleanSettings(raw: Partial<Settings> | undefined): Settings {
 export function normalize(raw: unknown): AppData {
   if (!raw || typeof raw !== 'object') throw new Error('Not a Split backup');
   const r = raw as Partial<AppData>;
-  if (!Array.isArray(r.solves) && typeof r.cards !== 'object') throw new Error('Not a Split backup');
+  // typeof null is 'object': a null cards field must not count as a usable backup
+  const hasSolves = Array.isArray(r.solves);
+  const hasCards = !!r.cards && typeof r.cards === 'object' && !Array.isArray(r.cards);
+  if (!hasSolves && !hasCards) throw new Error('Not a Split backup');
+  // a backup from a newer version may hold fields this one would silently drop: refuse it instead
+  if (r.v != null && (typeof r.v !== 'number' || r.v > 1)) throw new Error('That backup was made by a newer version of Split');
   const out: AppData = {
     v: 1,
     solves: cleanSolves(Array.isArray(r.solves) ? r.solves : []),

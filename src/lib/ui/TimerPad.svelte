@@ -78,14 +78,19 @@
     raf = requestAnimationFrame(loop);
   }
   const endInspection = () => { inspActive = false; };
-  $effect(() => { onRunning?.(st === 'run' || st === 'hold' || st === 'ready'); });
+  // the whole app needs to know a timer is running: tab shortcuts must not navigate away from a live solve
+  $effect(() => {
+    const busy = st === 'run' || st === 'hold' || st === 'ready';
+    store.timerRunning = busy;
+    onRunning?.(busy);
+  });
 
   // a phone that dims mid-solve is worse than a slightly brighter screen
   async function keepAwake() {
     try {
-      const nav = navigator as any;
-      if (!nav.wakeLock || wake) return;
-      wake = await nav.wakeLock.request('screen');
+      const api = navigator as any;
+      if (!api.wakeLock || wake) return;
+      wake = await api.wakeLock.request('screen');
       wake.addEventListener?.('release', () => { wake = null; });
     } catch { /* not supported, or the page is in the background */ }
   }
@@ -141,15 +146,16 @@
   }
   function cancel() { clearTimeout(holdTimer); cancelAnimationFrame(raf); endInspection(); st = 'idle'; clearTimeout(flashT); coverOpen = false; stopped = null; }
 
-  // Esc / Android Back cancels an inspection or a hold instead of leaving the screen
-  $effect(() => { if (inspActive || st === 'hold' || st === 'ready') return nav.onBack(() => { cancel(); return true; }); });
+  // Esc / Android Back cancels the timer instead of leaving the screen -- including a solve in
+  // progress, which used to be discarded silently when the screen changed under it
+  $effect(() => { if (inspActive || st === 'hold' || st === 'ready' || st === 'run') return nav.onBack(() => { cancel(); return true; }); });
   // the browser drops the lock when the tab goes away: take it again if the clock is still running
   $effect(() => {
     const onVis = () => { if (document.visibilityState === 'visible' && st === 'run') keepAwake(); };
     document.addEventListener('visibilitychange', onVis);
     return () => document.removeEventListener('visibilitychange', onVis);
   });
-  onDestroy(() => { cancelAnimationFrame(raf); clearTimeout(holdTimer); letSleep(); audio?.close().catch(() => {}); });
+  onDestroy(() => { cancelAnimationFrame(raf); clearTimeout(holdTimer); clearTimeout(flashT); letSleep(); store.timerRunning = false; audio?.close().catch(() => {}); });
   const typing = (e: Event) => /INPUT|TEXTAREA/.test((e.target as HTMLElement).tagName);
 </script>
 
@@ -159,7 +165,7 @@
     if (store.is(e, 'timer')) { e.preventDefault(); e.stopPropagation(); if (!e.repeat) down(); }
   }}
   onkeyup={(e) => { if (store.is(e, 'timer')) up(); }}
-  onpointerdown={(e) => { const t = e.target as HTMLElement; if (st === 'run' ? !t.closest('nav') : !!t.closest('.big')) down(); }}
+  onpointerdown={(e) => { if (e.button !== 0) return; const t = e.target as HTMLElement; if (st === 'run' ? !t.closest('nav') : !!t.closest('.big')) down(); }}
   onpointerup={up}
   onpointercancel={up}
 />

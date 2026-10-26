@@ -32,6 +32,29 @@ describe('stats', () => {
     expect(best(list(9000, [5000, '+2'], 8000))).toBe(7000);
     expect(bestAverage(list(20000, 20000, 20000, 20000, 20000, 9000, 9000, 9000, 9000, 9000), 5)).toBe(9000);
   });
+  it('best average matches a naive scan over the same windows', () => {
+    const naive = (xs: Solve[], n: number) => {
+      let b: number | null = null;
+      for (let i = n; i <= xs.length; i++) {
+        const a = averageOf(xs.slice(0, i), n);
+        if (a !== null && (b === null || a < b)) b = a;
+      }
+      return b;
+    };
+    const seed = (i: number) => ((i * 2654435761) % 1000) / 100 + 7;   // deterministic spread
+    for (const n of [3, 5, 12]) {
+      const xs = Array.from({ length: 120 }, (_, i) => mk(Math.round(seed(i) * 1000), i % 17 === 0 ? 'DNF' : i % 11 === 0 ? '+2' : ''));
+      expect(bestAverage(xs, n)).toBe(naive(xs, n));
+    }
+  });
+  it('best average over 20 000 solves is a single pass, not half a second', () => {
+    const xs = Array.from({ length: 20_000 }, (_, i) => mk(8000 + (i % 400) * 10));
+    const t0 = performance.now();
+    const b = bestAverage(xs, 5);
+    const ms = performance.now() - t0;
+    expect(b).not.toBeNull();
+    expect(ms).toBeLessThan(120);
+  });
   it('formats times', () => {
     expect(formatTime(9840)).toBe('9.84');
     expect(formatTime(65430)).toBe('1:05.43');

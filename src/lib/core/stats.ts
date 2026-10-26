@@ -35,13 +35,30 @@ export function meanOf(solves: Solve[], n: number): number | null {
   const m = v.reduce((a, b) => a + b, 0) / n;
   return Number.isFinite(m) ? m : Infinity;
 }
+// Best WCA average of n over every window: one pass, keeping the window sorted (a running
+// re-sort made this quadratic -- 0.5 s for 20 000 solves, twice per History render).
 export function bestAverage(solves: Solve[], n: number): number | null {
-  let b: number | null = null;
-  for (let i = n; i <= solves.length; i++) {
-    const a = averageOf(solves.slice(0, i), n);
-    if (a !== null && (b === null || a < b)) b = a;
+  if (n < 3 || solves.length < n) return null;
+  let best: number | null = null;
+  const win: number[] = [];
+  for (let i = 0; i < solves.length; i++) {
+    const v = effective(solves[i]);
+    let lo = 0, hi = win.length;
+    while (lo < hi) { const mid = (lo + hi) >> 1; if (win[mid] < v) lo = mid + 1; else hi = mid; }
+    win.splice(lo, 0, v);
+    if (win.length > n) {
+      const out = effective(solves[i - n]);
+      win.splice(win.indexOf(out), 1);
+    }
+    if (win.length === n) {
+      let sum = 0;
+      for (let k = 1; k < n - 1; k++) sum += win[k];   // drop the best and the worst
+      const mean = sum / (n - 2);
+      const a = Number.isFinite(mean) ? mean : Infinity;
+      if (best === null || a < best) best = a;
+    }
   }
-  return b;
+  return best;
 }
 
 /** What an attempt cost: execution time plus a +2, while a DNF has no usable time. */

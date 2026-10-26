@@ -177,7 +177,16 @@
     selId = null;
   }
   function onKey(e: KeyboardEvent) {
-    if (/INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement).tagName)) return;
+    const inField = /INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement).tagName);
+    // Esc must still work from the search box: clear the query, or close an open case panel
+    if (inField) {
+      if (e.key === 'Escape') {
+        if (q) { q = ''; e.preventDefault(); return; }
+        if (selId) { selId = null; e.preventDefault(); return; }
+      }
+      return;
+    }
+    if (store.timerRunning) return;   // the timer owns the keyboard while it runs
     if (training) {
       // the learner owns the arrows; penalties work like on the timer
       if (store.is(e, 'plus2')) { togglePen('+2'); e.preventDefault(); return; }
