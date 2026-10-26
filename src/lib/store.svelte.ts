@@ -127,10 +127,11 @@ class Store {
     if (s) this.deleteSolve(s.id);
   }
   deleteSolve(id: string) { this.data.solves = this.data.solves.filter(s => s.id !== id); this.persist(); }
-  /** put a deleted solve back where it was (undo) */
+  /** put a deleted solve back where it was (undo). `index` is a position in data.solves, not in the
+   *  current session: the two differ as soon as there is more than one session. */
   restoreSolve(solve: Solve, index: number) {
     if (this.data.solves.some(s => s.id === solve.id)) return;
-    this.data.solves.splice(Math.min(index, this.data.solves.length), 0, solve);
+    this.data.solves.splice(Math.min(Math.max(0, index), this.data.solves.length), 0, solve);
     this.persist();
   }
   cyclePenalty(id: string) {

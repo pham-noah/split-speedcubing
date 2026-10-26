@@ -15,13 +15,16 @@ export function randomMoveScramble(len = 20, rnd = Math.random): string {
 
 const TIMEOUT_MS = 8000;
 export async function newScramble(event = '333'): Promise<string> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
   try {
     // never wait forever: if the worker is blocked or fails to start, fall back to random moves
-    const timeout = new Promise<never>((_, rej) => setTimeout(() => rej(new Error('scramble timeout')), TIMEOUT_MS));
+    const timeout = new Promise<never>((_, rej) => { timer = setTimeout(() => rej(new Error('scramble timeout')), TIMEOUT_MS); });
     const make = import('cubing/scramble').then(m => m.randomScrambleForEvent(event)).then(a => a.toString());
     return await Promise.race([make, timeout]);
   } catch {
     return randomMoveScramble();
+  } finally {
+    clearTimeout(timer);   // otherwise every scramble leaves a timer behind
   }
 }
 

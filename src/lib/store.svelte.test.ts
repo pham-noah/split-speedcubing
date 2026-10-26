@@ -152,6 +152,19 @@ describe('store: backups that can be undone', () => {
     expect(store.importSolves(list, 'List')).toEqual({ added: 2, duplicates: 0, sessions: 1 });
     expect(store.importSolves(list, 'List')).toEqual({ added: 0, duplicates: 2, sessions: 0 });
   });
+  it('undo puts a deleted solve back where it was in a second session too', () => {
+    store.erase();
+    store.addSolve(9000, 'R U');
+    store.addSession('Second');
+    store.addSolve(8000, 'F B');
+    store.addSolve(7000, 'L D');
+    const [older, newer] = store.solves;
+    const index = store.data.solves.findIndex(s => s.id === older.id);
+    store.deleteSolve(older.id);
+    expect(store.solves.map(s => s.id)).toEqual([newer.id]);
+    store.restoreSolve(older, index);
+    expect(store.solves.map(s => s.id)).toEqual([older.id, newer.id]);
+  });
 });
 
 describe('store: personalised scheduling', () => {

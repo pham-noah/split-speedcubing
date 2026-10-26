@@ -13,14 +13,28 @@
   };
   let Screen = $state<any>(null);
   let loaded: View | null = null;
+  let loading: View | null = null;
   let loadError = $state<string | null>(null);
   const Current = $derived<any>(Screen);
-  $effect(() => {
-    const v = nav.view;
-    if (loaded === v) return;
-    VIEWS[v]().then(m => { if (nav.view !== v) return; Screen = m.default; loaded = v; })
-      .catch((err) => { loadError = String(err); });
-  });
+
+  /** load a screen's chunk; `force` retries the one that failed */
+  async function show(v: View, force = false) {
+    if (!force && loaded === v) return;
+    if (loading === v) return;
+    loading = v;
+    loadError = null;
+    try {
+      const m = await VIEWS[v]();
+      if (nav.view !== v) return;        // the user moved on while it downloaded
+      Screen = m.default;
+      loaded = v;
+    } catch (err) {
+      if (nav.view === v) loadError = String(err);
+    } finally {
+      if (loading === v) loading = null;
+    }
+  }
+  $effect(() => { void show(nav.view); });
   // once the first screen is up, quietly fetch the others (the browser caches the chunks)
   $effect(() => {
     if (!Screen) return;
@@ -122,7 +136,7 @@
           <div style="font-weight:800;color:#FF8A80">That screen could not load</div>
           <div class="mu">Probably a dropped connection on the first visit. Your data is untouched.</div>
           <div class="row" style="gap:8px">
-            <button class="btn p" style="flex:1" onclick={() => { loadError = null; loaded = null; nav.go('solve'); }}>Try again</button>
+            <button class="btn p" style="flex:1" onclick={() => { loaded = null; void show(nav.view, true); }}>Try again</button>
           </div>
         </div>
       </main>

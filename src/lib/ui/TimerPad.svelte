@@ -144,7 +144,7 @@
       coverOpen = false; // let go before the timer was ready: the colour goes back down
     }
   }
-  function cancel() { clearTimeout(holdTimer); cancelAnimationFrame(raf); endInspection(); st = 'idle'; clearTimeout(flashT); coverOpen = false; stopped = null; }
+  function cancel() { clearTimeout(holdTimer); cancelAnimationFrame(raf); endInspection(); st = 'idle'; clearTimeout(flashT); coverOpen = false; stopped = null; letSleep(); }
 
   // Esc / Android Back cancels the timer instead of leaving the screen -- including a solve in
   // progress, which used to be discarded silently when the screen changed under it

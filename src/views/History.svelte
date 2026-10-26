@@ -92,7 +92,7 @@
               <button class="btn" onclick={() => { store.retryScramble(s.scramble); onBack(); }}>Retry this scramble</button>
               <button class="btn" onclick={() => store.cyclePenalty(s.id)}>Penalty: {s.pen || 'none'}</button>
               <button class="btn" onclick={() => {
-              const index = solves.findIndex(x => x.id === s.id);
+              const index = store.data.solves.findIndex(x => x.id === s.id);
               store.deleteSolve(s.id); open = null;
               undone = { solve: s, index };
               clearTimeout(undoT); undoT = setTimeout(() => (undone = null), 6000);

@@ -153,7 +153,7 @@
   const sessionStats = $derived.by(() => {
     const all = Object.values(store.data.cards).flatMap(c => c.attempts).filter(a => a.ts >= sessionStart);
     const execs = all.map(a => a.total - (a.recog ?? 0));
-    return { n: all.length, best: execs.length ? Math.min(...execs) : null };
+    return { n: all.length, best: execs.length ? execs.reduce((a, b) => (b < a ? b : a), Infinity) : null };
   });
   const execOf = (a: { total: number; recog: number | null }) => a.total - (a.recog ?? 0);
   const avgOf = (n: number) => { const xs = attempts.map(execOf).slice(-n); return xs.length === n ? xs.reduce((p, q) => p + q, 0) / n : null; };

@@ -4,7 +4,7 @@
   import TimerPad from '../lib/ui/TimerPad.svelte';
   import { ScrambleQueue } from '../lib/core/scramble';
   import { make2Look, type TwoLook } from '../lib/core/twolook';
-  import { formatTime } from '../lib/core/stats';
+  import { formatTime, effective } from '../lib/core/stats';
   import ShortcutsSide from '../lib/ui/ShortcutsSide.svelte';
   import ScrambleWalk from '../lib/ui/ScrambleWalk.svelte';
   import { hoverEnter, hoverLeave } from '../lib/ui/hover';
@@ -93,6 +93,12 @@
   const recent = $derived(results.slice(-10));
   const mean = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
   const okOnly = $derived(recent.filter(d => d.ok));
+  // a penalty has to reach the numbers, not just the button: +2 adds two seconds, a DNF has no time
+  const exec = (d: DrillResult) => effective({ ms: d.ms, pen: d.pen ?? '' });
+  const timed = $derived(okOnly.map(exec).filter(Number.isFinite));
+  // the drill that just finished, with whatever penalty has been put on it since
+  const lastPen = $derived(results.at(-1)?.pen ?? '');
+  const pendingMs = $derived(pending ? (lastPen === 'DNF' ? Infinity : pending.ms + (lastPen === '+2' ? 2000 : 0)) : null);
   const isLookMode = $derived(mode === 'oll2' || mode === 'pll2');
   const twoStage = $derived(isLookMode ? twoLook : mode !== 'cross');
 
@@ -147,7 +153,7 @@
   {/if}
 
   {#if pending}
-    <div class="time mono">{formatTime(pending.ms)}</div>
+    <div class="time mono">{formatTime(pendingMs)}</div>
     {#if twoStage || mode === 'bld'}
       <div class="mu" style="text-align:center">{stage1Label} <b class="mono" style="color:var(--tx)">{formatTime(pending.memo)}</b> &nbsp; {stage2Label} <b class="mono" style="color:var(--tx)">{formatTime(pending.memo == null ? null : pending.ms - pending.memo)}</b></div>
     {/if}
@@ -168,9 +174,9 @@
   {/if}
 
   <div class="row">
-    <div class="card"><div class="mu">Last 10 average</div><b class="mono">{formatTime(mean(okOnly.map(d => d.ms)))}</b></div>
+    <div class="card"><div class="mu">Last 10 average</div><b class="mono">{formatTime(mean(timed))}</b></div>
     {#if twoStage}
-      <div class="card"><div class="mu">{stage1Label} avg</div><b class="mono">{formatTime(mean(okOnly.filter(d => d.memo != null).map(d => d.memo!)))}</b></div>
+      <div class="card"><div class="mu">{stage1Label} avg</div><b class="mono">{formatTime(mean(okOnly.filter(d => d.memo != null && d.pen !== 'DNF').map(d => d.memo!)))}</b></div>
     {/if}
     {#if mode === 'bld'}
       <div class="card"><div class="mu">Success</div><b class="mono">{recent.length ? Math.round((okOnly.length / recent.length) * 100) : 0}%</b></div>
@@ -184,7 +190,7 @@
     {#if results.length}
       <PenaltyRow pen={results.at(-1)?.pen ?? ''} onpen={togglePen} ondelete={dropDrill} />
     {/if}
-    <Deltas times={results.map(d => d.ms)} title="Recent {MODES.find(m => m.id === mode)?.label} attempts" />
+    <Deltas times={results.map(exec).filter(Number.isFinite)} title="Recent {MODES.find(m => m.id === mode)?.label} attempts" />
     <ShortcutsSide view="drills" inline />
   </aside></div>
 </main>

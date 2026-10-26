@@ -29,6 +29,10 @@ Trainer polish, and the trainer now grades itself.
 - Best ao5 / ao12 is a single pass now: it took 0.5 s per call at 20 000 solves, twice per History render.
 - A null cards field, or a backup from a newer version, is refused instead of quietly wiping the data.
 - ZBLL import reports the file's own line numbers; the weak-spot and lapsed drills follow their own order; right-click no longer starts the timer; a zero delta is not coloured as slower; a fast tab switch on a cold cache can no longer show the wrong screen.
+- Undo after deleting a solve puts it back where it belonged in a second or later session (the index was taken from the session's solves and applied to the whole list).
+- Drill penalties now reach the numbers: a +2 adds two seconds and a DNF drops out of the average, instead of only lighting up the button.
+- "Try again" on a failed screen load really retries it instead of sitting on "Loading…".
+- Esc during a solve releases the screen wake lock; `best` no longer spreads the whole list into `Math.min` (a RangeError past ~130k solves); the scramble timeout is cleared; a backup from a newer version says so in the error message.
 - Data loss is no longer silent: the pending save is flushed when the app is hidden or closed, write and read errors are shown with a retry, and a backup can no longer bring in NaN/negative times, unknown penalties or duplicate solve ids.
 - The IndexedDB connection is opened once instead of once per read and per write, and is closed when another tab upgrades the schema.
 - Scramble walkthrough: animation timers are cleared when it unmounts, and a solve started before the first scramble arrived is no longer saved with the "Generating scramble..." text.

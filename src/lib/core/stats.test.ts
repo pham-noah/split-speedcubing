@@ -32,6 +32,10 @@ describe('stats', () => {
     expect(best(list(9000, [5000, '+2'], 8000))).toBe(7000);
     expect(bestAverage(list(20000, 20000, 20000, 20000, 20000, 9000, 9000, 9000, 9000, 9000), 5)).toBe(9000);
   });
+  it('best single survives a list far too long to spread into Math.min', () => {
+    const many = Array.from({ length: 150_000 }, (_, i) => mk(1000 + i));
+    expect(best(many)).toBe(1000);
+  });
   it('best average matches a naive scan over the same windows', () => {
     const naive = (xs: Solve[], n: number) => {
       let b: number | null = null;

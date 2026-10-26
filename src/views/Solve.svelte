@@ -54,7 +54,8 @@
     const list = store.solves;
     const last = list.at(-1);
     if (!last) return;
-    const index = list.length - 1;
+    // the undo index is a position in the whole solve list, not in this session
+    const index = store.data.solves.findIndex(x => x.id === last.id);
     store.deleteLast();
     undone = { solve: last, index };
     clearTimeout(undoT);

@@ -18,7 +18,12 @@ export function formatTime(ms: number | null | undefined): string {
   return s.toFixed(2);
 }
 
-export const best = (solves: Solve[]): number | null => (solves.length ? Math.min(...solves.map(effective)) : null);
+export const best = (solves: Solve[]): number | null => {
+  // a loop, not Math.min(...array): spreading 130 000 solves throws RangeError
+  let b = Infinity;
+  for (const s of solves) { const t = effective(s); if (t < b) b = t; }
+  return solves.length ? b : null;
+};
 
 // WCA-style average of the last n solves: drop best and worst, mean of the rest. Two or more DNFs make the average a DNF.
 export function averageOf(solves: Solve[], n: number): number | null {
