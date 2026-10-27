@@ -47,10 +47,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-vi
 .seg button{flex:1 1 68px;min-width:0;min-height:36px;padding:0 7px;border:0;border-radius:9px;background:none;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .seg button.on{background:var(--am);color:var(--on-am)}
 nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;align-items:center;padding-bottom:env(safe-area-inset-bottom)}
-nav>*{flex:1;min-width:0;min-height:50px;padding:0 2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background:none;border:0;border-top:3px solid transparent;color:var(--mu);font-weight:600;font-size:.75rem}
+nav>*{flex:1;min-width:0;min-height:58px;padding:0 2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background:none;border:0;border-top:3px solid transparent;color:var(--mu);font-weight:600;font-size:.75rem}
 nav .on{color:var(--am);border-top-color:var(--am)}
-nav .mid{display:flex;justify-content:center;border:0}
-nav .mid button{width:52px;height:52px;margin-top:-20px;border-radius:50%;border:4px solid var(--bg);background:#262B36;color:var(--am);font-weight:800;font-size:.85rem}
+nav .mid{display:flex;justify-content:center;border:0;overflow:visible}   /* the round button rises above the bar: never clip it */
+nav .mid button{width:68px;height:68px;margin-top:-26px;border-radius:50%;border:4px solid var(--bg);background:#262B36;color:var(--am);font-weight:800;font-size:.85rem}
 nav .mid button.on{background:var(--am);color:var(--on-am)}
 input,textarea{width:100%;min-height:44px;border-radius:10px;border:1px solid #3A404C;background:var(--bg);color:var(--tx);padding:8px 12px;font:600 1rem ui-monospace,Menlo,Consolas,monospace;-webkit-user-select:text;user-select:text}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
@@ -81,7 +81,7 @@ input,textarea{width:100%;min-height:44px;border-radius:10px;border:1px solid #3
   nav>*{flex:none;min-height:46px;border-top:0;border-left:3px solid transparent;border-radius:10px;text-align:left;padding:0 14px;font-size:.95rem;font-weight:800}
   nav .on{border-left-color:var(--am);background:#262B36}
   nav .mid{display:block;padding:0}
-  nav .mid button{width:100%;height:40px;margin:0;border:0;border-radius:10px;font-size:.95rem;text-align:left;padding:0 14px;background:none;color:var(--mu)}
+  nav .mid button{width:100%;height:46px;margin:0;border:0;border-radius:10px;font-size:.95rem;text-align:left;padding:0 14px;background:none;color:var(--mu)}
   nav .mid button.on{background:#262B36;color:var(--am)}
 }
 /* Desktop-only affordances (keyboard hints), and a tighter phone layout so Solve and Drills fit one screen */
@@ -105,7 +105,7 @@ input,textarea{width:100%;min-height:44px;border-radius:10px;border:1px solid #3
   .big{width:min(146px,18vh);height:min(146px,18vh);min-width:106px;min-height:106px;margin:2px 0;font-size:1.05rem}
   .seg button{min-height:34px;padding:0 4px;font-size:.85rem}
   .empty{padding:14px 10px}
-  nav>*{min-height:48px;font-size:.7rem;padding:0 1px}
+  nav>*{min-height:54px;font-size:.7rem;padding:0 1px}
 }
 
 /* phones: three newest attempt rows, and the 3D walkthrough stays a desktop tool (the notation is still shown) */
