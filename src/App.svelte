@@ -2,6 +2,7 @@
   import { store } from './lib/store.svelte';
   import { nav, type View } from './lib/nav.svelte';
   import Intro from './lib/ui/Intro.svelte';
+  import NavIcon from './lib/ui/NavIcon.svelte';
 
   // Screens load on demand, so the first paint only carries the one you are looking at.
   const VIEWS: Record<View, () => Promise<{ default: any }>> = {
@@ -156,14 +157,15 @@
       </main>
     {:else}<main class="page"><div class="mu">Loading…</div></main>{/if}
 
+    <!-- icons on phones, icon + label on the desktop sidebar; Solve stays the round button -->
     <nav aria-label="Main">
       <button class:on={nav.view === 'train'} {...tab('train')} onclick={() => go('train')} aria-disabled={store.timerRunning}>
-        Train{#if dueCount}<span class="badge" aria-label="{dueCount} cases due">{dueCount}</span>{/if}
+        <NavIcon name="train" /><span class="nav-label">Train</span>{#if dueCount}<span class="badge" aria-label="{dueCount} cases due">{dueCount}</span>{/if}
       </button>
-      <button class:on={nav.view === 'lib'} {...tab('lib')} onclick={() => go('lib')} aria-disabled={store.timerRunning}>Library</button>
+      <button class:on={nav.view === 'lib'} {...tab('lib')} onclick={() => go('lib')} aria-disabled={store.timerRunning}><NavIcon name="library" /><span class="nav-label">Library</span></button>
       <div class="mid"><button class:on={nav.view === 'solve'} {...tab('solve')} onclick={() => go('solve')} aria-disabled={store.timerRunning}>Solve</button></div>
-      <button class:on={nav.view === 'drills'} {...tab('drills')} onclick={() => go('drills')} aria-disabled={store.timerRunning}>Drills</button>
-      <button class:on={nav.view === 'set'} {...tab('set')} onclick={() => go('set')} aria-disabled={store.timerRunning}>Settings</button>
+      <button class:on={nav.view === 'drills'} {...tab('drills')} onclick={() => go('drills')} aria-disabled={store.timerRunning}><NavIcon name="drills" /><span class="nav-label">Drills</span></button>
+      <button class:on={nav.view === 'set'} {...tab('set')} onclick={() => go('set')} aria-disabled={store.timerRunning}><NavIcon name="settings" /><span class="nav-label">Settings</span></button>
     </nav>
   </div>
 
