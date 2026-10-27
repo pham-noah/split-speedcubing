@@ -18,6 +18,8 @@ Trainer polish, and the trainer now grades itself.
 - The trainer grades every attempt from the result instead of recording "Good" every time: a DNF, a case you never recognised, or a very slow solve is recorded as a lapse, so the schedule, the Lapsed drill and the optimiser all see failures.
 - Every hardcoded key now goes through the command table, so rebinding really moves every action (S also closes History and Sessions, as before).
 - A session starts with Enter or with whatever the timer key is bound to.
+- Solves live in their own IndexedDB store now (schema v2, migrated automatically from v1), and a save writes only the records that changed instead of re-cloning and rewriting the whole history: measured at 20 000 solves, 19 ms per save against 2.5 s for the old full rewrite.
+- There is a lint gate: `npm run lint` (ESLint + typescript-eslint + eslint-plugin-svelte) runs in CI beside `svelte-check`. Turning it on found ~20 dead variables, three names shadowing others and two `$effect`s that leaned on bare expressions.
 
 ### Fixed
 - Scrambles were drawn without spaces between moves ("R2F2R'B'R...") because Svelte drops whitespace inside an each block; Solve, Train and Drills were all affected.

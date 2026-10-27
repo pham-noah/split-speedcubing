@@ -4,7 +4,7 @@
   import { DEFAULT_CUBE_COLORS } from './cube-colors';
 
   // A CSS-3D cube drawn straight from the sticker state, so it can never disagree with the simulator.
-  let { stickers, anim = null, size = 200, highlight = null, orbit = true, yaw = -34, pitch = -26, mono = null, dur = 300, faceCount = 6 }: {
+  const { stickers, anim = null, size = 200, highlight = null, orbit = true, yaw = -34, pitch = -26, mono = null, dur = 300, faceCount = 6 }: {
     stickers: State; anim?: TurnInfo | null; size?: number; orbit?: boolean; yaw?: number; pitch?: number;
     highlight?: ((p: [number, number, number]) => boolean) | null; mono?: string | null; dur?: number; faceCount?: 3 | 6;
   } = $props();

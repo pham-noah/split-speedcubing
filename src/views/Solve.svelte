@@ -33,7 +33,6 @@
     const avg = done.reduce((a, b) => a + b, 0) / done.length;
     return t - avg;
   });
-  const recent = $derived(solves.slice(-5).reverse());
   let history = $state(false);
   let walkIndex = $state(0);
   let undone = $state<{ solve: Solve; index: number } | null>(null);
@@ -52,12 +51,12 @@
   // deleting is undoable for a few seconds, so a stray C does not cost you a solve
   function removeLast() {
     const list = store.solves;
-    const last = list.at(-1);
-    if (!last) return;
+    const newest = list.at(-1);
+    if (!newest) return;
     // the undo index is a position in the whole solve list, not in this session
-    const index = store.data.solves.findIndex(x => x.id === last.id);
+    const index = store.data.solves.findIndex(x => x.id === newest.id);
     store.deleteLast();
-    undone = { solve: last, index };
+    undone = { solve: newest, index };
     clearTimeout(undoT);
     undoT = setTimeout(() => (undone = null), 6000);
   }

@@ -16,12 +16,6 @@
   const MODES: { id: Mode; label: string }[] = [
     { id: 'cross', label: 'Cross' }, { id: 'oll2', label: 'OLL' }, { id: 'pll2', label: 'PLL' }, { id: 'bld', label: 'BLD memo' },
   ];
-  const INFO: Record<Mode, string> = {
-    cross: 'Solve only the cross, then stop the timer. Plan it during inspection to get faster.',
-    bld: 'Memorize the cube, tap when memo is done, then tap again when you finish the execution. Times are saved separately.',
-    oll2: 'Last layer on top. Orient the edges first, tap, then orient the corners and stop. F2L is solved.',
-    pll2: 'Last layer on top, all yellow. Solve the corners first, tap, then the edges and stop. F2L is solved.',
-  };
   const MARK: Record<Mode, string> = { cross: '', bld: 'Tap when memorized', oll2: 'Tap when edges are oriented', pll2: 'Tap when corners are solved' };
 
   let mode = $state<Mode>(nav.drillMode);

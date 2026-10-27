@@ -55,9 +55,9 @@
       store.importJson(await f.text());
       msg = 'Backup restored.';
       canUndo = true;
-    } catch (e) {
+    } catch (err) {
       // keep the specific reason (a backup from a newer version), not just "invalid"
-      msg = e instanceof Error && /newer version/.test(e.message) ? e.message : 'That file is not a valid backup.';
+      msg = err instanceof Error && /newer version/.test(err.message) ? err.message : 'That file is not a valid backup.';
     }
     input.value = '';   // picking the same file again should still fire
   }

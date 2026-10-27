@@ -44,7 +44,7 @@ export function meanOf(solves: Solve[], n: number): number | null {
 // re-sort made this quadratic -- 0.5 s for 20 000 solves, twice per History render).
 export function bestAverage(solves: Solve[], n: number): number | null {
   if (n < 3 || solves.length < n) return null;
-  let best: number | null = null;
+  let bestSoFar: number | null = null;
   const win: number[] = [];
   for (let i = 0; i < solves.length; i++) {
     const v = effective(solves[i]);
@@ -60,10 +60,10 @@ export function bestAverage(solves: Solve[], n: number): number | null {
       for (let k = 1; k < n - 1; k++) sum += win[k];   // drop the best and the worst
       const mean = sum / (n - 2);
       const a = Number.isFinite(mean) ? mean : Infinity;
-      if (best === null || a < best) best = a;
+      if (bestSoFar === null || a < bestSoFar) bestSoFar = a;
     }
   }
-  return best;
+  return bestSoFar;
 }
 
 /** What an attempt cost: execution time plus a +2, while a DNF has no usable time. */

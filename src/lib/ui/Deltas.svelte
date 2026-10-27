@@ -3,7 +3,7 @@
 
   // Last attempts with three deltas each: against the previous attempt, the running ao5 and the running ao12.
   // Faster than the reference is green, slower is red.
-  let { times, rows = 5, title = 'Recent attempts' }: { times: number[]; rows?: number; title?: string } = $props();
+  const { times, rows = 5, title = 'Recent attempts' }: { times: number[]; rows?: number; title?: string } = $props();
 
   const fmt = (x: number | null) => (x == null ? '–' : `${x >= 0 ? '+' : '−'}${(Math.abs(x) / 1000).toFixed(2)}`);
   const col = (x: number | null) => (x == null || x === 0 ? 'var(--mu)' : x < 0 ? 'var(--good)' : 'var(--bad)');

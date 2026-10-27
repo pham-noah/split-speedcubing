@@ -68,13 +68,13 @@ describe('F2L data', () => {
     }
   });
   it('rotating an alg and rotating it back is the identity, and rotation is a real cube rotation', () => {
-    for (const c of F2L.filter(c => c.slot === 'FR').slice(0, 10)) {
+    for (const item of F2L.filter(x => x.slot === 'FR').slice(0, 10)) {
       for (const rot of ['y', 'y2', "y'"]) {
-        const back = rotateAlg(rotateAlg(c.alg, rot), rot === 'y' ? "y'" : rot === "y'" ? 'y' : 'y2');
-        expect(back).toBe(c.alg);
+        const back = rotateAlg(rotateAlg(item.alg, rot), rot === 'y' ? "y'" : rot === "y'" ? 'y' : 'y2');
+        expect(back).toBe(item.alg);
         // conjugating by the rotation in the simulator gives the same cube as the relabelled alg
-        const a = applyAlg(solved(), `${rot} ${c.alg} ${rot === 'y' ? "y'" : rot === "y'" ? 'y' : 'y2'}`);
-        const b = applyAlg(solved(), rotateAlg(c.alg, rot));
+        const a = applyAlg(solved(), `${rot} ${item.alg} ${rot === 'y' ? "y'" : rot === "y'" ? 'y' : 'y2'}`);
+        const b = applyAlg(solved(), rotateAlg(item.alg, rot));
         expect(JSON.stringify(a)).toBe(JSON.stringify(b));
       }
     }

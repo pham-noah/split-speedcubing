@@ -37,7 +37,7 @@
         <b>{preview.format}: {count(preview)} solves in {preview.sessions.length} session{preview.sessions.length === 1 ? '' : 's'}</b>
         <div class="mu" style="margin-top:4px">{preview.sessions.slice(0, 5).map(s => `${s.name} (${s.solves.length})`).join(', ')}{preview.sessions.length > 5 ? ', …' : ''}</div>
       {:else}<b>Nothing could be read</b>{/if}
-      {#each preview.notes as n}<div class="mu" style="margin-top:4px">{n}</div>{/each}
+      {#each preview.notes as n, i (i)}<div class="mu" style="margin-top:4px">{n}</div>{/each}
     </div>
     <button class="btn p" disabled={!preview.sessions.length} onclick={run}>Import</button>
   {/if}

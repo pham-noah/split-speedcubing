@@ -4,7 +4,7 @@
   import { formatTime } from '../core/stats';
 
   // Training history: the attempts made while training, not solve times. One case, or all of them.
-  let { caseId = null, onBack }: { caseId?: string | null; onBack: () => void } = $props();
+  const { caseId = null, onBack }: { caseId?: string | null; onBack: () => void } = $props();
 
   const name = (id: string) => {
     const c = store.caseOf(id);

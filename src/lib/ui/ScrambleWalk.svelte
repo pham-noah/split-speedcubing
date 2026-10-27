@@ -5,7 +5,7 @@
 
   // Walk through a scramble move by move: auto-plays while you leave it alone,
   // steps on demand when you press the arrows.
-  let { alg, size = 90, autoplay = false, speed = 900, onIndex = () => {}, onClose = null }: {
+  const { alg, size = 90, autoplay = false, speed = 900, onIndex = () => {}, onClose = null }: {
     alg: string; size?: number; autoplay?: boolean; speed?: number; onIndex?: (i: number) => void; onClose?: (() => void) | null;
   } = $props();
 
@@ -97,7 +97,12 @@
     return () => clearInterval(t);
   });
   // a new scramble starts from the top
-  $effect(() => { alg; seek(0); });
+  let lastAlg = '';
+  $effect(() => {
+    if (alg === lastAlg) return;
+    lastAlg = alg;
+    seek(0);
+  });
   // the scramble line above shows the position, so the walkthrough keeps no timeline of its own
   $effect(() => { onIndex(i); });
   onDestroy(stopTimers);

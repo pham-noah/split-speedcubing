@@ -20,7 +20,6 @@ const text = () => page.evaluate(() => document.body.textContent);
 const norm = s => (s ?? '').replace(/\s+/g, ' ').trim();
 // count the rendered move spans rather than splitting on whitespace
 const tokens = () => page.evaluate(() => [...document.querySelectorAll('.scr span')].map(s => s.textContent.trim()));
-const scramble = () => page.evaluate(() => document.querySelector('.scr')?.textContent ?? '');
 /** wait until the scramble line really carries a scramble */
 async function waitForScramble(ms = 8000) {
   const until = Date.now() + ms;
@@ -136,7 +135,7 @@ await clickText(page, 'Normal'); await sleep(200);
 await clickText(page, 'Solve', 'nav button'); await sleep(200);
 const sw = await page.evaluate(async () => Promise.race([
   navigator.serviceWorker.ready.then(r => !!r.active),
-  new Promise(res => setTimeout(() => res(false), 8000)),
+  new Promise(done => setTimeout(() => done(false), 8000)),
 ]));
 check('service worker is active', sw);
 if (!sw) {

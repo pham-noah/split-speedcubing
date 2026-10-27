@@ -1,7 +1,7 @@
 <script lang="ts">
   import { store } from '../lib/store.svelte';
   import { nav } from '../lib/nav.svelte';
-  import { SET_NAMES, SLOTS, type CaseSet, type Slot } from '../lib/data';
+  import { SET_NAMES, type CaseSet, type Slot } from '../lib/data';
   import CaseDiagram from '../lib/ui/CaseDiagram.svelte';
   import CaseCube from '../lib/ui/CaseCube.svelte';
   import LazyBox from '../lib/ui/LazyBox.svelte';
@@ -58,8 +58,11 @@
   const list = $derived(store.casesFor(set).filter(c => (set !== 'F2L' || c.slot === slotFilter) && matches(c) && keep(c)));
   const shownList = $derived(list.slice(0, visible));
   // a different set or filter starts from a short list again
+  let lastFilters = '';
   $effect(() => {
-    set; slotFilter; q; show;
+    const key = `${set}|${slotFilter}|${q}|${show}`;
+    if (key === lastFilters) return;
+    lastFilters = key;
     visible = 12;
   });
   // grow the grid a few cells at a time while the browser is idle, so switching is instant
@@ -284,7 +287,7 @@
         <label class="sr" for="zb">ZBLL algorithms</label>
         <textarea id="zb" rows="5" placeholder="Sune + T 1: R U R' U R U2 R' ..." bind:value={zbllText}></textarea>
         <div class="row"><button class="btn p" onclick={importZbll}>Import</button>{#if list.length}<button class="btn" onclick={() => { if (confirm('Remove all imported ZBLL cases and their progress?')) { store.clearZbll(); selId = null; } }}>Remove all</button>{/if}</div>
-        {#each zbllMsg as m}<div class="mu" role="status">{m}</div>{/each}
+        {#each zbllMsg as m, i (i)}<div class="mu" role="status">{m}</div>{/each}
       </div>
     {/if}
 

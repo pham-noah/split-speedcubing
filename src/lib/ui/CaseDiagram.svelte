@@ -2,7 +2,7 @@
   import { applyAlg, solved, llView } from '../core/cube';
   import { invert } from '../core/alg';
 
-  let { alg, mode = 'oll', size = 80, slot = 'FR' }: { alg: string; mode?: 'oll' | 'pll' | 'f2l'; size?: number; slot?: 'FR' | 'BR' | 'BL' | 'FL' } = $props();
+  const { alg, mode = 'oll', size = 80, slot = 'FR' }: { alg: string; mode?: 'oll' | 'pll' | 'f2l'; size?: number; slot?: 'FR' | 'BR' | 'BL' | 'FL' } = $props();
 
   // Colours are derived from the algorithm itself (apply its inverse to a solved cube), so the picture can never disagree with the alg.
   const COL = ['#F5C542', '#F2F2F2', '#D64545', '#F08A24', '#3FA34D', '#3C6FD8'];
@@ -129,8 +129,8 @@
 {#if mode === 'f2l'}
   <svg width={size} height={size} viewBox="0 0 {M * 3 + FW * 2} {M * 3 + FW * 2}" role="img" aria-label={label}>
     {#each panels as p (p.x + '-' + p.y)}
-      {#each p.g as row, r}
-        {#each row as c, k}<rect x={p.x + k * (K + GAP)} y={p.y + r * (K + GAP)} width={K} height={K} rx="3" fill={c} />{/each}
+      {#each p.g as row, r (r)}
+        {#each row as c, k (k)}<rect x={p.x + k * (K + GAP)} y={p.y + r * (K + GAP)} width={K} height={K} rx="3" fill={c} />{/each}
       {/each}
     {/each}
   </svg>
@@ -152,15 +152,15 @@
           marker-end="url(#pll-arrow)" marker-start={a.both ? 'url(#pll-arrow)' : undefined} />
       {/each}
     {:else}
-    {#each v.top as row, r}
-      {#each row as c, k}
+    {#each v.top as row, r (r)}
+      {#each row as c, k (k)}
         <rect x={pos(k)} y={pos(r)} width={C} height={C} rx="4" fill={fill(c)} />
       {/each}
     {/each}
-    {#each v.back as c, k}<rect x={pos(k)} y={O} width={C} height={S} rx="2" fill={fill(c)} />{/each}
-    {#each v.front as c, k}<rect x={pos(k)} y={pos(2) + C + G} width={C} height={S} rx="2" fill={fill(c)} />{/each}
-    {#each v.left as c, k}<rect x={O} y={pos(k)} width={S} height={C} rx="2" fill={fill(c)} />{/each}
-    {#each v.right as c, k}<rect x={pos(2) + C + G} y={pos(k)} width={S} height={C} rx="2" fill={fill(c)} />{/each}
+    {#each v.back as c, k (k)}<rect x={pos(k)} y={O} width={C} height={S} rx="2" fill={fill(c)} />{/each}
+    {#each v.front as c, k (k)}<rect x={pos(k)} y={pos(2) + C + G} width={C} height={S} rx="2" fill={fill(c)} />{/each}
+    {#each v.left as c, k (k)}<rect x={O} y={pos(k)} width={S} height={C} rx="2" fill={fill(c)} />{/each}
+    {#each v.right as c, k (k)}<rect x={pos(2) + C + G} y={pos(k)} width={S} height={C} rx="2" fill={fill(c)} />{/each}
     {/if}
   </svg>
 {/if}

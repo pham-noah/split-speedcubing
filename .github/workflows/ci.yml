@@ -16,6 +16,7 @@ jobs:
       - run: npm ci
       # one version in every manifest, or fail before anyone ships a mismatched build
       - run: npm run version:check
+      - run: npm run lint
       - run: npm run check
       - run: npm test
       # VITE_SW=1 registers the service worker on localhost too, so the offline checks can run

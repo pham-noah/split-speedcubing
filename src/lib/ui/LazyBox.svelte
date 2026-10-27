@@ -4,7 +4,7 @@
 
   // Mounts its children only when the box comes near the viewport, so a 41-cube grid does not
   // build every cube up front. The cell keeps its size, so nothing moves.
-  let { width, height, children }: { width: number; height: number; children: Snippet } = $props();
+  const { width, height, children }: { width: number; height: number; children: Snippet } = $props();
   let el: HTMLElement | undefined = $state();
   let show = $state(false);
 

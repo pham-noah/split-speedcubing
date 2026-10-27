@@ -11,8 +11,8 @@
   import CaseDiagram from '../lib/ui/CaseDiagram.svelte';
   import CaseCube from '../lib/ui/CaseCube.svelte';
   import PenaltyRow from '../lib/ui/PenaltyRow.svelte';
-  import { caseScramble, invert, randomAuf } from '../lib/core/alg';
-  import { pickNext, mastery, gradeForAttempt, type Grade } from '../lib/core/srs';
+  import { caseScramble, randomAuf } from '../lib/core/alg';
+  import { pickNext, mastery, gradeForAttempt } from '../lib/core/srs';
   import { CASE_TARGET_MS } from '../lib/core/targets';
   import { formatTime, type Penalty } from '../lib/core/stats';
   import { codeLabel } from '../lib/core/shortcuts';
@@ -121,11 +121,11 @@
   }
 
   // how far each set has come: mastered, learning, untouched
-  const progress = $derived.by(() => (['PLL', 'OLL', 'F2L', 'ZBLL'] as const).map(set => {
-    const cards = Object.values(store.cardsFor(set));
-    const mastered = cards.filter(c => mastery(c) === 'mastered').length;
-    const learning = cards.filter(c => c.seen && mastery(c) !== 'mastered').length;
-    return { set, total: cards.length || 1, mastered, learning, fresh: cards.length - mastered - learning };
+  const progress = $derived.by(() => (['PLL', 'OLL', 'F2L', 'ZBLL'] as const).map(setName => {
+    const cardList = Object.values(store.cardsFor(setName));
+    const mastered = cardList.filter(c => mastery(c) === 'mastered').length;
+    const learning = cardList.filter(c => c.seen && mastery(c) !== 'mastered').length;
+    return { set: setName, total: cardList.length || 1, mastered, learning, fresh: cardList.length - mastered - learning };
   }));
   // the last 30 days at a glance: how much you practised and how long you were on the clock
   const month = $derived.by(() => {
@@ -146,7 +146,6 @@
   const alg = $derived(current ? (drill ?? store.algFor(current.id)) : '');
   const scramble = $derived(current ? caseScramble(alg, auf, current.set === 'F2L') : '');
   const scrTokens = $derived(scramble.split(/\s+/).filter(Boolean));
-  const mode = $derived(set === 'F2L' ? 'f2l' : set === 'OLL' ? 'oll' : 'pll');
   // attempts as execution time; the side panel shows the last five with deltas
   const attempts = $derived(current ? store.card(current.id).attempts : []);
   // what this session has produced so far
@@ -156,21 +155,6 @@
     return { n: all.length, best: execs.length ? execs.reduce((a, b) => (b < a ? b : a), Infinity) : null };
   });
   const execOf = (a: { total: number; recog: number | null }) => a.total - (a.recog ?? 0);
-  const avgOf = (n: number) => { const xs = attempts.map(execOf).slice(-n); return xs.length === n ? xs.reduce((p, q) => p + q, 0) / n : null; };
-  const ao5 = $derived(avgOf(5)), ao12 = $derived(avgOf(12));
-  const meanUpTo = (end: number, n: number) => { const xs = attempts.slice(Math.max(0, end - n + 1), end + 1).map(execOf); return xs.length === n ? xs.reduce((p, q) => p + q, 0) / n : null; };
-  const delta = (x: number | null) => (x == null ? '–' : `${x >= 0 ? '+' : '−'}${(Math.abs(x) / 1000).toFixed(2)}`);
-  const dcol = (x: number | null) => (x == null ? 'var(--mu)' : x < 0 ? 'var(--good)' : 'var(--bad)'); // faster green, slower red
-  const recent = $derived.by(() => {
-    const ex = attempts.map(execOf);
-    return attempts.map((a, i) => ({
-      ts: a.ts,
-      total: a.total,
-      prev: i ? ex[i] - ex[i - 1] : null,
-      a5: meanUpTo(i, 5) == null ? null : ex[i] - meanUpTo(i, 5)!,
-      a12: meanUpTo(i, 12) == null ? null : ex[i] - meanUpTo(i, 12)!,
-    })).slice(-5).reverse();
-  });
 
   // The attempt itself decides the review grade: no self-rating. A DNF, a case you never recognised
   // (no first tap) or a very slow solve is a lapse, which is what the "Lapsed" drill and the
@@ -263,7 +247,7 @@
       <div class="col" style="gap:6px;margin-top:8px">
         {#each progress as p (p.set)}
           <div class="row sp prow" style="padding:3px 0">
-            <span style="font-weight:700">{p.set}{#if p.set === 'F2L'} <span class="mu pc-only">{' · 4 slots'}</span>{/if}</span>
+            <span style="font-weight:700">{p.set}{#if p.set === 'F2L'} <span class="mu pc-only"> · 4 slots</span>{/if}</span>
             <span class="mu mono">{p.mastered} mastered · {p.learning} learning · {p.fresh} new</span>
           </div>
           <div style="height:6px;border-radius:3px;background:#2A303B;overflow:hidden">
@@ -289,7 +273,7 @@
       <main style="display:flex;flex-direction:column;gap:14px">
         <h1 class="sr">Training session</h1>
         <div class="row sp"><span class="chip">{drill && current ? `Algorithm drill · ${current.name}` : `Recognition · ${set}`}{weak ? ' · weak spots' : ''}{lapsed ? ' · lapsed' : ''}{set === 'F2L' && slotFilter !== 'All' ? ` · ${slotFilter}` : ''}</span><button class="btn" onclick={end}>End session</button></div>
-        <div class="row sp"><span class="mu">{drill ? 'One algorithm, execution only' : 'Recognition first, then execution'} · {drill ? '' : `${due} due · ${fresh} new`}{#if sessionStats.n}{' · '}{sessionStats.n} done{#if sessionStats.best != null}{' · '}best {formatTime(sessionStats.best)}{/if}{/if}</span><span class="mu">{current ? mastery(cards[current.id]) : ''}</span></div>
+        <div class="row sp"><span class="mu">{drill ? 'One algorithm, execution only' : 'Recognition first, then execution'} · {drill ? '' : `${due} due · ${fresh} new`}{#if sessionStats.n} · {sessionStats.n} done{/if}{#if sessionStats.best != null} · best {formatTime(sessionStats.best)}{/if}</span><span class="mu">{current ? mastery(cards[current.id]) : ''}</span></div>
 
         {#if current}
           <div class="card" style="text-align:center">

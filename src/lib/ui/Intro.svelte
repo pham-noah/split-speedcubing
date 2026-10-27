@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { nav } from '../nav.svelte';
-  let { onDone }: { onDone: () => void } = $props();
+  const { onDone }: { onDone: () => void } = $props();
 
   const slides = [
     { title: 'Welcome to Split', body: 'Split is a speedcubing timer and algorithm trainer that works completely offline. Your solves and progress stay on this device: no account, no tracking.' },
@@ -34,7 +34,7 @@
     {#if i === 0}<img src="./logo.png" width="112" height="112" alt="" style="align-self:center" />{/if}
     <h2 id="intro-title">{slides[i].title}</h2>
     <p>{slides[i].body}</p>
-    <div class="dots" aria-hidden="true">{#each slides as _, k}<i class:on={k === i}></i>{/each}</div>
+    <div class="dots" aria-hidden="true">{#each slides as _, k (k)}<i class:on={k === i}></i>{/each}</div>
     <div class="row">
       {#if !last}<button class="btn" onclick={onDone}>Skip</button>{/if}
       <button class="btn p" data-first onclick={() => (last ? onDone() : i++)}>{last ? 'Get started' : 'Next'}</button>

@@ -2,7 +2,7 @@
   import { store } from '../lib/store.svelte';
   import { averageOf, bestAverage, best, effective, formatTime } from '../lib/core/stats';
   import ShortcutsSide from '../lib/ui/ShortcutsSide.svelte';
-  let { onBack }: { onBack: () => void } = $props();
+  const { onBack }: { onBack: () => void } = $props();
 
   // Escape goes back; so does the "New scramble" key (S by default), which is how S has always worked here
   function onKey(e: KeyboardEvent) {

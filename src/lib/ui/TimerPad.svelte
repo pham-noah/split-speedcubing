@@ -8,7 +8,7 @@
   import { readableInk } from './color';
 
   type St = 'idle' | 'insp' | 'hold' | 'ready' | 'run';
-  let { twoPress = false, markLabel = 'Tap when recognized', disabled = false, holdMs = 300, tapStart = false, hideTime = false, inspection = false, beeps = true, shown = null, cover = false, coverColor = '', onfinish, onRunning }: {
+  const { twoPress = false, markLabel = 'Tap when recognized', disabled = false, holdMs = 300, tapStart = false, hideTime = false, inspection = false, beeps = true, shown = null, cover = false, coverColor = '', onfinish, onRunning }: {
     twoPress?: boolean; markLabel?: string; disabled?: boolean; holdMs?: number; tapStart?: boolean; hideTime?: boolean;
     inspection?: boolean; beeps?: boolean; shown?: number | null; cover?: boolean; coverColor?: string;
     onfinish: (r: { ms: number; recog: number | null; pen: Penalty }) => void;

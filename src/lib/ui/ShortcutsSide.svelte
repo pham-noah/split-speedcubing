@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onDestroy } from 'svelte';
   import { store } from '../store.svelte';
   import { codeLabel } from '../core/shortcuts';
   import type { View } from '../nav.svelte';
@@ -8,7 +7,7 @@
 
   // A right rail with the same look as the trainer's side panel, on every screen,
   // but only with the keys that actually do something on that screen.
-  let { view, inline = false }: { view: Page; inline?: boolean } = $props();
+  const { view, inline = false }: { view: Page; inline?: boolean } = $props();
 
   const PAGE: Record<Page, string[]> = {
     history: ['back'],
@@ -43,7 +42,7 @@
 <svelte:element this={inline ? 'div' : 'aside'} class={inline ? '' : 'rail'} aria-label="Keyboard shortcuts on this screen">
   <div class="mu">Shortcuts on this screen</div>
   <div class="col" style="gap:2px">
-    {#each ids as id}
+    {#each ids as id (id)}
       <div class="row sp" style="padding:3px 0"><span class="mu">{SHORT[id]}</span><kbd class="kbd">{codeLabel(store.key(id))}</kbd></div>
     {/each}
   </div>

@@ -6,7 +6,7 @@
 
   // The slot filter as four small cubes: you can see which pair each slot is,
   // and only that slot's corner and edge are in colour.
-  let { value, onpick }: { value: Slot; onpick: (s: Slot) => void } = $props();
+  const { value, onpick }: { value: Slot; onpick: (s: Slot) => void } = $props();
 
   const base = solved();
   const PAIR: Record<Slot, [number, number, number][]> = {

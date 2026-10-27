@@ -3,7 +3,7 @@
   import { codeLabel } from '../core/shortcuts';
 
   // The same +2 / DNF / Delete row as the timer screen, for whatever was recorded last.
-  let { pen = '', onpen, ondelete }: {
+  const { pen = '', onpen, ondelete }: {
     pen?: '+2' | 'DNF' | '';
     onpen: (p: '+2' | 'DNF' | '') => void;
     ondelete: () => void;

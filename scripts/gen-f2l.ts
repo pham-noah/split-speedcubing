@@ -1,6 +1,6 @@
 // Finds a short algorithm for every F2L case (cross + 3 slots solved, one pair unsolved) by exhaustive search.
 // Run: npx vite-node scripts/gen-f2l.ts [maxDepth]   -> prints src/lib/data/f2l.ts
-import { solved, applyMove, FACE_OF_NORMAL, type State } from '../src/lib/core/cube';
+import { solved, applyMove } from '../src/lib/core/cube';
 import { invert } from '../src/lib/core/alg';
 
 const MAX = Number(process.argv[2] ?? 8);
@@ -20,7 +20,6 @@ for (const m of MOVES) {
 const pieceOf = base.map(s => s.p.join(','));
 const isPairPiece = (p: string) => p === '1,-1,1' || p === '1,0,1';
 const isLL = (p: string) => p.split(',')[1] === '1';
-const cls = (i: number) => (base[i].p.every(v => v === 0) || (base[i].p.filter(v => v !== 0).length === 1) ? 254 : 0); // centers
 // "home" list: stickers whose slot must hold their own id at the end (cross + three other slots)
 const must: number[] = [];
 const pairSlots: number[] = [];
@@ -38,7 +37,7 @@ const key = (st: Uint8Array) => {
   for (let i = 0; i < 54; i++) k += pairIds.has(st[i]) ? String.fromCharCode(65 + st[i] % 60) + i + ',' : '';
   return k;
 };
-const U = perm['U'], U3 = perm["U'"];
+const U = perm['U'];
 function canon(st: Uint8Array) {
   let best = '';
   let cur = st;

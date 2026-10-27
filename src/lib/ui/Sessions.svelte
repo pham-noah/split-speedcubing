@@ -2,7 +2,7 @@
   import { store } from '../store.svelte';
   import { averageOf, best, effective, formatTime } from '../core/stats';
   import ShortcutsSide from './ShortcutsSide.svelte';
-  let { onClose }: { onClose: () => void } = $props();
+  const { onClose }: { onClose: () => void } = $props();
   let name = $state('');
   let editing = $state<string | null>(null);
   let editName = $state('');

@@ -13,9 +13,10 @@ One codebase (Svelte 5 + TypeScript + Vite) for three targets: browser/PWA, Andr
 ```bash
 npm install
 npm run dev        # http://localhost:5173
-npm test           # 254 tests: simulator, every PLL/OLL/F2L alg, stats, grading, FSRS (+ personalisation), storage and backups, sessions, importers, shortcuts, back handling, contrast, and a full-app UI test with an axe accessibility audit
+npm test           # 258 tests: simulator, every PLL/OLL/F2L alg, stats, grading, FSRS (+ personalisation), storage and backups, sessions, importers, shortcuts, back handling, contrast, and a full-app UI test with an axe accessibility audit
 npm run e2e        # 31 checks in a real Chrome against a running build (see Testing)
 npm run check      # type-check
+npm run lint       # eslint: shadowing, dead code, unkeyed each blocks, bare $effect expressions
 npm run build      # production build into dist/
 npm run version:check   # the five version numbers agree
 ```
@@ -61,12 +62,13 @@ src/views/         Solve, Train, Library, Drills, Settings
 - **Case scrambles** are the inverse of the algorithm with a random AUF in front, so you meet each case from different angles.
 - **Scrambles for the Solve timer** use cubing.js random-state scrambles (loaded on demand), falling back to random-move scrambles if it cannot load.
 - **Scheduling** uses FSRS (via the open-source `ts-fsrs` library) in `srs.ts`: each case has a stability and difficulty, reviews are scheduled for a target recall you choose in Settings (80-95%, default 90%), and the Library shows the estimated recall for a case. Cards from the earlier box-based version are migrated on their next review. Parameters can be personalised from your own history (see `src/lib/core/fsrs-optimize.ts`: log-loss search pulled towards the defaults and validated on held-out cases).
-- **Storage** is behind one interface (`src/lib/storage/index.ts`).
+- **Storage** is behind one interface (`src/lib/storage/index.ts`). IndexedDB keeps the settings, cards and sessions in one small record and each solve as its own record, so adding a solve writes one entry instead of the whole history; older databases are migrated on first read.
 
 ## Testing
 
-- `npm test`: 254 unit and component tests (including an axe-core accessibility audit and WCAG contrast checks).
+- `npm test`: 258 unit and component tests (including an axe-core accessibility audit and WCAG contrast checks).
 - `npm run e2e`: 31 end-to-end checks in a **real Chrome/Chromium**: first launch, timing with real pointer input, persistence across reloads (IndexedDB), keyboard shortcuts, retrying a scramble from History, the training flow, csTimer import, no sideways overflow at Extra large text on a 360 px phone, offline mode (service worker, scrambles still work), and no console errors. Build with `VITE_SW=1 npm run build` so the service worker also registers on localhost, then `npm run preview` and `npm run e2e`; set `CHROME_PATH` if Chrome is not in a standard location. The checks run in CI (`.github/workflows/ci.yml`).
+- `npm run lint`: ESLint over `src/` and `scripts/` (svelte-check catches types, this catches the classes of bug that type-check fine: a name shadowing another, a dead variable, an unkeyed each block, a bare expression used as an `$effect` dependency). Run by CI before the tests.
 - `npm run screenshots`: regenerates the store screenshots, desktop image and feature graphic from the running build with demo data (`scripts/seed-demo.ts`).
 - Desktop security: `src-tauri/tauri.conf.json` sets a strict content security policy (no network). It was checked against the real app in Chromium (random-state scrambles, workers and diagrams all work under it).
 
@@ -114,7 +116,7 @@ Automated checks, run by `npm test`: an axe-core audit of the intro, Solve, Trai
 - Algorithms are starting points. Tests prove each PLL/OLL alg is valid and that all 21 PLLs and 57 OLLs are distinct, but not that the *number* (e.g. "OLL 29") matches your preferred list. OLL 29 was swapped after the distinctness test caught a duplicate, so double check the numbering. F2L numbering is the generator's own order, not a standard list.
 - Not done yet: ZBLL bundled algs. Smart cube Bluetooth support was deliberately left out to keep the app simple and fully offline.
 - The csTimer import follows csTimer's documented/observed export layout and is unit-tested against it, but not against a real export file. CubeDesk's own backup format could not be verified; its importer is best effort, and CSV or a plain list of times always works.
-- Tested in a real desktop browser (Chromium: 31 end-to-end checks) and by 254 unit tests, but not yet on a real phone or inside the Android and Tauri shells, and the GitHub workflows and F-Droid recipe have not been run.
+- Tested in a real desktop browser (Chromium: 31 end-to-end checks) and by 258 unit tests, but not yet on a real phone or inside the Android and Tauri shells, and the GitHub workflows and F-Droid recipe have not been run.
 
 ## Licence
 

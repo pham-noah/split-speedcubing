@@ -7,7 +7,7 @@
   // An F2L case as a 3D cube: everything grey, and only the two pieces the case has to join are
   // in colour. They are found by their colours, wherever they currently sit (usually the top layer),
   // not by the slot they belong to — the slot is empty in most cases.
-  let { alg, slotId = 'FR', size = 60 }: { alg: string; slotId?: Slot; size?: number } = $props();
+  const { alg, slotId = 'FR', size = 60 }: { alg: string; slotId?: Slot; size?: number } = $props();
 
   // colour ids: 0=U 1=D 2=R 3=L 4=F 5=B
   const SIDES: Record<Slot, [number, number]> = { FR: [4, 2], FL: [4, 3], BR: [5, 2], BL: [5, 3] };
@@ -39,9 +39,7 @@
   const rotZ = (n: [number, number, number], yawDeg: number) => {
     const ry = (yawDeg * Math.PI) / 180, rx = (-26 * Math.PI) / 180;
     const [x, y, z] = n;
-    const x1 = x * Math.cos(ry) + z * Math.sin(ry);
     const z1 = -x * Math.sin(ry) + z * Math.cos(ry);
-    const y2 = y * Math.cos(rx) - z1 * Math.sin(rx);
     const z2 = y * Math.sin(rx) + z1 * Math.cos(rx);
     return z2;
   };

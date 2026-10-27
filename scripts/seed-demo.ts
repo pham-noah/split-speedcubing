@@ -2,7 +2,7 @@
 // Run: npx vite-node scripts/seed-demo.ts > /tmp/seed.json
 import { randomMoveScramble } from '../src/lib/core/scramble';
 import { review, type Card, type Grade } from '../src/lib/core/srs';
-import { defaultData, type AppData, type CardRecord } from '../src/lib/storage/model';
+import { defaultData, type CardRecord } from '../src/lib/storage/model';
 import { PLL } from '../src/lib/data/pll';
 import { OLL } from '../src/lib/data/oll';
 import { F2L_FR } from '../src/lib/data/f2l-fr';
