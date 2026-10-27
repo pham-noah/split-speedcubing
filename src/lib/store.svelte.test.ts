@@ -86,14 +86,20 @@ describe('store: shortcuts, panels and imports', () => {
     expect(store.key('plus2')).toBe('KeyZ');
   });
   it('resetting a case forgets its progress but keeps its algorithms', () => {
-    store.resetCard('PLL-Aa');
-    store.addAlg('PLL-Aa', "x L2 D2 L' U' L D2 L' U L'");
-    store.grade('PLL-Aa', 2, 2000, 600);
-    expect(store.card('PLL-Aa').attempts.length).toBe(1);
-    const algs = store.algsFor('PLL-Aa').length;
-    store.resetCard('PLL-Aa');
-    expect(store.card('PLL-Aa').attempts.length).toBe(0);
-    expect(store.algsFor('PLL-Aa').length).toBe(algs);
+    store.resetCard('PLL-T');
+    // a real custom alg, and the return value is checked: the old version of this test added an alg
+    // that addAlg rejected and never looked, so it passed whether the algs survived or not
+    expect(store.addAlg('PLL-T', "R U R' U' R' F R2 U' R' U' R U R' F' U")).toBeNull();
+    const algs = store.algsFor('PLL-T');
+    expect(algs.length).toBe(2);
+    store.setDefault('PLL-T', algs[1]);
+    store.grade('PLL-T', 2, 2000, 600);
+    expect(store.card('PLL-T').attempts.length).toBe(1);
+    store.resetCard('PLL-T');
+    expect(store.card('PLL-T').attempts.length).toBe(0);
+    expect(store.card('PLL-T').seen).toBe(false);
+    expect(store.algsFor('PLL-T')).toEqual(algs);
+    expect(store.algFor('PLL-T')).toBe(algs[1]);   // the default the user picked survives too
   });
   it('a deleted solve can be put back where it was', () => {
     store.erase();

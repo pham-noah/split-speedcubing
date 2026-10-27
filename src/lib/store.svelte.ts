@@ -199,8 +199,18 @@ class Store {
     c.attempts = [...c.attempts, { ts: Date.now(), total, recog, grade: g, alg: alg ?? this.algFor(id) }].slice(-60);
     this.persist();
   }
-  /** forget everything learned about one case (keeps its algorithms) */
-  resetCard(id: string) { delete this.data.cards[id]; this.persist(); }
+  /** forget everything learned about one case, but keep the algorithms the user added and their
+   *  default: this resets progress, it does not undo the Library work */
+  resetCard(id: string) {
+    const card = this.data.cards[id];
+    if (!card) return;
+    this.data.cards[id] = {
+      seen: false, due: 0, attempts: [],
+      ...(card.algs?.length ? { algs: [...card.algs] } : {}),
+      ...(card.defaultAlg ? { defaultAlg: card.defaultAlg } : {}),
+    };
+    this.persist();
+  }
   /** the last attempt of a case: penalty, or drop it */
   penAttempt(id: string, pen: '+2' | 'DNF' | '') {
     const card = this.data.cards[id];

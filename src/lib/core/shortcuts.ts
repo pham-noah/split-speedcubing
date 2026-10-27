@@ -40,7 +40,9 @@ const clash = (a: Scope, b: Scope) => a === 'global' || b === 'global' || a === 
 export function conflictFor(id: string, code: string, overrides: Record<string, string>): Command | null {
   const me = command(id);
   if (!me) return null;
-  return COMMANDS.find(c => c.id !== id && keyFor(c.id, overrides) === code && clash(me.scope, c.scope)) ?? null;
+  // a stock alias counts too, otherwise binding another key to KeyP/KeyW would fire two commands
+  const uses = (c: Command) => keyFor(c.id, overrides) === code || (!overrides[c.id] && c.alt === code);
+  return COMMANDS.find(c => c.id !== id && uses(c) && clash(me.scope, c.scope)) ?? null;
 }
 
 const NOT_ALLOWED = new Set(['ShiftLeft', 'ShiftRight', 'ControlLeft', 'ControlRight', 'AltLeft', 'AltRight', 'MetaLeft', 'MetaRight', 'Tab', 'Enter', 'CapsLock']);

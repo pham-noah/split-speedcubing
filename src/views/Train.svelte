@@ -130,7 +130,7 @@
   // the last 30 days at a glance: how much you practised and how long you were on the clock
   const month = $derived.by(() => {
     const since = Date.now() - 30 * 86400000;
-    const solves = store.solves.filter(s => s.ts >= since);
+    const solves = store.data.solves.filter(s => s.ts >= since);   // device-wide, like the attempts and drills beside it
     const timed = solves.filter(s => s.pen !== 'DNF');
     const ms = timed.reduce((n, s) => n + s.ms + (s.pen === '+2' ? 2000 : 0), 0);
     const attempts = Object.values(store.data.cards).flatMap(c => c.attempts).filter(a => a.ts >= since);

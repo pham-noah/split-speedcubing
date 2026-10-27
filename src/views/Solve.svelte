@@ -90,8 +90,8 @@
   <h1 class="sr">Solve</h1>
   <div class="split"><div class="col" style="gap:12px">
   <div class="row sp">
-    <button class="chip" style="color:inherit;cursor:pointer" onclick={() => (sessions = true)} aria-label="Sessions. Current: {store.session.name}">3x3 · {store.session.name} ▾</button>
-    <button class="btn" onclick={() => (history = true)}>History · {solves.length}</button>
+    <button class="chip" style="color:inherit;cursor:pointer" onclick={() => { if (!store.timerRunning) sessions = true; }} aria-label="Sessions. Current: {store.session.name}">3x3 · {store.session.name} ▾</button>
+    <button class="btn" disabled={store.timerRunning} onclick={() => (history = true)}>History · {solves.length}</button>
   </div>
   {#if store.shown('solve.scramble')}
     <div class="scr" aria-label="Scramble" aria-live="polite">{#each scrTokens as t, idx (idx)}<span class:now={idx === walkIndex}>{t}</span>{' '}{/each}</div>
@@ -121,9 +121,9 @@
   {/if}
   {#if store.shown('solve.penalties')}
     <div class="row" style="justify-content:center">
-      <button class="btn" class:on={last?.pen === '+2'} aria-pressed={last?.pen === '+2'} disabled={!last} onclick={() => store.setPenalty('+2')}>+2</button>
-      <button class="btn" class:on={last?.pen === 'DNF'} aria-pressed={last?.pen === 'DNF'} disabled={!last} onclick={() => store.setPenalty('DNF')}>DNF</button>
-      <button class="btn" disabled={!last} onclick={removeLast}>Delete</button>
+      <button class="btn" class:on={last?.pen === '+2'} aria-pressed={last?.pen === '+2'} disabled={!last || store.timerRunning} onclick={() => store.setPenalty('+2')}>+2</button>
+      <button class="btn" class:on={last?.pen === 'DNF'} aria-pressed={last?.pen === 'DNF'} disabled={!last || store.timerRunning} onclick={() => store.setPenalty('DNF')}>DNF</button>
+      <button class="btn" disabled={!last || store.timerRunning} onclick={removeLast}>Delete</button>
     </div>
   {/if}
   {#if store.shown('solve.stats')}

@@ -78,6 +78,12 @@ describe('stats', () => {
     expect(attemptExec({ total: 9000, recog: 500, pen: '+2' })).toBe(10500);
     expect(attemptExec({ total: 9000, recog: 500, pen: 'DNF' })).toBe(Infinity);
   });
+  it('truncates to centiseconds instead of rounding up', () => {
+    expect(formatTime(9999)).toBe('9.99');     // rounding would give 10.00
+    expect(formatTime(59_999)).toBe('59.99');  // rounding would give 1:00.00
+    expect(formatTime(60_000)).toBe('1:00.00');
+    expect(formatTime(9)).toBe('0.00');
+  });
   it('never prints NaN or a negative time', () => {
     expect(formatTime(NaN)).toBe('–');
     expect(formatTime(-500)).toBe('–');

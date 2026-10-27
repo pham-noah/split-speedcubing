@@ -53,6 +53,8 @@
   const GO: Record<string, View> = { goSolve: 'solve', goTrain: 'train', goLibrary: 'lib', goDrills: 'drills', goSettings: 'set' };
   const ORDER: View[] = ['train', 'lib', 'solve', 'drills', 'set']; // the order the tabs sit in
   const cycle = (step: number) => nav.go(ORDER[(ORDER.indexOf(nav.view) + step + ORDER.length) % ORDER.length]);
+  /** a tap on a tab must not throw away a running solve: the keys are blocked for the same reason */
+  const go = (v: View) => { if (!store.timerRunning) nav.go(v); };
 
   type Dir = 'up' | 'down' | 'left' | 'right';
   const ARROWS: Record<string, Dir> = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right' };
@@ -129,7 +131,19 @@
   {/if}
   <div inert={!store.data.settings.introSeen}>
     {#if Current}
-      <Current />
+      <!-- one screen throwing must not white-screen the app -->
+      <svelte:boundary>
+        <Current />
+        {#snippet failed(error)}
+          <main class="page">
+            <div class="card col" role="alert" style="border-color:var(--bad);gap:10px">
+              <div style="font-weight:800">That screen hit an error</div>
+              <div class="mu">{error instanceof Error ? error.message : String(error)}</div>
+              <div class="row"><button class="btn" style="flex:1" onclick={() => nav.go('solve')}>Back to the timer</button></div>
+            </div>
+          </main>
+        {/snippet}
+      </svelte:boundary>
     {:else if chunkError}
       <main class="page">
         <div class="card col" role="alert" style="border-color:#FF6B6B;gap:10px">
@@ -143,13 +157,13 @@
     {:else}<main class="page"><div class="mu">Loading…</div></main>{/if}
 
     <nav aria-label="Main">
-      <button class:on={nav.view === 'train'} {...tab('train')} onclick={() => nav.go('train')}>
+      <button class:on={nav.view === 'train'} {...tab('train')} onclick={() => go('train')} aria-disabled={store.timerRunning}>
         Train{#if dueCount}<span class="badge" aria-label="{dueCount} cases due">{dueCount}</span>{/if}
       </button>
-      <button class:on={nav.view === 'lib'} {...tab('lib')} onclick={() => nav.go('lib')}>Library</button>
-      <div class="mid"><button class:on={nav.view === 'solve'} {...tab('solve')} onclick={() => nav.go('solve')}>Solve</button></div>
-      <button class:on={nav.view === 'drills'} {...tab('drills')} onclick={() => nav.go('drills')}>Drills</button>
-      <button class:on={nav.view === 'set'} {...tab('set')} onclick={() => nav.go('set')}>Settings</button>
+      <button class:on={nav.view === 'lib'} {...tab('lib')} onclick={() => go('lib')} aria-disabled={store.timerRunning}>Library</button>
+      <div class="mid"><button class:on={nav.view === 'solve'} {...tab('solve')} onclick={() => go('solve')} aria-disabled={store.timerRunning}>Solve</button></div>
+      <button class:on={nav.view === 'drills'} {...tab('drills')} onclick={() => go('drills')} aria-disabled={store.timerRunning}>Drills</button>
+      <button class:on={nav.view === 'set'} {...tab('set')} onclick={() => go('set')} aria-disabled={store.timerRunning}>Settings</button>
     </nav>
   </div>
 

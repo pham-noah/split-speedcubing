@@ -22,6 +22,13 @@ Trainer polish, and the trainer now grades itself.
 - There is a lint gate: `npm run lint` (ESLint + typescript-eslint + eslint-plugin-svelte) runs in CI beside `svelte-check`. Turning it on found ~20 dead variables, three names shadowing others and two `$effect`s that leaned on bare expressions.
 
 ### Fixed
+- Tapping the tab bar (or History / Sessions on the timer) no longer throws away a live solve: pointer navigation is blocked while the clock runs, exactly like the keyboard already was. +2 / DNF / Delete also stand down during a run instead of silently penalising the previous solve.
+- "Reset progress on this case" now really keeps the algorithms you added and your chosen default; it used to delete the whole card, and the test meant to guard it asserted nothing.
+- Train's "Last 30 days" counts the device, like the training attempts and drills beside it, instead of only the current session.
+- A screen that throws shows an error card instead of a white page.
+- Rebinding a command onto a stock alias (P, W) is refused instead of firing two commands.
+- Drills: the BLD memo time no longer picks up the previous drill's penalty before the attempt is recorded.
+- `npm run seed` / `npm run screenshots` work again (`vite-node` is a real devDependency).
 - Phones: the timer is smaller (last-solve time 48-58 px -> 38-42 px, the running time on the full-screen colour 102-128 px -> 77-80 px), so the Solve screen fits a 640 px phone without scrolling; the first-run explanation is hidden on short screens because the button already says what to do. The session chip is a 44 px tap target like every other control.
 - The ao5/ao12 in the side panels and History were plain means, so the panel said 12.40 while the ao5 card on the same screen said 11.00. They now use the same WCA rules as the cards (`runningAverage`, one pass), and a single DNF inside the window no longer blanks the column.
 - A DNF'd solve vanished from "Recent solves" instead of showing as DNF.

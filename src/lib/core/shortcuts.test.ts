@@ -31,3 +31,9 @@ describe('shortcuts', () => {
     expect(matches({ code: 'KeyZ', ctrlKey: true }, 'plus2', {})).toBe(false);
   });
 });
+
+describe('rebinding onto a stock alias', () => {
+  it('is refused, because the alias would fire both commands', () => {
+    expect(conflictFor('dnf', 'KeyP', {})?.id).toBe('plus2');   // P is the +2 alias
+  });
+});

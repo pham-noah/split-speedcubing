@@ -91,16 +91,20 @@
   const exec = (d: DrillResult) => effective({ ms: d.ms, pen: d.pen ?? '' });
   const timed = $derived(okOnly.map(exec).filter(Number.isFinite));
   // the drill that just finished, with whatever penalty has been put on it since
-  const lastPen = $derived(results.at(-1)?.pen ?? '');
+  // a BLD drill is only stored when you say whether it worked, so until then results.at(-1) is the
+  // PREVIOUS drill and its penalty must not be applied to the time on screen
+  let pendingRecorded = $state(false);
+  const lastPen = $derived(pendingRecorded ? (results.at(-1)?.pen ?? '') : '');
   const pendingMs = $derived(pending ? (lastPen === 'DNF' ? Infinity : pending.ms + (lastPen === '+2' ? 2000 : 0)) : null);
   const isLookMode = $derived(mode === 'oll2' || mode === 'pll2');
   const twoStage = $derived(isLookMode ? twoLook : mode !== 'cross');
 
   function finish(r: { ms: number; recog: number | null }) {
     if (mode === 'cross') { store.addDrill({ type: 'cross', ms: r.ms, memo: null, ok: true }); nextScramble(); return; }
-    if (mode === 'bld') { pending = { ms: r.ms, memo: r.recog }; return; }
+    if (mode === 'bld') { pendingRecorded = false; pending = { ms: r.ms, memo: r.recog }; return; }
     // 2-look: record straight away and show what the cases were
     store.addDrill({ type: mode, ms: r.ms, memo: r.recog, ok: true, info: twoLook ? `${look?.stage1?.name ?? 'skip'} + ${look?.stage2?.name ?? 'skip'}` : 'one look' });
+    pendingRecorded = true;
     pending = { ms: r.ms, memo: r.recog };
   }
   function mark(ok: boolean) {
