@@ -22,6 +22,7 @@ Trainer polish, and the trainer now grades itself.
 - There is a lint gate: `npm run lint` (ESLint + typescript-eslint + eslint-plugin-svelte) runs in CI beside `svelte-check`. Turning it on found ~20 dead variables, three names shadowing others and two `$effect`s that leaned on bare expressions.
 
 ### Fixed
+- Phones: the timer is smaller (last-solve time 48-58 px -> 38-42 px, the running time on the full-screen colour 102-128 px -> 77-80 px), so the Solve screen fits a 640 px phone without scrolling; the first-run explanation is hidden on short screens because the button already says what to do. The session chip is a 44 px tap target like every other control.
 - The ao5/ao12 in the side panels and History were plain means, so the panel said 12.40 while the ao5 card on the same screen said 11.00. They now use the same WCA rules as the cards (`runningAverage`, one pass), and a single DNF inside the window no longer blanks the column.
 - A DNF'd solve vanished from "Recent solves" instead of showing as DNF.
 - A +2 / DNF put on a training attempt reached no number: every average used the raw time and a DNF could still be recorded as your best. Attempt times now go through `attemptExec` everywhere (Train, Library, Train History, the weak-spot list), and non-finite times are excluded from averages and bests.

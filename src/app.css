@@ -22,7 +22,7 @@ h1{margin:0;font-size:2.1rem;font-weight:800;letter-spacing:-.5px}
 .row{display:flex;gap:8px;align-items:center}
 .row>*{flex:1;min-width:0}
 .sp{justify-content:space-between;gap:12px}.sp>*{flex:0 1 auto}
-.chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-weight:800;font-size:.9rem}
+.chip{display:inline-flex;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 14px;min-height:44px;font-weight:800;font-size:.9rem}
 .btn{min-height:46px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-weight:700;padding:0 14px}
 .btn.p{background:var(--am);color:var(--on-am);border:0;font-weight:800}
 .btn.on{border:2px solid var(--am);color:var(--am)}
@@ -73,6 +73,9 @@ input,textarea{width:100%;min-height:44px;border-radius:10px;border:1px solid #3
 .overlay p{margin:0;color:var(--mu);line-height:1.55;font-size:1.05rem}
 .empty{text-align:center;color:var(--mu);padding:22px 12px;line-height:1.5}
 .empty b{color:var(--tx);display:block;font-size:1.05rem;margin-bottom:4px}
+/* on a short phone the first-run screen fits only without the long explanation: the button already
+   says what to do, and the rest is read once */
+@media (max-height:700px){.empty-how{display:none}}
 /* Desktop / wide windows: the bottom tab bar becomes a left sidebar (Solve stays in the middle of the list) */
 @media (min-width:900px){
   body{padding-left:210px}
@@ -100,7 +103,8 @@ input,textarea{width:100%;min-height:44px;border-radius:10px;border:1px solid #3
   .card{padding:12px;border-radius:14px}
   .btn{min-height:44px}
   .scr{min-height:2.4em;line-height:1.4}
-  .time{font-size:clamp(2.4rem,7.5vh,3.6rem)}
+  .time{font-size:clamp(2rem,6vh,2.6rem)}
+  .cover-time{font-size:clamp(2.6rem,12vh,5rem)}
   .big{width:min(172px,21vh);height:min(172px,21vh);min-width:126px;min-height:126px;margin:2px 0;font-size:1.15rem}
   .seg button{min-height:44px;padding:0 4px;font-size:.85rem}
   .empty{padding:14px 10px}

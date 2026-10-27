@@ -117,7 +117,7 @@
   {/if}
   <TimerPad holdMs={store.data.settings.holdMs} tapStart={store.data.settings.tapStart} hideTime={store.data.settings.hideTime} inspection={store.data.settings.inspection} beeps={store.data.settings.beeps} shown={last ? effective(last) : null} cover={store.data.settings.coverOn} coverColor={store.data.settings.coverColor} onfinish={finish} />
   {#if !solves.length}
-    <div class="empty"><b>Ready for your first solve</b>Hold the big button<span class="pc-only"> (or {store.key('timer') === 'Space' ? 'the spacebar' : 'your timer key'})</span> until it says Release, then let go to start. Tap anywhere to stop.</div>
+    <div class="empty"><b>Ready for your first solve</b><span class="empty-how">Hold the big button<span class="pc-only"> (or {store.key('timer') === 'Space' ? 'the spacebar' : 'your timer key'})</span> until it says Release, then let go to start. Tap anywhere to stop.</span></div>
   {/if}
   {#if store.shown('solve.penalties')}
     <div class="row" style="justify-content:center">
