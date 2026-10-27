@@ -28,21 +28,26 @@
   <div class="mu">{title}</div>
   <div class="mu" style="margin-top:2px">ao5 <b class="mono" style="color:var(--tx)">{formatTime(ao5)}</b> · ao12 <b class="mono" style="color:var(--tx)">{formatTime(ao12)}</b></div>
   {#if list.length}
-    <div class="row mono mu" style="padding:6px 0 2px;font-size:.72rem">
-      <span style="flex:none;width:52px">time</span>
-      <span style="flex:1;text-align:right">prev</span>
-      <span style="flex:1;text-align:right">ao5</span>
-      <span style="flex:1;text-align:right">ao12</span>
-    </div>
-    <div class="drows">
-    {#each list as r (r.i)}
-      <div class="row mono drow" style="padding:3px 0;font-size:.82rem">
-        <span style="flex:none;width:52px">{formatTime(r.t)}</span>
-        <span style={cellStyle(r.prev)}>{fmt(r.prev)}</span>
-        <span style={cellStyle(r.a5)}>{fmt(r.a5)}</span>
-        <span style={cellStyle(r.a12)}>{fmt(r.a12)}</span>
+    <!-- a real table for screen readers: rows are grouped, so each one is read as time / prev / ao5 / ao12 -->
+    <div role="table" aria-label={title}>
+      <div role="rowgroup">
+        <div class="row mono mu" role="row" style="padding:6px 0 2px;font-size:.72rem">
+          <span role="columnheader" style="flex:none;width:52px">time</span>
+          <span role="columnheader" style="flex:1;text-align:right">prev</span>
+          <span role="columnheader" style="flex:1;text-align:right">ao5</span>
+          <span role="columnheader" style="flex:1;text-align:right">ao12</span>
+        </div>
       </div>
-    {/each}
+      <div class="drows" role="rowgroup">
+      {#each list as r (r.i)}
+        <div class="row mono drow" role="row" style="padding:3px 0;font-size:.82rem">
+          <span role="cell" style="flex:none;width:52px">{formatTime(r.t)}</span>
+          <span role="cell" style={cellStyle(r.prev)}>{fmt(r.prev)}</span>
+          <span role="cell" style={cellStyle(r.a5)}>{fmt(r.a5)}</span>
+          <span role="cell" style={cellStyle(r.a12)}>{fmt(r.a12)}</span>
+        </div>
+      {/each}
+      </div>
     </div>
   {:else}
     <div class="mu" style="margin-top:6px">None yet.</div>

@@ -7,7 +7,13 @@
   let msg = $state('');
 
   const count = (r: ImportResult) => r.sessions.reduce((n, s) => n + s.solves.length, 0);
-  function analyse(t: string) { preview = t.trim() ? parseImport(t) : null; msg = ''; }
+  // parsing happens on the main thread: refuse a file big enough to freeze the screen instead
+  const MAX_BYTES = 5 * 1024 * 1024;
+  function analyse(t: string) {
+    if (t.length > MAX_BYTES) { preview = null; msg = `That file is too large to read here (${Math.round(t.length / 1024 / 1024)} MB). Split imports solve histories, not raw exports of everything.`; return; }
+    preview = t.trim() ? parseImport(t) : null;
+    msg = '';
+  }
   async function pick(e: Event) {
     const f = (e.target as HTMLInputElement).files?.[0];
     if (!f) return;
