@@ -26,6 +26,8 @@ Trainer polish, and the trainer now grades itself.
 - A DNF'd solve vanished from "Recent solves" instead of showing as DNF.
 - A +2 / DNF put on a training attempt reached no number: every average used the raw time and a DNF could still be recorded as your best. Attempt times now go through `attemptExec` everywhere (Train, Library, Train History, the weak-spot list), and non-finite times are excluded from averages and bests.
 - "Erase all data" no longer throws away the app's own undo slot: it can be undone like a backup restore.
+- Deleting a session (and its solves) is undoable too, and no longer asks through a blocking `confirm()`, matching how deleting a single solve works.
+- `npm run version:check` now also covers the Android `versionCode` and the per-build store changelog (`fastlane/.../changelogs/<versionCode>.txt`), so a release cannot go out without its "what's new".
 - Storage: a failed migration is retried instead of being marked done, and a change to a solve's `event` is written.
 - The storage ordering test used fixture ids whose key order already matched time order, so it passed with the sort deleted; it now fails without it.
  ("R2F2R'B'R...") because Svelte drops whitespace inside an each block; Solve, Train and Drills were all affected.

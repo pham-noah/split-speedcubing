@@ -6,6 +6,7 @@
   let name = $state('');
   let editing = $state<string | null>(null);
   let editName = $state('');
+  let deleted = $state<string | null>(null);   // the session just removed, while it can still be undone
   const info = (id: string) => {
     const s = store.data.solves.filter(x => x.session === id);
     const times = s.map(effective).filter(Number.isFinite);
@@ -41,12 +42,18 @@
           </button>
           <div class="row">
             <button class="btn" onclick={() => { editing = s.id; editName = s.name; }}>Rename</button>
-            <button class="btn" onclick={() => { if (confirm(`Delete “${s.name}” and its ${store.countIn(s.id)} solves?`)) store.deleteSession(s.id); }}>{store.data.sessions.length > 1 ? 'Delete' : 'Clear'}</button>
+            <button class="btn" onclick={() => { store.deleteSession(s.id); deleted = s.name; }}>{store.data.sessions.length > 1 ? 'Delete' : 'Clear'}</button>
           </div>
         {/if}
       </div>
     {/each}
   </div>
+  {#if deleted}
+    <div class="card row sp" role="status" aria-live="polite" style="border-color:var(--am)">
+      <span class="mu">Deleted “{deleted}” and its solves</span>
+      <button class="btn" style="flex:none" onclick={() => { if (store.undoRestore()) deleted = null; }}>Undo</button>
+    </div>
+  {/if}
   <div class="card" style="display:flex;flex-direction:column;gap:8px">
     <label class="mu" for="ns">New session</label>
     <input id="ns" placeholder="Name (optional)" bind:value={name} onkeydown={(e) => { if (e.key === 'Enter') create(); }} />

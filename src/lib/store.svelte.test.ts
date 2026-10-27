@@ -146,6 +146,20 @@ describe('store: backups that can be undone', () => {
     expect(store.solves.length).toBe(before);
     expect(store.canUndoRestore).toBe(false);
   });
+  it('deleting a session and its solves can be undone', () => {
+    store.erase();
+    store.addSolve(9000, 'R U');
+    store.addSession('Doomed');
+    store.addSolve(8000, 'F B');
+    const doomed = store.session.id;
+    expect(store.solves.length).toBe(1);
+    store.deleteSession(doomed);
+    expect(store.data.sessions.some(s => s.id === doomed)).toBe(false);
+    expect(store.canUndoRestore).toBe(true);
+    expect(store.undoRestore()).toBe(true);
+    expect(store.data.sessions.some(s => s.id === doomed)).toBe(true);
+    expect(store.data.solves.some(s => s.session === doomed)).toBe(true);
+  });
   it('erasing everything can be undone', () => {
     store.erase();
     store.addSolve(9000, 'R U');

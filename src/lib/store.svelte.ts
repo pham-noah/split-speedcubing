@@ -98,8 +98,10 @@ class Store {
     const s = this.data.sessions.find(x => x.id === id);
     if (s && name.trim()) { s.name = name.trim(); this.persist(); }
   }
-  /** deletes the session and its solves; the last remaining session is emptied instead of removed */
+  /** deletes the session and its solves; the last remaining session is emptied instead of removed.
+   *  Undoable: it keeps what it replaced, and a session's history is not something to lose by mis-tap. */
   deleteSession(id: string) {
+    this.replaced = $state.snapshot(this.data) as AppData;
     this.data.solves = this.data.solves.filter(s => s.session !== id);
     if (this.data.sessions.length > 1) {
       this.data.sessions = this.data.sessions.filter(s => s.id !== id);
