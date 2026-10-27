@@ -71,3 +71,15 @@ export function attemptExec(a: { total: number; recog: number | null; pen?: '+2'
   if (a.pen === 'DNF') return Infinity;
   return a.total - (a.recog ?? 0) + (a.pen === '+2' ? 2000 : 0);
 }
+
+/** Running WCA average of the last n at every index: null until there are n, Infinity when two DNFs
+ *  sit inside the window. Exactly the rules of averageOf, so a deltas panel and an ao5 card on the
+ *  same screen cannot disagree. */
+export function runningAverage(times: number[], n: number): (number | null)[] {
+  return times.map((_, i) => {
+    if (i + 1 < n) return null;
+    const w = times.slice(i + 1 - n, i + 1).sort((a, b) => a - b);
+    const mean = w.slice(1, -1).reduce((a, b) => a + b, 0) / (n - 2);
+    return Number.isFinite(mean) ? mean : Infinity;
+  });
+}

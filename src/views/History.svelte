@@ -1,6 +1,6 @@
 <script lang="ts">
   import { store } from '../lib/store.svelte';
-  import { averageOf, bestAverage, best, effective, formatTime } from '../lib/core/stats';
+  import { averageOf, bestAverage, best, effective, formatTime, runningAverage } from '../lib/core/stats';
   import ShortcutsSide from '../lib/ui/ShortcutsSide.svelte';
   const { onBack }: { onBack: () => void } = $props();
 
@@ -24,23 +24,24 @@
   const path = $derived(pts.map((v, i) => (Number.isFinite(v) ? `${i ? 'L' : 'M'}${(i / Math.max(1, pts.length - 1)) * W},${H - 8 - ((v - lo) / Math.max(1, hi - lo)) * (H - 16)}` : '')).filter(Boolean).join(' '));
 
   // the same deltas as the side panel: against the previous solve, the running ao5 and ao12
-  const fmt = (x: number | null) => (x == null ? '–' : `${x >= 0 ? '+' : '−'}${(Math.abs(x) / 1000).toFixed(2)}`);
-  const col = (x: number | null) => (x == null ? 'var(--mu)' : x < 0 ? 'var(--good)' : 'var(--bad)');
-  const mean = (end: number, n: number) => {
-    const xs = solves.slice(Math.max(0, end - n + 1), end + 1).map(effective).filter(Number.isFinite);
-    return xs.length === n ? xs.reduce((a, b) => a + b, 0) / n : null;
-  };
+  const ok = (x: number | null): x is number => x != null && Number.isFinite(x);
+  const fmt = (x: number | null) => (ok(x) ? `${x >= 0 ? '+' : '−'}${(Math.abs(x) / 1000).toFixed(2)}` : '–');
+  const col = (x: number | null) => (!ok(x) || x === 0 ? 'var(--mu)' : x < 0 ? 'var(--good)' : 'var(--bad)');
+  // the same WCA rules as the ao5/ao12 cards, in one pass over the session
+  const times = $derived(solves.map(effective));
+  const a5 = $derived(runningAverage(times, 5));
+  const a12 = $derived(runningAverage(times, 12));
   const deltas = $derived.by(() => {
     const out = new Map<string, { prev: number | null; a5: number | null; a12: number | null }>();
     solves.forEach((s, i) => {
-      const t = effective(s);
-      if (!Number.isFinite(t)) return;
-      const prevT = i ? effective(solves[i - 1]) : null;
-      const a5 = mean(i, 5), a12 = mean(i, 12);
+      const t = times[i];
+      if (!Number.isFinite(t)) return;                       // a DNF row shows dashes, not a delta
+      const prevT = i ? times[i - 1] : null;
+      const m5 = a5[i], m12 = a12[i];
       out.set(s.id, {
-        prev: prevT != null && Number.isFinite(prevT) ? t - prevT : null,
-        a5: a5 == null ? null : t - a5,
-        a12: a12 == null ? null : t - a12,
+        prev: ok(prevT) ? t - prevT : null,
+        a5: ok(m5) ? t - m5 : null,
+        a12: ok(m12) ? t - m12 : null,
       });
     });
     return out;

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { store } from '../store.svelte';
   import ShortcutsSide from './ShortcutsSide.svelte';
-  import { formatTime } from '../core/stats';
+  import { formatTime, attemptExec, runningAverage } from '../core/stats';
 
   // Training history: the attempts made while training, not solve times. One case, or all of them.
   const { caseId = null, onBack }: { caseId?: string | null; onBack: () => void } = $props();
@@ -13,7 +13,7 @@
   const cards = $derived(store.data.cards);
 
   type Row = { id: string; caseId: string; ts: number; total: number; recog: number | null; alg?: string };
-  const exec = (a: Row) => a.total - (a.recog ?? 0);
+  const exec = (a: Row) => attemptExec(a);
 
   // per case, the same deltas as everywhere else: previous attempt, running ao5 and ao12
   const deltas = $derived.by(() => {
@@ -27,14 +27,14 @@
     const out = new Map<string, { prev: number | null; a5: number | null; a12: number | null }>();
     for (const rows of byCase.values()) {
       const ex = rows.map(exec);
+      const a5s = runningAverage(ex, 5), a12s = runningAverage(ex, 12);
+      const ok = (x: number | null): x is number => x != null && Number.isFinite(x);
       rows.forEach((r, i) => {
-        const slice = (n: number) => ex.slice(Math.max(0, i - n + 1), i + 1);
-        const a5 = slice(5).length === 5 ? slice(5).reduce((a, b) => a + b, 0) / 5 : null;
-        const a12 = slice(12).length === 12 ? slice(12).reduce((a, b) => a + b, 0) / 12 : null;
+        const t = ex[i], m5 = a5s[i], m12 = a12s[i];
         out.set(r.id + r.ts, {
-          prev: i ? ex[i] - ex[i - 1] : null,
-          a5: a5 == null ? null : ex[i] - a5,
-          a12: a12 == null ? null : ex[i] - a12,
+          prev: i && ok(t) && ok(ex[i - 1]) ? t - ex[i - 1] : null,
+          a5: ok(t) && ok(m5) ? t - m5 : null,
+          a12: ok(t) && ok(m12) ? t - m12 : null,
         });
       });
     }
@@ -48,8 +48,8 @@
       .sort((a, b) => b.ts - a.ts)
       .slice(0, 200),
   );
-  const execs = $derived(all.map(exec));
-  const bestExec = $derived(execs.length ? Math.min(...execs) : null);
+  const execs = $derived(all.map(exec).filter(Number.isFinite));
+  const bestExec = $derived(execs.length ? execs.reduce((a, b) => (b < a ? b : a), Infinity) : null);
   const avgExec = $derived(execs.length ? execs.reduce((a, b) => a + b, 0) / execs.length : null);
 
   // per case: where the time goes, slowest first — what to drill next
@@ -57,7 +57,7 @@
     const out: { id: string; avg: number; best: number; n: number }[] = [];
     for (const [id, card] of Object.entries(cards)) {
       if (caseId && id !== caseId) continue;
-      const ex = card.attempts.map(a => a.total - (a.recog ?? 0));
+      const ex = card.attempts.map(a => attemptExec(a)).filter(Number.isFinite);
       if (!ex.length) continue;
       out.push({ id, avg: ex.reduce((x, y) => x + y, 0) / ex.length, best: Math.min(...ex), n: ex.length });
     }

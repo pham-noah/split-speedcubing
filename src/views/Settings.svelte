@@ -181,7 +181,7 @@
       <label class="btn" style="display:flex;align-items:center;justify-content:center;cursor:pointer">Restore backup<input type="file" accept="application/json" onchange={upload} class="sr" /></label>
     </div>
     <button class="btn" onclick={() => store.update({ introSeen: false })}>Show the intro again</button>
-    <button class="btn" onclick={() => { if (confirm('Erase all solves and progress on this device?')) { store.erase(); msg = 'Erased.'; canUndo = false; } }}>Erase all data</button>
+    <button class="btn" onclick={() => { if (confirm('Erase all solves and progress on this device?')) { store.erase(); msg = 'Erased. You can put it back while this screen is open.'; canUndo = true; } }}>Erase all data</button>
     <div class="row sp" role="status" aria-live="polite">
       <span class="mu" style="flex:1;min-width:0">{msg}</span>
       {#if canUndo}<button class="btn" style="flex:none" onclick={undoRestore}>Undo restore</button>{/if}

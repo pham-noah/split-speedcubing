@@ -20,7 +20,7 @@ const DB = 'cube-trainer', META = 'kv', SOLVES = 'solves', KEY = 'app';
 type Meta = Omit<AppData, 'solves'>;
 
 /** One cheap line per solve: enough to spot what changed without rewriting the whole history. */
-const sig = (s: Solve) => `${s.ms}|${s.pen}|${s.ts}|${s.session ?? ''}|${s.scramble}`;
+const sig = (s: Solve) => `${s.ms}|${s.pen}|${s.ts}|${s.event}|${s.session ?? ''}|${s.scramble}`;
 /** Solves are stored by id, so their order has to come back from their times, not from the store. */
 const byTime = (a: Solve, b: Solve) => a.ts - b.ts || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
 
@@ -101,7 +101,8 @@ export class IdbStorage implements Storage {
 
   private async ready(): Promise<IDBDatabase> {
     const db = await this.open();
-    if (!this.migrated) { this.migrated = true; await this.migrate(db); }
+    // only mark it done once it really is: a migration that failed must be retried next time
+    if (!this.migrated) { await this.migrate(db); this.migrated = true; }
     return db;
   }
 

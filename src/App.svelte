@@ -14,7 +14,7 @@
   let Screen = $state<any>(null);
   let loaded: View | null = null;
   let loading: View | null = null;
-  let loadError = $state<string | null>(null);
+  let chunkError = $state<string | null>(null);   // a screen's code failed to download
   const Current = $derived<any>(Screen);
 
   /** load a screen's chunk; `force` retries the one that failed */
@@ -22,14 +22,14 @@
     if (!force && loaded === v) return;
     if (loading === v) return;
     loading = v;
-    loadError = null;
+    chunkError = null;
     try {
       const m = await VIEWS[v]();
       if (nav.view !== v) return;        // the user moved on while it downloaded
       Screen = m.default;
       loaded = v;
     } catch (err) {
-      if (nav.view === v) loadError = String(err);
+      if (nav.view === v) chunkError = String(err);
     } finally {
       if (loading === v) loading = null;
     }
@@ -130,7 +130,7 @@
   <div inert={!store.data.settings.introSeen}>
     {#if Current}
       <Current />
-    {:else if loadError}
+    {:else if chunkError}
       <main class="page">
         <div class="card col" role="alert" style="border-color:#FF6B6B;gap:10px">
           <div style="font-weight:800;color:#FF8A80">That screen could not load</div>

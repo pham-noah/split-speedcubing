@@ -20,10 +20,24 @@ export const sleep = ms => new Promise(r => setTimeout(r, ms));
 export const clickText = (page, text, sel = 'button, label') =>
   page.evaluate((t, s) => { const el = [...document.querySelectorAll(s)].find(b => b.textContent.trim().startsWith(t)); if (!el) throw new Error('no element: ' + t); el.click(); }, text, sel);
 export async function seedData(page, json) {
+  // schema v2: settings and cards in kv['app'], each solve its own record in 'solves'
   await page.evaluate(async j => new Promise((res, rej) => {
-    const r = indexedDB.open('cube-trainer', 1);
-    r.onupgradeneeded = () => r.result.createObjectStore('kv');
-    r.onsuccess = () => { const tx = r.result.transaction('kv', 'readwrite'); tx.objectStore('kv').put(JSON.parse(j), 'app'); tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); };
+    const r = indexedDB.open('cube-trainer', 2);
+    r.onupgradeneeded = () => {
+      const db = r.result;
+      if (!db.objectStoreNames.contains('kv')) db.createObjectStore('kv');
+      if (!db.objectStoreNames.contains('solves')) db.createObjectStore('solves', { keyPath: 'id' });
+    };
+    r.onsuccess = () => {
+      const db = r.result;
+      const { solves, ...meta } = JSON.parse(j);
+      const tx = db.transaction(['kv', 'solves'], 'readwrite');
+      tx.objectStore('kv').put(meta, 'app');
+      const store = tx.objectStore('solves');
+      for (const s of solves ?? []) store.put(s);
+      tx.oncomplete = () => { db.close(); res(); };
+      tx.onerror = () => rej(tx.error);
+    };
     r.onerror = () => rej(r.error);
   }), json);
 }

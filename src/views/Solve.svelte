@@ -137,7 +137,7 @@
   </div>
   <aside class="side" aria-label="Recent solves">
     {#if store.shown('solve.recent')}
-      <Deltas times={solves.map(effective).filter(Number.isFinite)} title="Recent solves" />
+      <Deltas times={solves.map(effective)} title="Recent solves" />
     {/if}
     <ShortcutsSide view="solve" inline />
   </aside></div>

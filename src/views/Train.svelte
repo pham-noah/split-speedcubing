@@ -14,7 +14,7 @@
   import { caseScramble, randomAuf } from '../lib/core/alg';
   import { pickNext, mastery, gradeForAttempt } from '../lib/core/srs';
   import { CASE_TARGET_MS } from '../lib/core/targets';
-  import { formatTime, type Penalty } from '../lib/core/stats';
+  import { formatTime, attemptExec, type Penalty } from '../lib/core/stats';
   import { codeLabel } from '../lib/core/shortcuts';
 
   const HINT: Record<CaseSet, string> = {
@@ -67,8 +67,8 @@
     return (card.fsrs?.lapses ?? 0) > 0 || card.attempts.at(-1)?.pen === 'DNF';
   }).slice(0, 15));
   function weakCases(): CaseDef[] {
-    const avg = (c: CaseDef) => mean(store.card(c.id).attempts.filter(x => x.recog != null).slice(-8).map(x => x.total - x.recog!));
-    const timed = list.filter(c => store.card(c.id).attempts.filter(x => x.recog != null).length >= 2);
+    const avg = (c: CaseDef) => mean(store.card(c.id).attempts.slice(-8).map(attemptExec).filter(Number.isFinite));
+    const timed = list.filter(c => store.card(c.id).attempts.map(attemptExec).filter(Number.isFinite).length >= 2);
     return timed.sort((a, b) => (avg(b) ?? 0) - (avg(a) ?? 0)).slice(0, 10);
   }
 
@@ -104,7 +104,7 @@
       best: sessionStats.best,
       avg: (() => {
         const all = Object.values(store.data.cards).flatMap(c => c.attempts).filter(a => a.ts >= sessionStart);
-        const ex = all.map(a => a.total - (a.recog ?? 0));
+        const ex = all.map(attemptExec).filter(Number.isFinite);
         return ex.length ? ex.reduce((x, y) => x + y, 0) / ex.length : null;
       })(),
     } : null;
@@ -151,10 +151,10 @@
   // what this session has produced so far
   const sessionStats = $derived.by(() => {
     const all = Object.values(store.data.cards).flatMap(c => c.attempts).filter(a => a.ts >= sessionStart);
-    const execs = all.map(a => a.total - (a.recog ?? 0));
+    const execs = all.map(attemptExec).filter(Number.isFinite);
     return { n: all.length, best: execs.length ? execs.reduce((a, b) => (b < a ? b : a), Infinity) : null };
   });
-  const execOf = (a: { total: number; recog: number | null }) => a.total - (a.recog ?? 0);
+  const execOf = (a: { total: number; recog: number | null; pen?: '+2' | 'DNF' }) => attemptExec(a);
 
   // The attempt itself decides the review grade: no self-rating. A DNF, a case you never recognised
   // (no first tap) or a very slow solve is a lapse, which is what the "Lapsed" drill and the

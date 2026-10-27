@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { averageOf, meanOf, best, bestAverage, formatTime, effective, type Solve } from './stats';
+import { averageOf, meanOf, best, bestAverage, formatTime, effective, runningAverage, attemptExec, type Solve } from './stats';
 const mk = (ms: number, pen: Solve['pen'] = ''): Solve => ({ id: String(Math.random()), ms, pen, scramble: '', event: '333', ts: 0 });
 const list = (...v: (number | [number, Solve['pen']])[]) => v.map(x => (Array.isArray(x) ? mk(x[0], x[1]) : mk(x)));
 
@@ -64,6 +64,19 @@ describe('stats', () => {
     expect(formatTime(65430)).toBe('1:05.43');
     expect(formatTime(Infinity)).toBe('DNF');
     expect(formatTime(null)).toBe('–');
+  });
+  it('the running average follows the same WCA rules as averageOf', () => {
+    const xs = list(10000, 12000, 11000, 9000, 20000, [1, 'DNF'], 9500, 13000);
+    const run = runningAverage(xs.map(effective), 5);
+    for (let i = 0; i < xs.length; i++) {
+      const expected = averageOf(xs.slice(0, i + 1), 5);
+      expect(run[i], `window ${i}`).toBe(expected);
+    }
+  });
+  it('an attempt with a penalty costs the penalty, and a DNF has no time', () => {
+    expect(attemptExec({ total: 9000, recog: 500 })).toBe(8500);
+    expect(attemptExec({ total: 9000, recog: 500, pen: '+2' })).toBe(10500);
+    expect(attemptExec({ total: 9000, recog: 500, pen: 'DNF' })).toBe(Infinity);
   });
   it('never prints NaN or a negative time', () => {
     expect(formatTime(NaN)).toBe('–');

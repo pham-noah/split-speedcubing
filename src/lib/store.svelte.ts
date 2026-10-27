@@ -150,7 +150,9 @@ class Store {
     return set === 'ZBLL' ? this.data.zbll.map(c => ({ id: c.id, set: 'ZBLL' as const, name: c.name, alg: c.alg })) : SETS[set];
   }
   caseOf(id: string): CaseDef {
-    return BUILTIN_CASES.find(c => c.id === id) ?? this.casesFor('ZBLL').find(c => c.id === id)!;
+    const found = BUILTIN_CASES.find(c => c.id === id) ?? this.casesFor('ZBLL').find(c => c.id === id);
+    if (!found) throw new Error(`Unknown case: ${id}`);
+    return found;
   }
   card(id: string): CardRecord { return this.data.cards[id] ?? { ...newCard(), attempts: [] }; }
   /** built-in alg first, then the user's own */
@@ -325,6 +327,13 @@ class Store {
     this.persist();
     return true;
   }
-  erase() { this.data = defaultData(); this.replaced = null; this.apply(); this.persist(); }
+  /** wipe everything, but keep the data it replaced: this is the one action that can throw away
+   *  years of history, and it is undoable for exactly that reason */
+  erase() {
+    this.replaced = $state.snapshot(this.data) as AppData;
+    this.data = defaultData();
+    this.apply();
+    this.persist();
+  }
 }
 export const store = new Store();

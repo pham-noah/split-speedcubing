@@ -146,6 +146,16 @@ describe('store: backups that can be undone', () => {
     expect(store.solves.length).toBe(before);
     expect(store.canUndoRestore).toBe(false);
   });
+  it('erasing everything can be undone', () => {
+    store.erase();
+    store.addSolve(9000, 'R U');
+    const before = store.solves.map(s => s.id);
+    store.erase();
+    expect(store.solves.length).toBe(0);
+    expect(store.canUndoRestore).toBe(true);
+    expect(store.undoRestore()).toBe(true);
+    expect(store.solves.map(s => s.id)).toEqual(before);
+  });
   it('importing the same date-less list twice adds nothing the second time', () => {
     store.erase();
     const list = [{ name: 'List', solves: [{ ms: 9000, pen: '' as const, scramble: '', ts: 0 }, { ms: 8000, pen: '' as const, scramble: '', ts: 1 }] }];

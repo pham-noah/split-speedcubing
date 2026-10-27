@@ -22,7 +22,13 @@ Trainer polish, and the trainer now grades itself.
 - There is a lint gate: `npm run lint` (ESLint + typescript-eslint + eslint-plugin-svelte) runs in CI beside `svelte-check`. Turning it on found ~20 dead variables, three names shadowing others and two `$effect`s that leaned on bare expressions.
 
 ### Fixed
-- Scrambles were drawn without spaces between moves ("R2F2R'B'R...") because Svelte drops whitespace inside an each block; Solve, Train and Drills were all affected.
+- The ao5/ao12 in the side panels and History were plain means, so the panel said 12.40 while the ao5 card on the same screen said 11.00. They now use the same WCA rules as the cards (`runningAverage`, one pass), and a single DNF inside the window no longer blanks the column.
+- A DNF'd solve vanished from "Recent solves" instead of showing as DNF.
+- A +2 / DNF put on a training attempt reached no number: every average used the raw time and a DNF could still be recorded as your best. Attempt times now go through `attemptExec` everywhere (Train, Library, Train History, the weak-spot list), and non-finite times are excluded from averages and bests.
+- "Erase all data" no longer throws away the app's own undo slot: it can be undone like a backup restore.
+- Storage: a failed migration is retried instead of being marked done, and a change to a solve's `event` is written.
+- The storage ordering test used fixture ids whose key order already matched time order, so it passed with the sort deleted; it now fails without it.
+ ("R2F2R'B'R...") because Svelte drops whitespace inside an each block; Solve, Train and Drills were all affected.
 - "Retry this scramble" did nothing: the request was a plain field read once at startup, so the timer never saw it.
 - No sideways overflow at Extra large text on a 360 px phone (tab bar, segmented controls, scramble line).
 - A solve in progress is no longer thrown away by leaving the screen: Esc / Back stops the clock instead of navigating, tab shortcuts are ignored while the timer runs, and Esc in the Library search box clears the search or closes the case panel.
@@ -38,7 +44,7 @@ Trainer polish, and the trainer now grades itself.
 - Data loss is no longer silent: the pending save is flushed when the app is hidden or closed, write and read errors are shown with a retry, and a backup can no longer bring in NaN/negative times, unknown penalties or duplicate solve ids.
 - The IndexedDB connection is opened once instead of once per read and per write, and is closed when another tab upgrades the schema.
 - Scramble walkthrough: animation timers are cleared when it unmounts, and a solve started before the first scramble arrived is no longer saved with the "Generating scramble..." text.
-- End-to-end suite brought back in line with the UI (penalty keys, reveal instead of a grade dialog, diagram shapes, offline step); it is 29 checks and all of them pass again.
+- End-to-end suite brought back in line with the UI (penalty keys, reveal instead of a grade dialog, diagram shapes, offline step); it is 31 checks and all of them pass again.
 - The four version numbers (package.json, Cargo.toml, tauri.conf.json, Android) agree, and `npm run version:check` fails CI if they drift.
 
 ## [0.3.0] - 2026-10-19

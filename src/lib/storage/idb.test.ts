@@ -75,9 +75,11 @@ describe('IdbStorage', () => {
     await seedV1([]);
     const storage = new IdbStorage();
     const data = (await storage.load()) ?? defaultData();
-    data.solves = [solve('late', 9000, 5000), solve('early', 8000, 1000)];
+    // ids chosen so that key order (a-late < z-early) is the OPPOSITE of time order: without the
+    // sort on load this test fails, which the previous "early"/"late" ids could not do
+    data.solves = [solve('a-late', 9000, 5000), solve('z-early', 8000, 1000)];
     await storage.save(data);
-    expect((await new IdbStorage().load())!.solves.map(s => s.id)).toEqual(['early', 'late']);
+    expect((await new IdbStorage().load())!.solves.map(s => s.id)).toEqual(['z-early', 'a-late']);
   });
 
   it('keeps settings and cards across a save and a reload', async () => {

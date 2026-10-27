@@ -13,7 +13,7 @@
   import { mastery, recall, dueLabel, gradeForAttempt } from '../lib/core/srs';
   import { CASE_TARGET_MS } from '../lib/core/targets';
   import { moveCount, caseScramble, randomAuf } from '../lib/core/alg';
-  import { formatTime, type Penalty } from '../lib/core/stats';
+  import { formatTime, attemptExec, type Penalty } from '../lib/core/stats';
   import { makeHints } from '../lib/core/hints';
   import TrainHistory from '../lib/ui/TrainHistory.svelte';
   import PenaltyRow from '../lib/ui/PenaltyRow.svelte';
@@ -95,11 +95,12 @@
   const tScramble = $derived(training && tCase ? caseScramble(training.alg, auf, tCase.set === 'F2L') : '');
   const tMode = $derived(tCase ? (tCase.set === 'F2L' ? 'f2l' : tCase.set === 'OLL' ? 'oll' : 'pll') : 'pll');
   const tAttempts = $derived(training ? store.card(training.id).attempts : []);
-  const tExec = (a: { total: number; recog: number | null }) => a.total - (a.recog ?? 0);
+  const tExec = (a: { total: number; recog: number | null; pen?: '+2' | 'DNF' }) => attemptExec(a);
 
   function stats(alg?: string) {
     const a = (card?.attempts ?? []).filter(x => x.recog != null && (!alg || (x.alg ?? store.caseOf(sel!.id).alg) === alg));
-    return { n: a.length, recog: mean(a.map(x => x.recog!)), exec: mean(a.map(x => x.total - x.recog!)) };
+    // a penalty has to move these numbers: a DNF attempt has no usable execution time
+    return { n: a.length, recog: mean(a.map(x => x.recog!)), exec: mean(a.map(tExec).filter(Number.isFinite)) };
   }
   function pick(id: string) {
     selId = id; draft = ''; error = ''; confirmReset = false;
@@ -362,7 +363,7 @@
   </div>
   <aside class="side" aria-label="Case panel">
     {#if sel}
-      <Deltas times={store.card(sel.id).attempts.map(x => x.total - (x.recog ?? 0))} title="Recent attempts on this case" />
+      <Deltas times={store.card(sel.id).attempts.map(tExec)} title="Recent attempts on this case" />
     {:else}
       <div class="mu">Open a case to see its attempts here.</div>
     {/if}

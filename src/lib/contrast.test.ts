@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
+import { readableInk } from './ui/color';
 
 // WCAG 2.x contrast ratio between two #rrggbb colours
 const lum = (hex: string) => {
@@ -36,8 +37,11 @@ describe.each(Object.entries(themes))('contrast: %s theme', (_name, t) => {
     expect(ratio(fg, bg)).toBeGreaterThanOrEqual(4.5);
   });
   it('big button states are readable', () => {
-    expect(ratio('#000000', '#ffffff')).toBeGreaterThanOrEqual(4.5);   // ready (white)
     expect(ratio(t.tx, '#3A404C')).toBeGreaterThanOrEqual(4.5);        // running
+  });
+  it('the ink readableInk picks for the accent clears 4.5:1', () => {
+    // this is the function the app actually uses for --on-am, so a bad threshold fails here
+    expect(ratio(readableInk(t.am, '#12161C', '#FFFFFF'), t.am)).toBeGreaterThanOrEqual(4.5);
   });
   it('focus ring and dashed/selected outlines are visible (3:1) against the page', () => {
     expect(ratio(t.bl, t.bg)).toBeGreaterThanOrEqual(3);

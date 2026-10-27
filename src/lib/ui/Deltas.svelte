@@ -1,25 +1,27 @@
 <script lang="ts">
-  import { formatTime } from '../core/stats';
+  import { formatTime, runningAverage } from '../core/stats';
 
   // Last attempts with three deltas each: against the previous attempt, the running ao5 and the running ao12.
-  // Faster than the reference is green, slower is red.
+  // Faster than the reference is green, slower is red. The averages follow WCA rules (averageOf), so
+  // the number here matches the ao5 card on the same screen.
   const { times, rows = 5, title = 'Recent attempts' }: { times: number[]; rows?: number; title?: string } = $props();
 
-  const fmt = (x: number | null) => (x == null ? '–' : `${x >= 0 ? '+' : '−'}${(Math.abs(x) / 1000).toFixed(2)}`);
-  const col = (x: number | null) => (x == null || x === 0 ? 'var(--mu)' : x < 0 ? 'var(--good)' : 'var(--bad)');
+  const ok = (x: number | null): x is number => x != null && Number.isFinite(x);
+  const fmt = (x: number | null) => (ok(x) ? `${x >= 0 ? '+' : '−'}${(Math.abs(x) / 1000).toFixed(2)}` : '–');
+  const col = (x: number | null) => (!ok(x) || x === 0 ? 'var(--mu)' : x < 0 ? 'var(--good)' : 'var(--bad)');
   const cellStyle = (x: number | null) => `flex:1;text-align:right;color:${col(x)}`;
-  const mean = (end: number, n: number) => {
-    const xs = times.slice(Math.max(0, end - n + 1), end + 1);
-    return xs.length === n ? xs.reduce((a, b) => a + b, 0) / n : null;
-  };
-  const list = $derived.by(() =>
-    times.map((t, i) => {
-      const a5 = mean(i, 5), a12 = mean(i, 12);
-      return { i, t, prev: i ? t - times[i - 1] : null, a5: a5 == null ? null : t - a5, a12: a12 == null ? null : t - a12 };
-    }).slice(-rows).reverse(),
-  );
-  const ao5 = $derived(mean(times.length - 1, 5));
-  const ao12 = $derived(mean(times.length - 1, 12));
+  const list = $derived.by(() => {
+    const a5 = runningAverage(times, 5), a12 = runningAverage(times, 12);
+    return times.map((t, i) => ({
+      i,
+      t,
+      prev: i && ok(t) && ok(times[i - 1]) ? t - times[i - 1] : null,
+      a5: ok(t) && ok(a5[i]) ? t - (a5[i] as number) : null,
+      a12: ok(t) && ok(a12[i]) ? t - (a12[i] as number) : null,
+    })).slice(-rows).reverse();
+  });
+  const ao5 = $derived(runningAverage(times, 5).at(-1) ?? null);
+  const ao12 = $derived(runningAverage(times, 12).at(-1) ?? null);
 </script>
 
 <div class="deltas">
