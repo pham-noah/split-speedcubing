@@ -54,7 +54,9 @@
   );
   const shownText = $derived(
     st === 'run' ? (hideTime ? 'Solving…' : formatTime(now)) :
-    inspActive ? inspectionText(inspElapsed) : formatTime(shown)
+    inspActive ? inspectionText(inspElapsed) :
+    // no solve yet: an empty line, not a lone dash that reads as a stray divider
+    shown == null ? '' : formatTime(shown)
   );
 
   function beep(freq: number, len = 0.12) {

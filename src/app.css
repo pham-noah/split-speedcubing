@@ -16,20 +16,20 @@ h1{margin:0;font-size:2.1rem;font-weight:800;letter-spacing:-.5px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;content-visibility:auto;contain-intrinsic-size:auto 96px}
 .hero{padding:20px;display:flex;flex-direction:column;gap:6px}
 .hero .n{font-size:3.4rem;font-weight:800;line-height:1}
-.btn.big-cta{min-height:56px;border-radius:14px;font-size:1.05rem;margin-top:10px}
-.btn.row-btn{min-height:56px;text-align:left;padding:0 16px;justify-content:flex-start}
+.btn.big-cta{min-height:46px;border-radius:12px;font-size:1rem;margin-top:8px}
+.btn.row-btn{min-height:44px;text-align:left;padding:0 13px;justify-content:flex-start}
 .col{display:flex;flex-direction:column;gap:10px}
 .row{display:flex;gap:8px;align-items:center}
 .row>*{flex:1;min-width:0}
 .sp{justify-content:space-between;gap:12px}.sp>*{flex:0 1 auto}
-.chip{display:inline-flex;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 14px;min-height:44px;font-weight:800;font-size:.9rem}
-.btn{min-height:46px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-weight:700;padding:0 14px}
+.chip{display:inline-flex;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 11px;min-height:34px;font-weight:800;font-size:.85rem}
+.btn{min-height:38px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-weight:700;padding:0 11px;font-size:.92rem}
 .btn.p{background:var(--am);color:var(--on-am);border:0;font-weight:800}
 .btn.on{border:2px solid var(--am);color:var(--am)}
 button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible,a:focus-visible,.cell:focus-visible{outline:3px solid var(--bl);outline-offset:2px}
 .time{font-size:clamp(3rem,9vh,4.4rem);font-weight:800;letter-spacing:-2px;text-align:center;line-height:1}
 .scr{font-size:.95rem;font-weight:600;color:var(--mu);text-align:center;line-height:1.5;min-height:3em;overflow-wrap:anywhere}
-.big{width:min(210px,27vh);height:min(210px,27vh);min-width:150px;min-height:150px;border-radius:50%;border:0;background:var(--bl);color:#06121F;font-size:1.3rem;font-weight:800;align-self:center;margin:6px 0;touch-action:none}
+.big{width:min(180px,23vh);height:min(180px,23vh);min-width:128px;min-height:128px;border-radius:50%;border:0;background:var(--bl);color:#06121F;font-size:1.3rem;font-weight:800;align-self:center;margin:6px 0;touch-action:none}
 .big[data-s=hold]{background:var(--am);color:var(--on-am)}
 .big[data-s=ready]{background:#fff;color:#000}
 .big[data-s=run]{background:#3A404C;color:var(--tx)}
@@ -44,13 +44,13 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-vi
 .clabel{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-align:center;line-height:1.15;font-size:.72rem;max-width:100%;word-break:break-word}
 .hint{position:absolute;top:3px;right:3px;background:var(--am);color:var(--on-am);border-radius:6px;padding:1px 5px;font:800 .7rem/1.3 "JetBrains Mono",monospace;letter-spacing:.5px}
 .seg{display:flex;flex-wrap:wrap;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;min-width:0}
-.seg button{flex:1 1 68px;min-width:0;min-height:44px;padding:0 8px;border:0;border-radius:9px;background:none;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.seg button{flex:1 1 68px;min-width:0;min-height:36px;padding:0 7px;border:0;border-radius:9px;background:none;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .seg button.on{background:var(--am);color:var(--on-am)}
 nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;align-items:center;padding-bottom:env(safe-area-inset-bottom)}
-nav>*{flex:1;min-width:0;min-height:58px;padding:0 2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background:none;border:0;border-top:3px solid transparent;color:var(--mu);font-weight:600;font-size:.75rem}
+nav>*{flex:1;min-width:0;min-height:50px;padding:0 2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background:none;border:0;border-top:3px solid transparent;color:var(--mu);font-weight:600;font-size:.75rem}
 nav .on{color:var(--am);border-top-color:var(--am)}
 nav .mid{display:flex;justify-content:center;border:0}
-nav .mid button{width:68px;height:68px;margin-top:-26px;border-radius:50%;border:4px solid var(--bg);background:#262B36;color:var(--am);font-weight:800;font-size:.85rem}
+nav .mid button{width:52px;height:52px;margin-top:-20px;border-radius:50%;border:4px solid var(--bg);background:#262B36;color:var(--am);font-weight:800;font-size:.85rem}
 nav .mid button.on{background:var(--am);color:var(--on-am)}
 input,textarea{width:100%;min-height:44px;border-radius:10px;border:1px solid #3A404C;background:var(--bg);color:var(--tx);padding:8px 12px;font:600 1rem ui-monospace,Menlo,Consolas,monospace;-webkit-user-select:text;user-select:text}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
@@ -73,9 +73,6 @@ input,textarea{width:100%;min-height:44px;border-radius:10px;border:1px solid #3
 .overlay p{margin:0;color:var(--mu);line-height:1.55;font-size:1.05rem}
 .empty{text-align:center;color:var(--mu);padding:22px 12px;line-height:1.5}
 .empty b{color:var(--tx);display:block;font-size:1.05rem;margin-bottom:4px}
-/* on a short phone the first-run screen fits only without the long explanation: the button already
-   says what to do, and the rest is read once */
-@media (max-height:700px){.empty-how{display:none}}
 /* Desktop / wide windows: the bottom tab bar becomes a left sidebar (Solve stays in the middle of the list) */
 @media (min-width:900px){
   body{padding-left:210px}
@@ -84,7 +81,7 @@ input,textarea{width:100%;min-height:44px;border-radius:10px;border:1px solid #3
   nav>*{flex:none;min-height:46px;border-top:0;border-left:3px solid transparent;border-radius:10px;text-align:left;padding:0 14px;font-size:.95rem;font-weight:800}
   nav .on{border-left-color:var(--am);background:#262B36}
   nav .mid{display:block;padding:0}
-  nav .mid button{width:100%;height:46px;margin:0;border:0;border-radius:10px;font-size:.95rem;text-align:left;padding:0 14px;background:none;color:var(--mu)}
+  nav .mid button{width:100%;height:40px;margin:0;border:0;border-radius:10px;font-size:.95rem;text-align:left;padding:0 14px;background:none;color:var(--mu)}
   nav .mid button.on{background:#262B36;color:var(--am)}
 }
 /* Desktop-only affordances (keyboard hints), and a tighter phone layout so Solve and Drills fit one screen */
@@ -101,14 +98,14 @@ input,textarea{width:100%;min-height:44px;border-radius:10px;border:1px solid #3
   .page{padding:10px 14px calc(74px + env(safe-area-inset-bottom));gap:9px;min-height:0}
   h1{font-size:1.7rem}
   .card{padding:12px;border-radius:14px}
-  .btn{min-height:44px}
+  .btn{min-height:36px}
   .scr{min-height:2.4em;line-height:1.4}
   .time{font-size:clamp(2rem,6vh,2.6rem)}
   .cover-time{font-size:clamp(2.6rem,12vh,5rem)}
-  .big{width:min(172px,21vh);height:min(172px,21vh);min-width:126px;min-height:126px;margin:2px 0;font-size:1.15rem}
-  .seg button{min-height:44px;padding:0 4px;font-size:.85rem}
+  .big{width:min(146px,18vh);height:min(146px,18vh);min-width:106px;min-height:106px;margin:2px 0;font-size:1.05rem}
+  .seg button{min-height:34px;padding:0 4px;font-size:.85rem}
   .empty{padding:14px 10px}
-  nav>*{min-height:54px;font-size:.7rem;padding:0 1px}
+  nav>*{min-height:48px;font-size:.7rem;padding:0 1px}
 }
 
 /* phones: three newest attempt rows, and the 3D walkthrough stays a desktop tool (the notation is still shown) */

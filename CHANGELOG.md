@@ -22,6 +22,7 @@ Trainer polish, and the trainer now grades itself.
 - There is a lint gate: `npm run lint` (ESLint + typescript-eslint + eslint-plugin-svelte) runs in CI beside `svelte-check`. Turning it on found ~20 dead variables, three names shadowing others and two `$effect`s that leaned on bare expressions.
 
 ### Fixed
+- Phones: the first-run explanation is back on every screen size (an over-eager height rule had cut it), the lone dash the timer showed before your first solve is gone instead of looking like a stray divider, and every button is smaller: .btn 46->38 px, chips 44->34, segmented controls 44->36, tab bar 58->50, the round timer button 172->146 px.
 - Tapping the tab bar (or History / Sessions on the timer) no longer throws away a live solve: pointer navigation is blocked while the clock runs, exactly like the keyboard already was. +2 / DNF / Delete also stand down during a run instead of silently penalising the previous solve.
 - "Reset progress on this case" now really keeps the algorithms you added and your chosen default; it used to delete the whole card, and the test meant to guard it asserted nothing.
 - Train's "Last 30 days" counts the device, like the training attempts and drills beside it, instead of only the current session.
