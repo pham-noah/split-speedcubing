@@ -58,6 +58,7 @@
     "@capacitor/core": "^8.5.3",
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@fontsource-variable/manrope": "^5.3.0",
+    "@tauri-apps/plugin-opener": "^2.7.2",
     "cubing": "^0.66.1",
     "ts-fsrs": "^5.4.2"
   },

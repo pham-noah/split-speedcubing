@@ -59,8 +59,8 @@ describe('pickFileViaInput', () => {
     click.mockRestore();
   });
 
-  it('only the web and android shells can leave the webview', () => {
-    expect([web.caps.openLinks, android.caps.openLinks, desktop.caps.openLinks]).toEqual([true, true, false]);
+  it('every shell can open an external link its own way', () => {
+    expect([web.caps.openLinks, android.caps.openLinks, desktop.caps.openLinks]).toEqual([true, true, true]);
   });
 });
 

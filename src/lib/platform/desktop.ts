@@ -1,12 +1,24 @@
+import { openUrl } from '@tauri-apps/plugin-opener';
 import type { Platform } from './types';
 import { markShell, pickFileViaInput, saveFileViaAnchor } from './dom';
 
 export const platform: Platform = {
   kind: 'desktop',
-  caps: { backButton: false, saveFile: true, fileDialogs: false, openLinks: false },
+  caps: { backButton: false, saveFile: true, fileDialogs: false, openLinks: true },
   shell() {
     markShell('desktop');
-    // no service worker: the app's own files are already on disk
+    // a webview has nowhere to navigate to: hand every external link to the system browser instead
+    document.addEventListener(
+      'click',
+      (e) => {
+        const a = (e.target as HTMLElement | null)?.closest?.('a[href]') as HTMLAnchorElement | null;
+        if (!a || !/^https?:/i.test(a.href)) return;
+        e.preventDefault();
+        e.stopPropagation();
+        void openUrl(a.href).catch(() => {});
+      },
+      true,
+    );
   },
   saveFile: saveFileViaAnchor,
   pickFile: pickFileViaInput,
