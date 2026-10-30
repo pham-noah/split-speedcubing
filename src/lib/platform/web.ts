@@ -6,7 +6,7 @@ const forceSW = import.meta.env.VITE_SW === '1';
 
 export const platform: Platform = {
   kind: 'web',
-  caps: { backButton: false, saveFile: true, fileDialogs: false },
+  caps: { backButton: false, saveFile: true, fileDialogs: false, openLinks: true },
   shell() {
     markShell('web');
     if (!('serviceWorker' in navigator) || !location.protocol.startsWith('http')) return;
@@ -15,7 +15,10 @@ export const platform: Platform = {
       navigator.serviceWorker.register('./sw.js').catch(() => {});
     } else if (local) {
       // drop a worker left over from an earlier build
-      navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister())).catch(() => {});
+      navigator.serviceWorker
+        .getRegistrations()
+        .then((rs) => rs.forEach((r) => r.unregister()))
+        .catch(() => {});
     }
   },
   saveFile: saveFileViaAnchor,

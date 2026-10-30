@@ -58,4 +58,9 @@ describe('pickFileViaInput', () => {
     await expect(pickFileViaInput('application/json')).resolves.toBeNull();
     click.mockRestore();
   });
+
+  it('only the web and android shells can leave the webview', () => {
+    expect([web.caps.openLinks, android.caps.openLinks, desktop.caps.openLinks]).toEqual([true, true, false]);
+  });
 });
+

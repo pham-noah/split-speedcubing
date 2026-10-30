@@ -10,7 +10,7 @@ export function saveFileViaAnchor(name: string, text: string, mime = 'applicatio
 }
 
 export function pickFileViaInput(accept: string): Promise<{ name: string; text: string } | null> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const input = Object.assign(document.createElement('input'), { type: 'file', accept });
     input.addEventListener('change', async () => {
       const f = input.files?.[0];

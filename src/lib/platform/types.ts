@@ -2,6 +2,7 @@ export interface Caps {
   backButton: boolean;
   saveFile: boolean;
   fileDialogs: boolean;
+  openLinks: boolean;
 }
 
 export interface Platform {
