@@ -40,6 +40,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -51,25 +54,34 @@ jobs:
           distribution: temurin
           java-version: 21
       - run: npm ci
-      - run: npm run build
-      - run: npx cap sync android
-      - name: Build release APK (unsigned)
+      - run: npm run build:android
+      # a debug-signed APK cannot be updated in place, so a release without the key is not published
+      - name: Check for the release key
+        run: |
+          if [ -z "$KEYSTORE_B64" ]; then
+            echo "::error::No release key. Set ANDROID_KEYSTORE_BASE64, ANDROID_KEY_ALIAS, ANDROID_KEYSTORE_PASSWORD and ANDROID_KEY_PASSWORD, then re-run this tag."
+            exit 1
+          fi
+      - name: Install the release key
+        run: |
+          echo "$KEYSTORE_B64" | base64 -d > android/app/split-release.jks
+          cat > android/keystore.properties <<EOF
+          storeFile=split-release.jks
+          storePassword=$KEYSTORE_PASSWORD
+          keyAlias=$KEY_ALIAS
+          keyPassword=$KEY_PASSWORD
+          EOF
+      - name: Build and sign the APK
         working-directory: android
         run: ./gradlew assembleRelease
-      - name: Sign the APK (only when signing secrets are set)
-        if: env.KEYSTORE_B64 != ''
+      - name: Verify the signature
         run: |
-          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/upload.jks"
           APKSIGNER=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)
-          "$APKSIGNER" sign --ks "$RUNNER_TEMP/upload.jks" --ks-key-alias "${{ secrets.ANDROID_KEY_ALIAS }}" \
-            --ks-pass "pass:${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" --key-pass "pass:${{ secrets.ANDROID_KEY_PASSWORD }}" \
-            --out split-${{ github.ref_name }}.apk android/app/build/outputs/apk/release/app-release-unsigned.apk
-      - name: Keep the unsigned APK if there was no key
-        if: env.KEYSTORE_B64 == ''
-        run: cp android/app/build/outputs/apk/release/app-release-unsigned.apk split-${{ github.ref_name }}-unsigned.apk
+          "$APKSIGNER" verify --print-certs android/app/build/outputs/apk/release/app-release.apk
+          cp android/app/build/outputs/apk/release/app-release.apk "Split-${GITHUB_REF_NAME#v}.apk"
       - name: Attach to the release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release view "${{ github.ref_name }}" >/dev/null 2>&1 || gh release create "${{ github.ref_name }}" --draft --title "Split ${{ github.ref_name }}"
-          gh release upload "${{ github.ref_name }}" split-*.apk --clobber
+          gh release upload "${{ github.ref_name }}" Split-*.apk --clobber
