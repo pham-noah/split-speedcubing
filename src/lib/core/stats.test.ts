@@ -35,7 +35,7 @@ describe('stats', () => {
   it('best single survives a list far too long to spread into Math.min', () => {
     const many = Array.from({ length: 150_000 }, (_, i) => mk(1000 + i));
     expect(best(many)).toBe(1000);
-  });
+  }, 20_000);   // 150k objects: slow on a loaded machine, and that must not read as a failure
   it('best average matches a naive scan over the same windows', () => {
     const naive = (xs: Solve[], n: number) => {
       let b: number | null = null;
@@ -51,13 +51,19 @@ describe('stats', () => {
       expect(bestAverage(xs, n)).toBe(naive(xs, n));
     }
   });
-  it('best average over 20 000 solves is a single pass, not half a second', () => {
+  it('best average over 20 000 solves reads each solve a fixed number of times', () => {
     const xs = Array.from({ length: 20_000 }, (_, i) => mk(8000 + (i % 400) * 10));
-    const t0 = performance.now();
-    const b = bestAverage(xs, 5);
-    const ms = performance.now() - t0;
+    // A wall clock says more about the machine than about the code: this ran as "fast" on an idle box and
+    // failed while a build was running. Count the touches instead - a single pass reads every solve once
+    // (plus the two it re-reads to evict), a re-sorting or naive rescan reads them many times over.
+    let reads = 0;
+    const counted = new Proxy(xs, {
+      get(target, key, recv) { if (typeof key === 'string' && /^\d+$/.test(key)) reads++; return Reflect.get(target, key, recv); },
+    });
+    const b = bestAverage(counted, 5);
     expect(b).not.toBeNull();
-    expect(ms).toBeLessThan(120);
+    expect(reads).toBeLessThan(xs.length * 6);
+    expect(reads).toBeGreaterThanOrEqual(xs.length);   // it did read the list
   });
   it('formats times', () => {
     expect(formatTime(9840)).toBe('9.84');

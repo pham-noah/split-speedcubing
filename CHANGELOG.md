@@ -6,6 +6,9 @@ All notable changes to Split. Format based on [Keep a Changelog](https://keepach
 
 The F2L library is now the standard one, and so are PLL and OLL.
 
+### Fixed
+- Two tests in `stats.test.ts` measured the clock, so they failed whenever the machine was busy (a build running beside them) and passed on an idle one. The 150 000-solve case now has an explicit timeout, and the "single pass over 20 000 solves" case counts how many times the list is read (a Proxy), which a re-sorting or naive rescan blows past by three orders of magnitude. Verified by putting the naive version back: it reads 200 009 990 times against the 120 000 limit.
+
 ### Changed
 - The F2L tab lists the 41 cases once. A filter row carries speedcubedb's own six groups (Connected Pairs, Corner In Slot, Disconnected Pairs, Edge In Slot, Free Pairs, Pieces In Slot — alphabetical, the same order as their sidebar) with a mastered/total count on each; the four-slot cubes that used to sit above the grid are gone, and the case you open has **FR / FL / BL / BR** tabs instead, so the same case can be read in any slot without leaving it. Each slot still keeps its own progress and its own rotated algorithms; Train schedules all 164 as before.
 - A selected case is now looked up in the whole set rather than in the filtered grid, which is what lets the slot tabs open a sibling the current filter does not contain.
