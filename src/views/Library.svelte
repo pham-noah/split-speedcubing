@@ -91,7 +91,6 @@
   // OLL cells show the case name ("Sune"), not just its number; the number is still in the panel
   const label = (c: { name: string; nick?: string }) => (set === 'OLL' ? (c.nick ?? c.name) : short(c.name));
 
-  // the case being learned
   const tCase = $derived(training ? store.caseOf(training.id) : null);
   const tAlg = $derived(training?.alg ?? '');
   const tScramble = $derived(training && tCase ? caseScramble(training.alg, auf, tCase.set === 'F2L') : '');

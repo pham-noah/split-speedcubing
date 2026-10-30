@@ -71,7 +71,6 @@ class Store {
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
   }
 
-  /** push theme and text size into the document */
   apply() {
     const s = this.data.settings;
     document.documentElement.dataset.theme = s.theme;
@@ -103,7 +102,6 @@ class Store {
     }
   }
 
-  // ---- sessions ----
   get session(): Session { return this.data.sessions.find(s => s.id === this.data.session) ?? this.data.sessions[0]; }
   /** solves of the current session, oldest first */
   get solves(): Solve[] { const id = this.session.id; return this.data.solves.filter(s => (s.session ?? this.data.sessions[0].id) === id); }
@@ -129,7 +127,6 @@ class Store {
     this.persist();
   }
 
-  // ---- solves ----
   addSolve(ms: number, scramble: string, pen: Penalty = '') {
     // a solve started before the first scramble arrived would otherwise be saved with the placeholder text
     const scr = scramble.startsWith('Generating') ? '' : scramble;
@@ -162,10 +159,8 @@ class Store {
     this.persist();
   }
 
-  // ---- drills ----
   addDrill(d: Omit<DrillResult, 'ts'>) { this.data.drills.push({ ...d, ts: Date.now() }); this.data.drills = this.data.drills.slice(-500); this.persist(); }
 
-  // ---- cases ----
   /** all cases of a set; ZBLL comes from the user's import */
   casesFor(set: CaseSet): CaseDef[] {
     return set === 'ZBLL' ? this.data.zbll.map(c => ({ id: c.id, set: 'ZBLL' as const, name: c.name, alg: c.alg })) : SETS[set];
@@ -295,7 +290,6 @@ class Store {
   }
   clearZbll() { this.data.zbll = []; this.persist(); }
 
-  // ---- personalised scheduling ----
   /** how many of the user's reviews the optimiser can learn from */
   get fsrsPoints() { return countPoints(collectLogs(this.data.cards)); }
   readonly fsrsMinPoints = MIN_POINTS;
@@ -306,7 +300,6 @@ class Store {
   }
   resetFsrs() { delete this.data.settings.fsrsW; this.persist(); }
 
-  // ---- shortcuts and panels ----
   key(id: string) { return keyFor(id, this.data.settings.keys); }
   is(e: KeyLike, id: string) { return matches(e, id, this.data.settings.keys); }
   /** null when bound, otherwise a message */
@@ -322,7 +315,6 @@ class Store {
   shown(panel: string) { return !this.data.settings.hidden[panel]; }
   setShown(panel: string, on: boolean) { this.data.settings.hidden = { ...this.data.settings.hidden, [panel]: !on }; this.persist(); }
 
-  // ---- importing solves from other timers ----
   /** each imported session becomes a new session; solves already present (same time, scramble and date) are skipped */
   importSolves(sessions: ImportedSession[], label: string): { added: number; duplicates: number; sessions: number } {
     const seen = new Set(this.data.solves.map(s => `${s.ts}|${s.ms}|${s.scramble}`));
@@ -344,7 +336,6 @@ class Store {
     return { added, duplicates, sessions: made };
   }
 
-  // ---- settings and backups ----
   update(patch: Partial<AppData['settings']>) { Object.assign(this.data.settings, patch); this.apply(); this.persist(); }
   exportJson() { return JSON.stringify($state.snapshot(this.data), null, 1); }
   /** Replaces everything, but keeps what it replaced so the restore can be undone. Throws before

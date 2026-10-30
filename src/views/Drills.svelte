@@ -54,7 +54,6 @@
     scramble = await queue.take();
   }
   function setMode(m: Mode) { mode = m; nextScramble(); }
-  // penalties on the drill you just finished
   function togglePen(p: '+2' | 'DNF' | '') {
     if (!p || !results.length) return;
     const now = results.at(-1)?.pen;

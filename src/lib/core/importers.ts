@@ -4,7 +4,6 @@ export interface ImportedSolve { ms: number; pen: Penalty; scramble: string; ts:
 export interface ImportedSession { name: string; solves: ImportedSolve[] }
 export interface ImportResult { format: string; sessions: ImportedSession[]; notes: string[] }
 
-// ---- time parsing ----
 /** "9.84", "1:05.43", "10.5+", "DNF(12.3)", "12.34" -> {ms, pen}; null if it is not a time. */
 export function parseTimeText(raw: string): { ms: number; pen: Penalty } | null {
   let t = raw.trim().replace(/^"|"$/g, '');
@@ -35,7 +34,6 @@ const toTs = (v: unknown): number | null => {
   return null;
 };
 
-// ---- csTimer (JSON export) ----
 // { "session1": [ [[penalty, ms], scramble, comment, timestamp], ... ], "properties": { "sessionData": "{...}" } }
 function parseCsTimer(root: Record<string, unknown>): ImportResult {
   const notes: string[] = [];
@@ -102,7 +100,6 @@ function parseGenericJson(root: unknown): ImportResult {
   return { format: 'JSON backup', sessions: found, notes: found.length ? ['Format recognised by its structure (time in seconds). Check the preview before importing.'] : [] };
 }
 
-// ---- CSV ----
 function splitCsv(text: string): string[][] {
   const first = text.split(/\r?\n/, 1)[0];
   const delim = [';', '\t', ','].reduce((b, d) => (first.split(d).length > first.split(b).length ? d : b), ',');
@@ -154,7 +151,6 @@ function parseCsv(text: string): ImportResult | null {
   return { format: 'CSV', sessions: [...sessions].map(([name, solves]) => ({ name, solves })), notes };
 }
 
-// ---- plain list of times, one per line ----
 function parseList(text: string): ImportResult {
   const solves: ImportedSolve[] = [];
   let skipped = 0;

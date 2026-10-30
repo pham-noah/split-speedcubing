@@ -96,7 +96,6 @@
     const t = setInterval(() => { if (Date.now() - touchedAt > 1600) step(); }, Math.max(300, speed));
     return () => clearInterval(t);
   });
-  // a new scramble starts from the top
   let lastAlg = '';
   $effect(() => {
     if (alg === lastAlg) return;

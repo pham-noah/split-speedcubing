@@ -84,7 +84,6 @@
     current = c; auf = randomAuf(); lastId = c?.id ?? null;
   }
   function start(isWeak = false, isLapsed = false) { weak = isWeak; lapsed = isLapsed; lastId = null; started = true; sessionStart = Date.now(); next(); }
-  // penalties apply to the attempt you just finished
   function togglePen(p: '+2' | 'DNF' | '') {
     if (!current) return;
     if (!p) return;
@@ -148,7 +147,6 @@
   const scrTokens = $derived(scramble.split(/\s+/).filter(Boolean));
   // attempts as execution time; the side panel shows the last five with deltas
   const attempts = $derived(current ? store.card(current.id).attempts : []);
-  // what this session has produced so far
   const sessionStats = $derived.by(() => {
     const all = Object.values(store.data.cards).flatMap(c => c.attempts).filter(a => a.ts >= sessionStart);
     const execs = all.map(attemptExec).filter(Number.isFinite);
