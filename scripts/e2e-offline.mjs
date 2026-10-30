@@ -16,7 +16,7 @@ if (build.status !== 0) { console.error('offline build failed'); process.exit(1)
 const fs = await import('node:fs');
 const logPath = '/tmp/split-preview-sw.log';
 let server = null;
-const stop = () => { try { server?.kill('SIGTERM'); } catch {} };
+const stop = () => { try { server?.kill('SIGTERM'); } catch { /* already gone */ } };
 process.on('exit', stop);
 process.on('SIGINT', () => { stop(); process.exit(130); });
 
@@ -33,9 +33,9 @@ const holderPid = () => {
 if (answered()) {
   const pid = holderPid();
   console.log(`port ${PORT} was held by a leftover preview${pid ? ` (pid ${pid})` : ''}; clearing it`);
-  if (pid) { try { process.kill(pid, 'SIGTERM'); } catch {} }
+  if (pid) { try { process.kill(pid, 'SIGTERM'); } catch { /* already gone */ } }
   for (let i = 0; i < 20 && answered(); i++) await wait(250);
-  if (answered() && pid) { try { process.kill(pid, 'SIGKILL'); } catch {} }
+  if (answered() && pid) { try { process.kill(pid, 'SIGKILL'); } catch { /* already gone */ } }
 }
 
 // one attempt, then one retry: a preview that silently fails to bind must not fail the gate
@@ -51,7 +51,7 @@ for (let attempt = 0; attempt < 2 && !up; attempt++) {
 }
 if (!up) {
   console.error(`preview on ${PORT} never answered; its log:`);
-  try { console.error(fs.readFileSync(logPath, 'utf8').trim() || '(empty)'); } catch {}
+  try { console.error(fs.readFileSync(logPath, 'utf8').trim() || '(empty)'); } catch { console.error('(no log)'); }
   stop();
   process.exit(1);
 }
@@ -63,5 +63,5 @@ const run = spawnSync('node', ['scripts/e2e.mjs'], {
 // SIGTERM, then make sure the port really went away: an orphaned preview breaks the next run
 stop();
 for (let i = 0; i < 20 && answered(); i++) await wait(250);
-if (answered()) { try { server?.kill('SIGKILL'); } catch {} await wait(500); }
+if (answered()) { try { server?.kill('SIGKILL'); } catch { /* already gone */ } await wait(500); }
 process.exit(run.status ?? 1);

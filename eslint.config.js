@@ -10,7 +10,7 @@ import svelteConfig from './svelte.config.js';
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'android/**', 'src-tauri/target/**', 'src-tauri/gen/**', 'coverage/**', 'node_modules/**'],
+    ignores: ['dist/**', 'dist-sw/**', 'android/**', 'src-tauri/target/**', 'src-tauri/gen/**', 'coverage/**', 'node_modules/**'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
