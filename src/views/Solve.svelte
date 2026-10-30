@@ -79,7 +79,17 @@
     else if (store.is(e, 'sessions')) sessions = true;
     else if (store.is(e, 'scramble')) newScramble();
   }
-  // Back closes history / sessions first
+    // the walkthrough eats the space the timer needs on a desktop-sized window
+  let wide = $state(false);
+  $effect(() => {
+    const m = matchMedia('(min-width:1100px)');
+    const on = () => (wide = m.matches);
+    on();
+    m.addEventListener('change', on);
+    return () => m.removeEventListener('change', on);
+  });
+
+// Back closes history / sessions first
   $effect(() => {
     if (history || sessions)
       return nav.onBack(() => {
@@ -119,6 +129,7 @@
         {#if store.shown('solve.cube') && !store.cubeHidden && scramble.includes(' ') && !scramble.startsWith('Generating')}
           <div class="card cube-panel" style="display:flex;justify-content:center">
             <ScrambleWalk
+              size={wide ? 58 : 90}
               alg={scramble}
               autoplay={store.data.settings.walkAutoplay}
               speed={store.data.settings.walkSpeed}
