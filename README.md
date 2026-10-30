@@ -13,7 +13,7 @@ One codebase (Svelte 5 + TypeScript + Vite) for three targets: browser/PWA, Andr
 ```bash
 npm install
 npm run dev        # http://localhost:5173
-npm test           # 282 tests: simulator, every PLL/OLL/F2L alg, stats, grading, FSRS (+ personalisation), storage and backups, sessions, importers, shortcuts, back handling, contrast, and a full-app UI test with an axe accessibility audit
+npm test           # 283 tests: simulator, every PLL/OLL/F2L alg, stats, grading, FSRS (+ personalisation), storage and backups, sessions, importers, shortcuts, back handling, contrast, and a full-app UI test with an axe accessibility audit
 npm run e2e        # 31 checks in a real Chrome against a running build (see Testing)
 npm run check      # type-check
 npm run lint       # eslint: shadowing, dead code, unkeyed each blocks, bare $effect expressions
@@ -66,7 +66,7 @@ src/views/         Solve, Train, Library, Drills, Settings
 
 ## Testing
 
-- `npm test`: 282 unit and component tests (including an axe-core accessibility audit and WCAG contrast checks).
+- `npm test`: 283 unit and component tests (including an axe-core accessibility audit and WCAG contrast checks).
 - `npm run e2e`: 31 end-to-end checks in a **real Chrome/Chromium**: first launch, timing with real pointer input, persistence across reloads (IndexedDB), keyboard shortcuts, retrying a scramble from History, the training flow, csTimer import, no sideways overflow at Extra large text on a 360 px phone, offline mode (service worker, scrambles still work), and no console errors. Build with `VITE_SW=1 npm run build` so the service worker also registers on localhost, then `npm run preview` and `npm run e2e`; set `CHROME_PATH` if Chrome is not in a standard location. The checks run in CI (`.github/workflows/ci.yml`).
 - `npm run lint`: ESLint over `src/` and `scripts/` (svelte-check catches types, this catches the classes of bug that type-check fine: a name shadowing another, a dead variable, an unkeyed each block, a bare expression used as an `$effect` dependency). Run by CI before the tests.
 - `npm run screenshots`: regenerates the store screenshots, desktop image and feature graphic from the running build with demo data (`scripts/seed-demo.ts`).
@@ -85,8 +85,8 @@ src/views/         Solve, Train, Library, Drills, Settings
 - **Solve:** timer with hold-to-start (touch or keyboard), optional 15 s inspection (beeps at 8 s and 12 s, +2 after 15 s, DNF after 17 s), +2 / DNF / delete, best / ao5 / ao12, cubing.js scrambles.
 - **Sessions:** tap the session name on the Solve screen to create, switch, rename or delete sessions. Each keeps its own solves, history and averages; training progress is shared.
 - **History:** every solve with its scramble, penalty editing, delete, best single / ao5 / ao12, and a progress chart.
-- **Train:** opens on a **Today** screen (cases due, new cases, this week's recognition and execution averages, last 30 days at a glance, progress per set, quick drills, "weak spots" = your 10 slowest cases, plus "lapsed" = the cases the scheduler marked as lapses). Then PLL, OLL, F2L (41 cases x 4 slots) and ZBLL (your own imported list) with case-specific scrambles, recognition vs execution timing, attempt-based grading (a DNF, a missed recognition or a very slow solve counts as a lapse) and FSRS spaced repetition. On wide screens a side panel shows the algorithm, recent attempts and shortcuts.
-- **Library:** PLL / OLL / F2L (slot filter) / ZBLL tabs, mastery grid; PLL cases are drawn as movement arrows, F2L as small cubes with only the pair in colour (flat SVG in the grid, a live 3D cube for the case you open); several algorithms per case, pick your default, add your own (checked by the simulator to really solve that case), per-algorithm stats, estimated recall, case codes (press F) and a Trainer view for one case inside the Library.
+- **Train:** opens on a **Today** screen (cases due, new cases, this week's recognition and execution averages, last 30 days at a glance, progress per set, quick drills, "weak spots" = your 10 slowest cases, plus "lapsed" = the cases the scheduler marked as lapses). Then PLL, OLL, F2L (the 41 cases practised in all four slots, so 164 cards) and ZBLL (your own imported list) with case-specific scrambles, recognition vs execution timing, attempt-based grading (a DNF, a missed recognition or a very slow solve counts as a lapse) and FSRS spaced repetition. On wide screens a side panel shows the algorithm, recent attempts and shortcuts.
+- **Library:** PLL / OLL / F2L / ZBLL tabs, mastery grid; the F2L tab lists the 41 cases once, filtered by the six groups speedcubedb uses (Connected, Corner In Slot, Disconnected, Edge In Slot, Free, Pieces In Slot) with a mastered/total count on each, and the case you open has **FR / FL / BL / BR** tabs to see that same case from any slot; PLL cases are drawn as movement arrows, F2L as small cubes with only the pair in colour (flat SVG in the grid, a live 3D cube for the case you open); several algorithms per case, pick your default, add your own (checked by the simulator to really solve that case), per-algorithm stats, estimated recall, case codes (press F) and a Trainer view for one case inside the Library.
 - **Attempts panel:** every screen has a right-hand column with the recent attempts or solves and three deltas — previous, ao5, ao12 — green when faster, red when slower. History carries the same deltas on every row.
 - **Drills:** Cross only, 2-look OLL, 2-look PLL, BLD memo.
 - **First launch:** a short three-step intro (replay it from Settings) and helpful empty states.
@@ -121,7 +121,7 @@ One module decides what a case looks like: `src/lib/ui/caseCubeView.ts` finds th
 - Algorithms are starting points: a default plus the alternatives SpeedCubeDB lists, all of them machine-checked, but they are not guaranteed to be the ones you like executing. Swap the default in the Library per case (the app checks that an alg really solves the case before it accepts it), and check any line against your own reference if you care about a specific numbering.
 - Not done yet: ZBLL bundled algs. Smart cube Bluetooth support was deliberately left out to keep the app simple and fully offline.
 - The csTimer import follows csTimer's documented/observed export layout and is unit-tested against it, but not against a real export file. CubeDesk's own backup format could not be verified; its importer is best effort, and CSV or a plain list of times always works.
-- Tested in a real desktop browser (Chromium: 31 end-to-end checks) and by 282 unit tests, but not yet on a real phone or inside the Android and Tauri shells, and the GitHub workflows and F-Droid recipe have not been run.
+- Tested in a real desktop browser (Chromium: 31 end-to-end checks) and by 283 unit tests, but not yet on a real phone or inside the Android and Tauri shells, and the GitHub workflows and F-Droid recipe have not been run.
 
 ## Licence
 

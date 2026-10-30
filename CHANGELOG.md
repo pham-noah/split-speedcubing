@@ -7,6 +7,8 @@ All notable changes to Split. Format based on [Keep a Changelog](https://keepach
 The F2L library is now the standard one, and so are PLL and OLL.
 
 ### Changed
+- The F2L tab lists the 41 cases once. A filter row carries speedcubedb's own six groups (Connected Pairs, Corner In Slot, Disconnected Pairs, Edge In Slot, Free Pairs, Pieces In Slot — alphabetical, the same order as their sidebar) with a mastered/total count on each; the four-slot cubes that used to sit above the grid are gone, and the case you open has **FR / FL / BL / BR** tabs instead, so the same case can be read in any slot without leaving it. Each slot still keeps its own progress and its own rotated algorithms; Train schedules all 164 as before.
+- A selected case is now looked up in the whole set rather than in the filtered grid, which is what lets the slot tabs open a sibling the current filter does not contain.
 - The F2L grid draws each case as a flat `<svg>` (`CaseThumb`) instead of a live CSS-3D scene, and both it and the 3D `CaseCube` read their framing from one new module, `src/lib/ui/caseCubeView.ts` (the pair, the camera angle, the projection, which faces point at the viewer). Measured on a phone-sized viewport, the 41-cell F2L grid settles in 828 ms with 459 ms of blocked main thread and 1,131 DOM nodes, against 4,451 ms, 3,671 ms and 2,931 nodes for the same grid built from CSS-3D cubes. The cube you open in the Library and the Trainer keeps the 3D renderer; the unused three-face culling path is gone with it.
 
 ### Added

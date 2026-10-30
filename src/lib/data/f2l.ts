@@ -18,3 +18,9 @@ export const F2L: CaseDef[] = SLOTS.flatMap(slot =>
     slot,
   }))
 );
+
+/** the same case as seen from another slot: 'F2L-1' <-> 'F2L-1-FL' (FR keeps the bare id) */
+export function f2lSibling(id: string, slot: Slot): string {
+  const base = id.replace(/-(FR|FL|BL|BR)$/, '');
+  return slot === 'FR' ? base : `${base}-${slot}`;
+}

@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { applyAlg, solved, isSolved, llView, llFlat, f2lSolved } from './cube';
 import { invert } from './alg';
 import { PLL } from '../data/pll';
+import { F2L, f2lSibling } from '../data/f2l';
+import { SLOTS } from '../data';
 import { OLL } from '../data/oll';
 
 const scrambleState = (alg: string, pre = '', post = '') => applyAlg(solved(), `${pre} ${invert(alg)} ${post}`);
@@ -55,6 +57,19 @@ describe('PLL data', () => {
     }
     expect(checked).toBeGreaterThan(40);
   });
+  it('the same case in another slot keeps its identity but changes its algorithm', () => {
+    for (const slot of SLOTS) {
+      const id = f2lSibling('F2L-7', slot);
+      expect(id).toBe(slot === 'FR' ? 'F2L-7' : `F2L-7-${slot}`);
+      const c = F2L.find(x => x.id === id);
+      expect(c, id).toBeTruthy();
+      expect(c!.slot).toBe(slot);
+      if (slot !== 'FR') expect(c!.alg).not.toBe(F2L.find(x => x.id === 'F2L-7')!.alg);   // rotated, not copied
+      expect(c!.alts?.length ?? 0).toBe(F2L.find(x => x.id === 'F2L-7')!.alts?.length ?? 0);
+    }
+    expect(f2lSibling('F2L-7-FL', 'FR')).toBe('F2L-7');   // and back again
+  });
+
   it('every PLL is a distinct case', () => {
     const keys = PLL.map(c => key(c.alg, false));
     expect(new Set(keys).size).toBe(21);

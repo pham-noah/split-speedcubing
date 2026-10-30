@@ -1,12 +1,11 @@
 <script lang="ts">
   import { store } from '../lib/store.svelte';
   import { nav } from '../lib/nav.svelte';
-  import { SET_NAMES, type CaseSet, type Slot } from '../lib/data';
+  import { SET_NAMES, SLOTS, F2L_GROUPS, f2lSibling, type CaseSet } from '../lib/data';
   import CaseDiagram from '../lib/ui/CaseDiagram.svelte';
   import CaseCube from '../lib/ui/CaseCube.svelte';
   import CaseThumb from '../lib/ui/CaseThumb.svelte';
   import LazyBox from '../lib/ui/LazyBox.svelte';
-  import SlotPicker from '../lib/ui/SlotPicker.svelte';
   import ShortcutsSide from '../lib/ui/ShortcutsSide.svelte';
   import ScrambleWalk from '../lib/ui/ScrambleWalk.svelte';
   import Deltas from '../lib/ui/Deltas.svelte';
@@ -26,7 +25,7 @@
   let error = $state('');
   let zbllText = $state('');
   let zbllMsg = $state<string[]>([]);
-  let slotFilter = $state<Slot>('FR');
+  let groupFilter = $state<string | null>(null);   // F2L group, the grid always shows the front-right set
   // Vimium-style: press F, type a case's code, and that case opens
   let hint = $state(false);
   let typed = $state('');
@@ -56,12 +55,12 @@
     if (show === 'due') return k.seen && k.due <= Date.now();
     return true;
   };
-  const list = $derived(store.casesFor(set).filter(c => (set !== 'F2L' || c.slot === slotFilter) && matches(c) && keep(c)));
+  const list = $derived(store.casesFor(set).filter(c => (set !== 'F2L' || (c.slot === 'FR' && (!groupFilter || c.group === groupFilter))) && matches(c) && keep(c)));
   const shownList = $derived(list.slice(0, visible));
   // a different set or filter starts from a short list again
   let lastFilters = '';
   $effect(() => {
-    const key = `${set}|${slotFilter}|${q}|${show}`;
+    const key = `${set}|${groupFilter}|${q}|${show}`;
     if (key === lastFilters) return;
     lastFilters = key;
     visible = 12;
@@ -81,7 +80,9 @@
     return () => { stop = true; };
   });
   const mode = $derived(set === 'F2L' ? 'f2l' : set === 'OLL' ? 'oll' : 'pll');
-  const sel = $derived(selId ? list.find(c => c.id === selId) ?? null : null);
+  // looked up in the whole set, not in the filtered list: the slot tabs open a sibling case
+  // (F2L 1 in FL) that the current grid filter does not contain, and it must still open
+  const sel = $derived(selId ? store.casesFor(set).find(c => c.id === selId) ?? null : null);
   const card = $derived(sel ? store.card(sel.id) : null);
   const algs = $derived(sel ? store.algsFor(sel.id) : []);
   const current = $derived(sel ? store.algFor(sel.id) : '');
@@ -130,9 +131,17 @@
     if (selId) return nav.onBack(() => { selId = null; return true; });
   });
   const mastered = $derived(list.reduce((n, c) => n + (mastery(store.card(c.id)) === 'mastered' ? 1 : 0), 0));
+  const groupCounts = $derived.by(() => {
+    const fr = store.casesFor('F2L').filter(c => c.slot === 'FR');
+    // speedcubedb lists its filters alphabetically, with the same six groups and the same totals
+    return [...F2L_GROUPS].sort((a, b) => a.localeCompare(b)).map(name => {
+      const cs = fr.filter(c => c.group === name);
+      return { name, total: cs.length, done: cs.filter(c => mastery(store.card(c.id)) === 'mastered').length };
+    });
+  });
   const learning = $derived(list.reduce((n, c) => { const m = mastery(store.card(c.id)); return n + (m === 'learning' ? 1 : 0); }, 0));
   const dueNow = $derived(list.filter(c => { const k = store.card(c.id); return k.seen && k.due <= Date.now(); }).length);
-  const codesRaw = $derived(makeHints(store.casesFor(set).filter(c => set !== 'F2L' || c.slot === slotFilter).map(c => ({ id: c.id, name: c.name }))));
+  const codesRaw = $derived(makeHints(store.casesFor(set).filter(c => set !== 'F2L' || (c.slot === 'FR' && (!groupFilter || c.group === groupFilter))).map(c => ({ id: c.id, name: c.name }))));
   const codes = $derived(makeHints(list.map(c => ({ id: c.id, name: c.name }))));
   // while the codes are up, the tab keys are part of the code, not navigation
   $effect(() => { nav.hintActive = hint; return () => { nav.hintActive = false; }; });
@@ -279,7 +288,16 @@
     {/if}
     {#if hint}<div class="sr" role="status" aria-live="polite">Case codes shown. Type a code, or the start of a case name, to open it. Escape closes this.</div>{/if}
     {#if set === 'F2L'}
-      <SlotPicker value={slotFilter} onpick={(s) => { slotFilter = s; selId = null; }} />
+      <div class="seg groups" role="group" aria-label="F2L group">
+        <button class:on={!groupFilter} aria-pressed={!groupFilter} aria-label="All groups" onclick={() => { groupFilter = null; selId = null; }}>
+          <span>All groups</span><span class="mu">{groupCounts.reduce((a, g) => a + g.done, 0)}/{groupCounts.reduce((a, g) => a + g.total, 0)}</span>
+        </button>
+        {#each groupCounts as g (g.name)}
+          <button class:on={groupFilter === g.name} aria-pressed={groupFilter === g.name} aria-label="{g.name}, {g.done} of {g.total} mastered" onclick={() => { groupFilter = g.name; selId = null; }}>
+            <span>{g.name}</span><span class="mu">{g.done}/{g.total}</span>
+          </button>
+        {/each}
+      </div>
     {/if}
 
     {#if set === 'ZBLL'}
@@ -320,6 +338,13 @@
 
     {#if sel && card}
       <div class="card" id="case-panel" style="display:flex;flex-direction:column;gap:10px">
+        {#if set === 'F2L' && sel.slot}
+          <div class="seg" role="group" aria-label="Slot for this case">
+            {#each SLOTS as sl (sl)}
+              <button class:on={sel.slot === sl} aria-pressed={sel.slot === sl} onclick={() => (selId = f2lSibling(sel.id, sl))}>{sl}</button>
+            {/each}
+          </div>
+        {/if}
         <div class="row" style="gap:14px">
           <div style="flex:none">{#if set === 'F2L'}<CaseCube alg={current} slotId={sel.slot} size={92} />{:else}<CaseDiagram alg={current} {mode} size={110} slot={sel.slot} />{/if}</div>
           <div>
@@ -373,3 +398,11 @@
   </aside></div>
 </main>
 {/if}
+
+<style>
+  /* group chips: the name on top, mastered/total under it, wide enough not to truncate */
+  .seg.groups button { flex: 1 1 132px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 1px; padding: 6px 8px; line-height: 1.15; white-space: normal; }
+  .seg.groups button .mu { font-size: .7rem; }
+  .seg.groups button.on .mu { color: var(--on-am); }
+</style>
