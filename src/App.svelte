@@ -3,6 +3,7 @@
   import { nav, type View } from './lib/nav.svelte';
   import Intro from './lib/ui/Intro.svelte';
   import NavIcon from './lib/ui/NavIcon.svelte';
+  import { platform } from '$platform';
 
   // Screens load on demand, so the first paint only carries the one you are looking at.
   const VIEWS: Record<View, () => Promise<{ default: any }>> = {
@@ -44,6 +45,20 @@
   });
 
   store.init();
+  // when the device will not promise to keep the data, put a copy where it cannot reach: only a file
+  // survives eviction, so this is the same export the Settings button writes, made on its own.
+  async function safetyCopy() {
+    if (!store.needsAutoBackup() || store.durable.persisted !== false) return;
+    const name = `split-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    await platform.saveFile(name, store.exportJson());
+    store.update({ lastBackupAt: Date.now() });
+  }
+  $effect(() => {
+    if (!store.ready || store.durable.persisted === null) return;
+    // after the first paint, so a long history never delays the timer
+    const idle = (window as any).requestIdleCallback ?? ((fn: () => void) => setTimeout(fn, 2500));
+    idle(() => void safetyCopy());
+  });
   // the HTML splash (index.html) stays up until the saved data has loaded
   $effect(() => {
     if (!store.ready) return;

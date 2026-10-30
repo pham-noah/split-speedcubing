@@ -343,6 +343,13 @@ class Store {
 
   update(patch: Partial<AppData['settings']>) { Object.assign(this.data.settings, patch); this.apply(); this.persist(); }
   exportJson() { return JSON.stringify($state.snapshot(this.data), null, 1); }
+  /** A copy on disk is the only thing that survives eviction, so make one when the device will not
+   *  promise to keep this origin's data. The caller writes the file; the store only says when. */
+  needsAutoBackup() {
+    if (!this.data.settings.autoBackup || !this.data.solves.length) return false;
+    const last = this.data.settings.lastBackupAt ?? 0;
+    return Date.now() - last > 7 * 864e5;
+  }
   /** Replaces everything, but keeps what it replaced so the restore can be undone. Throws before
    *  touching the data when the file is not a backup. */
   importJson(text: string) {

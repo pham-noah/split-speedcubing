@@ -295,13 +295,30 @@
         {#if store.durable.persisted}
           Storage: this device has agreed to keep your data.
         {:else}
-          Storage: the system may free this app's data if space runs short. A backup is the only copy that survives that.
+          Storage: the system may free this app's data if space runs short.
+          {s.autoBackup
+            ? 'A copy is saved to your downloads every 7 days for that reason.'
+            : 'A backup is the only copy that survives that.'}
         {/if}
         {#if store.durable.usage != null}({formatBytes(store.durable.usage)} used){/if}
       </div>
     {/if}
     <div class="row">
       {#if platform.caps.saveFile}<button class="btn" onclick={download}>Export backup</button>{/if}
+      {#if platform.caps.saveFile}
+        <label class="row sp" style="min-height:44px"
+          ><span>Keep a safety copy</span><input
+            type="checkbox"
+            style="width:24px;min-height:24px;flex:none"
+            checked={s.autoBackup !== false}
+            onchange={(e) => store.update({ autoBackup: e.currentTarget.checked })}
+          /></label
+        >
+        <div class="mu">
+          Writes a backup to your downloads once a week when there are solves to lose, and only if this device will not promise to keep the
+          data.
+        </div>
+      {/if}
       <button class="btn" onclick={restore}>Restore backup</button>
     </div>
     <button class="btn" onclick={() => store.update({ introSeen: false })}>Show the intro again</button>

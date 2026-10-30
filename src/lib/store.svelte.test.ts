@@ -248,3 +248,19 @@ describe('store: bundled F2L algorithms', () => {
     expect(store.algFor('F2L-2')).toBe(store.algsFor('F2L-2')[0]);
   });
 });
+
+describe('store: the weekly safety copy', () => {
+  it('is due only when there is something to lose and a week has passed', () => {
+    store.update({ autoBackup: true, lastBackupAt: 0 });
+    // nothing to lose yet: the first-run app must not litter the downloads folder
+    const before = store.solves.length;
+    expect(store.needsAutoBackup()).toBe(before > 0);
+    store.addSolve(12000, 'R U');
+    expect(store.needsAutoBackup()).toBe(true);
+    store.update({ lastBackupAt: Date.now() });
+    expect(store.needsAutoBackup()).toBe(false);
+    store.update({ autoBackup: false });
+    store.update({ lastBackupAt: 0 });
+    expect(store.needsAutoBackup()).toBe(false);
+  });
+});

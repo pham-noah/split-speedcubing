@@ -5,7 +5,7 @@ export interface Attempt { ts: number; total: number; recog: number | null; grad
 // algs = extra algorithms the user added (the built-in one is always available); defaultAlg = the one used for training.
 // `alg` is the legacy single-alg field from v0.1, migrated in normalize().
 export interface CardRecord extends Card { algs?: string[]; defaultAlg?: string; alg?: string; attempts: Attempt[] }
-export interface Settings { theme: 'midnight' | 'amoled' | 'contrast'; textSize: number; holdMs: number; inspection: boolean; beeps: boolean; hideTime: boolean; tapStart: boolean; retention: number; keys: Record<string, string>; hidden: Record<string, boolean>; introSeen: boolean; coverOn: boolean; coverColor: string; accent: string; walkAutoplay: boolean; walkSpeed: number; cubeColors: string[]; swapRO: boolean; checkUpdates?: boolean; drillTwoLook?: boolean; lastBackupAt?: number; fsrsW?: number[] }
+export interface Settings { theme: 'midnight' | 'amoled' | 'contrast'; textSize: number; holdMs: number; inspection: boolean; beeps: boolean; hideTime: boolean; tapStart: boolean; retention: number; keys: Record<string, string>; hidden: Record<string, boolean>; introSeen: boolean; coverOn: boolean; coverColor: string; accent: string; walkAutoplay: boolean; walkSpeed: number; cubeColors: string[]; swapRO: boolean; checkUpdates?: boolean; drillTwoLook?: boolean; lastBackupAt?: number; autoBackup?: boolean; fsrsW?: number[] }
 export interface DrillResult { type: 'cross' | 'bld' | 'oll2' | 'pll2'; ms: number; memo: number | null; ok: boolean; ts: number; info?: string; pen?: '+2' | 'DNF' }
 export interface Session { id: string; name: string }
 export interface CustomCase { id: string; name: string; alg: string }
@@ -76,6 +76,7 @@ function cleanSettings(raw: Partial<Settings> | undefined): Settings {
   d.keys = d.keys && typeof d.keys === 'object' ? Object.fromEntries(Object.entries(d.keys).filter(([, v]) => typeof v === 'string')) : {};
   d.hidden = d.hidden && typeof d.hidden === 'object' ? { ...d.hidden } : {};
   d.checkUpdates = d.checkUpdates === true;
+  d.autoBackup = d.autoBackup !== false;
   return d;
 }
 
