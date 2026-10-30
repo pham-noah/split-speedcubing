@@ -7,7 +7,7 @@
   // An F2L case as a 3D cube: everything grey, and only the two pieces the case has to join are
   // in colour. They are found by their colours, wherever they currently sit (usually the top layer),
   // not by the slot they belong to — the slot is empty in most cases.
-  const { alg, slotId = 'FR', size = 60 }: { alg: string; slotId?: Slot; size?: number } = $props();
+  const { alg, slotId = 'FR', size = 60, faces = 6 }: { alg: string; slotId?: Slot; size?: number; faces?: 3 | 6 } = $props();
 
   // colour ids: 0=U 1=D 2=R 3=L 4=F 5=B
   const SIDES: Record<Slot, [number, number]> = { FR: [4, 2], FL: [4, 3], BR: [5, 2], BL: [5, 3] };
@@ -55,4 +55,4 @@
   });
 </script>
 
-<Cube3D {stickers} {size} orbit={false} yaw={view.yaw} pitch={-26} highlight={isPair} mono={view.tint ? 'var(--am)' : null} faceCount={6} />
+<Cube3D {stickers} {size} orbit={false} yaw={view.yaw} pitch={-26} highlight={isPair} mono={view.tint ? 'var(--am)' : null} faceCount={faces} />

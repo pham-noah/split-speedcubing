@@ -1,0 +1,1 @@
+F2L is now the standard table: the 41 cases in the community numbering, with SpeedCubeDB's algorithms and their six groups, so a case number means the same thing here as in a tutorial. The F2L grid also draws lighter, so opening the library is quicker. Everything else is unchanged.

@@ -306,7 +306,7 @@
           {@const code = shownCode(c)}
           <button class="cell {m}" class:sel={selId === c.id} class:dim={hint && typed.length > 0 && !code.startsWith(typed) && !byName(typed).includes(c)} onclick={() => pick(c.id)} aria-label="{c.name}, {m}">
             {#if set === 'F2L'}
-              <LazyBox width={81} height={76}><CaseCube alg={store.algFor(c.id)} slotId={c.slot} size={54} /></LazyBox>
+              <LazyBox width={81} height={76}><CaseCube alg={store.algFor(c.id)} slotId={c.slot} size={54} faces={3} /></LazyBox>
             {:else}
               <CaseDiagram alg={store.algFor(c.id)} {mode} size={64} slot={c.slot} />
             {/if}
