@@ -4,9 +4,11 @@ All notable changes to Split. Format based on [Keep a Changelog](https://keepach
 
 ## [0.5.0] - 2026-10-30
 
-The F2L library is now the standard one.
+The F2L library is now the standard one, and so are PLL and OLL.
 
 ### Added
+- PLL and OLL now come from SpeedCubeDB as well: the standard letter and number naming, each case carrying the algorithm that page marks standard plus up to three further algorithms that the simulator accepts (52 bundled). Nicknames moved to `src/lib/data/oll-names.ts`, and `scripts/check-oll-names.ts` re-checks all 57 against the new algorithms, so the numbering is verified rather than assumed.
+- `scripts/gen-lastlayer-scdb.ts` writes both data files and re-checks every line first: F2L must stay solved, the algorithm must solve its own case, and the 21 PLL permutations or 57 OLL orientation patterns must all be distinct.
 - The 41 F2L cases are the standard table in the community's numbering, taken from SpeedCubeDB: their case order, their six groups (Free Pairs, Connected, Disconnected, Corner In Slot, Edge In Slot, Pieces In Slot) and, for each case, the highest-voted algorithm that the cube simulator accepts for this slot. So "F2L 23" now means the same case here as in a tutorial.
 - `scripts/gen-f2l-scdb.ts` writes the data file and re-checks every line with the simulator first: the case must disturb the front-right pair and nothing else, the alg may be at most 12 moves, and no two cases may be the same shape (compared up to an AUF).
 - Each case carries up to three further algorithms from that page as bundled alternatives, so the Library shows the whole set for a case (the default first, then the others at 71 in total) instead of a single line. A bundled algorithm is marked as built-in and cannot be deleted; your own additions sit beside them as before, and any of them can be made the default.

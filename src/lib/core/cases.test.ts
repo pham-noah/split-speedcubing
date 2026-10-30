@@ -45,6 +45,16 @@ describe('PLL data', () => {
     expect(llView(st).top.flat().every(c => c === 0)).toBe(true);
     expect(isSolved(applyAlg(st, alg))).toBe(true);
   });
+  it('every bundled alternative solves the case it ships with', () => {
+    let checked = 0;
+    for (const c of [...PLL, ...OLL]) {
+      for (const a of c.alts ?? []) {
+        expect(solvesCase(c.alg, a, false), `${c.id} ${a}`).toBe(true);
+        checked++;
+      }
+    }
+    expect(checked).toBeGreaterThan(40);
+  });
   it('every PLL is a distinct case', () => {
     const keys = PLL.map(c => key(c.alg, false));
     expect(new Set(keys).size).toBe(21);

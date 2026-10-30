@@ -46,14 +46,16 @@ describe('store: sessions and solves', () => {
 
 describe('store: algorithms and ZBLL import', () => {
   it('accepts a different valid alg for a case and rejects wrong ones', () => {
+    const bundled = store.bundledAlgs('PLL-T').length;   // the shipped default plus its alternatives
     expect(store.addAlg('PLL-T', "R U R' U' R' F R2 U' R' U' R U R' F' U")).toBeNull(); // extra final AUF still solves it
     expect(store.addAlg('PLL-T', "R U R' U'")).toContain('does not solve');
     expect(store.addAlg('PLL-T', 'R Q')).toContain('Unknown move');
-    expect(store.algsFor('PLL-T').length).toBe(2);
-    store.setDefault('PLL-T', store.algsFor('PLL-T')[1]);
-    expect(store.algFor('PLL-T')).toContain('U');
-    store.removeAlg('PLL-T', store.algsFor('PLL-T')[1]);
-    expect(store.algsFor('PLL-T').length).toBe(1);
+    expect(store.algsFor('PLL-T').length).toBe(bundled + 1);
+    const mine = store.algsFor('PLL-T').at(-1)!;
+    store.setDefault('PLL-T', mine);
+    expect(store.algFor('PLL-T')).toBe(mine);
+    store.removeAlg('PLL-T', mine);
+    expect(store.algsFor('PLL-T').length).toBe(bundled);
   });
   it('F2L allows an alg with a leading AUF', () => {
     const base = store.caseOf('F2L-3').alg;
@@ -89,17 +91,19 @@ describe('store: shortcuts, panels and imports', () => {
     store.resetCard('PLL-T');
     // a real custom alg, and the return value is checked: the old version of this test added an alg
     // that addAlg rejected and never looked, so it passed whether the algs survived or not
+    const bundled = store.bundledAlgs('PLL-T').length;
     expect(store.addAlg('PLL-T', "R U R' U' R' F R2 U' R' U' R U R' F' U")).toBeNull();
     const algs = store.algsFor('PLL-T');
-    expect(algs.length).toBe(2);
-    store.setDefault('PLL-T', algs[1]);
+    expect(algs.length).toBe(bundled + 1);
+    const mine = algs.at(-1)!;
+    store.setDefault('PLL-T', mine);
     store.grade('PLL-T', 2, 2000, 600);
     expect(store.card('PLL-T').attempts.length).toBe(1);
     store.resetCard('PLL-T');
     expect(store.card('PLL-T').attempts.length).toBe(0);
     expect(store.card('PLL-T').seen).toBe(false);
     expect(store.algsFor('PLL-T')).toEqual(algs);
-    expect(store.algFor('PLL-T')).toBe(algs[1]);   // the default the user picked survives too
+    expect(store.algFor('PLL-T')).toBe(mine);   // the default the user picked survives too
   });
   it('a deleted solve can be put back where it was', () => {
     store.erase();

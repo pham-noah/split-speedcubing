@@ -13,7 +13,7 @@ One codebase (Svelte 5 + TypeScript + Vite) for three targets: browser/PWA, Andr
 ```bash
 npm install
 npm run dev        # http://localhost:5173
-npm test           # 275 tests: simulator, every PLL/OLL/F2L alg, stats, grading, FSRS (+ personalisation), storage and backups, sessions, importers, shortcuts, back handling, contrast, and a full-app UI test with an axe accessibility audit
+npm test           # 276 tests: simulator, every PLL/OLL/F2L alg, stats, grading, FSRS (+ personalisation), storage and backups, sessions, importers, shortcuts, back handling, contrast, and a full-app UI test with an axe accessibility audit
 npm run e2e        # 31 checks in a real Chrome against a running build (see Testing)
 npm run check      # type-check
 npm run lint       # eslint: shadowing, dead code, unkeyed each blocks, bare $effect expressions
@@ -66,7 +66,7 @@ src/views/         Solve, Train, Library, Drills, Settings
 
 ## Testing
 
-- `npm test`: 275 unit and component tests (including an axe-core accessibility audit and WCAG contrast checks).
+- `npm test`: 276 unit and component tests (including an axe-core accessibility audit and WCAG contrast checks).
 - `npm run e2e`: 31 end-to-end checks in a **real Chrome/Chromium**: first launch, timing with real pointer input, persistence across reloads (IndexedDB), keyboard shortcuts, retrying a scramble from History, the training flow, csTimer import, no sideways overflow at Extra large text on a 360 px phone, offline mode (service worker, scrambles still work), and no console errors. Build with `VITE_SW=1 npm run build` so the service worker also registers on localhost, then `npm run preview` and `npm run e2e`; set `CHROME_PATH` if Chrome is not in a standard location. The checks run in CI (`.github/workflows/ci.yml`).
 - `npm run lint`: ESLint over `src/` and `scripts/` (svelte-check catches types, this catches the classes of bug that type-check fine: a name shadowing another, a dead variable, an unkeyed each block, a bare expression used as an `$effect` dependency). Run by CI before the tests.
 - `npm run screenshots`: regenerates the store screenshots, desktop image and feature graphic from the running build with demo data (`scripts/seed-demo.ts`).
@@ -106,17 +106,18 @@ Automated checks, run by `npm test`: an axe-core audit of the intro, Solve, Trai
 
 **Still to do on a real device (cannot be tested here):** TalkBack (Android) or a desktop screen reader walk-through of the timer and trainer, and a visual pass at "Extra large" text on a small phone.
 
-## F2L and ZBLL data
+## Algorithm data (PLL, OLL, F2L, ZBLL)
 
 - **F2L:** the 41 cases are the standard table in the community's numbering, taken from [SpeedCubeDB](https://speedcubedb.com/a/3x3/F2L) (`scripts/data/f2l-speedcubedb.json`, front-right slot, the highest-voted algorithm per case). `scripts/gen-f2l-scdb.ts` writes `src/lib/data/f2l-fr.ts` and re-checks every line with the simulator first: the case must disturb the front-right pair and nothing else, the alg may be at most 12 moves, and no two cases may be the same shape (compared up to an AUF). The other three slots (front-left, back-left, back-right) are the same cases turned about the vertical axis: `src/lib/core/rotate.ts` relabels the moves, with the mapping derived from the simulator and verified for all 164 cases (cross and the other three slots untouched, the right pair disturbed). These are the algorithms people actually execute; swap in your own favourites in the Library (the app checks that they solve the case, allowing an AUF in front).
+- **PLL and OLL:** the 21 and 57 cases in the standard letter and number naming, taken from [SpeedCubeDB](https://speedcubedb.com/a/3x3/PLL) (`scripts/data/pll-speedcubedb.json`, `oll-speedcubedb.json`). Each case ships the algorithm that page marks standard, plus up to three further algorithms from the same page; 52 of those alternatives are bundled. `scripts/gen-lastlayer-scdb.ts` writes both data files and refuses to write unless every line keeps F2L solved, solves its own case, and the 21 permutations (PLL) or 57 orientation patterns (OLL) are all distinct. `scripts/check-oll-names.ts` re-checks the nicknames in `src/lib/data/oll-names.ts` against the algs, so the numbering is the standard one rather than a guess.
 - **ZBLL:** no algorithms are bundled (493 cases, and I did not want to invent them). Paste your own list in Library > ZBLL, one `name: algorithm` per line. Every line is checked by the simulator (F2L solved, edges oriented). Diagrams, scrambles and spaced repetition then work for them like any other set.
 
 ## Known limits / next steps
 
-- Algorithms are starting points. Tests prove each PLL/OLL alg is valid and that all 21 PLLs and 57 OLLs are distinct, but not that the *number* (e.g. "OLL 29") matches your preferred list. OLL 29 was swapped after the distinctness test caught a duplicate, so double check the numbering. F2L uses SpeedCubeDB's numbering and each case ships one default alg (their highest-voted one the simulator accepts); the other algorithms from that page are not bundled, add the ones you like in the Library.
+- Algorithms are starting points: a default plus the alternatives SpeedCubeDB lists, all of them machine-checked, but they are not guaranteed to be the ones you like executing. Swap the default in the Library per case (the app checks that an alg really solves the case before it accepts it), and check any line against your own reference if you care about a specific numbering.
 - Not done yet: ZBLL bundled algs. Smart cube Bluetooth support was deliberately left out to keep the app simple and fully offline.
 - The csTimer import follows csTimer's documented/observed export layout and is unit-tested against it, but not against a real export file. CubeDesk's own backup format could not be verified; its importer is best effort, and CSV or a plain list of times always works.
-- Tested in a real desktop browser (Chromium: 31 end-to-end checks) and by 275 unit tests, but not yet on a real phone or inside the Android and Tauri shells, and the GitHub workflows and F-Droid recipe have not been run.
+- Tested in a real desktop browser (Chromium: 31 end-to-end checks) and by 276 unit tests, but not yet on a real phone or inside the Android and Tauri shells, and the GitHub workflows and F-Droid recipe have not been run.
 
 ## Licence
 
