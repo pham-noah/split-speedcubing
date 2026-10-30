@@ -155,6 +155,15 @@ check('choosing FL shows that slot\'s rotated algorithm', !!slots && slots.fl !=
 await page.keyboard.press('Escape'); await sleep(500);
 await clickText(page, 'Solve', 'nav button'); await sleep(300);
 
+// --- Settings: About credits the author and links the source
+await clickText(page, 'Settings', 'nav button'); await sleep(400);
+check('About names the author and links GitHub', await page.evaluate(() => {
+  const a = [...document.querySelectorAll('a[href]')].find(x => x.getAttribute('href') === 'https://github.com/pham-noah');
+  const about = document.body.textContent.includes('Built by Noah Pham');
+  return !!a && about && a.getAttribute('target') === '_blank';
+}));
+await clickText(page, 'Solve', 'nav button'); await sleep(300);
+
 // --- csTimer import
 const cs = { session1: [[[0, 12340], "R U R' U'", '', 1700000000], [[2000, 10500], 'F B', '', 1700000100], [[-1, 20000], 'L D', '', 1700000200]], properties: { sessionData: JSON.stringify({ 1: { name: 'Main', opt: {} } }) } };
 writeFileSync('/tmp/cstimer-export.txt', JSON.stringify(cs));

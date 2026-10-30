@@ -1,4 +1,4 @@
-// Builds with VITE_SW=1 into dist-sw/ (dist/ is left alone), serves it on :4174 and runs scripts/e2e.mjs
+// Builds the web target with VITE_SW=1 into dist-sw/ (dist-web/ is left alone), serves it on :4174 and runs scripts/e2e.mjs
 // with EXPECT_SW=1, because the offline checks need a build that registers the worker.
 import { spawn, spawnSync } from 'node:child_process';
 import { setTimeout as wait } from 'node:timers/promises';
@@ -8,7 +8,7 @@ const out = 'dist-sw';
 
 // the installed binary directly: an `npx` layer can resolve slowly enough to race the readiness loop
 const VITE = 'node_modules/.bin/vite';
-const build = spawnSync(VITE, ['build', '--outDir', out], { stdio: 'inherit', env: { ...process.env, VITE_SW: '1' } });
+const build = spawnSync(VITE, ['build', '--mode', 'web', '--outDir', out], { stdio: 'inherit', env: { ...process.env, VITE_SW: '1' } });
 if (build.status !== 0) { console.error('offline build failed'); process.exit(1); }
 
 // keep the server's output: if it refuses to start, that log is the only clue

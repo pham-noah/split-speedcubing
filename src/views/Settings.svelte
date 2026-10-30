@@ -3,6 +3,8 @@
   import ShortcutsPanel from '../lib/ui/ShortcutsPanel.svelte';
   import { DEFAULT_CUBE_COLORS } from '../lib/ui/cube-colors';
   import ImportPanel from '../lib/ui/ImportPanel.svelte';
+  import { platform } from '$platform';
+  import { look, type Check } from '../lib/core/update';
   const s = $derived(store.data.settings);
   const colours = () => (s.cubeColors && s.cubeColors.length === 6 ? s.cubeColors : DEFAULT_CUBE_COLORS);
   let msg = $state('');
@@ -37,29 +39,30 @@
     const days = Math.floor((Date.now() - at) / 86400000);
     return { nudge: days >= 14, text: days <= 0 ? 'Last backup: today.' : `Last backup: ${days} day${days === 1 ? '' : 's'} ago.` };
   });
-  function download() {
-    const url = URL.createObjectURL(new Blob([store.exportJson()], { type: 'application/json' }));
-    const a = Object.assign(document.createElement('a'), { href: url, download: `split-${new Date().toISOString().slice(0, 10)}.json` });
-    a.click();
-    // revoking in the same tick can cancel the download in Safari and Firefox
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  async function download() {
+    await platform.saveFile(`split-${new Date().toISOString().slice(0, 10)}.json`, store.exportJson());
     store.update({ lastBackupAt: Date.now() });
     msg = 'Backup saved.';
   }
-  async function upload(e: Event) {
-    const input = e.target as HTMLInputElement;
-    const f = input.files?.[0];
+  async function restore() {
+    const f = await platform.pickFile('application/json');
     if (!f) return;
     try {
       // importJson throws before it touches anything, so a wrong file costs nothing
-      store.importJson(await f.text());
+      store.importJson(f.text);
       msg = 'Backup restored.';
       canUndo = true;
     } catch (err) {
       // keep the specific reason (a backup from a newer version), not just "invalid"
       msg = err instanceof Error && /newer version/.test(err.message) ? err.message : 'That file is not a valid backup.';
     }
-    input.value = '';   // picking the same file again should still fire
+  }
+  let update = $state<Check | null>(null);
+  let updateBusy = $state(false);
+  async function checkForUpdates() {
+    updateBusy = true;
+    update = await look(__APP_VERSION__, platform.kind);
+    updateBusy = false;
   }
   function undoRestore() {
     if (!store.undoRestore()) return;
@@ -177,8 +180,8 @@
     <div class="mu">Everything is stored only on this device. Make a backup before switching phones.</div>
     <div class="mu" style="color:{backupAge.nudge ? 'var(--am)' : 'var(--mu2)'}">{backupAge.text}</div>
     <div class="row">
-      <button class="btn" onclick={download}>Export backup</button>
-      <label class="btn" style="display:flex;align-items:center;justify-content:center;cursor:pointer">Restore backup<input type="file" accept="application/json" onchange={upload} class="sr" /></label>
+      {#if platform.caps.saveFile}<button class="btn" onclick={download}>Export backup</button>{/if}
+      <button class="btn" onclick={restore}>Restore backup</button>
     </div>
     <button class="btn" onclick={() => store.update({ introSeen: false })}>Show the intro again</button>
     <button class="btn" onclick={() => { if (confirm('Erase all solves and progress on this device?')) { store.erase(); msg = 'Erased. You can put it back while this screen is open.'; canUndo = true; } }}>Erase all data</button>
@@ -191,5 +194,20 @@
   <section class="card col" aria-labelledby="ab-h">
     <h2 id="ab-h" style="margin:0;font-size:1.15rem">About</h2>
     <div class="mu">Split {__APP_VERSION__}. Free software under the GNU General Public License v3 or later: you may use, study, share and change it. Includes open-source components (see THIRD_PARTY_LICENSES.md in the source). No accounts, no tracking, no network access.</div>
+    <div class="mu">Built by Noah Pham. Source, releases and issues: <a class="link" href="https://github.com/pham-noah" target="_blank" rel="noopener noreferrer">github.com/pham-noah</a></div>
+    {#if platform.kind !== 'web'}
+      <label class="row sp" style="min-height:44px"><span>Check for updates</span><input type="checkbox" style="width:24px;min-height:24px;flex:none" checked={s.checkUpdates === true} onchange={(e) => store.update({ checkUpdates: e.currentTarget.checked })} /></label>
+      {#if s.checkUpdates}
+        <button class="btn" onclick={checkForUpdates} disabled={updateBusy}>{updateBusy ? 'Checking…' : 'Check now'}</button>
+        {#if update?.kind === 'found'}
+          <div class="mu" role="status" aria-live="polite">Version {update.release.version} is available. <a class="link" href={update.release.page} target="_blank" rel="noopener noreferrer">Open the release page</a></div>
+        {:else if update?.kind === 'current'}
+          <div class="mu" role="status" aria-live="polite">Split {__APP_VERSION__} is the latest version.</div>
+        {:else if update?.kind === 'failed'}
+          <div class="mu" role="status" aria-live="polite">Could not reach GitHub. Try again later.</div>
+        {/if}
+        <div class="mu">The check asks github.com for the newest release and sends no device id. Installing the update is left to you or to your store.</div>
+      {/if}
+    {/if}
   </section>
 </main>

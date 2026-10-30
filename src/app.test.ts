@@ -53,7 +53,8 @@ describe('whole app in a simulated browser', () => {
   it('every tab opens without errors and passes the accessibility audit', async () => {
     for (const [tab, marker] of [['Train', 'Today'], ['Library', 'Library'], ['Drills', 'Drills'], ['Settings', 'Settings']] as const) {
       byText(tab, q('nav')!)!.click(); await tick();
-      for (let i = 0; i < 40; i++) {
+      // the screen is a lazy chunk: on a loaded machine (tests beside a build) 1 s is not enough
+      for (let i = 0; i < 160; i++) {
         await wait(25); flushSync();
         if (document.querySelector('h1')?.textContent?.includes(marker)) break;
       }

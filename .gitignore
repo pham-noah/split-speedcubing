@@ -11,3 +11,11 @@ android/.gradle
 
 # the offline end-to-end build (npm run test:e2e:offline)
 dist-sw/
+
+# one build per shell (vite --mode web|android|desktop)
+dist-web/
+dist-android/
+dist-desktop/
+
+# release signing key and its passwords
+android/keystore.properties

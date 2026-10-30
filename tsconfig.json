@@ -6,7 +6,19 @@
     "moduleResolution": "bundler",
     "strict": true,
     "skipLibCheck": true,
-    "types": ["svelte", "vite/client", "node"]
+    "types": [
+      "svelte",
+      "vite/client",
+      "node"
+    ],
+    "paths": {
+      "$platform": [
+        "./src/lib/platform/web.ts"
+      ]
+    }
   },
-  "include": ["src/**/*.ts", "src/**/*.svelte"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.svelte"
+  ]
 }

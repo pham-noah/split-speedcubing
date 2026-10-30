@@ -10,7 +10,7 @@ import svelteConfig from './svelte.config.js';
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'dist-sw/**', 'android/**', 'src-tauri/target/**', 'src-tauri/gen/**', 'coverage/**', 'node_modules/**'],
+    ignores: ['dist/**', 'dist-web/**', 'dist-android/**', 'dist-desktop/**', 'dist-sw/**', 'android/**', 'src-tauri/target/**', 'src-tauri/gen/**', 'coverage/**', 'node_modules/**'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -20,6 +20,23 @@ export default tseslint.config(
   {
     languageOptions: {
       globals: { ...globals.browser, ...globals.node, __APP_VERSION__: 'readonly' },
+    },
+  },
+  {
+    // The platform seam: only src/lib/platform/ may talk to a shell. Anywhere else the import fails
+    // the gate instead of quietly coupling the three builds together.
+    files: ['src/**/*.ts', 'src/**/*.svelte', 'src/**/*.svelte.ts'],
+    ignores: ['src/lib/platform/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            { group: ['@capacitor/*'], message: 'Shell code belongs in src/lib/platform/.' },
+            { group: ['@tauri-apps/*'], message: 'Shell code belongs in src/lib/platform/.' },
+          ],
+        },
+      ],
     },
   },
   {

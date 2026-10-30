@@ -4,10 +4,10 @@
   "version": "0.5.0",
   "identifier": "com.noah.split",
   "build": {
-    "frontendDist": "../dist",
+    "frontendDist": "../dist-desktop",
     "devUrl": "http://localhost:5173",
     "beforeDevCommand": "npm run dev",
-    "beforeBuildCommand": "npm run build"
+    "beforeBuildCommand": "npm run build:desktop"
   },
   "app": {
     "windows": [

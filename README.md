@@ -13,24 +13,54 @@ One codebase (Svelte 5 + TypeScript + Vite) for three targets: browser/PWA, Andr
 ```bash
 npm install
 npm run dev        # http://localhost:5173
-npm run e2e        # 37 end-to-end checks in a real browser against the build on :4173 (3 offline checks skip)
-npm run e2e:offline  # builds with the service worker into dist-sw/, serves it on :4174, runs all 33
-npm test           # 285 tests: simulator, every PLL/OLL/F2L alg, stats, grading, FSRS (+ personalisation), storage and backups, sessions, importers, shortcuts, back handling, contrast, and a full-app UI test with an axe accessibility audit
-npm run e2e        # 31 checks in a real Chrome against a running build (see Testing)
+npm run e2e        # 38 end-to-end checks in a real browser against the build on :4173 (3 offline checks skip)
+npm run e2e:offline  # builds the web target with the service worker into dist-sw/, serves :4174, runs all 38
+npm test           # 300 tests: simulator, every PLL/OLL/F2L alg, stats, grading, FSRS (+ personalisation), storage and backups, sessions, importers, shortcuts, back handling, contrast, and a full-app UI test with an axe accessibility audit
 npm run check      # type-check
 npm run lint       # eslint: shadowing, dead code, unkeyed each blocks, bare $effect expressions
-npm run build      # production build into dist/
+npm run build      # the web build into dist-web/ (the one the PWA and `npm run preview` use)
 npm run version:check   # the five version numbers agree
 ```
+
+## The three builds
+
+One codebase, three shells, one output directory each. `vite --mode <target>` swaps the adapter in
+`src/lib/platform/`, so no shell's dependencies reach another shell's bundle: `@capacitor/*` and
+`@tauri-apps/*` are blocked by eslint outside that directory.
+
+```bash
+npm run build:web       # dist-web/      PWA + service worker
+npm run build:android   # dist-android/  then copied into android/
+npm run build:desktop   # dist-desktop/  what Tauri packages
+```
+
+What actually differs between shells, and where it lives:
+
+| Capability | web | android | desktop |
+|---|---|---|---|
+| Back button | - | Capacitor `backButton` | - |
+| Service worker | yes | no | no |
+| Backup save/restore | anchor + `<input>` | anchor + `<input>` | anchor + `<input>` |
+
+The UI hides what a shell cannot do (`platform.caps.*`) rather than disabling it.
 
 ## Android (Capacitor)
 
 Needs Android Studio (SDK + JDK 17+).
 
 ```bash
-npm run android:sync   # build web app and copy it into android/
+npm run build:android  # web build into dist-android/ and into android/app/src/main/assets/public
 npm run android:open   # opens Android Studio; press Run on a device/emulator
 ```
+
+**Release signing.** `android/app/build.gradle` reads `android/keystore.properties` (gitignored) and signs
+release builds with `android/app/split-release.jks`. Both are gitignored: the key and its passwords must be
+backed up somewhere permanent, because a lost key means nobody who installed the app can be updated again.
+Without the properties file, release builds fall back to the debug key so a fresh clone still builds.
+
+Updating in place works when the phone already has a build signed with this key. A phone holding a build
+signed with a different key (an older debug-key APK) needs that one uninstalled once; after that, every
+build installs over the last.
 
 - Change `appId` in `capacitor.config.ts` (and the package in `android/`) before publishing.
 - The `INTERNET` permission has been removed from `android/app/src/main/AndroidManifest.xml` so the app is provably offline.
