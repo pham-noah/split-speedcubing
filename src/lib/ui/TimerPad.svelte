@@ -148,8 +148,7 @@
   }
   function cancel() { clearTimeout(holdTimer); cancelAnimationFrame(raf); endInspection(); st = 'idle'; clearTimeout(flashT); coverOpen = false; stopped = null; letSleep(); }
 
-  // Esc / Android Back cancels the timer instead of leaving the screen -- including a solve in
-  // progress, which used to be discarded silently when the screen changed under it
+  // Esc / Android Back cancels the timer instead of leaving the screen, including a solve in progress
   $effect(() => { if (inspActive || st === 'hold' || st === 'ready' || st === 'run') return nav.onBack(() => { cancel(); return true; }); });
   // the browser drops the lock when the tab goes away: take it again if the clock is still running
   $effect(() => {

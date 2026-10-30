@@ -36,10 +36,9 @@ export function pairPositions(stickers: CubeState, slotId: Slot): Set<string> {
 
 export const FACE_NORMALS: Vec3[] = [[0, 0, 1], [0, 0, -1], [1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0]];
 
-/** The renderer works in CSS space, where y points DOWN and the cube's y is mirrored to get there
- *  (Cube3D places a cubie at translate3d(x, -y*U, z) and its faces carry the same mirror). Everything
- *  below therefore takes simulator coordinates and mirrors y first; skipping that flip is what once made
- *  the three-face view cull the TOP and draw the bottom instead — the face an F2L case lives on. */
+/** CSS space has y pointing DOWN while the simulator's y points up (Cube3D places a cubie at
+ *  translate3d(x, -y*U, z)), so everything below mirrors y first. Without it the three-face view culls
+ *  the top and draws the bottom — the face an F2L case sits on. */
 const css = (v: Vec3): Vec3 => [v[0], -v[1], v[2]];
 
 /** how much of a normal points at the camera (positive means visible) */

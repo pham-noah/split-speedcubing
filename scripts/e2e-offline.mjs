@@ -1,18 +1,17 @@
-// The offline checks need a build that registers the service worker, served on its own port so the normal
-// build in dist/ is left alone. Builds, serves, runs scripts/e2e.mjs with EXPECT_SW=1, then cleans up.
+// Builds with VITE_SW=1 into dist-sw/ (dist/ is left alone), serves it on :4174 and runs scripts/e2e.mjs
+// with EXPECT_SW=1, because the offline checks need a build that registers the worker.
 import { spawn, spawnSync } from 'node:child_process';
 import { setTimeout as wait } from 'node:timers/promises';
 
 const PORT = process.env.SW_PORT || '4174';
 const out = 'dist-sw';
 
-// call the installed binaries directly: an `npx` layer sometimes resolves slowly enough that the
-// port is still closed when the readiness loop gives up
+// the installed binary directly: an `npx` layer can resolve slowly enough to race the readiness loop
 const VITE = 'node_modules/.bin/vite';
 const build = spawnSync(VITE, ['build', '--outDir', out], { stdio: 'inherit', env: { ...process.env, VITE_SW: '1' } });
 if (build.status !== 0) { console.error('offline build failed'); process.exit(1); }
 
-// keep the server's own output: when it refuses to start, that log is the only useful clue
+// keep the server's output: if it refuses to start, that log is the only clue
 const fs = await import('node:fs');
 const logPath = '/tmp/split-preview-sw.log';
 let server = null;
@@ -22,8 +21,8 @@ process.on('SIGINT', () => { stop(); process.exit(130); });
 
 const answered = () => spawnSync('node', ['-e', `fetch('http://127.0.0.1:${PORT}/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))`]).status === 0;
 
-// A preview left behind by an earlier run holds the port, and --strictPort then makes the next one exit
-// instantly - which reads as "never answered". Clear only our own preview, never anything else.
+// A preview left behind by an earlier run holds the port, and --strictPort then makes the next one exit at
+// once. Clear only this run's own preview, by port.
 const holderPid = () => {
   const r = spawnSync('ss', ['-ltnp'], { encoding: 'utf8' });
   const line = (r.stdout || '').split('\n').find(l => l.includes(`:${PORT} `));
@@ -60,7 +59,7 @@ const run = spawnSync('node', ['scripts/e2e.mjs'], {
   stdio: 'inherit',
   env: { ...process.env, BASE_URL: `http://127.0.0.1:${PORT}/`, EXPECT_SW: '1' },
 });
-// SIGTERM, then make sure the port really went away: an orphaned preview breaks the next run
+// SIGTERM, then confirm the port is free: an orphaned preview breaks the next run
 stop();
 for (let i = 0; i < 20 && answered(); i++) await wait(250);
 if (answered()) { try { server?.kill('SIGKILL'); } catch { /* already gone */ } await wait(500); }

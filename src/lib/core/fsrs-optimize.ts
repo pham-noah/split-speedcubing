@@ -1,11 +1,6 @@
-// Personalises the FSRS parameters from the user's own review history, entirely on the device.
-//
-// How: replay every case's reviews through the FSRS model; before each review that happened a day or more after the
-// previous one, the model predicts the chance of recalling the case. We compare that prediction with what actually
-// happened (Again = forgotten, anything else = recalled) using log loss, and search for parameters that predict better.
-// With little history a search like this overfits, so it is (1) pulled gently towards the default parameters and
-// (2) checked on cases that were held out of the search: the new parameters are only applied if they also predict
-// those held-out cases better than the defaults do.
+// Personalises the FSRS parameters from the user's own reviews, on device: replay the reviews, score the
+// model's recall predictions with log loss, and search for parameters that predict better. A short history
+// overfits, so the search is pulled towards the defaults and checked on cases held out of it.
 import { createEmptyCard, fsrs, generatorParameters, clipParameters, default_w, State, type FSRS, type Grade as FGrade } from 'ts-fsrs';
 
 export interface LogEntry { ts: number; grade: 0 | 1 | 2 | 3 }

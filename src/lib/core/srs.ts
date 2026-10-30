@@ -1,7 +1,5 @@
-// Spaced repetition using FSRS (Free Spaced Repetition Scheduler) via the open-source ts-fsrs library.
-// FSRS models each case's memory with stability and difficulty and schedules the next review for a target retention
-// (default 90%: you should still recall the case 9 times out of 10 when it comes due). It runs fully offline.
-// The rest of the app only sees this small module, so the scheduler can be swapped again without touching the UI.
+// Spaced repetition via ts-fsrs (FSRS), fully offline: stability and difficulty per case, next review at a
+// 90% target recall. Only this module touches the scheduler, so it can be swapped without touching the UI.
 import { createEmptyCard, fsrs, generatorParameters, State, type Card as FCard, type FSRS, type Grade as FGrade } from 'ts-fsrs';
 
 export type Grade = 0 | 1 | 2 | 3; // Again, Hard, Good, Easy

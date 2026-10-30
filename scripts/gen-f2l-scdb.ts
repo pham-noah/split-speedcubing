@@ -1,6 +1,5 @@
-// Writes src/lib/data/f2l-fr.ts from the speedcubedb F2L table (scripts/data/f2l-speedcubedb.json).
-// Every line is re-checked with the cube simulator before it is written: the case must disturb the
-// front-right slot's pair and nothing else, and the alg must be 12 moves or fewer.
+// Writes src/lib/data/f2l-fr.ts from scripts/data/f2l-speedcubedb.json, re-checking every line with the
+// simulator: the case must disturb the front-right slot's pair and nothing else, the alg 12 moves or fewer.
 // Run: npx vite-node scripts/gen-f2l-scdb.ts
 import { readFileSync, writeFileSync } from 'node:fs';
 import { applyAlg, solved, tokens, FACE_OF_NORMAL } from '../src/lib/core/cube';
@@ -53,11 +52,9 @@ const body = rows
   .join('\n');
 const file = `import type { CaseDef } from './types';
 
-// The 41 standard first-two-layers cases, in the community's numbering, taken from SpeedCubeDB
-// (https://speedcubedb.com/a/3x3/F2L, front-right slot, fetched 2026-10-30). Each case ships the
-// highest-voted algorithm that the simulator accepts for this slot, plus up to three further
-// algorithms from the same page that solve it. Regenerate with scripts/gen-f2l-scdb.ts, which
-// re-checks every line before writing this file.
+// The 41 standard F2L cases in the community numbering, from speedcubedb.com/a/3x3/F2L (front-right
+// slot, fetched 2026-10-30): the highest-voted algorithm the simulator accepts for the slot plus up to
+// three more that solve it. Regenerate with scripts/gen-f2l-scdb.ts.
 export const F2L_GROUPS = ${JSON.stringify(groups)};
 
 export const F2L_FR: CaseDef[] = [

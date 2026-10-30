@@ -1,7 +1,6 @@
-// Writes src/lib/data/pll.ts and src/lib/data/oll.ts from the speedcubedb tables in scripts/data.
-// Every algorithm is re-checked with the cube simulator before it is written:
-//   PLL - keeps F2L solved, leaves the last layer oriented, solves the case, and all 21 cases differ;
-//   OLL - keeps F2L solved, and all 57 orientation patterns differ.
+// Writes src/lib/data/pll.ts and src/lib/data/oll.ts from the speedcubedb tables in scripts/data, with
+// every algorithm re-checked by the simulator: PLL keeps F2L solved, leaves the last layer oriented and
+// differs across all 21; OLL keeps F2L solved across 57 distinct orientation patterns.
 // Run: npx vite-node scripts/gen-lastlayer-scdb.ts
 import { readFileSync, writeFileSync } from 'node:fs';
 import { applyAlg, solved, isSolved, llView, llFlat, f2lSolved, tokens } from '../src/lib/core/cube';
@@ -110,10 +109,9 @@ const line = (p: Pick, extra: string) =>
 
 writeFileSync('src/lib/data/pll.ts', `import type { CaseDef } from './types';
 
-// The 21 PLL cases in the standard letter naming, taken from SpeedCubeDB
-// (https://speedcubedb.com/a/3x3/PLL, fetched 2026-10-30): the algorithm that page marks standard,
-// plus up to three further algorithms that solve the same case. Regenerate with
-// scripts/gen-lastlayer-scdb.ts, which re-checks every line before writing this file.
+// The 21 PLL cases in the standard letter naming, from speedcubedb.com/a/3x3/PLL (fetched 2026-10-30): the
+// algorithm that page marks standard plus up to three more that solve it. Regenerate with
+// scripts/gen-lastlayer-scdb.ts.
 export const PLL: CaseDef[] = [
 ${picks.filter(p => p.id.startsWith('PLL')).map(p => line(p, '')).join('\n')}
 ];
@@ -122,10 +120,9 @@ ${picks.filter(p => p.id.startsWith('PLL')).map(p => line(p, '')).join('\n')}
 writeFileSync('src/lib/data/oll.ts', `import type { CaseDef } from './types';
 import { OLL_NICK } from './oll-names';
 
-// The 57 OLL cases in the standard numbering, taken from SpeedCubeDB
-// (https://speedcubedb.com/a/3x3/OLL, fetched 2026-10-30): the algorithm that page marks standard,
-// plus up to three further algorithms that solve the same case. Nicknames are in ./oll-names.ts.
-// Regenerate with scripts/gen-lastlayer-scdb.ts, which re-checks every line before writing this file.
+// The 57 OLL cases in the standard numbering, from speedcubedb.com/a/3x3/OLL (fetched 2026-10-30): the
+// algorithm that page marks standard plus up to three more that solve it. Nicknames in ./oll-names.ts.
+// Regenerate with scripts/gen-lastlayer-scdb.ts.
 export const OLL: CaseDef[] = [
 ${picks.filter(p => p.id.startsWith('OLL')).map(p => line(p, `, nick: OLL_NICK['${p.id.slice(4)}']`)).join('\n')}
 ];

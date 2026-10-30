@@ -182,9 +182,9 @@ const sw = await page.evaluate(async () => Promise.race([
   navigator.serviceWorker.ready.then(r => !!r.active),
   new Promise(done => setTimeout(() => done(false), 8000)),
 ]));
-// A normal build never registers the worker (main.ts gates it on VITE_SW=1 outside localhost), so on such a
-// build these three checks cannot pass - they must not report FAIL, or a real offline regression hides
-// behind a red line that has nothing to do with the code. EXPECT_SW=1 is set by `npm run test:e2e:offline`.
+// A normal build never registers the worker (main.ts gates it on VITE_SW=1 outside localhost), so these
+// three cannot pass there: skip them rather than report a FAIL that hides a real offline regression.
+// EXPECT_SW=1 is set by `npm run e2e:offline`.
 if (!sw && process.env.EXPECT_SW !== '1') {
   for (const name of ['service worker is active', 'app loads while offline', 'scrambles still work offline']) {
     console.log(`SKIP  ${name}  (needs an offline build: npm run test:e2e:offline)`);

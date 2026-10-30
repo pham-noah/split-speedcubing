@@ -1,10 +1,9 @@
 import type { CaseDef } from './types';
 import { OLL_NICK } from './oll-names';
 
-// The 57 OLL cases in the standard numbering, taken from SpeedCubeDB
-// (https://speedcubedb.com/a/3x3/OLL, fetched 2026-10-30): the algorithm that page marks standard,
-// plus up to three further algorithms that solve the same case. Nicknames are in ./oll-names.ts.
-// Regenerate with scripts/gen-lastlayer-scdb.ts, which re-checks every line before writing this file.
+// The 57 OLL cases in the standard numbering, from speedcubedb.com/a/3x3/OLL (fetched 2026-10-30): the
+// algorithm that page marks standard plus up to three more that solve it. Nicknames in ./oll-names.ts.
+// Regenerate with scripts/gen-lastlayer-scdb.ts.
 export const OLL: CaseDef[] = [
   { id: "OLL-1", set: 'OLL', name: "OLL 1", alg: "R U2 R2 F R F' U2 R' F R F'", nick: OLL_NICK['1'], alts: ["L' U2 L2 F' L' F U2 L F' L' F"] },
   { id: "OLL-2", set: 'OLL', name: "OLL 2", alg: "F R U R' U' F' f R U R' U' f'", nick: OLL_NICK['2'], alts: ["F R U R' U' S R U R' U' f'"] },

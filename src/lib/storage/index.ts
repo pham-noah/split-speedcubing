@@ -56,8 +56,7 @@ function keys(db: IDBDatabase, store: string): Promise<string[]> {
 }
 
 export class IdbStorage implements Storage {
-  // one connection for the life of the app: opening (and leaking) a new one per read and per write
-  // used to mean a dozen live connections after a few minutes of use
+  // one connection for the life of the app, not one per read and write
   private db: Promise<IDBDatabase> | null = null;
   private migrated = false;
   /** id -> signature of what is already on disk, so a save only writes the solves that changed */

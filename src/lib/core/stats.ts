@@ -40,8 +40,8 @@ export function meanOf(solves: Solve[], n: number): number | null {
   const m = v.reduce((a, b) => a + b, 0) / n;
   return Number.isFinite(m) ? m : Infinity;
 }
-// Best WCA average of n over every window: one pass, keeping the window sorted (a running
-// re-sort made this quadratic -- 0.5 s for 20 000 solves, twice per History render).
+// Best WCA average of n over every window: one pass, keeping the window sorted rather than re-sorting
+// it each step, which is quadratic across a long history.
 export function bestAverage(solves: Solve[], n: number): number | null {
   if (n < 3 || solves.length < n) return null;
   let bestSoFar: number | null = null;

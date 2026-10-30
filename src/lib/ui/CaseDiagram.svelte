@@ -47,11 +47,8 @@
   const K = 20, GAP = 2, M = 6;
   const FW = 3 * K + 2 * GAP;
   const panels = $derived([{ g: Uf, x: M, y: M }, { g: Lf, x: M, y: M * 2 + FW }, { g: Rf, x: M * 2 + FW, y: M * 2 + FW }]);
-  // PLL is drawn as movement, not colour: arrows from each piece's square to the square it ends up in.
-  // Cycles are read off the permutation, so a swap is one double-headed arrow instead of two crossing ones,
-  // and longer cycles bow outward instead of cutting through the middle.
-  // sticker i in the case state is the same sticker as i in a solved cube, so its home square is where it goes;
-  // no AUF guessing needed — this is the case's own permutation
+  // PLL is drawn as movement: an arrow from each piece's square to where it goes. Sticker i's home square
+  // is where i sits solved, so no AUF is guessed. A swap is one double-headed arrow; longer cycles bow out.
   const home = solved();
   const centre = (x: number, z: number) => [pos(x + 1) + C / 2, pos(z + 1) + C / 2];
   const mid = pos(1) + C / 2;

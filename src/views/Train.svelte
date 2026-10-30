@@ -154,9 +154,8 @@
   });
   const execOf = (a: { total: number; recog: number | null; pen?: '+2' | 'DNF' }) => attemptExec(a);
 
-  // The attempt itself decides the review grade: no self-rating. A DNF, a case you never recognised
-  // (no first tap) or a very slow solve is a lapse, which is what the "Lapsed" drill and the
-  // optimiser need in order to learn anything from a failure.
+  // The attempt decides the grade, never a self-rating: a DNF, no recognition tap or a very slow solve
+  // grades as a lapse, so the Lapsed drill and the optimiser have failures to learn from.
   function finish(r: { ms: number; recog: number | null; pen?: Penalty }) {
     if (!current) return;
     const ok = r.pen !== 'DNF' && (drill ? true : r.recog != null);

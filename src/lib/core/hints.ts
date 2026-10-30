@@ -12,10 +12,8 @@ export function slug(name: string): string {
     .replace(/[^a-z0-9]/g, '');
 }
 
-/**
- * One unique code per target, in list order. A code that is already taken grows by one
- * character from the home row; a name with nothing typeable in it falls back to its position.
- */
+/** One code per target, in list order: a taken code grows by a character from the home row, and a name
+ *  with nothing typeable in it falls back to its position. */
 export function makeHints(targets: { id: string; name: string }[]): Map<string, string> {
   const out = new Map<string, string>();
   const taken = new Set<string>();

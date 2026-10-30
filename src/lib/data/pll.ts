@@ -1,9 +1,8 @@
 import type { CaseDef } from './types';
 
-// The 21 PLL cases in the standard letter naming, taken from SpeedCubeDB
-// (https://speedcubedb.com/a/3x3/PLL, fetched 2026-10-30): the algorithm that page marks standard,
-// plus up to three further algorithms that solve the same case. Regenerate with
-// scripts/gen-lastlayer-scdb.ts, which re-checks every line before writing this file.
+// The 21 PLL cases in the standard letter naming, from speedcubedb.com/a/3x3/PLL (fetched 2026-10-30): the
+// algorithm that page marks standard plus up to three more that solve it. Regenerate with
+// scripts/gen-lastlayer-scdb.ts.
 export const PLL: CaseDef[] = [
   { id: "PLL-Aa", set: 'PLL', name: "Aa-perm", alg: "x R' U R' D2 R U' R' D2 R2 x'", alts: ["l' U R' D2 R U' R' D2 R2 x'"] },
   { id: "PLL-Ab", set: 'PLL', name: "Ab-perm", alg: "x R2 D2 R U R' D2 R U' R x'", alts: ["R' B' R U' R D R' U R D' R2 B R"] },
