@@ -55,6 +55,7 @@ jobs:
           java-version: 21
       - run: npm ci
       - run: npm run build:android
+      - run: npx cap sync android
       # a debug-signed APK cannot be updated in place, so a release without the key is not published
       - name: Check for the release key
         run: |
