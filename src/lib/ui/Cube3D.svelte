@@ -4,9 +4,9 @@
   import { DEFAULT_CUBE_COLORS } from './cube-colors';
 
   // A CSS-3D cube drawn straight from the sticker state, so it can never disagree with the simulator.
-  const { stickers, anim = null, size = 200, highlight = null, orbit = true, yaw = -34, pitch = -26, mono = null, dur = 300, faceCount = 6 }: {
+  const { stickers, anim = null, size = 200, highlight = null, orbit = true, yaw = -34, pitch = -26, mono = null, dur = 300 }: {
     stickers: State; anim?: TurnInfo | null; size?: number; orbit?: boolean; yaw?: number; pitch?: number;
-    highlight?: ((p: [number, number, number]) => boolean) | null; mono?: string | null; dur?: number; faceCount?: 3 | 6;
+    highlight?: ((p: [number, number, number]) => boolean) | null; mono?: string | null; dur?: number;
   } = $props();
 
   // colours follow the settings; swapping red and orange is a display swap, the simulator is untouched
@@ -38,28 +38,6 @@
   });
 
   // which three faces point at the camera for this fixed view
-  const visible = $derived.by(() => {
-    if (faceCount === 6) return null;
-    const rx = (pitch * Math.PI) / 180, ry = (yaw * Math.PI) / 180;
-    const rot = (n: [number, number, number]): [number, number, number] => {
-      const [x, y, z] = n;
-      // CSS applies rotateX(pitch) rotateY(yaw) right to left: yaw first, then pitch
-      const x1 = x * Math.cos(ry) + z * Math.sin(ry);
-      const z1 = -x * Math.sin(ry) + z * Math.cos(ry);
-      const y2 = y * Math.cos(rx) - z1 * Math.sin(rx);
-      const z2 = y * Math.sin(rx) + z1 * Math.cos(rx);
-      return [x1, y2, z2];
-    };
-    return new Set(
-      [[0, 0, 1], [0, 0, -1], [1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0]]
-        .filter(n => rot(n as [number, number, number])[2] > 0)
-        .map(n => n.join(',')),
-    );
-  });
-
-  // with a fixed three-face view, cubies that only show hidden faces are never seen: skip them
-  const drawn = $derived(visible ? cubies.filter(c => Object.keys(c.faces).some(n => visible.has(n))) : cubies);
-
   let spinX = $state(0);
   let spinY = $state(0);   // drag adds to the given viewing angle
   let drag: { x: number; y: number } | null = null;
@@ -85,7 +63,7 @@
   onpointercancel={() => (drag = null)}
 >
   <div class="cube" style="transform:rotateX({pitch + spinX}deg) rotateY({yaw + spinY}deg);width:{size}px;height:{size}px;position:absolute;left:50%;top:50%;margin-left:{-size / 2}px;margin-top:{-size / 2}px">
-    {#each drawn as c (c.p.join(','))}
+    {#each cubies as c (c.p.join(','))}
       {@const inLayer = anim ? anim.test(c.p as [number, number, number]) : false}
       <div
         class="cubie"
@@ -93,7 +71,7 @@
           transform:{turn && inLayer ? `rotate3d(${turn.axis},${turn.angle}deg) ` : ''}translate3d({c.p[0] * U}px,{-c.p[1] * U}px,{c.p[2] * U}px);
           transition:{turn && inLayer ? `transform ${dur}ms cubic-bezier(.3,.7,.4,1)` : 'none'}"
       >
-        {#each facesOf(U).filter(f => !visible || visible.has(f.n)) as f (f.n)}
+        {#each facesOf(U) as f (f.n)}
           {@const inPair = !highlight || highlight(c.p as [number, number, number])}
           {@const col = !inPair ? null : mono ? mono : c.faces[f.n]}
           <div class="face" style="transform:{f.t};background:{col == null ? DARK : typeof col === 'string' ? col : COL[col]};opacity:{col == null ? .55 : 1}"></div>

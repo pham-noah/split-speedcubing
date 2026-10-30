@@ -6,6 +6,9 @@ All notable changes to Split. Format based on [Keep a Changelog](https://keepach
 
 The F2L library is now the standard one, and so are PLL and OLL.
 
+### Changed
+- The F2L grid draws each case as a flat `<svg>` (`CaseThumb`) instead of a live CSS-3D scene, and both it and the 3D `CaseCube` read their framing from one new module, `src/lib/ui/caseCubeView.ts` (the pair, the camera angle, the projection, which faces point at the viewer). Measured on a phone-sized viewport, the 41-cell F2L grid settles in 828 ms with 459 ms of blocked main thread and 1,131 DOM nodes, against 4,451 ms, 3,671 ms and 2,931 nodes for the same grid built from CSS-3D cubes. The cube you open in the Library and the Trainer keeps the 3D renderer; the unused three-face culling path is gone with it.
+
 ### Added
 - PLL and OLL now come from SpeedCubeDB as well: the standard letter and number naming, each case carrying the algorithm that page marks standard plus up to three further algorithms that the simulator accepts (52 bundled). Nicknames moved to `src/lib/data/oll-names.ts`, and `scripts/check-oll-names.ts` re-checks all 57 against the new algorithms, so the numbering is verified rather than assumed.
 - `scripts/gen-lastlayer-scdb.ts` writes both data files and re-checks every line first: F2L must stay solved, the algorithm must solve its own case, and the 21 PLL permutations or 57 OLL orientation patterns must all be distinct.

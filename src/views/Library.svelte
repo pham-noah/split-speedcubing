@@ -4,6 +4,7 @@
   import { SET_NAMES, type CaseSet, type Slot } from '../lib/data';
   import CaseDiagram from '../lib/ui/CaseDiagram.svelte';
   import CaseCube from '../lib/ui/CaseCube.svelte';
+  import CaseThumb from '../lib/ui/CaseThumb.svelte';
   import LazyBox from '../lib/ui/LazyBox.svelte';
   import SlotPicker from '../lib/ui/SlotPicker.svelte';
   import ShortcutsSide from '../lib/ui/ShortcutsSide.svelte';
@@ -306,7 +307,7 @@
           {@const code = shownCode(c)}
           <button class="cell {m}" class:sel={selId === c.id} class:dim={hint && typed.length > 0 && !code.startsWith(typed) && !byName(typed).includes(c)} onclick={() => pick(c.id)} aria-label="{c.name}, {m}">
             {#if set === 'F2L'}
-              <LazyBox width={81} height={76}><CaseCube alg={store.algFor(c.id)} slotId={c.slot} size={54} faces={3} /></LazyBox>
+              <LazyBox width={81} height={76}><CaseThumb alg={store.algFor(c.id)} slotId={c.slot} size={54} /></LazyBox>
             {:else}
               <CaseDiagram alg={store.algFor(c.id)} {mode} size={64} slot={c.slot} />
             {/if}
