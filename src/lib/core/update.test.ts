@@ -122,3 +122,13 @@ describe('issueUrl', () => {
     expect(issuesUrl).toBe('https://github.com/pham-noah/split-speedcubing/issues');
   });
 });
+
+// the real endpoint, only when asked: LIVE=1 npx vitest run src/lib/core/update.test.ts
+describe.skipIf(!process.env.LIVE)('the live release channel', () => {
+  it('answers for this version without authentication', async () => {
+    const { look } = await import('./update');
+    const c = await look('0.5.0', 'android');
+    expect(c.kind).not.toBe('unavailable');
+    expect(['current', 'found']).toContain(c.kind);
+  }, 15000);
+});

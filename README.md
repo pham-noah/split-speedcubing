@@ -44,6 +44,9 @@ What actually differs between shells, and where it lives:
 
 The UI hides what a shell cannot do (`platform.caps.*`) rather than disabling it.
 
+**Releases.** Built APKs are published at
+github.com/pham-noah/split-speedcubing/releases, which is the public channel the in-app check reads.
+
 **Updates.** Settings > About has an opt-in check (off by default, no device id) that asks GitHub for the
 newest release and matches the asset to the shell. It reads `pham-noah/split-speedcubing`, which is public:
 an anonymous request gets a 404 for a private repo, so the release channel has to be public for a check
