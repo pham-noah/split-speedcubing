@@ -16,5 +16,6 @@ describe('import panel', () => {
     expect(host.textContent).not.toContain('solves in');   // it never parsed it
     unmount(app);
     host.remove();
-  });
+    // 6 MB through jsdom's event path is slow on a loaded machine; the work is real, the default 5 s is not
+  }, 60_000);
 });

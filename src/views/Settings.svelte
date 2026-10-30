@@ -5,6 +5,7 @@
   import ImportPanel from '../lib/ui/ImportPanel.svelte';
   import { platform } from '$platform';
   import { issuesUrl, issueUrl, look, type Check } from '../lib/core/update';
+  import { formatBytes } from '../lib/storage/durability';
   const s = $derived(store.data.settings);
   const colours = () => (s.cubeColors && s.cubeColors.length === 6 ? s.cubeColors : DEFAULT_CUBE_COLORS);
   let msg = $state('');
@@ -289,6 +290,16 @@
     <h2 id="bk-h" style="margin:0;font-size:1.15rem">Your data</h2>
     <div class="mu">Everything is stored only on this device. Make a backup before switching phones.</div>
     <div class="mu" style="color:{backupAge.nudge ? 'var(--am)' : 'var(--mu2)'}">{backupAge.text}</div>
+    {#if store.durable.persisted !== null}
+      <div class="mu" style="color:{store.durable.persisted ? 'var(--mu2)' : 'var(--am)'}">
+        {#if store.durable.persisted}
+          Storage: this device has agreed to keep your data.
+        {:else}
+          Storage: the system may free this app's data if space runs short. A backup is the only copy that survives that.
+        {/if}
+        {#if store.durable.usage != null}({formatBytes(store.durable.usage)} used){/if}
+      </div>
+    {/if}
     <div class="row">
       {#if platform.caps.saveFile}<button class="btn" onclick={download}>Export backup</button>{/if}
       <button class="btn" onclick={restore}>Restore backup</button>

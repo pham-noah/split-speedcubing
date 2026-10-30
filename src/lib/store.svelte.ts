@@ -8,6 +8,7 @@ import type { Penalty, Solve } from './core/stats';
 import { keyFor, matches, conflictFor, canBind, type KeyLike } from './core/shortcuts';
 import { withTimestamps, type ImportedSession } from './core/importers';
 import { collectLogs, countPoints, optimizeParameters, MIN_POINTS, type OptResult } from './core/fsrs-optimize';
+import { durability, type Durability } from './storage/durability';
 
 const uid = () => crypto.randomUUID?.() ?? String(Date.now() + Math.random());
 
@@ -20,6 +21,8 @@ class Store {
   saveError = $state<string | null>(null);
   /** the saved data could not be read; the app runs on empty data until the user tries again */
   loadError = $state<string | null>(null);
+  /** whether the browser will keep this origin's data, and how much is used */
+  durable = $state<Durability>({ persisted: null, usage: null, quota: null });
   focusId = $state<string | null>(null); // case the user asked to train next
   focusAlg = $state<string | null>(null);
   cubeHidden = $state(false);   // the scramble cube panel, toggled with one key from anywhere // when set, train that case with exactly this algorithm (execution only)
@@ -42,6 +45,8 @@ class Store {
     this.apply();
     this.ready = true;
     this.watchUnload();
+    // best effort until asked: on Android the origin can be evicted with the app still installed
+    void durability().then((d) => (this.durable = d));
   }
   /** 0.5.0 renumbered F2L: case N is a different shape than it was, so progress logged against the old
    *  numbers would sit on the wrong case. Clear that progress once, and keep only the user's algorithms
