@@ -1,4 +1,4 @@
-import { SETS, BUILTIN_CASES, type CaseDef, type CaseSet } from './data';
+import { SETS, BUILTIN_CASES, F2L_DATA_REV, type CaseDef, type CaseSet } from './data';
 import { readableInk } from './ui/color';
 import { createStorage, type Storage } from './storage';
 import { defaultData, normalize, type AppData, type CardRecord, type DrillResult, type Session } from './storage/model';
@@ -38,9 +38,28 @@ class Store {
       // keep running, but say so: silently showing an empty history looks exactly like lost data
       this.loadError = e instanceof Error ? e.message : 'Could not read the saved data';
     }
+    this.migrateF2L();
     this.apply();
     this.ready = true;
     this.watchUnload();
+  }
+  /** 0.5.0 renumbered F2L: case N is a different shape than it was, so progress logged against the old
+   *  numbers would sit on the wrong case. Clear that progress once, and keep only the user's algorithms
+   *  that still solve the case they now sit on. */
+  private migrateF2L() {
+    if ((this.data.f2lRev ?? 1) >= F2L_DATA_REV) return;
+    for (const c of SETS.F2L) {
+      const card = this.data.cards[c.id];
+      if (!card) continue;
+      const kept = (card.algs ?? []).filter(a => a !== c.alg && solvesCase(c.alg, a, true));
+      const keepDefault = card.defaultAlg && (card.defaultAlg === c.alg || kept.includes(card.defaultAlg)) ? card.defaultAlg : undefined;
+      const blank: CardRecord = { seen: false, due: 0, attempts: [] };
+      if (kept.length) blank.algs = kept;
+      if (keepDefault) blank.defaultAlg = keepDefault;
+      this.data.cards[c.id] = blank;
+    }
+    this.data.f2lRev = F2L_DATA_REV;
+    this.persist();
   }
   /** write the pending change before the app is backgrounded or closed, instead of losing it */
   private watchUnload() {
@@ -157,10 +176,17 @@ class Store {
     return found;
   }
   card(id: string): CardRecord { return this.data.cards[id] ?? { ...newCard(), attempts: [] }; }
-  /** built-in alg first, then the user's own */
+  /** every algorithm that ships with this case: the default first, then the bundled alternatives */
+  bundledAlgs(id: string): string[] {
+    const c = this.caseOf(id);
+    return [c.alg, ...(c.alts ?? [])];
+  }
+  /** true when the algorithm ships with the app, so the UI must not offer to remove it */
+  isBundled(id: string, alg: string): boolean { return this.bundledAlgs(id).includes(alg); }
+  /** built-in algs first, then the user's own */
   algsFor(id: string): string[] {
-    const builtin = this.caseOf(id).alg;
-    return [builtin, ...(this.data.cards[id]?.algs ?? []).filter(a => a !== builtin)];
+    const builtin = this.bundledAlgs(id);
+    return [...builtin, ...(this.data.cards[id]?.algs ?? []).filter(a => !builtin.includes(a))];
   }
   algFor(id: string): string {
     const list = this.algsFor(id), d = this.data.cards[id]?.defaultAlg;
@@ -188,6 +214,7 @@ class Store {
     return null;
   }
   removeAlg(id: string, alg: string) {
+    if (this.isBundled(id, alg)) return;   // a shipped algorithm is not the user's to delete
     const c = this.ensure(id);
     c.algs = (c.algs ?? []).filter(a => a !== alg);
     if (c.defaultAlg === alg) c.defaultAlg = undefined;

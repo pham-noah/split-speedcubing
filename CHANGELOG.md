@@ -9,6 +9,10 @@ The F2L library is now the standard one.
 ### Added
 - The 41 F2L cases are the standard table in the community's numbering, taken from SpeedCubeDB: their case order, their six groups (Free Pairs, Connected, Disconnected, Corner In Slot, Edge In Slot, Pieces In Slot) and, for each case, the highest-voted algorithm that the cube simulator accepts for this slot. So "F2L 23" now means the same case here as in a tutorial.
 - `scripts/gen-f2l-scdb.ts` writes the data file and re-checks every line with the simulator first: the case must disturb the front-right pair and nothing else, the alg may be at most 12 moves, and no two cases may be the same shape (compared up to an AUF).
+- Each case carries up to three further algorithms from that page as bundled alternatives, so the Library shows the whole set for a case (the default first, then the others at 71 in total) instead of a single line. A bundled algorithm is marked as built-in and cannot be deleted; your own additions sit beside them as before, and any of them can be made the default.
+
+### Fixed
+- F2L progress from the old numbering is reset once, because case N is now a different shape than it was: that progress would otherwise schedule the wrong case. Algorithms you added are kept only where they still solve the case they now sit on, and the reset is written to the data so it happens once.
 
 ### Changed
 - F2L thumbnails in the Library draw only the three faces the fixed camera can actually see, instead of all six faces of every cubie: 57 face elements per cube instead of 156, 2,337 across the grid instead of 6,396. Measured on the grid: main-thread blocks of 94-147 ms each became 54-89 ms, and switching to F2L costs about a third of the paint time it did. The picture is unchanged by construction (a face is only dropped when it was already backface-hidden), which was checked on all 41 cells rather than by eye.

@@ -334,12 +334,13 @@
         <div role="radiogroup" aria-label="Default algorithm" style="display:flex;flex-direction:column;gap:8px">
           {#each algs as a, i (a)}
             {@const st = stats(a)}
+            {@const shipped = set !== 'ZBLL' && store.isBundled(sel.id, a)}
             <div class="row" style="gap:6px;align-items:stretch">
               <button role="radio" aria-checked={a === current} class="btn" class:on={a === current} style="flex:1;text-align:left;padding:10px 12px;display:flex;flex-direction:column;gap:4px" onclick={() => store.setDefault(sel.id, a)}>
                 <span class="mono" style="font-size:.9rem;word-break:break-word">{a}</span>
-                <span class="mu">{a === current ? 'Default · ' : ''}{i === 0 ? (set === 'ZBLL' ? 'imported' : 'built-in') : 'yours'} · {moveCount(a)} moves{st.n ? ` · exec ${formatTime(st.exec)} (${st.n})` : ''}</span>
+                <span class="mu">{a === current ? 'Default · ' : ''}{set === 'ZBLL' ? (i === 0 ? 'imported' : 'yours') : shipped ? 'built-in' : 'yours'} · {moveCount(a)} moves{st.n ? ` · exec ${formatTime(st.exec)} (${st.n})` : ''}</span>
               </button>
-              {#if i > 0}<button class="btn" style="flex:none" aria-label="Remove algorithm" onclick={() => store.removeAlg(sel.id, a)}>✕</button>{/if}
+              {#if i > 0 && !shipped}<button class="btn" style="flex:none" aria-label="Remove algorithm" onclick={() => store.removeAlg(sel.id, a)}>✕</button>{/if}
             </div>
           {/each}
         </div>

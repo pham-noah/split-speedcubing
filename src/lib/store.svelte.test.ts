@@ -215,3 +215,32 @@ describe('store: personalised scheduling', () => {
     expect(store.data.settings.fsrsW).toBeUndefined();
   });
 });
+
+describe('store: bundled F2L algorithms', () => {
+  it('lists the whole bundled set for a case, default first', () => {
+    const list = store.algsFor('F2L-1');
+    expect(list[0]).toBe("U R U' R'");
+    expect(list.length).toBeGreaterThan(1);
+    expect(list.every(a => store.isBundled('F2L-1', a))).toBe(true);
+  });
+  it('refuses to remove a bundled algorithm, and lets the user delete their own', () => {
+    store.removeAlg('F2L-1', "R' F R F'");
+    expect(store.algsFor('F2L-1')).toContain("R' F R F'");
+    const mine = 'R U2 R2 F R F';
+    expect(store.addAlg('F2L-1', mine)).toBe('That algorithm does not solve this case.');
+    const ok = "U2 R' F R F' U2";   // the bundled alt with a U2 on each end: still the same solution
+    expect(store.addAlg('F2L-1', ok)).toBeNull();
+    expect(store.algsFor('F2L-1')).toContain(ok);
+    store.removeAlg('F2L-1', ok);
+    expect(store.algsFor('F2L-1')).not.toContain(ok);
+  });
+  it('keeps a bundled alternative as the default without dropping it on reset', () => {
+    const alt = store.algsFor('F2L-2')[1];
+    store.setDefault('F2L-2', alt);
+    expect(store.algFor('F2L-2')).toBe(alt);
+    store.resetCard('F2L-2');
+    expect(store.algFor('F2L-2')).toBe(alt);
+    store.setDefault('F2L-2', store.algsFor('F2L-2')[0]);
+    expect(store.algFor('F2L-2')).toBe(store.algsFor('F2L-2')[0]);
+  });
+});

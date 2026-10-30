@@ -9,7 +9,7 @@ export interface Settings { theme: 'midnight' | 'amoled' | 'contrast'; textSize:
 export interface DrillResult { type: 'cross' | 'bld' | 'oll2' | 'pll2'; ms: number; memo: number | null; ok: boolean; ts: number; info?: string; pen?: '+2' | 'DNF' }
 export interface Session { id: string; name: string }
 export interface CustomCase { id: string; name: string; alg: string }
-export interface AppData { v: 1; solves: Solve[]; cards: Record<string, CardRecord>; settings: Settings; drills: DrillResult[]; sessions: Session[]; session: string; zbll: CustomCase[] }
+export interface AppData { v: 1; solves: Solve[]; cards: Record<string, CardRecord>; settings: Settings; drills: DrillResult[]; sessions: Session[]; session: string; zbll: CustomCase[]; f2lRev?: number }
 
 export const defaultSettings = (): Settings => ({ theme: 'midnight', textSize: 100, holdMs: 300, tapStart: false, inspection: false, beeps: true, hideTime: false, retention: 0.9, keys: {}, hidden: {}, introSeen: false, coverOn: true, coverColor: '', accent: '', walkAutoplay: false, walkSpeed: 900, cubeColors: [], swapRO: false });
 export const defaultData = (): AppData => ({ v: 1, solves: [], cards: {}, settings: defaultSettings(), drills: [], sessions: [{ id: 'default', name: 'Session 1' }], session: 'default', zbll: [] });
@@ -98,6 +98,7 @@ export function normalize(raw: unknown): AppData {
     zbll: Array.isArray(r.zbll) ? r.zbll.filter(c => c && c.id && c.alg) : [],
     drills: Array.isArray(r.drills) ? r.drills.filter(d => d && finite(d.ms) && d.ms >= 0) : [],
   };
+  if (typeof r.f2lRev === 'number' && Number.isFinite(r.f2lRev)) out.f2lRev = r.f2lRev;
   if (out.settings.fsrsW && !(out.settings.fsrsW.length === 21 && out.settings.fsrsW.every(Number.isFinite))) delete out.settings.fsrsW;
   // solves from before sessions existed belong to the first session
   const first = out.sessions[0].id;

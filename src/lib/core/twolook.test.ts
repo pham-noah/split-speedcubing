@@ -5,7 +5,7 @@ import { make2Look } from './twolook';
 import { EO_STEPS, OCLL_STEPS, CORNER_STEPS, EDGE_STEPS } from '../data/twolook';
 import { F2L } from '../data/f2l';
 import { rotateAlg } from './rotate';
-import { isZbllCase } from './alg';
+import { isZbllCase, solvesCase } from './alg';
 
 const topEdges = (alg: string) => {
   const v = llView(applyAlg(solved(), invert(alg)));
@@ -66,6 +66,17 @@ describe('F2L data', () => {
       expect(st.some(s => s.p[0] === cx && s.p[2] === cz && s.p[1] <= 0 && FACE_OF_NORMAL(s.n) !== s.c), c.id).toBe(true);
       expect(tokens(c.alg).length).toBeLessThanOrEqual(12);
     }
+  });
+  it('every bundled alternative solves the same case, in all four slots', () => {
+    let checked = 0;
+    for (const c of F2L) {
+      for (const a of c.alts ?? []) {
+        expect(tokens(a).length, `${c.id} ${a}`).toBeLessThanOrEqual(12);
+        expect(solvesCase(c.alg, a, true), `${c.id} ${a}`).toBe(true);
+        checked++;
+      }
+    }
+    expect(checked).toBeGreaterThan(50);
   });
   it('rotating an alg and rotating it back is the identity, and rotation is a real cube rotation', () => {
     for (const item of F2L.filter(x => x.slot === 'FR').slice(0, 10)) {
