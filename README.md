@@ -13,7 +13,7 @@ One codebase (Svelte 5 + TypeScript + Vite) for three targets: browser/PWA, Andr
 ```bash
 npm install
 npm run dev        # http://localhost:5173
-npm run e2e        # 33 end-to-end checks in a real browser against the build on :4173 (3 offline checks skip)
+npm run e2e        # 37 end-to-end checks in a real browser against the build on :4173 (3 offline checks skip)
 npm run e2e:offline  # builds with the service worker into dist-sw/, serves it on :4174, runs all 33
 npm test           # 285 tests: simulator, every PLL/OLL/F2L alg, stats, grading, FSRS (+ personalisation), storage and backups, sessions, importers, shortcuts, back handling, contrast, and a full-app UI test with an axe accessibility audit
 npm run e2e        # 31 checks in a real Chrome against a running build (see Testing)
@@ -69,7 +69,7 @@ src/views/         Solve, Train, Library, Drills, Settings
 ## Testing
 
 - `npm test`: 285 unit and component tests (including an axe-core accessibility audit and WCAG contrast checks).
-- `npm run test:e2e`: 33 end-to-end checks in a **real Chrome/Chromium**: first launch, timing with real pointer input, persistence across reloads (IndexedDB), keyboard shortcuts, retrying a scramble from History, the training flow, csTimer import, no sideways overflow at Extra large text on a 360 px phone, offline mode (service worker, scrambles still work), and no console errors. `npm run e2e` runs them against the build on :4173, where the three offline checks skip; `npm run e2e:offline` builds with `VITE_SW=1` into `dist-sw/`, serves it on :4174 and runs all 33, which is what CI does. Set `CHROME_PATH` if Chrome is not in a standard location. The checks run in CI (`.github/workflows/ci.yml`).
+- `npm run e2e`: 37 end-to-end checks in a **real Chrome/Chromium**: first launch, timing with real pointer input, persistence across reloads (IndexedDB), keyboard shortcuts, retrying a scramble from History, the training flow, csTimer import, no sideways overflow at Extra large text on a 360 px phone, offline mode (service worker, scrambles still work), and no console errors. `npm run e2e` runs them against the build on :4173, where the three offline checks skip; `npm run e2e:offline` builds with `VITE_SW=1` into `dist-sw/`, serves it on :4174 and runs all 37, which is what CI does. Set `CHROME_PATH` if Chrome is not in a standard location. The checks run in CI (`.github/workflows/ci.yml`).
 - `npm run lint`: ESLint over `src/` and `scripts/` (svelte-check catches types, this catches the classes of bug that type-check fine: a name shadowing another, a dead variable, an unkeyed each block, a bare expression used as an `$effect` dependency). Run by CI before the tests.
 - `npm run screenshots`: regenerates the store screenshots, desktop image and feature graphic from the running build with demo data (`scripts/seed-demo.ts`).
 - Desktop security: `src-tauri/tauri.conf.json` sets a strict content security policy (no network). It was checked against the real app in Chromium (random-state scrambles, workers and diagrams all work under it).
@@ -123,7 +123,7 @@ One module decides what a case looks like: `src/lib/ui/caseCubeView.ts` finds th
 - Algorithms are starting points: a default plus the alternatives SpeedCubeDB lists, all of them machine-checked, but they are not guaranteed to be the ones you like executing. Swap the default in the Library per case (the app checks that an alg really solves the case before it accepts it), and check any line against your own reference if you care about a specific numbering.
 - Not done yet: ZBLL bundled algs. Smart cube Bluetooth support was deliberately left out to keep the app simple and fully offline.
 - The csTimer import follows csTimer's documented/observed export layout and is unit-tested against it, but not against a real export file. CubeDesk's own backup format could not be verified; its importer is best effort, and CSV or a plain list of times always works.
-- Tested in a real desktop browser (Chromium: 33 end-to-end checks) and by 285 unit tests, but not yet on a real phone or inside the Android and Tauri shells, and the GitHub workflows and F-Droid recipe have not been run.
+- Tested in a real desktop browser (Chromium: 37 end-to-end checks) and by 285 unit tests, but not yet on a real phone or inside the Android and Tauri shells, and the GitHub workflows and F-Droid recipe have not been run.
 
 ## Licence
 

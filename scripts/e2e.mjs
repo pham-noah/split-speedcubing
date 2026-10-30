@@ -117,6 +117,44 @@ check('the next-case key moves to a new case', !/· recog/.test(await page.evalu
 await page.keyboard.press('Escape'); await sleep(300);
 check('Back returns to Today', /Due for review/.test(await text()));
 
+// --- the F2L library: 41 cases once, a group filter, and the four slots inside the case
+await clickText(page, 'Library', 'nav button'); await sleep(400);
+await page.evaluate(() => { const b = [...document.querySelectorAll('.seg button')].find(x => x.textContent.trim() === 'F2L'); b.click(); });
+await sleep(1500);
+const groups = await page.evaluate(() => [...document.querySelectorAll('.seg.groups button')]
+  .map(b => ({ label: b.getAttribute('aria-label') || '', total: document.querySelectorAll('.grid .cell').length })));
+check('the F2L tab lists the 41 front-right cases once',
+  await page.evaluate(() => document.querySelectorAll('.grid .cell').length) === 41);
+check('its filter is speedcubedb\'s six groups with counts',
+  groups.length === 7 && /^Connected Pairs, 0 of 10/.test(groups[1].label) && /^Pieces In Slot, 0 of 5/.test(groups[6].label),
+  `${groups.length - 1} groups`);
+const cornerCells = await page.evaluate(async () => {
+  const b = [...document.querySelectorAll('.seg.groups button')].find(x => (x.getAttribute('aria-label') || '').startsWith('Corner In Slot'));
+  b.click();
+  await new Promise(r => setTimeout(r, 700));
+  return document.querySelectorAll('.grid .cell').length;
+});
+check('picking a single group narrows the grid to that group', cornerCells === 6, `(${cornerCells} cells)`);
+const slots = await page.evaluate(async () => {
+  const all = [...document.querySelectorAll('.seg.groups button')].find(x => (x.getAttribute('aria-label') || '') === 'All groups');
+  all.click();
+  await new Promise(r => setTimeout(r, 600));
+  document.querySelector('.grid .cell').click();
+  await new Promise(r => setTimeout(r, 900));
+  const panel = document.querySelector('#case-panel');
+  if (!panel) return null;
+  const tabs = [...panel.querySelectorAll('.seg[aria-label="Slot for this case"] button')].map(b => b.textContent.trim());
+  const alg = () => panel.querySelector('[role=radio] .mono')?.textContent.trim();
+  const first = alg();
+  [...panel.querySelectorAll('.seg[aria-label="Slot for this case"] button')].find(b => b.textContent.trim() === 'FL').click();
+  await new Promise(r => setTimeout(r, 700));
+  return { tabs, first, fl: alg(), title: panel.textContent.includes('· FL') };
+});
+check('the opened F2L case offers FR / FL / BL / BR', !!slots && slots.tabs.join(',') === 'FR,FL,BL,BR', slots ? slots.tabs.join(',') : 'no panel');
+check('choosing FL shows that slot\'s rotated algorithm', !!slots && slots.fl !== slots.first && slots.title, slots ? `${slots.first} -> ${slots.fl}` : '');
+await page.keyboard.press('Escape'); await sleep(500);
+await clickText(page, 'Solve', 'nav button'); await sleep(300);
+
 // --- csTimer import
 const cs = { session1: [[[0, 12340], "R U R' U'", '', 1700000000], [[2000, 10500], 'F B', '', 1700000100], [[-1, 20000], 'L D', '', 1700000200]], properties: { sessionData: JSON.stringify({ 1: { name: 'Main', opt: {} } }) } };
 writeFileSync('/tmp/cstimer-export.txt', JSON.stringify(cs));
