@@ -1,8 +1,6 @@
 apply plugin: 'com.android.application'
 
-// Release signing: the key lives beside the project (gitignored), so every build carries the same
-// signature and an update installs in place. Without the file the release build falls back to debug,
-// which keeps a fresh clone and CI able to build, and is useless for shipping.
+// same key every build, so updates install in place; debug when the key is absent
 def keystoreProps = new Properties()
 def keystoreFile = rootProject.file('keystore.properties')
 if (keystoreFile.exists()) {

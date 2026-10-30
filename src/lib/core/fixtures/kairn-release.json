@@ -1,0 +1,14 @@
+{
+  "tag_name": "v0.8.1",
+  "name": "Kairn 0.8.1",
+  "html_url": "https://github.com/pham-noah/kairn-reader/releases/tag/v0.8.1",
+  "body": "Kairn 0.8.1\n\n- A book you have finished no longer appears in Continue reading. It stays in the grid, it just stops asking to be picked up.\n- Share and Look up sit in the selection toolbar instead of b",
+  "published_at": "2026-10-30T15:06:51Z",
+  "assets": [
+    {
+      "name": "Kairn-release.apk",
+      "size": 5194116,
+      "browser_download_url": "https://github.com/pham-noah/kairn-reader/releases/download/v0.8.1/Kairn-release.apk"
+    }
+  ]
+}

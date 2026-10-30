@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
-import { isNewer, pickAsset, releaseFrom } from './update';
+import real from './fixtures/kairn-release.json';
+import { isNewer, issueUrl, issuesUrl, pickAsset, releaseFrom } from './update';
 
 const asset = (name: string) => ({ name, browser_download_url: `https://example.test/${name}`, size: 1234 });
-/** pickAsset takes the shape releaseFrom builds, not raw GitHub JSON. */
 const picked = (name: string) => ({ name, url: `https://example.test/${name}`, size: 1234 });
 const release = (tag: string, names: string[]) => ({
   tag_name: tag,
@@ -58,6 +58,25 @@ describe('look', () => {
   });
 });
 
+describe('a real GitHub response', () => {
+  it('finds the APK and its download URL', () => {
+    const c = releaseFrom(real, '0.5.0', 'android');
+    expect(c.kind).toBe('found');
+    if (c.kind === 'found') {
+      expect(c.release.version).toBe('0.8.1');
+      expect(c.release.name).toBe('Kairn-release.apk');
+      expect(c.release.url).toMatch(/^https:\/\/github\.com\/.+\/releases\/download\/v0\.8\.1\/Kairn-release\.apk$/);
+      expect(c.release.size).toBe(5194116);
+      expect(c.release.page).toContain('/releases/tag/v0.8.1');
+      expect(c.release.notes).toContain('Continue reading');
+    }
+  });
+
+  it('is current once the version is reached', () => {
+    expect(releaseFrom(real, '0.8.1', 'android').kind).toBe('current');
+  });
+});
+
 describe('releaseFrom', () => {
   it('reports a newer release with the asset that fits the shell', () => {
     const c = releaseFrom(release('v0.6.0', ['split-arm64.apk', 'Split_0.6.0_x64-setup.exe']), '0.5.0', 'android');
@@ -80,5 +99,26 @@ describe('releaseFrom', () => {
   it('says failed on a body that is not a release', () => {
     expect(releaseFrom(null, '0.5.0', 'web').kind).toBe('failed');
     expect(releaseFrom({ message: 'Not Found' }, '0.5.0', 'web').kind).toBe('failed');
+  });
+});
+
+describe('issueUrl', () => {
+  it('prefills the version and shell, and asks the two questions that matter', () => {
+    const url = new URL(issueUrl('0.5.0', 'android', 'Settings'));
+    expect(url.origin + url.pathname).toBe('https://github.com/pham-noah/split/issues/new');
+    expect(url.searchParams.get('title')).toBe('[0.5.0/android] ');
+    const body = url.searchParams.get('body')!;
+    expect(body).toContain('**What happened**');
+    expect(body).toContain('**What you expected**');
+    expect(body).toContain('Split 0.5.0 · android · Settings');
+  });
+
+  it('leaves the screen out when there is none', () => {
+    const body = new URL(issueUrl('0.5.0', 'web')).searchParams.get('body')!;
+    expect(body.trim().endsWith('Split 0.5.0 · web')).toBe(true);
+  });
+
+  it('points at the issue list', () => {
+    expect(issuesUrl).toBe('https://github.com/pham-noah/split/issues');
   });
 });

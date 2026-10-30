@@ -23,8 +23,7 @@ export default tseslint.config(
     },
   },
   {
-    // The platform seam: only src/lib/platform/ may talk to a shell. Anywhere else the import fails
-    // the gate instead of quietly coupling the three builds together.
+    // shell code stays in src/lib/platform/, so the three builds cannot couple
     files: ['src/**/*.ts', 'src/**/*.svelte', 'src/**/*.svelte.ts'],
     ignores: ['src/lib/platform/**'],
     rules: {

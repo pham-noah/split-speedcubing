@@ -18,7 +18,6 @@ export default defineConfig(({ mode }) => {
     // without polling the dev server keeps serving the old code (looks like "nothing changed")
     server: { watch: { usePolling: true, interval: 300 } },
     define: { __APP_VERSION__: JSON.stringify(pkg.version) },
-    // one adapter per build, so a shell's dependencies never reach the other two bundles
     resolve: {
       alias: { $platform: fileURLToPath(new URL(`./src/lib/platform/${target}.ts`, import.meta.url)) },
       ...(process.env.VITEST ? { conditions: ['browser'] } : {}),

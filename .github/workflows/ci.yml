@@ -20,9 +20,17 @@ jobs:
       - run: npm run check
       - run: npm test
       # VITE_SW=1 registers the service worker on localhost too, so the offline checks can run
-      - run: npm run build
+      - run: npm run build:web
         env:
           VITE_SW: '1'
+      # every shell's frontend has to compile, even though cargo and gradle are separate jobs
+      - name: Build the native shells' frontends
+        run: |
+          npm run build:android
+          npm run build:desktop
+          test ! -f dist-android/sw.js && test ! -f dist-desktop/sw.js
+          grep -q 'isNativePlatform' dist-android/assets/*.js
+          ! grep -q 'isNativePlatform' dist-desktop/assets/*.js
       # real-browser end-to-end checks against the production build (Chrome is preinstalled on the runner)
       - name: End-to-end tests
         run: |
@@ -45,8 +53,7 @@ jobs:
           distribution: temurin
           java-version: 21
       - run: npm ci
-      - run: npm run build
-      - run: npx cap sync android
+      - run: npm run build:android
       - name: Build debug APK
         working-directory: android
         run: ./gradlew assembleDebug

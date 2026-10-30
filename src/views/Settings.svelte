@@ -4,7 +4,7 @@
   import { DEFAULT_CUBE_COLORS } from '../lib/ui/cube-colors';
   import ImportPanel from '../lib/ui/ImportPanel.svelte';
   import { platform } from '$platform';
-  import { look, type Check } from '../lib/core/update';
+  import { issuesUrl, issueUrl, look, type Check } from '../lib/core/update';
   const s = $derived(store.data.settings);
   const colours = () => (s.cubeColors && s.cubeColors.length === 6 ? s.cubeColors : DEFAULT_CUBE_COLORS);
   let msg = $state('');
@@ -195,6 +195,11 @@
     <h2 id="ab-h" style="margin:0;font-size:1.15rem">About</h2>
     <div class="mu">Split {__APP_VERSION__}. Free software under the GNU General Public License v3 or later: you may use, study, share and change it. Includes open-source components (see THIRD_PARTY_LICENSES.md in the source). No accounts, no tracking, no network access.</div>
     <div class="mu">Built by Noah Pham. Source, releases and issues: <a class="link" href="https://github.com/pham-noah" target="_blank" rel="noopener noreferrer">github.com/pham-noah</a></div>
+    <div class="row">
+      <a class="btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none" href={issueUrl(__APP_VERSION__, platform.kind)} target="_blank" rel="noopener noreferrer">Report a problem</a>
+      <a class="btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none" href={issuesUrl} target="_blank" rel="noopener noreferrer">Open issues</a>
+    </div>
+    <div class="mu">A report opens a pre-filled GitHub issue: what happened, what you expected, and the version and shell you are on. Nothing is sent from the app itself.</div>
     {#if platform.kind !== 'web'}
       <label class="row sp" style="min-height:44px"><span>Check for updates</span><input type="checkbox" style="width:24px;min-height:24px;flex:none" checked={s.checkUpdates === true} onchange={(e) => store.update({ checkUpdates: e.currentTarget.checked })} /></label>
       {#if s.checkUpdates}

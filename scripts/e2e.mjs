@@ -38,6 +38,7 @@ const hold = async (ms = 450) => {
 const tap = async () => { const b = await (await page.$('.big')).boundingBox(); await page.mouse.move(b.x + 20, b.y + 20); await page.mouse.down(); await page.mouse.up(); };
 
 // --- first launch
+check('the web shell is the one that loaded', await page.evaluate(() => document.documentElement.dataset.platform === 'web'));
 check('splash is removed', await page.evaluate(() => !document.getElementById('splash')));
 check('intro dialog shows', await page.evaluate(() => !!document.querySelector('[role=dialog]')));
 await clickText(page, 'Next'); await clickText(page, 'Next'); await clickText(page, 'Get started'); await sleep(200);
@@ -153,6 +154,7 @@ const slots = await page.evaluate(async () => {
 check('the opened F2L case offers FR / FL / BL / BR', !!slots && slots.tabs.join(',') === 'FR,FL,BL,BR', slots ? slots.tabs.join(',') : 'no panel');
 check('choosing FL shows that slot\'s rotated algorithm', !!slots && slots.fl !== slots.first && slots.title, slots ? `${slots.first} -> ${slots.fl}` : '');
 await page.keyboard.press('Escape'); await sleep(500);
+check('no update check on the web build', await page.evaluate(() => !document.body.textContent.includes('Check for updates')));
 await clickText(page, 'Solve', 'nav button'); await sleep(300);
 
 // --- Settings: About credits the author and links the source
@@ -162,6 +164,16 @@ check('About names the author and links GitHub', await page.evaluate(() => {
   const about = document.body.textContent.includes('Built by Noah Pham');
   return !!a && about && a.getAttribute('target') === '_blank';
 }));
+check('About offers a pre-filled issue report', await page.evaluate(() => {
+  const link = (label) => [...document.querySelectorAll('a[href]')].find(a => a.textContent.trim() === label);
+  const report = link('Report a problem'), list = link('Open issues');
+  if (!report || !list) return false;
+  const href = decodeURIComponent(report.getAttribute('href') || '');
+  return report.getAttribute('href').startsWith('https://github.com/pham-noah/split/issues/new?')
+    && href.includes('What happened') && href.includes('What you expected') && href.includes('Split 0.5.0')
+    && list.getAttribute('href') === 'https://github.com/pham-noah/split/issues';
+}));
+
 await clickText(page, 'Solve', 'nav button'); await sleep(300);
 
 // --- csTimer import
