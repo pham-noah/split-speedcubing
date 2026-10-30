@@ -4,7 +4,9 @@ android {
     namespace = "org.example.split"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "org.example.split"
+        // store identity; namespace below is the Java package and stays org.example.split so
+        // MainActivity (package org.example.split, manifest ".MainActivity") keeps resolving
+        applicationId "com.noah.split"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 5
