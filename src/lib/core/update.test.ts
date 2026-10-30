@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { isNewer, pickAsset, releaseFrom } from './update';
 
 const asset = (name: string) => ({ name, browser_download_url: `https://example.test/${name}`, size: 1234 });
@@ -41,6 +41,20 @@ describe('pickAsset', () => {
 
   it('has no installer for the web build', () => {
     expect(pickAsset([picked('split-arm64.apk')], 'web')).toBeNull();
+  });
+});
+
+describe('look', () => {
+  it('separates a private or missing repo from a network failure', async () => {
+    const { look } = await import('./update');
+    const no = (status: number) => vi.fn(async () => new Response('{}', { status }));
+    vi.stubGlobal('fetch', no(404));
+    await expect(look('0.5.0', 'android')).resolves.toEqual({ kind: 'unavailable' });
+    vi.stubGlobal('fetch', no(500));
+    await expect(look('0.5.0', 'android')).resolves.toEqual({ kind: 'failed' });
+    vi.stubGlobal('fetch', vi.fn(async () => { throw new Error('offline'); }));
+    await expect(look('0.5.0', 'android')).resolves.toEqual({ kind: 'failed' });
+    vi.unstubAllGlobals();
   });
 });
 

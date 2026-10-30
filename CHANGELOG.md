@@ -50,7 +50,9 @@ A preview left listening on :4174 by an earlier run is now detected by port and 
 - Settings > About credits the author and links github.com/pham-noah.
 - `src/lib/core/update.ts`: an opt-in check against GitHub releases (off by default, no device id),
   with the asset matched to the shell — the arm64 APK on Android, the setup exe on desktop. It reports
-  the release page; installing stays with the user or the store.
+  the release page; installing stays with the user or the store. A 404 is reported as "no public
+  releases", not as a network failure: an anonymous check cannot see a private repository, so the
+  releases have to be published publicly for this to find anything.
 
 ### Changed
 - Release builds are signed with a dedicated key (`android/app/split-release.jks` +

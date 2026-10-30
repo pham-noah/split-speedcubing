@@ -203,6 +203,8 @@
           <div class="mu" role="status" aria-live="polite">Version {update.release.version} is available. <a class="link" href={update.release.page} target="_blank" rel="noopener noreferrer">Open the release page</a></div>
         {:else if update?.kind === 'current'}
           <div class="mu" role="status" aria-live="polite">Split {__APP_VERSION__} is the latest version.</div>
+        {:else if update?.kind === 'unavailable'}
+          <div class="mu" role="status" aria-live="polite">No public releases found. A check can only see a public repository, so this build cannot find updates until the releases are published somewhere public.</div>
         {:else if update?.kind === 'failed'}
           <div class="mu" role="status" aria-live="polite">Could not reach GitHub. Try again later.</div>
         {/if}

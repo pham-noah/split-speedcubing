@@ -12,8 +12,12 @@ export interface Release {
   name: string;
 }
 
-/** "No update" and "could not ask" are different answers, so they are different results. */
-export type Check = { kind: 'found'; release: Release } | { kind: 'current' } | { kind: 'failed' };
+/** "No update", "nothing to check against" and "could not ask" are different answers. */
+export type Check =
+  | { kind: 'found'; release: Release }
+  | { kind: 'current' }
+  | { kind: 'unavailable' }
+  | { kind: 'failed' };
 
 interface Asset {
   name: string;
@@ -84,6 +88,9 @@ export async function look(currentVersion: string, kind: 'web' | 'android' | 'de
       // the app and its version, deliberately: no device or install id
       cache: 'no-store',
     });
+    // 404 means GitHub will not show the repo or its releases to an anonymous request, which is what a
+    // private repository looks like from a phone. That is a setup problem, not a network problem.
+    if (r.status === 404 || r.status === 403) return { kind: 'unavailable' };
     if (!r.ok) return { kind: 'failed' };
     return releaseFrom(await r.json(), currentVersion, kind);
   } catch {

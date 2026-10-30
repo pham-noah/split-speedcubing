@@ -44,6 +44,12 @@ What actually differs between shells, and where it lives:
 
 The UI hides what a shell cannot do (`platform.caps.*`) rather than disabling it.
 
+**Updates.** Settings > About has an opt-in check (off by default, no device id) that asks GitHub for the
+newest release and matches the asset to the shell. It can only see a **public** repository: an anonymous
+request gets a 404 for a private one, so publish the releases publicly or point `REPO` in
+`src/lib/core/update.ts` at a public repository. Installing the update is then left to the user or the
+store; nothing is downloaded or installed automatically.
+
 ## Android (Capacitor)
 
 Needs Android Studio (SDK + JDK 17+).
