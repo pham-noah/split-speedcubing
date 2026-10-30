@@ -8,6 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
+    "e2e:offline": "node scripts/e2e-offline.mjs",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "lint": "eslint .",
     "format": "prettier --write .",

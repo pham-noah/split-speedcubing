@@ -8,3 +8,6 @@ android/.gradle
 *.jks
 *.p12
 .DS_Store
+
+# the offline end-to-end build (npm run test:e2e:offline)
+dist-sw/

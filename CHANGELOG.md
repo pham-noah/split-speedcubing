@@ -12,6 +12,9 @@ The F2L library is now the standard one, and so are PLL and OLL.
 The Android **namespace** is deliberately still `org.example.split`, because that is the Java package `MainActivity` lives in and the manifest's `.MainActivity` resolves against it; renaming it means moving the Java package, which needs a gradle build to verify.
 
 ### Fixed
+- `npm run e2e` reported three failures on any normal build — service worker, offline load, offline scrambles — because a plain build never registers the worker. They now skip with the command that runs them, and `npm run e2e:offline` builds with `VITE_SW=1` into `dist-sw/`, serves it on :4174 and runs all 33 checks including the offline ones. CI builds that way already, so it sets `EXPECT_SW=1` and keeps the coverage.
+
+### Fixed
 - Two tests in `stats.test.ts` measured the clock, so they failed whenever the machine was busy (a build running beside them) and passed on an idle one. The 150 000-solve case now has an explicit timeout, and the "single pass over 20 000 solves" case counts how many times the list is read (a Proxy), which a re-sorting or naive rescan blows past by three orders of magnitude. Verified by putting the naive version back: it reads 200 009 990 times against the 120 000 limit.
 
 ### Changed
