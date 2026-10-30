@@ -47,7 +47,10 @@ A preview left listening on :4174 by an earlier run is now detected by port and 
   `if (android)` in views. The builds write `dist-web/`, `dist-android/` and `dist-desktop/`; eslint
   rejects `@capacitor/*` and `@tauri-apps/*` outside that directory, so the boundary cannot rot.
 - `npm run build:web|android|desktop`, plus `preview` serving `dist-web/`.
-- Settings > About credits the author and links github.com/pham-noah.
+- Settings > About credits the author, links github.com/pham-noah, and offers "Report a problem" (a
+  pre-filled GitHub issue carrying the version and shell) and "Open issues".
+- The public home is github.com/pham-noah/split-speedcubing: it is what the update check reads and what
+  the issue buttons open, because an anonymous request cannot see a private repository.
 - `src/lib/core/update.ts`: an opt-in check against GitHub releases (off by default, no device id),
   with the asset matched to the shell — the arm64 APK on Android, the setup exe on desktop. It reports
   the release page; installing stays with the user or the store. A 404 is reported as "no public

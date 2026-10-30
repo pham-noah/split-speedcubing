@@ -7,7 +7,7 @@ const picked = (name: string) => ({ name, url: `https://example.test/${name}`, s
 const release = (tag: string, names: string[]) => ({
   tag_name: tag,
   body: 'notes',
-  html_url: 'https://github.com/pham-noah/split/releases/tag/x',
+  html_url: 'https://github.com/pham-noah/split-speedcubing/releases/tag/x',
   assets: names.map(asset),
 });
 
@@ -105,7 +105,7 @@ describe('releaseFrom', () => {
 describe('issueUrl', () => {
   it('prefills the version and shell, and asks the two questions that matter', () => {
     const url = new URL(issueUrl('0.5.0', 'android', 'Settings'));
-    expect(url.origin + url.pathname).toBe('https://github.com/pham-noah/split/issues/new');
+    expect(url.origin + url.pathname).toBe('https://github.com/pham-noah/split-speedcubing/issues/new');
     expect(url.searchParams.get('title')).toBe('[0.5.0/android] ');
     const body = url.searchParams.get('body')!;
     expect(body).toContain('**What happened**');
@@ -119,6 +119,6 @@ describe('issueUrl', () => {
   });
 
   it('points at the issue list', () => {
-    expect(issuesUrl).toBe('https://github.com/pham-noah/split/issues');
+    expect(issuesUrl).toBe('https://github.com/pham-noah/split-speedcubing/issues');
   });
 });

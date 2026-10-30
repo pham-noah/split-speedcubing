@@ -1,4 +1,4 @@
-export const REPO = 'pham-noah/split';
+export const REPO = 'pham-noah/split-speedcubing';
 
 export interface Release {
   version: string;

@@ -37,9 +37,18 @@ const hold = async (ms = 450) => {
 };
 const tap = async () => { const b = await (await page.$('.big')).boundingBox(); await page.mouse.move(b.x + 20, b.y + 20); await page.mouse.down(); await page.mouse.up(); };
 
+// boot is not finished when the network is idle: poll rather than sample once
+const waitGone = async (sel, ms = 8000) => {
+  for (let i = 0; i < ms / 100; i++) {
+    if (await page.evaluate(s => !document.querySelector(s), sel)) return true;
+    await sleep(100);
+  }
+  return false;
+};
+
 // --- first launch
 check('the web shell is the one that loaded', await page.evaluate(() => document.documentElement.dataset.platform === 'web'));
-check('splash is removed', await page.evaluate(() => !document.getElementById('splash')));
+check('splash is removed', await waitGone('#splash'));
 check('intro dialog shows', await page.evaluate(() => !!document.querySelector('[role=dialog]')));
 await clickText(page, 'Next'); await clickText(page, 'Next'); await clickText(page, 'Get started'); await sleep(200);
 check('intro can be completed', await page.evaluate(() => !document.querySelector('[role=dialog]')));
@@ -169,9 +178,9 @@ check('About offers a pre-filled issue report', await page.evaluate(() => {
   const report = link('Report a problem'), list = link('Open issues');
   if (!report || !list) return false;
   const href = decodeURIComponent(report.getAttribute('href') || '');
-  return report.getAttribute('href').startsWith('https://github.com/pham-noah/split/issues/new?')
+  return report.getAttribute('href').startsWith('https://github.com/pham-noah/split-speedcubing/issues/new?')
     && href.includes('What happened') && href.includes('What you expected') && href.includes('Split 0.5.0')
-    && list.getAttribute('href') === 'https://github.com/pham-noah/split/issues';
+    && list.getAttribute('href') === 'https://github.com/pham-noah/split-speedcubing/issues';
 }));
 
 await clickText(page, 'Solve', 'nav button'); await sleep(300);
