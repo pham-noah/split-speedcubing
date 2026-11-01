@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
+import { SETS } from './data';
 
 // minimal DOM stub: the store only touches documentElement for theme and text size
 (globalThis as any).document = { documentElement: { dataset: {}, style: {} } };
@@ -61,19 +62,30 @@ describe('store: algorithms and ZBLL import', () => {
     const base = store.caseOf('F2L-3').alg;
     expect(store.addAlg('F2L-3', `U ${base}`)).toBeNull();
   });
-  it('imports valid ZBLL lines and reports bad ones', () => {
-    const r = store.importZbll(`# comment
-Sune: R U R' U R U2 R'
-R U R' U'
-bad line Q
-Sune: R U R' U R U2 R'`);
-    expect(r.added).toBe(1);
-    expect(r.errors.length).toBe(3);
-    expect(store.casesFor('ZBLL').length).toBe(1);
-    expect(store.casesFor('ZBLL')[0].name).toBe('Sune');
-    expect(store.caseOf(store.casesFor('ZBLL')[0].id).alg).toBe("R U R' U R U2 R'");
+  it('adds an imported algorithm to the bundled case it solves', () => {
+    const base = store.caseOf('ZBLL-T-1').alg;
+    const mine = `${base} U`;   // one extra AUF still solves the case
+    const r = store.importZbll(`T 1: ${mine}`);
+    expect(r.attached).toBe(1);
+    expect(r.added).toBe(0);
+    expect(store.algsFor('ZBLL-T-1')).toContain(mine);
+    expect(store.isBundled('ZBLL-T-1', mine)).toBe(false);
     store.clearZbll();
-    expect(store.casesFor('ZBLL').length).toBe(0);
+    expect(store.algsFor('ZBLL-T-1')).not.toContain(mine);
+  });
+  it('keeps a case the app does not ship as the user\'s own', () => {
+    const perm = "R U R' U' R' F R2 U' R' U' R U R' F'";   // the T perm is PLL, so no bundled ZBLL case holds it
+    const r = store.importZbll(perm);
+    expect(r.added).toBe(1);
+    expect(store.casesFor('ZBLL').at(-1)!.alg).toBe(perm);
+    expect(store.casesFor('ZBLL').length).toBe(SETS.ZBLL.length + 1);
+    store.clearZbll();
+    expect(store.casesFor('ZBLL').length).toBe(SETS.ZBLL.length);
+  });
+  it('reports the lines it cannot use', () => {
+    const r = store.importZbll(`R U R' U'\nbad line Q`);
+    expect(r.added + r.attached).toBe(0);
+    expect(r.errors.length).toBe(2);
   });
 });
 

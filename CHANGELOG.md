@@ -12,6 +12,14 @@ The F2L library is now the standard one, and so are PLL and OLL.
 The Android **namespace** is deliberately still `org.example.split`, because that is the Java package `MainActivity` lives in and the manifest's `.MainActivity` resolves against it; renaming it means moving the Java package, which needs a gradle build to verify.
 
 ### Added
+- ZBLL ships its 472 cases: the seven SpeedCubeDB subsets, each case with the algorithm that page lists first
+  plus up to three more the simulator accepts (427 bundled alternatives). `scripts/gen-zbl-scdb.ts` writes the
+  seven data files and refuses to write unless every line keeps F2L solved with the last-layer edges oriented,
+  solves its own case and all 472 patterns stay distinct up to AUF. The Library gains a subset filter row
+  (U, L, T, H, Pi, S, AS) and Train schedules the 472 as cards. Pasting your own list still works and is now
+  smarter: a line that names a case (`U1`, `T 4`, `ZBLL U 1`) or solves one adds your algorithm to that case
+  instead of creating a duplicate, only genuinely new cases are stored as yours, and "Remove mine" takes back
+  both.
 - Five end-to-end checks for the F2L library, so tonight's UI cannot silently regress: 41 cells listed once, speedcubedb's six groups present with their counts, one group narrowing the grid to its own 6 cases, the opened case offering FR / FL / BL / BR, and choosing FL showing that slot's rotated algorithm (`U R U' R'` -> `U F U' F'`). 37 checks in all.
 
 ### Fixed

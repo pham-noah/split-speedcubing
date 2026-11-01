@@ -2,9 +2,9 @@
 
 ![Split trainer on desktop](docs/desktop-trainer.png)
 
-Local-first speedcubing trainer: a solve timer plus drills for **PLL (21)**, **OLL (57)** and **F2L (41 cases
-in 4 slots)**, with recognition/execution timing, case-specific scrambles, spaced repetition and generated
-case diagrams. No accounts, no tracking; data stays on the device.
+Local-first speedcubing trainer: a solve timer plus drills for **PLL (21)**, **OLL (57)**, **F2L (41 cases in
+4 slots)** and **ZBLL (472)**, with recognition/execution timing, case-specific scrambles, spaced repetition and
+generated case diagrams. No accounts, no tracking; data stays on the device.
 
 One codebase (Svelte 5 + TypeScript + Vite) for three shells: browser/PWA, Android (Capacitor), desktop (Tauri).
 
@@ -13,7 +13,7 @@ One codebase (Svelte 5 + TypeScript + Vite) for three shells: browser/PWA, Andro
 ```bash
 npm install
 npm run dev            # http://localhost:5173
-npm test               # 306 unit and component tests
+npm test               # 790 unit and component tests in 24 files
 npm run check          # type-check (svelte-check)
 npm run lint           # eslint
 npm run e2e            # 38 real-browser checks against the build on :4173
@@ -106,8 +106,9 @@ src/views/         Solve, Train, Library, Drills, Settings
 - **Train:** Today (due, new, week averages, weak spots, lapses), then PLL, OLL, F2L and ZBLL drills with
   recognition/execution timing, attempt grading and FSRS scheduling.
 - **Library:** mastery grid per set; F2L lists the 41 cases once, filtered by the six SpeedCubeDB groups, each
-  open case rotatable across FR/FL/BL/BR; several algorithms per case, your default, your own additions
-  (machine-checked), per-algorithm stats and estimated recall.
+  open case rotatable across FR/FL/BL/BR; ZBLL lists its 472 cases once, filtered by the seven subsets. Several
+  algorithms per case, your default, your own additions (machine-checked), per-algorithm stats and estimated
+  recall.
 - **Drills:** Cross, 2-look OLL, 2-look PLL, BLD memo.
 - **Import:** csTimer, CSV (TwistyTimer-style and generic), plain time lists, best-effort CubeDesk JSON.
   Duplicates are skipped; files over 5 MB are refused rather than parsed on the main thread.
@@ -128,13 +129,17 @@ src/views/         Solve, Train, Library, Drills, Settings
 - **PLL / OLL:** the 21 and 57 standard cases from [SpeedCubeDB](https://speedcubedb.com/a/3x3/PLL), each with
   the standard algorithm plus up to three alternatives (52 bundled). `scripts/gen-lastlayer-scdb.ts` refuses to
   write unless every line keeps F2L solved, solves its own case, and all cases stay distinct.
-- **ZBLL:** no algorithms bundled. Paste your own list in Library > ZBLL; each line is verified by the simulator.
+- **ZBLL:** the 472 cases from [SpeedCubeDB](https://speedcubedb.com/a/3x3/ZBLL)'s seven subsets, every line
+  re-checked by the simulator (F2L solved, edges oriented, the algorithm solves its own case, all 472 distinct
+  up to AUF) — `scripts/gen-zbl-scdb.ts`. 427 bundled alternatives. The 21 PLL cases are their own set, which is
+  why this is 472 and not the 493 usually quoted. A pasted list keeps working: a line that names a case (`U1`,
+  `T 4`) or solves one adds your algorithm to that case, anything else becomes its own case.
 
 ## Known limits
 
 - Algorithms are machine-checked starting points, not a claim about what you like executing; swap the default per
   case in the Library.
-- Not tested on a real phone or inside the Tauri shell yet, and no TalkBack/screen-reader pass. ZBLL ships empty.
+- Not tested on a real phone or inside the Tauri shell yet, and no TalkBack/screen-reader pass.
 - The csTimer importer is unit-tested against the documented layout, not a real export file; CubeDesk's format
   could not be verified, so its importer is best effort.
 

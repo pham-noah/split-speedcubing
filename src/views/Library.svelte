@@ -1,7 +1,7 @@
 <script lang="ts">
   import { store } from '../lib/store.svelte';
   import { nav } from '../lib/nav.svelte';
-  import { SET_NAMES, SLOTS, F2L_GROUPS, f2lSibling, type CaseSet } from '../lib/data';
+  import { SET_NAMES, SLOTS, F2L_GROUPS, ZBLL_GROUPS, f2lSibling, type CaseSet } from '../lib/data';
   import CaseDiagram from '../lib/ui/CaseDiagram.svelte';
   import CaseCube from '../lib/ui/CaseCube.svelte';
   import CaseThumb from '../lib/ui/CaseThumb.svelte';
@@ -55,8 +55,18 @@
     if (show === 'due') return k.seen && k.due <= Date.now();
     return true;
   };
-  const list = $derived(store.casesFor(set).filter(c => (set !== 'F2L' || (c.slot === 'FR' && (!groupFilter || c.group === groupFilter))) && matches(c) && keep(c)));
+  // the F2L grid shows the front-right slot only; ZBLL filters by subset and F2L by pair group
+  const inScope = (c: { slot?: string; group?: string }) =>
+    set === 'F2L' ? c.slot === 'FR' && (!groupFilter || c.group === groupFilter) : !groupFilter || c.group === groupFilter;
+  const list = $derived(store.casesFor(set).filter(c => inScope(c) && matches(c) && keep(c)));
   const shownList = $derived(list.slice(0, visible));
+  // the group chips belong to one set's numbering, so a set change drops the filter
+  let lastSet: CaseSet | '' = '';
+  $effect(() => {
+    if (set === lastSet) return;
+    lastSet = set;
+    groupFilter = null;
+  });
   // a different set or filter starts from a short list again
   let lastFilters = '';
   $effect(() => {
@@ -121,9 +131,13 @@
   }
   function importZbll() {
     const r = store.importZbll(zbllText);
-    zbllMsg = [`${r.added} case${r.added === 1 ? '' : 's'} added.`, ...r.errors.slice(0, 8), ...(r.errors.length > 8 ? [`…and ${r.errors.length - 8} more problems`] : [])];
+    const parts: string[] = [];
+    if (r.attached) parts.push(`${r.attached} algorithm${r.attached === 1 ? '' : 's'} added to ZBLL cases`);
+    if (r.added) parts.push(`${r.added} new case${r.added === 1 ? '' : 's'}`);
+    zbllMsg = [parts.length ? `${parts.join(' · ')}.` : 'Nothing to import.', ...r.errors.slice(0, 8), ...(r.errors.length > 8 ? [`…and ${r.errors.length - 8} more problems`] : [])];
     if (!r.errors.length) zbllText = '';
   }
+  const hasOwnZbll = $derived(store.data.zbll.length > 0 || store.casesFor('ZBLL').some(c => (store.data.cards[c.id]?.algs?.length ?? 0) > 0));
   // Back closes the learner first, then the open case, then leaves the tab
   $effect(() => {
     if (training) return nav.onBack(() => { endTraining(); return true; });
@@ -131,6 +145,12 @@
   });
   const mastered = $derived(list.reduce((n, c) => n + (mastery(store.card(c.id)) === 'mastered' ? 1 : 0), 0));
   const groupCounts = $derived.by(() => {
+    if (set === 'ZBLL') {
+      return ZBLL_GROUPS.map(name => {
+        const cs = store.casesFor('ZBLL').filter(c => c.group === name);
+        return { name, total: cs.length, done: cs.filter(c => mastery(store.card(c.id)) === 'mastered').length };
+      });
+    }
     const fr = store.casesFor('F2L').filter(c => c.slot === 'FR');
     // speedcubedb lists its filters alphabetically, with the same six groups and the same totals
     return [...F2L_GROUPS].sort((a, b) => a.localeCompare(b)).map(name => {
@@ -140,7 +160,7 @@
   });
   const learning = $derived(list.reduce((n, c) => { const m = mastery(store.card(c.id)); return n + (m === 'learning' ? 1 : 0); }, 0));
   const dueNow = $derived(list.filter(c => { const k = store.card(c.id); return k.seen && k.due <= Date.now(); }).length);
-  const codesRaw = $derived(makeHints(store.casesFor(set).filter(c => set !== 'F2L' || (c.slot === 'FR' && (!groupFilter || c.group === groupFilter))).map(c => ({ id: c.id, name: c.name }))));
+  const codesRaw = $derived(makeHints(store.casesFor(set).filter(inScope).map(c => ({ id: c.id, name: c.name }))));
   const codes = $derived(makeHints(list.map(c => ({ id: c.id, name: c.name }))));
   // while the codes are up, the tab keys are part of the code, not navigation
   $effect(() => { nav.hintActive = hint; return () => { nav.hintActive = false; }; });
@@ -286,8 +306,8 @@
       <div class="mu" role="status" aria-live="polite">“{typed}” · {byName(typed).length + [...codes.values()].filter(code => code.startsWith(typed)).length} match · Enter opens the first</div>
     {/if}
     {#if hint}<div class="sr" role="status" aria-live="polite">Case codes shown. Type a code, or the start of a case name, to open it. Escape closes this.</div>{/if}
-    {#if set === 'F2L'}
-      <div class="seg groups" role="group" aria-label="F2L group">
+    {#if set === 'F2L' || set === 'ZBLL'}
+      <div class="seg groups" role="group" aria-label="{set} group">
         <button class:on={!groupFilter} aria-pressed={!groupFilter} aria-label="All groups" onclick={() => { groupFilter = null; selId = null; }}>
           <span>All groups</span><span class="mu">{groupCounts.reduce((a, g) => a + g.done, 0)}/{groupCounts.reduce((a, g) => a + g.total, 0)}</span>
         </button>
@@ -301,11 +321,11 @@
 
     {#if set === 'ZBLL'}
       <div class="card" style="display:flex;flex-direction:column;gap:8px">
-        <div style="font-weight:800">Import your ZBLL algorithms</div>
-        <div class="mu">No ZBLL algorithms are bundled (there are 493 cases). Paste your own list, one per line, as <span class="mono">name: algorithm</span> or just the algorithm. Each line is checked by the cube simulator: F2L solved and edges oriented.</div>
+        <div style="font-weight:800">Your own ZBLL algorithms</div>
+        <div class="mu">All 472 ZBLL cases ship with the app. Paste your own list to swap in your algorithms: one <span class="mono">name: algorithm</span> or bare algorithm per line. A line that names a case (<span class="mono">U1</span>, <span class="mono">T 4</span>) or solves one adds your algorithm to it; anything else becomes its own case. Each line is checked by the cube simulator: F2L solved and edges oriented.</div>
         <label class="sr" for="zb">ZBLL algorithms</label>
-        <textarea id="zb" rows="5" placeholder="Sune + T 1: R U R' U R U2 R' ..." bind:value={zbllText}></textarea>
-        <div class="row"><button class="btn p" onclick={importZbll}>Import</button>{#if list.length}<button class="btn" onclick={() => { if (confirm('Remove all imported ZBLL cases and their progress?')) { store.clearZbll(); selId = null; } }}>Remove all</button>{/if}</div>
+        <textarea id="zb" rows="5" placeholder="T 1: R U R' U' R' F R2 U' R' U' R U R' F' ..." bind:value={zbllText}></textarea>
+        <div class="row"><button class="btn p" onclick={importZbll}>Import</button>{#if hasOwnZbll}<button class="btn" onclick={() => { if (confirm('Remove the ZBLL algorithms you imported and any you added to bundled cases?')) { store.clearZbll(); selId = null; } }}>Remove mine</button>{/if}</div>
         {#each zbllMsg as m, i (i)}<div class="mu" role="status">{m}</div>{/each}
       </div>
     {/if}
@@ -359,11 +379,11 @@
         <div role="radiogroup" aria-label="Default algorithm" style="display:flex;flex-direction:column;gap:8px">
           {#each algs as a, i (a)}
             {@const st = stats(a)}
-            {@const shipped = set !== 'ZBLL' && store.isBundled(sel.id, a)}
+            {@const shipped = store.isBundled(sel.id, a)}
             <div class="row" style="gap:6px;align-items:stretch">
               <button role="radio" aria-checked={a === current} class="btn" class:on={a === current} style="flex:1;text-align:left;padding:10px 12px;display:flex;flex-direction:column;gap:4px" onclick={() => store.setDefault(sel.id, a)}>
                 <span class="mono" style="font-size:.9rem;word-break:break-word">{a}</span>
-                <span class="mu">{a === current ? 'Default · ' : ''}{set === 'ZBLL' ? (i === 0 ? 'imported' : 'yours') : shipped ? 'built-in' : 'yours'} · {moveCount(a)} moves{st.n ? ` · exec ${formatTime(st.exec)} (${st.n})` : ''}</span>
+                <span class="mu">{a === current ? 'Default · ' : ''}{shipped ? 'built-in' : 'yours'} · {moveCount(a)} moves{st.n ? ` · exec ${formatTime(st.exec)} (${st.n})` : ''}</span>
               </button>
               {#if i > 0 && !shipped}<button class="btn" style="flex:none" aria-label="Remove algorithm" onclick={() => store.removeAlg(sel.id, a)}>✕</button>{/if}
             </div>

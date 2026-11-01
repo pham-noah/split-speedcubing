@@ -166,9 +166,11 @@ class Store {
 
   addDrill(d: Omit<DrillResult, 'ts'>) { this.data.drills.push({ ...d, ts: Date.now() }); this.data.drills = this.data.drills.slice(-500); this.persist(); }
 
-  /** all cases of a set; ZBLL comes from the user's import */
+  /** all cases of a set; ZBLL is the bundled 472 plus anything the user imported on top */
   casesFor(set: CaseSet): CaseDef[] {
-    return set === 'ZBLL' ? this.data.zbll.map(c => ({ id: c.id, set: 'ZBLL' as const, name: c.name, alg: c.alg })) : SETS[set];
+    if (set !== 'ZBLL') return SETS[set];
+    const own = this.data.zbll.map(c => ({ id: c.id, set: 'ZBLL' as const, name: c.name, alg: c.alg }));
+    return [...SETS.ZBLL, ...own];
   }
   caseOf(id: string): CaseDef {
     const found = BUILTIN_CASES.find(c => c.id === id) ?? this.casesFor('ZBLL').find(c => c.id === id);
@@ -273,9 +275,15 @@ class Store {
   }
 
   // ---- ZBLL import: one "name: alg" or bare "alg" per line ----
-  importZbll(text: string): { added: number; errors: string[] } {
+  /** a pasted name matches a bundled case: "U1", "U 1" and "ZBLL U 1" are the same case */
+  private zbllNamed(text: string): CaseDef | undefined {
+    const key = text.toLowerCase().replace(/[^a-z0-9]/g, '').replace(/^zbll/, '');
+    if (!key) return undefined;
+    return SETS.ZBLL.find(c => c.name.toLowerCase().replace(/[^a-z0-9]/g, '').replace(/^zbll/, '') === key);
+  }
+  importZbll(text: string): { added: number; attached: number; errors: string[] } {
     const errors: string[] = [];
-    let added = 0;
+    let added = 0, attached = 0;
     const have = new Set(this.data.zbll.map(c => c.alg));
     // keep the file's own line numbers: a comment or blank line must not shift every "Line N"
     text.split(/\r?\n/)
@@ -283,17 +291,35 @@ class Store {
       .filter(x => x.line && !x.line.startsWith('#'))
       .forEach(({ line, n }) => {
         const m = /^([^:]{1,40}):\s*(.+)$/.exec(line);
-        const name = m ? m[1].trim() : `ZBLL ${this.data.zbll.length + added + 1}`;
+        const name = m ? m[1].trim() : '';
         const alg = (m ? m[2] : line).trim().replace(/\s+/g, ' ');
         const err = validateAlg(alg) ?? (isZbllCase(alg) ? null : 'does not start from a last layer with oriented edges and solved F2L');
-        if (err) errors.push(`Line ${n}: ${err}`);
-        else if (have.has(alg)) errors.push(`Line ${n}: duplicate`);
-        else { this.data.zbll.push({ id: `ZBLL-${uid()}`, name, alg }); have.add(alg); added++; }
+        if (err) { errors.push(`Line ${n}: ${err}`); return; }
+        // a named case first, then whichever bundled case this algorithm actually solves
+        const target = this.zbllNamed(name) ?? SETS.ZBLL.find(c => solvesCase(c.alg, alg, false));
+        if (target) {
+          const bad = this.addAlg(target.id, alg);
+          if (bad) errors.push(`Line ${n}: ${bad}`);
+          else attached++;
+          return;
+        }
+        if (have.has(alg)) { errors.push(`Line ${n}: duplicate`); return; }
+        this.data.zbll.push({ id: `ZBLL-${uid()}`, name: name || `ZBLL ${this.data.zbll.length + added + 1}`, alg });
+        have.add(alg);
+        added++;
       });
     this.persist();
-    return { added, errors };
+    return { added, attached, errors };
   }
-  clearZbll() { this.data.zbll = []; this.persist(); }
+  /** removes the user's own ZBLL material: imported cases, and the algorithms they added to bundled ones */
+  clearZbll() {
+    for (const c of SETS.ZBLL) {
+      const card = this.data.cards[c.id];
+      if (card) { card.algs = []; card.defaultAlg = undefined; }
+    }
+    this.data.zbll = [];
+    this.persist();
+  }
 
   /** how many of the user's reviews the optimiser can learn from */
   get fsrsPoints() { return countPoints(collectLogs(this.data.cards)); }

@@ -5,6 +5,7 @@ import { PLL } from '../data/pll';
 import { F2L, f2lSibling } from '../data/f2l';
 import { SLOTS } from '../data';
 import { OLL } from '../data/oll';
+import { ZBLL } from '../data/zbl';
 
 const scrambleState = (alg: string, pre = '', post = '') => applyAlg(solved(), `${pre} ${invert(alg)} ${post}`);
 
@@ -96,6 +97,35 @@ describe('OLL data', () => {
       const top = llView(scrambleState(c.alg)).top.flat();
       expect(top.every(x => x === 0), c.name).toBe(false);
     }
+  });
+});
+
+describe('ZBLL data', () => {
+  it('has 472 cases in seven subsets', () => {
+    expect(ZBLL.length).toBe(472);
+    expect(new Set(ZBLL.map(c => c.id)).size).toBe(472);
+    expect([...new Set(ZBLL.map(c => c.group))].sort()).toEqual(['AS', 'H', 'L', 'Pi', 'S', 'T', 'U']);
+  });
+  it.each(ZBLL.map(c => [c.name, c.alg]))('%s keeps F2L solved with the edges oriented', (_n, alg) => {
+    const st = scrambleState(alg);
+    expect(f2lSolved(st)).toBe(true);
+    const t = llView(st).top;
+    expect([t[0][1], t[1][0], t[1][2], t[2][1]].every(c => c === 0)).toBe(true);
+    expect(isSolved(st)).toBe(false);
+    expect(isSolved(applyAlg(st, alg))).toBe(true);
+  });
+  it('every case is distinct up to AUF', () => {
+    const seen = new Map<string, string>();
+    const dupes: string[] = [];
+    for (const c of ZBLL) {
+      const k = key(c.alg, false);
+      if (seen.has(k)) dupes.push(`${c.name} == ${seen.get(k)}`);
+      seen.set(k, c.name);
+    }
+    expect(dupes).toEqual([]);
+  });
+  it('every bundled alternative solves the case it ships with', () => {
+    for (const c of ZBLL) for (const a of c.alts ?? []) expect(solvesCase(c.alg, a, false), `${c.id} ${a}`).toBe(true);
   });
 });
 

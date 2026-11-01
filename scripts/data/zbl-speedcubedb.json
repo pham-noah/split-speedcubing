@@ -1,0 +1,5545 @@
+{
+ "source": "https://speedcubedb.com/a/3x3/ZBLL{U,L,T,H,Pi,S,AS}",
+ "fetched": "2026-11-02",
+ "note": "472 cases, one page per subset; the 21 PLL cases are their own set. The site marks no standard algorithm for ZBLL, so the first listed is the default.",
+ "cases": [
+  {
+   "key": "ZBLL U 1",
+   "subset": "U",
+   "group": "U1",
+   "setup": "L' U R U' L U R2' U2' R U R' U R",
+   "algs": [
+    "R U' R' U' R U2 R' U' R' D' R U2 R' D R",
+    "R' U' R U' R' U2 R2 U' L' U R' U' L",
+    "y F R' F' U' F R S U R2 U' R' f'",
+    "R' U' R U' R' U2 R2 U' r' F R' F' r"
+   ]
+  },
+  {
+   "key": "ZBLL U 2",
+   "subset": "U",
+   "group": "U1",
+   "setup": "R U R' U R U2' R D R' U2' R D' R' U2' R' y",
+   "algs": [
+    "y' R U2 R D R' U2 R D' R' U2 R' U' R U' R'",
+    "y2 R U' L' U R' U' L R' U' R U' R' U2 R",
+    "z U R' D' R U' R' D U' R' U R' U' R2 U z'",
+    "y2 S R U' R' U' F' U2 F U R U' R' S'"
+   ]
+  },
+  {
+   "key": "ZBLL U 3",
+   "subset": "U",
+   "group": "U1",
+   "setup": "R U2' R D r' U2' r D' R2' y2'",
+   "algs": [
+    "y2 R2 D r' U2 r D' R' U2 R'",
+    "R' U2 R U R2 F' R U R U' R' F R",
+    "R' U r' F R F' r U2 R' U R",
+    "y F' R U R' F' R U R' U' R' F R2 U' R' F"
+   ]
+  },
+  {
+   "key": "ZBLL U 4",
+   "subset": "U",
+   "group": "U1",
+   "setup": "R U2' R' U' R2' D R' U' R D' R2' y'",
+   "algs": [
+    "y R U R2 D' R U R' D R2 U2 R'",
+    "y R2 D R' U R D' R2 U R U2 R'",
+    "y R U R' U R U' R' U' R' F R U R U' R' F'",
+    "U R U R2 D' R U R' D R2 U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL U 5",
+   "subset": "U",
+   "group": "U1",
+   "setup": "R U2' R' U2' R U R2' D' R U2' R' D R2' U2' R' y",
+   "algs": [
+    "y' R U2 R2 D' R U2 R' D R2 U' R' U2 R U2 R'",
+    "r U R' U R' D' R U R' D R U r' F R F'",
+    "y2 S R2 S' D R' U2 R D' R U2 R2 U2 R",
+    "y R U' r2 B2 r U r' B2 r U' F R' F' r"
+   ]
+  },
+  {
+   "key": "ZBLL U 6",
+   "subset": "U",
+   "group": "U1",
+   "setup": "R U2' R D R' U2' R D' R2' y2'",
+   "algs": [
+    "y2 R2 D R' U2 R D' R' U2 R'",
+    "L2 D L' U2 L D' L' U2 L'",
+    "U2 R2 D R' U2 R D' R' U2 R' U2",
+    "y' R U R' U2 R' D' R U2 R' D R2 U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL U 7",
+   "subset": "U",
+   "group": "U1",
+   "setup": "D R' U' R U2' R' U' R D' U' R U2' R' U R U R' y",
+   "algs": [
+    "y2 R' D' r U2 r' D R U2 R U' R' U' R U' R'",
+    "R U R' U' R U R2 D' R U R' D R2 U R' U' R U' R'",
+    "R U R' F' U' F2 D R' U R' U' R D' F'",
+    "y' R U' R' U' R U2 R' U D R' U R U2 R' U R D'"
+   ]
+  },
+  {
+   "key": "ZBLL U 8",
+   "subset": "U",
+   "group": "U1",
+   "setup": "F R U R' U' R' F' U' R U R U' R' U' R' U R",
+   "algs": [
+    "R' U' R U R U R' U' R' U F R U R U' R' F'",
+    "U R' F' R U2 R' F R2 D2 r' U r D2 R'",
+    "y R' F' R U2 R' F R2 u2 R' F R u2 R'",
+    "y2 R' U R D' R U R' D R2 U' R U R U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL U 9",
+   "subset": "U",
+   "group": "U1",
+   "setup": "R' U' R U R' U R U' L U' R' U L' U R y'",
+   "algs": [
+    "y' R U R' U R U' R' U F' R U2 R' U2 R' F R",
+    "y2 R2 F2 R2 U R U2 R' U' R U R F2 R' U2 R'",
+    "R D' R' U R2 D' r' D2 r' U' r2 D' R2",
+    "y R U B2 U2 B2 R2 D' R U' R2 D R2"
+   ]
+  },
+  {
+   "key": "ZBLL U 10",
+   "subset": "U",
+   "group": "U1",
+   "setup": "R' U R' D' R U R' U2' R U R' D U R U' R y'",
+   "algs": [
+    "y' R2 D' R U' R' D R2 U R' U R U2 R' U R U2 R' U' R",
+    "y R2 U F' R2 U' R2 U' R2 U2 R2 U' F U' R2",
+    "y R' U R' U' D' R U' R' U2 R U' R' D R U' R",
+    "y2 R U2 R' U R U R2 D' r U2 r' D R2 U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL U 11",
+   "subset": "U",
+   "group": "U1",
+   "setup": "L U2' L' U R' U2' L U2' R U L' U R' U R y",
+   "algs": [
+    "y R U R' U R U' R' U R U' R' U' L' U R U' R' L",
+    "y R U R' U R U' R' U R U2 R' r U R' U' r' F R F'",
+    "y R U R' U R U' R' U R U' R' U' r' F R F' M'",
+    "y R' F R F' U R' D' r U' r' D U' F' U F R"
+   ]
+  },
+  {
+   "key": "ZBLL U 12",
+   "subset": "U",
+   "group": "U1",
+   "setup": "R U' R2' D' R U' R' D R U2' R U' R' U' R U R' y",
+   "algs": [
+    "y' R U' R' U R U R' U2 R' D' R U R' D R2 U R'",
+    "R' U2 R U F' R' D U' R U R' D' U R F",
+    "R F2 U' R2 U' R U2 R' U' R U' R U F2 R'",
+    "y' R U' R' U R U R' U' R U R' U' R U L U' R' U L'"
+   ]
+  },
+  {
+   "key": "ZBLL U 13",
+   "subset": "U",
+   "group": "U2",
+   "setup": "R' U2' R' D' r U2' r' D R2'",
+   "algs": [
+    "R2 D' r U2 r' D R U2 R",
+    "y F U R U' R2 F' R2 U' R' F' U' F R U R'",
+    "y2 R U2 R' U L' U2 R U' R' U2 L",
+    "R2 D' L F2 L' D R U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL U 14",
+   "subset": "U",
+   "group": "U2",
+   "setup": "R' U2' R U R2' D' R U R' D R2' y'",
+   "algs": [
+    "y R2 D' R U' R' D R2 U' R' U2 R",
+    "R' U R U2 R D r' U2 r D' R'",
+    "y R' U' R2 D R' U' R D' R2 U2 R",
+    "R2 F' R U R' U' R' F R2 U' R' U2 R U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL U 15",
+   "subset": "U",
+   "group": "U2",
+   "setup": "R D R' U2' R D' R' U' R' U2' R U' R' U' R y2'",
+   "algs": [
+    "y2 R' U R U R' U2 R U R D R' U2 R D' R'",
+    "L U L' U L U2 L2 U R U' L U R'",
+    "y2 R U R' U R U2 R2 U L U' R U L'",
+    "y2 R' F R U R' F' M U' F2 U F r"
+   ]
+  },
+  {
+   "key": "ZBLL U 16",
+   "subset": "U",
+   "group": "U2",
+   "setup": "R' U' R U' R' U2' R' D' R U2' R' D R U2' R y",
+   "algs": [
+    "y' R' U2 R' D' R U2 R' D R U2 R U R' U R",
+    "R U' R' U' R U R' U R U R2 F' R U R U' R' F",
+    "y2 L' U R U' L U R' L U L' U L U2 L'",
+    "y' R' U2 R2 D r' U2 r D' R2 U R U2 R' U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL U 17",
+   "subset": "U",
+   "group": "U2",
+   "setup": "R' U2' R' D' R U2' R' D R2'",
+   "algs": [
+    "R2 D' R U2 R' D R U2 R",
+    "y' F x R2 D2 R U R' D2 R U' R x' F'",
+    "y2 L2 D' L U2 L' D L U2 L"
+   ]
+  },
+  {
+   "key": "ZBLL U 18",
+   "subset": "U",
+   "group": "U2",
+   "setup": "R' U2' R U2' R' U' R2' D R' U2' R D' R2' U2' R y",
+   "algs": [
+    "y' R' U2 R2 D R' U2 R D' R2 U R U2 R' U2 R",
+    "R' F' r U2 R' D R U' R' D' R2 U' r' F",
+    "S R2 S' D' R U2 R' D R' U2 R2 U2 R'",
+    "y F U R U2 R' U R U2 R2 F R F' R U' R' F'"
+   ]
+  },
+  {
+   "key": "ZBLL U 19",
+   "subset": "U",
+   "group": "U2",
+   "setup": "D' R U R' U2' R U R' D U R' U2' R U' R' U' R y",
+   "algs": [
+    "y' R' U R U R' U2 R y U2 R U' R' U2 R U' R'",
+    "R D r' U2 r D' R' U2 R' U R U R' U R",
+    "y' R' U R U R' U2 R U' D' R U' R' U2 R U' R' D",
+    "y' R' U R U R' U2 R D' U' R U' R' U2 R U' R' D"
+   ]
+  },
+  {
+   "key": "ZBLL U 20",
+   "subset": "U",
+   "group": "U2",
+   "setup": "R U2' R U R U' R2' D R' U R D' R U R'",
+   "algs": [
+    "y2 F R U R' U' R2 D R' U' R D' R2 U' R U R' F'",
+    "y R B R' U2 R B' R2 D2 r U' r' D2 R",
+    "y2 F R U R2 D' R U' R' D R2 U' R' U' R U R' F'",
+    "R U' R2 U' R2 F' R U R' U' R' F U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL U 21",
+   "subset": "U",
+   "group": "U2",
+   "setup": "R2' U R U R2' U2' R2' D R' U R D' R U R'",
+   "algs": [
+    "R2 D' R U2 R' U' D R' U' R2 U R U R2",
+    "y' R2 D R' U R D' R2 U' R U' R' U2 R U' R' U2 R U R'",
+    "R' U2 F U F' R F U2 R' U' R U F'",
+    "R' U2 R U' R' U' R2 D r' U2 r D' R2 U R"
+   ]
+  },
+  {
+   "key": "ZBLL U 22",
+   "subset": "U",
+   "group": "U2",
+   "setup": "L U L' U' L U' L' U R' U L U' R U' L' y",
+   "algs": [
+    "y' R2 F' R U2 R U2 R' F U' R U R' U' R",
+    "y R U L' U R' U' L U' R U R' U R U' R'",
+    "R2 D' R U2 R' D R U' R' U' R' U' R' U R U R2",
+    "r' B r U' r2 U R B2 R U R2 U r2"
+   ]
+  },
+  {
+   "key": "ZBLL U 23",
+   "subset": "U",
+   "group": "U2",
+   "setup": "R' U R2' D R' U R D' R' U2' R' U R U R' U' R y",
+   "algs": [
+    "y' R' U R U' R' U' R U2 R D R' U' R D' R2 U' R",
+    "y R' U' R U' R' U R F U' R' U' R U F' R' U2 R",
+    "R D R' U2 R D' R' U R' U R U' R' U' R U R' U' R",
+    "y2 f U2 r F' R U R' U' R' F M U2 f'"
+   ]
+  },
+  {
+   "key": "ZBLL U 24",
+   "subset": "U",
+   "group": "U2",
+   "setup": "R U' R2' F2' R U2' R U2' R' F2' U2' R U' R' y",
+   "algs": [
+    "F U R U' R D R' U' R D' R2 U R U R' F'",
+    "y' R U R' U2 F2 R U2 R' U2 R' F2 R2 U R'",
+    "y R2 U' R2 U' R U2 D' R U' R' U' D R U R2",
+    "y R' U' R U' R' U R U' R' U R U L U' R' U R L'"
+   ]
+  },
+  {
+   "key": "ZBLL U 25",
+   "subset": "U",
+   "group": "U3",
+   "setup": "R' F R' F' R U R U' R' F R U' R' U R U R' F' R",
+   "algs": [
+    "R' F R U' R' U' R U R' F' R U R' U' R' F R F' R",
+    "R U' R2 U' R2 U R2 D' R2 U R2 U' R2 D R'",
+    "R U' R2 U' R2 U R' F' R U R2 U' R' F R2",
+    "R U' R' U F' r U' r' F2 R' F R F'"
+   ]
+  },
+  {
+   "key": "ZBLL U 26",
+   "subset": "U",
+   "group": "U3",
+   "setup": "R U2' R D r' U2' r D' R2' U R' U2' R U R' U R y2'",
+   "algs": [
+    "r2 F2 r U2 r U' L' U R' U R U' L",
+    "y2 R' U' R U' R' U2 R U' R2 D r' U2 r D' R' U2 R'",
+    "R2 D' R U2 R' D R U2 R' F R U R U' R' F' R U2 R' U2 R",
+    "R' L' U2 L U2 R U' L' U R' U R U' L"
+   ]
+  },
+  {
+   "key": "ZBLL U 27",
+   "subset": "U",
+   "group": "U3",
+   "setup": "F2' R' F' R U R U' R' F R U' R' U R U R' F2' y",
+   "algs": [
+    "y' F2 R U' R' U' R U R' F' R U R' U' R' F R F2",
+    "y R U R' U R U2 R2 F' R U R' U' R' F R2 U' R' U2 R",
+    "y2 R' U R U' x' U L' U L U2 R U' R' U x",
+    "y' F2 R U r U2 R2 F R F' R U2 r' R' F2"
+   ]
+  },
+  {
+   "key": "ZBLL U 28",
+   "subset": "U",
+   "group": "U3",
+   "setup": "x' R2' U2' R' U2' l' U R U' L U' L' U R' y'",
+   "algs": [
+    "R2 B2 R' B2 R' U R U' L U' L' U R'",
+    "R2 D' R U2 R' D R U2 R2 U R' F' R U R' U' R' F R2 U' R'",
+    "R U R' U R U2 R' U R2 D' r U2 r' D R U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL U 29",
+   "subset": "U",
+   "group": "U3",
+   "setup": "R' U' R F R2' D' R U R' D R2' U' F' y",
+   "algs": [
+    "y' F U R2 D' R U' R' D R2 F' R' U R",
+    "y' R U R' B' R2 D R' U' R D' R2 U B",
+    "R U R D R' U' R D' R2 U' R2 D' R U' R' D R U R",
+    "R U R' U R U2 R' U2 R' U' R2 D R' U' R D' R2 U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL U 30",
+   "subset": "U",
+   "group": "U3",
+   "setup": "F U R2' D' R U' R' D R2' F' R' U R y",
+   "algs": [
+    "y' R' U' R F R2 D' R U R' D R2 U' F'",
+    "y' B' U' R2 D R' U R D' R2 B R U' R'",
+    "y' R' U' R F R' U R U' R' F' r U R U' r'"
+   ]
+  },
+  {
+   "key": "ZBLL U 31",
+   "subset": "U",
+   "group": "U3",
+   "setup": "R' U2' R U R' U2' R U R2' F' R U R U' R' F R U' R' U' R y'",
+   "algs": [
+    "y R' U R U R' F' R U R' U' R' F R2 U' R' U2 R U' R' U2 R",
+    "F U R U' R' S U f' R' f R U' R' f' R",
+    "R' U2 F' R U R' U' R' F R2 F U' R' U' R U F'",
+    "L U R' U L' U2 R U' R' L U L' U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL U 32",
+   "subset": "U",
+   "group": "U3",
+   "setup": "R' U' R U' R2' U2' R U R2' F' R U R U' R' F R2' y",
+   "algs": [
+    "y' R2 F' R U R' U' R' F R2 U' R' U2 R2 U R' U R",
+    "y R' B2 R2 U R' U R U' R2 B2 R U2 R U R'",
+    "R U' R' U R U' L U L' U x' U2 R U2 R2 x",
+    "R2 D' R U2 R' D R U2 R2 U R' U' R' F R2 U' R' U' R U R' F'"
+   ]
+  },
+  {
+   "key": "ZBLL U 33",
+   "subset": "U",
+   "group": "U3",
+   "setup": "R2' D' R U2' R' D R U2' R U R' U2' R U R' U R y'",
+   "algs": [
+    "y F U R U2 R' U R U R2 F' r U R U' r'",
+    "y R' U' R U' R' U2 R U' R' U2 R' D' R U2 R' D R2",
+    "y' R' U2 R2 L U2 L' U' L U2 R2 U L' R",
+    "y' R' U2 R' U' F' U F R2 U' R' F R' F' R2"
+   ]
+  },
+  {
+   "key": "ZBLL U 34",
+   "subset": "U",
+   "group": "U3",
+   "setup": "R2' D R' U2' R D' R' U2' R' U' R U2' R' U' R U' R' y'",
+   "algs": [
+    "y R U R' U R U2 R' U R U2 R D R' U2 R D' R2",
+    "y' R U2 R' U2 R' F R U R U2 R' U' R U2 R' U' F'",
+    "y2 F R2 U R' D R2 D' R U' R2 F' R U' R'",
+    "y R2 D' R U' R' D R2 U R' F R U R' U' R' F' R2"
+   ]
+  },
+  {
+   "key": "ZBLL U 35",
+   "subset": "U",
+   "group": "U3",
+   "setup": "F U R U2' R' U R U R2' F' r U R U' r' y",
+   "algs": [
+    "y' r U R' U' r' F R2 U' R' U' R U2 R' U' F'",
+    "L U L' F U' R U2 L U2 L' U2 R' U F'",
+    "y' R2 F R F' R U R2 F' U' F U R U2 R",
+    "y' R2 D' R U2 R' D R U2 R U R' U2 R U R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL U 36",
+   "subset": "U",
+   "group": "U3",
+   "setup": "R U R' U R U2' R' U R U2' R D R' U2' R D' R2' y",
+   "algs": [
+    "R2 F R U R U' R' F' R U' R2 D' R U R' D R2",
+    "y F U R U2 R' U R U2 R' U' R' F' R U2 R U2 R'",
+    "y' R2 D R' U2 R D' R' U2 R' U' R U2 R' U' R U' R'",
+    "U' S' U F R' F' R2 U' R' U2 R B U2 B' R' S"
+   ]
+  },
+  {
+   "key": "ZBLL U 37",
+   "subset": "U",
+   "group": "U4",
+   "setup": "R U R' L' U2' R U' R' U2' L U R U' R' y2'",
+   "algs": [
+    "y2 R U R' U R U R' U2 R U' R2 D' R U' R' D R",
+    "y2 R U R' U' L' U2 R U R' U2 L R U' R'",
+    "L U L' F' U L U L' U' F U' L U' L'",
+    "y2 F U R U' R' S' R U' R' S U R U2 R' U' F'"
+   ]
+  },
+  {
+   "key": "ZBLL U 38",
+   "subset": "U",
+   "group": "U4",
+   "setup": "R' U2' R' D' R U2' R' D R' U R' U R U2' R' y",
+   "algs": [
+    "R U R' U R U' R' U2 R' D' R U2 R' D R2 U' R'",
+    "y' R U2 R' U' R U' R D' R U2 R' D R U2 R",
+    "y f R' f' R' f' R U R' S U' R' F R2",
+    "R U R' U R U2 R' U' R2 D R' U2 R D' R' U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL U 39",
+   "subset": "U",
+   "group": "U4",
+   "setup": "R' U' R U' F U' R' U R U F' R' U R",
+   "algs": [
+    "R' U' R U2 R' F' R U R' U' R' F R2 U2 R' U R",
+    "R' U' R F U' R' U' R U F' U R' U R",
+    "R' U' R U' R' U' R U2 R' U R2 D R' U R D' R'",
+    "R' U' R U L U2 R' U' L' U' L R U2 L'"
+   ]
+  },
+  {
+   "key": "ZBLL U 40",
+   "subset": "U",
+   "group": "U4",
+   "setup": "R U2' R D R' U2' R D' R U' R U' R' U2' R y",
+   "algs": [
+    "y R2 D' R U2 R' D R U2 R U R' U' R U' R' U2 R",
+    "y' R' U2 R U R' U R' D R' U2 R D' R' U2 R'",
+    "y2 R' U' R U' R' U2 R U R2 D' R U2 R' D R U2 R",
+    "y2 R' U' R U' R' U R U2 R D R' U2 R D' R2 U R"
+   ]
+  },
+  {
+   "key": "ZBLL U 41",
+   "subset": "U",
+   "group": "U4",
+   "setup": "x' R U2' R D2' R' U2' R D2' R2' x",
+   "algs": [
+    "x' R2 D2 R' U2 R D2 R' U2 R' x",
+    "y2 R U' D' R' D' R U2 R' D R U' D R'",
+    "y2 x L2 D2 L' U2 L D2 L' U2 L'",
+    "R U R' U' R U R' U' R U R' U' R' F R F' R' F R F' R' F R F'"
+   ]
+  },
+  {
+   "key": "ZBLL U 42",
+   "subset": "U",
+   "group": "U4",
+   "setup": "x R' U2' R' D2' R U2' R' D2' R2' x' y2'",
+   "algs": [
+    "y2 x R2 D2 R U2 R' D2 R U2 R x'",
+    "y2 R' F2 R U2 R U2 R' F2 R U2 R'",
+    "R' U D R D R' U2 R D' R' U D' R",
+    "U R U R2 U' R' F R U R2 U' R' F'"
+   ]
+  },
+  {
+   "key": "ZBLL U 43",
+   "subset": "U",
+   "group": "U4",
+   "setup": "F R U R' U' R U' R' U' R U R' F'",
+   "algs": [
+    "F R U' R' U R U R' U R U' R' F'",
+    "R U R' U' R' F2 R2 U' R' U' R U R' F2",
+    "R' U' R f R' U R U' R U R' U' f'",
+    "F R U' R' U R U R' U R U' R' F' U2"
+   ]
+  },
+  {
+   "key": "ZBLL U 44",
+   "subset": "U",
+   "group": "U4",
+   "setup": "F' U' F U R' F R2' U R' U' R' F' R2' U R' y2'",
+   "algs": [
+    "y2 R U' R2 F R U R U' R2 F' R U' F' U F",
+    "y F' R U R' U' R' F R2 U R' U2 R U R' U2 R U' R'",
+    "y R U2 F R U R U' R U R2 U' F' U2 R'",
+    "y' R U' R' U R' D' R U' R' D F R f' R U R' S"
+   ]
+  },
+  {
+   "key": "ZBLL U 45",
+   "subset": "U",
+   "group": "U4",
+   "setup": "R' U R2' D R' U R D' R' U R' U' R U' R' U' R y",
+   "algs": [
+    "R U R' U R' D' R U2 R' D R2 U' R' U2 R U2 R'",
+    "y' R' U2 R U R' U R' D r' U2 r D' R' U2 R'",
+    "y' R' U R U R' U R U' R D R' U' R D' R2 U' R"
+   ]
+  },
+  {
+   "key": "ZBLL U 46",
+   "subset": "U",
+   "group": "U4",
+   "setup": "R U' R2' D' R U' R' D R U' R U R' U R U R' y",
+   "algs": [
+    "y' R U' R' U' R U' R' U R' D' R U R' D R2 U R'",
+    "y F' r U R' U' r' F R2 U R' U R U2 R'",
+    "y R U R' U R U2 R' U' R2 D' R U' R' D R U R",
+    "y' R U2 R' U' R U' R D' r U2 r' D R U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL U 47",
+   "subset": "U",
+   "group": "U4",
+   "setup": "R' U' R' D' R U R' D R U' R U' R' U2' R",
+   "algs": [
+    "R' U2 R U R' U R' D' R U' R' D R U R",
+    "R' U2 R U R D R' U' R D' R' U R' U R",
+    "R' U2 R U R' U R U' F' r U R' U' r' F R",
+    "y2 R U2 r' F R' F' r U2 r' F R F' M'"
+   ]
+  },
+  {
+   "key": "ZBLL U 48",
+   "subset": "U",
+   "group": "U4",
+   "setup": "R F R' U R U2' R' U R U F' R'",
+   "algs": [
+    "y2 R U2 R' U' R U' R D R' U R D' R' U' R'",
+    "R F U' R' U' R U2 R' U' R F' R'",
+    "L U2 L' U' L U' L' R U R' U' R' F R U R U' R' F'",
+    "y2 R U2 R' U' R U' R' U' F R' F' r U R U' r'"
+   ]
+  },
+  {
+   "key": "ZBLL U 49",
+   "subset": "U",
+   "group": "U5",
+   "setup": "R2' D R' U' R D' R' U' R' U R U R'",
+   "algs": [
+    "R U' R' U' R U R D R' U R D' R2",
+    "R U' R' U' R U2 R2 D' R U R' D R",
+    "R' D R2 U' R' U' R U2 R2 D' R",
+    "y' B' U R U' R' U' B R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL U 50",
+   "subset": "U",
+   "group": "U5",
+   "setup": "R' U' F' U F R U F U R U' R' U R U' R' F' y",
+   "algs": [
+    "y' F R U R' U' R U R' U' F' U' R' F' U' F U R",
+    "y' R U2 R2 D' R U' R' D R U' R' F R U R U' R' F'",
+    "y S' R' U R S R' U2 R' F R F' U R",
+    "y2 M U' M' F U R U' R' F' M U M'"
+   ]
+  },
+  {
+   "key": "ZBLL U 51",
+   "subset": "U",
+   "group": "U5",
+   "setup": "L' R U R' U R U R' U2' L R U' R'",
+   "algs": [
+    "R U R' L' U2 R U' R' U' R U' R' L",
+    "R U R' U R' F R F' U' S' R U' R' S",
+    "R U R' U L' U R U' R' L U' R U' R'",
+    "S' R' U' R S R' U F' U' F U R"
+   ]
+  },
+  {
+   "key": "ZBLL U 52",
+   "subset": "U",
+   "group": "U5",
+   "setup": "F U' R' U R U F' R' U2' R",
+   "algs": [
+    "R2 D' R U R' D R U R U' R' U' R",
+    "R' U2 R F U' R' U' R U F'",
+    "R' U2 R U2 R' F' R U R' U' R' F R2",
+    "R' U2 R U2 R' F' R U R' U' R' F R2 U'"
+   ]
+  },
+  {
+   "key": "ZBLL U 53",
+   "subset": "U",
+   "group": "U5",
+   "setup": "F U R U2' R' U R U R' U R U2' R' U R U R' F'",
+   "algs": [
+    "F U R U2 R' U R U R' U R U2 R' U R U R' F'",
+    "F R U' R' U' R U2 R' U' R U' R' U' R U2 R' U' F'",
+    "y2 f U2 R2 U2 R2 U' S R2 S' U' R2 f'",
+    "y2 F U2 R2 U2 R2 U' S R2 S' U' R2 F'"
+   ]
+  },
+  {
+   "key": "ZBLL U 54",
+   "subset": "U",
+   "group": "U5",
+   "setup": "F U R U' R' F' R U R' U' M' U R U' r' y",
+   "algs": [
+    "y' r U R' U' M U R U' R' F R U R' U' F'",
+    "R' F' M U' M' F M U r",
+    "R' F' U' F U F R S R' F' R S'",
+    "S' R U R' S R U' R2 F' U' F U R"
+   ]
+  },
+  {
+   "key": "ZBLL U 55",
+   "subset": "U",
+   "group": "U5",
+   "setup": "M' U' R U R' U M F R' F' R2' U2' R' y",
+   "algs": [
+    "y' r U2 R2 F R F' U2 r' R U R U' R'",
+    "y R U R' U' M' U R2 B' R' B U' r'",
+    "y' R U2 R2 F R F' M' U' R U' R' U M",
+    "y' F R U R' U' f' R U R' S R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL U 56",
+   "subset": "U",
+   "group": "U5",
+   "setup": "L' U' L U' L' R U' R' U2' L R U' R' y'",
+   "algs": [
+    "y R' D R2 U' R' U R U2 R' U' R U R2 D' R",
+    "y R' U' R U' R' L U' R U R' L' U2 R",
+    "y' R' U' F R' F' R2 S' R' U R S"
+   ]
+  },
+  {
+   "key": "ZBLL U 57",
+   "subset": "U",
+   "group": "U5",
+   "setup": "F' U L U' L' U' F L U2' L'",
+   "algs": [
+    "y' R' D' R U' R' D R2 U2 R' U R U R'",
+    "y2 R2 D R' U' R D' R' U' R' U R U R'",
+    "y2 R' D R2 U2 R' U R U R2 D' R",
+    "L U2 L' F' U L U L' U' F"
+   ]
+  },
+  {
+   "key": "ZBLL U 58",
+   "subset": "U",
+   "group": "U5",
+   "setup": "R B' R2' F R2' B R2' F' R F U R U' R' F' y'",
+   "algs": [
+    "M' U R' U' F' U F R2 U R' U R U2 r'",
+    "F U R U2 R2 U2 R U R' U R U2 R U R' F'",
+    "M U' M' F R U R' U' F' M U M'",
+    "y F' U' L' U L F2 U R U' R' U R U' R' F'"
+   ]
+  },
+  {
+   "key": "ZBLL U 59",
+   "subset": "U",
+   "group": "U5",
+   "setup": "R' U2' R U L U2' R' U' R U2' L'",
+   "algs": [
+    "y2 R' U R U R' U' R' D' R U' R' D R2",
+    "y' F U' R' U R U F' R' U2 R",
+    "y2 R' U R U R' U2 R2 D R' U' R D' R'",
+    "L' U L U L' U2 L2 D L' U' L D' L'"
+   ]
+  },
+  {
+   "key": "ZBLL U 60",
+   "subset": "U",
+   "group": "U5",
+   "setup": "R U R' U L' U R U' R' L U' R U' R' y2'",
+   "algs": [
+    "y2 L' R U R' U R U R' U2 R L U' R'",
+    "y2 R' U' F' U F U' R S' R' U R S",
+    "y2 R' U' R U' F U' R' U R U R' U R U' F'",
+    "L' U' L R U2 L' U L U L' U L R'"
+   ]
+  },
+  {
+   "key": "ZBLL U 61",
+   "subset": "U",
+   "group": "U6",
+   "setup": "R U R' U R U2' R' U' R U2' R' U' R U' R' y2'",
+   "algs": [
+    "y' R' U' R U R' U R U2 R' U R U2 R' U' R",
+    "y2 R U R' U R U2 R' U R U2 R' U' R U' R'",
+    "L U L' U L U2 L' U L U2 L' U' L U' L'",
+    "U2 R U R' U R U2 R' U R U2 R' U' R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL U 62",
+   "subset": "U",
+   "group": "U6",
+   "setup": "R U' R' U2' R U R' U2' R U R' U R U' R' y",
+   "algs": [
+    "y' R U R' U' R U' R' U2 R U' R' U2 R U R'",
+    "R' U' R U' R' U2 R U' R' U2 R U R' U R",
+    "R' U' R U' R' U2 R U' R' U2 R U R' U R U",
+    "y2 L' U' L U' L' U2 L U' L' U2 L U L' U L"
+   ]
+  },
+  {
+   "key": "ZBLL U 63",
+   "subset": "U",
+   "group": "U6",
+   "setup": "R U2' R' U' R U' R' U R U R' U R U2' R' y'",
+   "algs": [
+    "y R U2 R' U' R U' R' U' R U R' U R U2 R'",
+    "U R U2 R' U' R U' R' U L U L' U L U2 L'",
+    "y R U2 R' U' R U' R' U' R U R' U R U2 R' U",
+    "y' L U2 L' U' L U' L' y R U R' U R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL U 64",
+   "subset": "U",
+   "group": "U6",
+   "setup": "R U R' U R U' R' U R' U' R2' U' R2' U2' R y'",
+   "algs": [
+    "y R' U2 R2 U R2 U R U' R U R' U' R U' R'",
+    "y' r' F2 r2 U' r' F r' F U' F U r",
+    "U R' U2 R2 U R2 U R U' R U R' U' R U' R'",
+    "y2 R' U' R U R U' R' U' R U' R' U R' U R2 U R'"
+   ]
+  },
+  {
+   "key": "ZBLL U 65",
+   "subset": "U",
+   "group": "U6",
+   "setup": "R' U2' R U R' U R U' R' U' R U' R' U2' R y'",
+   "algs": [
+    "y R' U2 R U R' U R U R' U' R U' R' U2 R",
+    "y' L' U2 L U L' U L U' R' U' R U' R' U2 R",
+    "y R' U2 R U R' U R U R' U' R U' R' U2 R U'",
+    "y' z U' R2 U R U' R U R U' R' U R' U' R2 U"
+   ]
+  },
+  {
+   "key": "ZBLL U 66",
+   "subset": "U",
+   "group": "U6",
+   "setup": "R' U' R U' R' U R U' R U R2' U R2' U2' R' y'",
+   "algs": [
+    "y R U2 R2 U' R2 U' R' U R' U' R U R' U R",
+    "U' L U2 L2 U' L2 U' L' U L' U' L U L' U L",
+    "y R U2 R2 F R F' R U' B U' B' R'",
+    "y R' U R U' R' U R U' R' U R' U' R2 U' R2 U2 R2"
+   ]
+  },
+  {
+   "key": "ZBLL U 67",
+   "subset": "U",
+   "group": "U6",
+   "setup": "R U R2' U' R2' U' R2' U2' R U' R U' R' y2'",
+   "algs": [
+    "y2 R U R' U R' U2 R2 U R2 U R2 U' R'",
+    "y2 R U R' U R' U' R U' R' U2 R U2 R U2 R'",
+    "y2 L R U R' U R U2 R' L' U2 L U2 L' U' L U L'",
+    "y2 R U R' U R' U' R U R U2 R' U2 R' U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL U 68",
+   "subset": "U",
+   "group": "U6",
+   "setup": "R' U' R2' U R2' U R2' U2' R' U R' U R",
+   "algs": [
+    "R' U' R U' R U2 R2 U' R2 U' R2 U R",
+    "R' U' R U' R U R' U' R' U2 R U2 R U2 R'",
+    "R' U' R U' R U R' U R U2 R' U2 R' U2 R",
+    "y2 L' U' L U' L U L' U L U2 L' U2 L' U2 L"
+   ]
+  },
+  {
+   "key": "ZBLL U 69",
+   "subset": "U",
+   "group": "U6",
+   "setup": "R U2' R' U' R U' R2' U2' R U R' U R",
+   "algs": [
+    "R' U' R U' R' U2 R2 U R' U R U2 R'",
+    "y2 L' U' L U' L' U2 L U2 R U R' U R U2 R'",
+    "y2 L' U' L U' L' U2 L2 U L' U L U2 L'"
+   ]
+  },
+  {
+   "key": "ZBLL U 70",
+   "subset": "U",
+   "group": "U6",
+   "setup": "R' U2' R U R' U R2' U2' R' U' R U' R' y2'",
+   "algs": [
+    "y2 R U R' U R U2 R2 U' R U' R' U2 R",
+    "L U L' U L U2 L2 U' L U' L' U2 L",
+    "R U R' U' R U' R' U2 R U' R' U2 R U' R' U' R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL U 71",
+   "subset": "U",
+   "group": "U6",
+   "setup": "R2' U R2' U R U' R' U R2' U2' R' U R' U R U' R'",
+   "algs": [
+    "R U R' U' R U' R U2 R2 U' R U R' U' R2 U' R2",
+    "x' R2 D2 R' U' R D2 R2 D R U R' D' x",
+    "y2 R' U2 R U R' U R U2 R U2 R2 U' R2 U' R2 U2 R",
+    "y2 R' U' R U R U' R' U' R' U R U' R U' R' U2 R U R'"
+   ]
+  },
+  {
+   "key": "ZBLL U 72",
+   "subset": "U",
+   "group": "U6",
+   "setup": "R' U' R U' R' U2' R U2' R U R' U R U2' R' y'",
+   "algs": [
+    "y R U2 R' U' R U' R' L' U2 L U L' U L",
+    "y R U2 R' U' R U' R' U2 R' U2 R U R' U R",
+    "y R' F' R U R' U' R' F D' R U R' D R2",
+    "F R' F' r U R U' R' U R U' r' F R' F' R"
+   ]
+  },
+  {
+   "key": "ZBLL L 1",
+   "subset": "L",
+   "group": "L1",
+   "setup": "R U R' U R U2' R2' U2' R' D' R U2' R' D R2' y'",
+   "algs": [
+    "y' R' U' R U' R' U2 R' D' R U2 R' D R U2 R",
+    "S R' U' R U f R2 f' U' R' U' R S'",
+    "y F' R U R' U' R' F R2 U' R' U' R U' R' U R U R'",
+    "y r' F' r U' r' F2 r' U' r F2 r' U r F2 r"
+   ]
+  },
+  {
+   "key": "ZBLL L 2",
+   "subset": "L",
+   "group": "L1",
+   "setup": "R' U R U R' U2' R U R D R' U2' R D' R' y'",
+   "algs": [
+    "R' U' R U' R' U2 R U' R U' r' F R' F' r",
+    "y R D R' U2 R D' R' U' R' U2 R U' R' U' R",
+    "y' L U' R' U L' U' R2 U2 R' U' R U' R'",
+    "y2 L' U' L U' L' U2 L U R U' L' U R' U' L"
+   ]
+  },
+  {
+   "key": "ZBLL L 3",
+   "subset": "L",
+   "group": "L1",
+   "setup": "R' U' R2' D R' U' R D' R2' U2' R y",
+   "algs": [
+    "y' R' U2 R U R2 D' R U R' D R2",
+    "y' R' U2 R2 D R' U R D' R2 U R",
+    "y R D r' U2 r D' R' U2 R' U' R",
+    "R U2 R' U' R U' R' U' R2 D' R U2 R' D R U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL L 4",
+   "subset": "L",
+   "group": "L1",
+   "setup": "R2' D' r U2' r' D R U2' R",
+   "algs": [
+    "R' U2 R' D' r U2 r' D R2",
+    "y2 R U' R' F' U F R U R2 F R2 U R' U' F'",
+    "R U R' U2 L U' R U L' U R'",
+    "y2 R U R' U' z' y' R U R' F' R U R' U' R' F R2 U' R' U' F"
+   ]
+  },
+  {
+   "key": "ZBLL L 5",
+   "subset": "L",
+   "group": "L1",
+   "setup": "R' U2' R2' D R' U2' R D' R2' U R U2' R' U2' R",
+   "algs": [
+    "R' U2 R U2 R' U' R2 D R' U2 R D' R2 U2 R",
+    "y2 F' r U R2 D R U R' D' R U2 r' F R",
+    "R U2 R2 U2 R D' R U2 R' D S R2 S'",
+    "y' R' D' L U' D R' D R U R' D2 L' D R2"
+   ]
+  },
+  {
+   "key": "ZBLL L 6",
+   "subset": "L",
+   "group": "L1",
+   "setup": "R2' D' R U2' R' D R U2' R",
+   "algs": [
+    "R' U2 R' D' R U2 R' D R2",
+    "y2 z U' R2 U' L' U R2 U' L U2",
+    "R' F R2 U' R' U' R U R' F' R U' R' U R U R'",
+    "y2 x R' U' R D' R' U2 R D R' U' R x'"
+   ]
+  },
+  {
+   "key": "ZBLL L 7",
+   "subset": "L",
+   "group": "L1",
+   "setup": "R' U R U R' U2' R y U2' R U' R' U2' R U' R'",
+   "algs": [
+    "y' R' U' R U' R' U' R U2 R D r' U2 r D' R'",
+    "R U R' U2 R U R' U2 F' U2 y' R U' R' U' R",
+    "R U R' U2 R U R' U D R' U2 R U' R' U' R D'",
+    "y' R' U' R U' R' U R2 D R' U R D' R2 U R U' R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL L 8",
+   "subset": "L",
+   "group": "L1",
+   "setup": "R U2' F U F' R' U F U2' F' R U2' R' y'",
+   "algs": [
+    "y' F R U' R' U R U R2 D' R U R' D R2 U' R' F'",
+    "y' F R U' R' U R2 D R' U R D' R2 U R U' R' F'",
+    "y R U2 R U R U' R2 D R' U R D' R U R'",
+    "y R U2 R' F U2 F' U' R F U' F' U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL L 9",
+   "subset": "L",
+   "group": "L1",
+   "setup": "R U' R U D R' U R U2' R' U R D' R' U R'",
+   "algs": [
+    "y' R' U' R2 D r' U2 r D' R2 U R U R' U2 R",
+    "R' U2 R' D' R' F2 R2 U2 R2 F2 R D R2",
+    "R2 U' R' U' R2 U R U D' R U2 R' D R2",
+    "R U' R D R' U' R U2 R' U' R D' U' R' U R'"
+   ]
+  },
+  {
+   "key": "ZBLL L 10",
+   "subset": "L",
+   "group": "L1",
+   "setup": "R U L' U R' U' L U' R U R' U R U' R'",
+   "algs": [
+    "R' U R U' R' U F' R U2 R' U2 R' F R2",
+    "y' R' U2 R U R2 D' R U' R' r U2 r' D R2",
+    "R U R' U' R U' R' U L' U R U' L U' R'",
+    "y' L2 D' R' B2 R' D2 L' D R2 D2 L'"
+   ]
+  },
+  {
+   "key": "ZBLL L 11",
+   "subset": "L",
+   "group": "L1",
+   "setup": "R' U R U' R' U' R U2' R D R' U' R D' R2' U' R",
+   "algs": [
+    "R' U R2 D R' U R D' R' U2 R' U R U R' U' R",
+    "R' U R U' R' U R U R' U' R U' R D R' U2 R D' R'",
+    "y2 f U' R2 U' R' F R' F' U' R U' R' U' f'",
+    "y' R' U2 R F U' R' U R U F' R' U' R U R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL L 12",
+   "subset": "L",
+   "group": "L1",
+   "setup": "R U R' U2' F2' R U2' R' U2' R' F2' R2' U R' y",
+   "algs": [
+    "y' F R U' R' U' R2 D R' U R D' R' U R' U' F'",
+    "y' R U' R2 F2 R U2 R U2 R' F2 U2 R U' R'",
+    "y2 F U R' U' R F' R' U' R U R' U' R U R' U R",
+    "y' F U R U' R' F' R B' R' U' R B R' f' L f"
+   ]
+  },
+  {
+   "key": "ZBLL L 13",
+   "subset": "L",
+   "group": "L2",
+   "setup": "R2' B2' R' U2' R' U2' R B2' R' U R U' R' y2'",
+   "algs": [
+    "R2 D' R U2 R' D R2 U R2 F' R U R U' R' F R",
+    "y2 R2 D r' U2 r R' U' R D' R' U' R'",
+    "R2 U R' U' R' U R' D U' R' U R D'",
+    "R' F2 R U2 R U2 R' F2 R U' R' U R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL L 14",
+   "subset": "L",
+   "group": "L2",
+   "setup": "R' D' R U R' D R2' U' R' U R U R' U' R U R' y'",
+   "algs": [
+    "y R U' R' U R U' R' U' R U R2 D' R U' R' D R",
+    "S' R U R' F' U f U' R' U' R' U R",
+    "y R' D R2 U' R' U R U' R' U' R U R2 D' R",
+    "y' R' D' R U2 R' D R2 U' R' U R U' R' U' R U R'"
+   ]
+  },
+  {
+   "key": "ZBLL L 15",
+   "subset": "L",
+   "group": "L2",
+   "setup": "R U R' U R U R' U2' L R U' R' U L'",
+   "algs": [
+    "L U' R U R' L' U2 R U' R' U' R U' R'",
+    "R' U2 R F U' R' U2 R U F' U' R' U R",
+    "y R2 U R U R D' R U' R' D U' R' U2 R'",
+    "y R U R' U' R U R2 D' R U R' D R2 U R' U' R U R' U' R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL L 16",
+   "subset": "L",
+   "group": "L2",
+   "setup": "F R U R' U' R' F' U2' R U R U' R2' U2' R",
+   "algs": [
+    "R' U2 R2 U R' U' R' U2 F R U R U' R' F'",
+    "R' U' R' D' R U' R' U' D R' U' R2 U R U R2",
+    "L U' R U L' U R U2 R U' R U R' U2 R2",
+    "y2 M U' M' F R' F' R U R U' r' U M'"
+   ]
+  },
+  {
+   "key": "ZBLL L 17",
+   "subset": "L",
+   "group": "L2",
+   "setup": "R L U2' L' U' R' U2' R' L U L' U' R2' U2' R' y",
+   "algs": [
+    "R' U2 R U R' U' F' R U R' U' R' F R2 U R' U R",
+    "R' F R U R' U' F' R' F R F' R' F R F' U R",
+    "y S R F R2 F' R U2 S U' R2 S2 U' R2",
+    "y' F' L F L' U' L' U L F' U' L' U L U' L' U L F"
+   ]
+  },
+  {
+   "key": "ZBLL L 18",
+   "subset": "L",
+   "group": "L2",
+   "setup": "x' D R U' R' D' R U R' x",
+   "algs": [
+    "y F R' F' r U R U' r'",
+    "x' R U' R' D R U R' D' x",
+    "y2 R2 D R' U R D' R' U' R'",
+    "y2 x' U' R' D' R U R' D R x"
+   ]
+  },
+  {
+   "key": "ZBLL L 19",
+   "subset": "L",
+   "group": "L2",
+   "setup": "D' R2' U R' U' R' U R' D U2' R' U2' R y",
+   "algs": [
+    "y' R' U2 R U2 D' R U' R U R U' R2 D",
+    "R U R' U R U R' U' R U R D R' U2 R D' R' U' R'",
+    "y2 x' r U r' D' F r U r' F' D r U2 L'",
+    "R U R' B' U R U R' U' f D R2 D' z'"
+   ]
+  },
+  {
+   "key": "ZBLL L 20",
+   "subset": "L",
+   "group": "L2",
+   "setup": "R F U R' U' R U' R' U' R U F' R'",
+   "algs": [
+    "L R U' R' U L' R U R' U R U' R'",
+    "R U R' F' U' F U R U2 R' f R U R' U' f'",
+    "R F U' R' U R U R' U R U' F' R'",
+    "L R U' R' U R L' U R' U R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL L 21",
+   "subset": "L",
+   "group": "L2",
+   "setup": "R U' R' U' R U R D R' U2' R D' R' U' R' y'",
+   "algs": [
+    "y R U R D R' U2 R D' R' U' R' U R U R'",
+    "y S U2 R' U2 R U2 F R f'",
+    "y' S' R' U2 R S U2 f R f'"
+   ]
+  },
+  {
+   "key": "ZBLL L 22",
+   "subset": "L",
+   "group": "L2",
+   "setup": "x M U R' U' L U R U R' U' R U' R'",
+   "algs": [
+    "R U R' U R U' R' U' L' U R U' R' L",
+    "y R U' R' U' R' D' r U2 r' D R U' R U R'",
+    "R U R' U R U' R' U' r' F R F' M'",
+    "R' U' R U' R D R' U2 R D' R2 U R U' R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL L 23",
+   "subset": "L",
+   "group": "L2",
+   "setup": "R U2' R' U2' R' F R U R U' R' F' y'",
+   "algs": [
+    "y F R U R' U' R' F' R U2 R U2 R'",
+    "y' x' M' U L' U2 R U2 L U' L' U' R' U R",
+    "y F R' F' r U2 R' U' R2 U' r' U R' U R",
+    "R U' R' U2 R U' R' F' U F U2 F' U F"
+   ]
+  },
+  {
+   "key": "ZBLL L 24",
+   "subset": "L",
+   "group": "L2",
+   "setup": "F' U' r' F2' r U' r' F' r F",
+   "algs": [
+    "y' R' F' R U R' U' R' F R U' R U R' U R",
+    "y2 R U R' F' U' r' F2 r U F",
+    "F' r' F r U r' F2 r U F"
+   ]
+  },
+  {
+   "key": "ZBLL L 25",
+   "subset": "L",
+   "group": "L3",
+   "setup": "R2' F2' R U2' R U2' R' F2' R U' R' U R y",
+   "algs": [
+    "y' R2 D' r U2 r' R U R' D R U R",
+    "y' r U2 r' U2 r' F2 r F2 L' U L U' L' U2 L",
+    "y' R2 D' r U2 M U R' D R U R",
+    "y' R' U' R U R' F2 R U2 R' U2 R' F2 R2"
+   ]
+  },
+  {
+   "key": "ZBLL L 26",
+   "subset": "L",
+   "group": "L3",
+   "setup": "L' U' L U' L' U' L U2' R' L' U L U' R y",
+   "algs": [
+    "y' R' U R U2 R' L' U R U L U r' F r",
+    "y' S R B' U' R2 U B U' R2 U R' S'",
+    "y L' U R' U' L R U2 R' U R U R' U R",
+    "R' F' R U2 R U2 R' F R' U' R2 U' R2 U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL L 27",
+   "subset": "L",
+   "group": "L3",
+   "setup": "R D R' U' R D' R2' U R U' R' U' R U R' U' R",
+   "algs": [
+    "R' D R' U R D' R' U R2 U' R2 U' R2",
+    "y R U R' U R' D' r U2 r' D R2 U' R' U R U' R'",
+    "y S' R' U' R f R' F' U R U R U' R'",
+    "R D' R2 U R U' R' U R U R' U' R2 D R'"
+   ]
+  },
+  {
+   "key": "ZBLL L 28",
+   "subset": "L",
+   "group": "L3",
+   "setup": "R' U2' R2' U R' U' R' U2' F' R U2' R U2' R' F y2'",
+   "algs": [
+    "y2 F' R U2 R' U2 R' F U2 R U R U' R2 U2 R",
+    "y R' D U R' U2 R U' R' U' R D' R U R' U2 R",
+    "y2 F R U2 R' F' S R' F R S' U2 R' F' R"
+   ]
+  },
+  {
+   "key": "ZBLL L 29",
+   "subset": "L",
+   "group": "L3",
+   "setup": "R' F' r U R U' r' F y2'",
+   "algs": [
+    "y2 F' r U R' U' r' F R",
+    "y' R2 D' R U' R' D R U R",
+    "x' U' R U L' U' R' U r",
+    "r U R U' L' U R' U' x'"
+   ]
+  },
+  {
+   "key": "ZBLL L 30",
+   "subset": "L",
+   "group": "L3",
+   "setup": "R U2' R' U2' R U' R' U L' U R U' L U' R' y",
+   "algs": [
+    "y R U R' U R U' R' U R U' R' U R2 D R' U2 R D' R2",
+    "F R' F' R U R U' R' F U R U' R' U R U' R' F'",
+    "y' R U r' F R' F' r U' R U R' U2 R U2 R'",
+    "y' R U L' U R' U' L U' R U R' U2 R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL L 31",
+   "subset": "L",
+   "group": "L3",
+   "setup": "R' U' R U R' U L' R U R' U' L R y'",
+   "algs": [
+    "y' R' F R U R U' R' F' U R U R' U R U' R'",
+    "y R' L' U R U' L R' U' R U' R' U R",
+    "y R' F R U R' U' F' U R F' U' L' U L F",
+    "y R' L' U R U' R' L U' R U' R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL L 32",
+   "subset": "L",
+   "group": "L3",
+   "setup": "R' U2' R F U' R' U R U F' R' U R y'",
+   "algs": [
+    "y R' U' R U2 R' F' R U R' U' R' F R2 U R' U2 R",
+    "y R' U' R F U' R' U' R U F' R' U2 R",
+    "y2 R U2 R' U2 D R' U R' U' R' U R2 D'",
+    "y2 D' R U2 R' U2 D R' U R' U' R' U R2"
+   ]
+  },
+  {
+   "key": "ZBLL L 33",
+   "subset": "L",
+   "group": "L3",
+   "setup": "R U R' U' R' F' R U2' R U2' R' F y2'",
+   "algs": [
+    "y2 F' R U2 R' U2 R' F R U R U' R'",
+    "y2 F' L' U' L U L F L' U2 L' U2 L",
+    "y2 R U2 R' U' R U R D R' U' R D' R' U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL L 34",
+   "subset": "L",
+   "group": "L3",
+   "setup": "R U R' U' R U R2' D' R U2' R' D R U' R U' R' y'",
+   "algs": [
+    "y R U R' U R' D' R U2 R' D R2 U' R' U R U' R'",
+    "y R' U' R U' R' U R F R' U R U' F'",
+    "y R' U' R U' R' U R U L U' R' U M x",
+    "y' L' U' L U' L' U L U R U' L' U M' x'"
+   ]
+  },
+  {
+   "key": "ZBLL L 35",
+   "subset": "L",
+   "group": "L3",
+   "setup": "R' U R U R' U' R' D' R U2' R' D R U R",
+   "algs": [
+    "R' U' R' D' R U2 R' D R U R U' R' U' R",
+    "y2 F B' R2 U R2 U' R2 F' U' B",
+    "y2 S' R U2 R' S U2 F' U' F",
+    "S U2 R U2 R' U2 f' U' F"
+   ]
+  },
+  {
+   "key": "ZBLL L 36",
+   "subset": "L",
+   "group": "L3",
+   "setup": "F U R U2' R' U R U R' F' y",
+   "algs": [
+    "y' F R U' R' U' R U2 R' U' F'",
+    "y L' U' L F U R U2 R' U' F'",
+    "y' R' U' R F U' R' U2 R U F'",
+    "F' U' F U2 R U2 R' U' R' F R F' R U' R' U"
+   ]
+  },
+  {
+   "key": "ZBLL L 37",
+   "subset": "L",
+   "group": "L4",
+   "setup": "R U2' R D R' U2' R D' R' U2' R' U' R U' R' y2'",
+   "algs": [
+    "y2 R U R' U R U2 R D R' U2 R D' R' U2 R'",
+    "R2 D R' U2 R D' R' U2 R2 U2 R U R' U R",
+    "U S R U R' U' F' U2 F U R U R' S'",
+    "x' M' U L' U L U2 L' U' L U' R U L'"
+   ]
+  },
+  {
+   "key": "ZBLL L 38",
+   "subset": "L",
+   "group": "L4",
+   "setup": "R2' D R' U R D' R2' U R U2' R' y2'",
+   "algs": [
+    "y2 R U2 R' U' R2 D R' U' R D' R2",
+    "U2 R U2 R2 D' R U' R' D R2 U' R'",
+    "y2 F R U R' U' R' F' R U R U R' U' R U' R'",
+    "y2 R U R' U' R U R2 D' R U R' D R2 U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL L 39",
+   "subset": "L",
+   "group": "L4",
+   "setup": "R U' R' U' R U2' R' U' R' D' R U2' R' D R",
+   "algs": [
+    "R' D' R U2 R' D R U R U2 R' U R U R'",
+    "y2 L' U R U' L U R2 U2 R U R' U R",
+    "f R U R2 U' S' R' F' U F R F'",
+    "y' R U' R' F2 U2 F2 D R' U R U' R D'"
+   ]
+  },
+  {
+   "key": "ZBLL L 40",
+   "subset": "L",
+   "group": "L4",
+   "setup": "R2' D r' U2' r D' R' U2' R' y'",
+   "algs": [
+    "R' F' R U R' U' R' F R2 U' R' U2 R",
+    "y R U2 R D r' U2 r D' R2",
+    "y2 R' U M' U' R U' R' U' R U2 r' F R' F' R U' R",
+    "F' R U R2 F' R U R U' R' F R U' R' F"
+   ]
+  },
+  {
+   "key": "ZBLL L 41",
+   "subset": "L",
+   "group": "L4",
+   "setup": "R2' D R' U2' R D' R' U2' R' y'",
+   "algs": [
+    "y R U2 R D R' U2 R D' R2",
+    "y' x' R U R' D R U2 R' D' R U R' x",
+    "y' L U2 L D L' U2 L D' L2",
+    "F' r U' L D2 L' U L D2 r2 D"
+   ]
+  },
+  {
+   "key": "ZBLL L 42",
+   "subset": "L",
+   "group": "L4",
+   "setup": "R U2' R2' D' R U2' R' D R2' U' R' U2' R U2' R' y'",
+   "algs": [
+    "y R U2 R' U2 R U R2 D' R U2 R' D R2 U2 R'",
+    "y F R' F' r U' R' D' R U' R' D R U' R U' r'",
+    "y2 S' r U2 R2 U' R2 U' r' S U2 f R f'"
+   ]
+  },
+  {
+   "key": "ZBLL L 43",
+   "subset": "L",
+   "group": "L4",
+   "setup": "R' U' R U R U R' U' R' U F R U R U' R' F' y2'",
+   "algs": [
+    "y2 F R U R' U' R' F' U' R U R U' R' U' R' U R",
+    "R' U2 R' U' R' U R2 D' R U' R' D R' U' R",
+    "y2 R U R' U2 R U R2 D' r U2 r' D R2 U' R'",
+    "y R u2 R' F' R u2 R2 F' R U2 R' F R"
+   ]
+  },
+  {
+   "key": "ZBLL L 44",
+   "subset": "L",
+   "group": "L4",
+   "setup": "R U2' R2' U' R F' U' R' U2' R U F R U' R' y",
+   "algs": [
+    "y2 R U R' U R U R' U2 R' D' r U2 r' D R",
+    "y2 R U R' U R U' R2 D' R U' R' D R2 U' R' U R U' R'",
+    "y R u R' U R U' R u' R2 U' F' U' F R",
+    "y R' U' R U2 R' U' R D' U' R U2 R' U R U R' D"
+   ]
+  },
+  {
+   "key": "ZBLL L 45",
+   "subset": "L",
+   "group": "L4",
+   "setup": "R U' R' U R U R' U2' R' D' R U R' D R2' U R' y'",
+   "algs": [
+    "y R U' R2 D' R U' R' D R U2 R U' R' U' R U R'",
+    "y2 S R' U' F R' F' R2 U F R F' U2 S'",
+    "y L U' R U L' U' R' U R U' R' U R U' R' U' R U R'",
+    "L U D' L U2 L' U2 D L2 U2 L U L2 U L"
+   ]
+  },
+  {
+   "key": "ZBLL L 46",
+   "subset": "L",
+   "group": "L4",
+   "setup": "R' U' L U' R U L' U R' U' R U' R' U R y'",
+   "algs": [
+    "y2 R' F' R U2 R U2 R' F U' R U R' U' R U' R'",
+    "y R' U' R U R' U R U2 F R' U R U' F' U R' U R",
+    "R2 D' R2 U R' D R2 U' D r2 D2 r2 D' R'",
+    "y R' U' R U R' U R U' L U' R' U L' U R"
+   ]
+  },
+  {
+   "key": "ZBLL L 47",
+   "subset": "L",
+   "group": "L4",
+   "setup": "R' U R' D' U' R U' R' U2' R U' R' D R U' R y'",
+   "algs": [
+    "y R' U R U2 R' U' R U2 R' U' R U' R2 D' R U R' D R2",
+    "y R' U R' D' R U R' U2 R U R' U D R U' R",
+    "y2 R U R2 D' r U2 r' D R2 U' R' U' R U2 R'",
+    "F2 U' F R2 u R' U R U' R u' R2 F"
+   ]
+  },
+  {
+   "key": "ZBLL L 48",
+   "subset": "L",
+   "group": "L4",
+   "setup": "L' U' L U2' F2' L' U2' L U2' L F2' L2' U' L",
+   "algs": [
+    "y' R' F' R U R' U' R' F D' R U' R' D R2 U R' U R",
+    "y' F U' R U R' U R' U2 R U R' U R2 U' R' U F'",
+    "y2 L' R U R' U' L U R U R' U' R U R' U' R U' R'",
+    "y2 M F R' F' r U R U R' U' R U R' U' R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL L 49",
+   "subset": "L",
+   "group": "L5",
+   "setup": "r U2' R r2' F R' F' r2' U2' r' y'",
+   "algs": [
+    "y r U2 r2 F R F' r2 R' U2 r'",
+    "y2 R' F2 R2 U' r' F R' M' F2 R",
+    "y r U2 r2 F R F' R' r2 U2 r'",
+    "y2 R' F2 R2 U' L' U R2 r U2 R x'"
+   ]
+  },
+  {
+   "key": "ZBLL L 50",
+   "subset": "L",
+   "group": "L5",
+   "setup": "L' U' L U' x M U' R' U2' L U R U2' R'",
+   "algs": [
+    "y R U' R' U R U' R' U' R U R' U2 R' D' R U R' D R",
+    "R U2 R' U' L' U2 R U M' x' U L' U L",
+    "U2 R U R' U R U' R' F2 R U2 R' U2 R' F2 R2 U' R' U2",
+    "y2 R U R' U R U' R' F2 R U2 R' U2 R' F2 R2 U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL L 51",
+   "subset": "L",
+   "group": "L5",
+   "setup": "R U R' U x M U L U2' R' U' L' U2' L y",
+   "algs": [
+    "R' U R U' R' U R U R' U' R U2 R D R' U' R D' R'",
+    "R' D' R U' R' D R U2 R U' R' U R U R' U' R U R'",
+    "y' R' U' R U' R' U' F U' F' U' R F U2 F'",
+    "y' L' U2 L U R U2 L' U' M' x' U' R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL L 52",
+   "subset": "L",
+   "group": "L5",
+   "setup": "r U2' r2' F R F' r2' R' U2' r'",
+   "algs": [
+    "r U2 R r2 F R' F' r2 U2 r'",
+    "r U2 r2 R F R' F' r2 U2 r'",
+    "y2 R' U2 R U R2 F R F' R' F R F' R' F R F' U R",
+    "y' R' F2 R2 r' F' r U R2 F2 R"
+   ]
+  },
+  {
+   "key": "ZBLL L 53",
+   "subset": "L",
+   "group": "L5",
+   "setup": "F R U R' U' F' r U r' U R U' M' U' r'",
+   "algs": [
+    "y2 F' r U R' U R' D R U' R' D' R U' r' F R",
+    "r U r' R U R' U' r U' r' F U R U' R' F'",
+    "y R U2 R2 F R F2 r' U' F2 U r F",
+    "y R U2 R2 x U R U2 r' B' U2 B r U x'"
+   ]
+  },
+  {
+   "key": "ZBLL L 54",
+   "subset": "L",
+   "group": "L5",
+   "setup": "r U M U R' U' r U' r' F U R U' R' F' y'",
+   "algs": [
+    "y F R U R' U' F' r U r' U R U' R' r U' r'",
+    "r U R2 D' R U2 R' D R U r' F R F'",
+    "y L' U R2 D' R' U2 R D R' U L U R'"
+   ]
+  },
+  {
+   "key": "ZBLL L 55",
+   "subset": "L",
+   "group": "L5",
+   "setup": "F2' R U' R' U R U R2' F' R U R U' R' F' y",
+   "algs": [
+    "y' F R U R' U' R' F R2 U' R' U' R U R' F2",
+    "y R' U R U' R' U' R U' R' U2 R' D' R U' R' D R2",
+    "y2 x' r2 U' r U2 R' F R U2 r2 F L'",
+    "R D R' U R D' R2 U' R U R' U R U R' U' R"
+   ]
+  },
+  {
+   "key": "ZBLL L 56",
+   "subset": "L",
+   "group": "L5",
+   "setup": "R' U' F R U' R' U R U R2' F' R U R U' R' U R y",
+   "algs": [
+    "y2 B' R U R' U' R' F R2 U' R' U' R U R' S z'",
+    "R U' R' U R U R' U R U' R2 D' R U R' D R",
+    "y M' U' r U2 R' F R U2 r2 F R",
+    "y R' F' r2 U2 R' F' R U2 r' U M"
+   ]
+  },
+  {
+   "key": "ZBLL L 57",
+   "subset": "L",
+   "group": "L5",
+   "setup": "R2' F' R U R U' R' F R U' R' U R y",
+   "algs": [
+    "y' R' U' R U R' F' R U R' U' R' F R2",
+    "y r U2 R2 F R F' R U2 r'",
+    "R U2 L' U R' U' L R U2 R'",
+    "y2 B' R U R' F' R U R' U' R' F R2 U' R' U' B"
+   ]
+  },
+  {
+   "key": "ZBLL L 58",
+   "subset": "L",
+   "group": "L5",
+   "setup": "F U R U2' R' U2' R U R' U R U' R' F'",
+   "algs": [
+    "y F R U R2 F R F' R U' R' F'",
+    "F R U R' U' R U' R' U2 R U2 R' U' F'",
+    "F R U R' U' R2 x' U' R' U R' D' x",
+    "F R U R' F R' F' R2 U' R' F'"
+   ]
+  },
+  {
+   "key": "ZBLL L 59",
+   "subset": "L",
+   "group": "L5",
+   "setup": "R U R' L' U2' R U R' U2' L y",
+   "algs": [
+    "y' L' U2 R U' R' U2 L R U' R'",
+    "r' U2 R2 B' R' B R' U2 r",
+    "y F R U R' U' F' r U R' U R U2 r'",
+    "L U L' U' L F L' U' L U L F' L2"
+   ]
+  },
+  {
+   "key": "ZBLL L 60",
+   "subset": "L",
+   "group": "L5",
+   "setup": "F U R U2' R D R' U R D' R' U' R' U R U R' F' y",
+   "algs": [
+    "y2 R U R' U F' R U2 R' U' R' U' R' F R U R",
+    "y F U' R' U R D R' U R U D' F' R' U R",
+    "R' U2 R2 U R' F' R U R' U' R' F R2 U' R' U' R' U2 R",
+    "y' F R U' R' U' R U R' U R' D' R U' R' D R2 U R' U' F'"
+   ]
+  },
+  {
+   "key": "ZBLL L 61",
+   "subset": "L",
+   "group": "L6",
+   "setup": "R U2' R2' U2' R' U R' U' R U2' R U2' R U2' R' y",
+   "algs": [
+    "y' R2 U R' U R' U' R U' R' U' R U R U' R2",
+    "y' R' U' R U' R' U R U' R' U2 R2 U R' U R U2 R'",
+    "R U R' U R U' R' U R U2 R' L' U' L U' L' U2 L",
+    "y' R U R' U R U2 R' U R' U2 R U R' U' R U R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL L 62",
+   "subset": "L",
+   "group": "L6",
+   "setup": "R' U' R U' R' U2' R U' R U R' U R U2' R' y'",
+   "algs": [
+    "y R U2 R' U' R U' R' U R' U2 R U R' U R",
+    "y R U2 R' U' R U' R' y R' U2 R U R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL L 63",
+   "subset": "L",
+   "group": "L6",
+   "setup": "R' U2' R U R' U R U' R U2' R' U' R U' R' y'",
+   "algs": [
+    "y R U R' U R U2 R' U R' U' R U' R' U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL L 64",
+   "subset": "L",
+   "group": "L6",
+   "setup": "R2' U' R U' R U R' U R U R' U' R' U R2' y'",
+   "algs": [
+    "y R2 U' R U R U' R' U' R U' R' U R' U R2",
+    "y2 R' U2 R U R' U R2 U2 R' U' R U R' U' R U' R'",
+    "y' r U r' U R U' R' U R U' R' M' U R U2 r'",
+    "y' R' U2 R2 U2 R U' R U R' U2 R' U2 R' U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL L 65",
+   "subset": "L",
+   "group": "L6",
+   "setup": "R U R' U R U2' R' U R' U' R U' R' U2' R",
+   "algs": [
+    "R' U2 R U R' U R U' R U2 R' U' R U' R'",
+    "y2 L' U2 L U L' U L U' L U2 L' U' L U' L'"
+   ]
+  },
+  {
+   "key": "ZBLL L 66",
+   "subset": "L",
+   "group": "L6",
+   "setup": "R2' U' R U R U' R' U' R U' R' U R' U R2' y2'",
+   "algs": [
+    "y2 R2 U' R U' R U R' U R U R' U' R' U R2",
+    "y2 R U R' U R U' R' U R U2 R2 U' R U' R' U2 R",
+    "y' F' R U2 R' U2 R' F2 R2 U R' U' R U R' U' F'",
+    "y2 R' U' R U' R' U2 R U' R U2 R' U' R U R' U' R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL L 67",
+   "subset": "L",
+   "group": "L6",
+   "setup": "R U2' R' U' R U' R' U R' U2' R U R' U R",
+   "algs": [
+    "R' U' R U' R' U2 R U' R U R' U R U2 R'",
+    "y2 L' U' L U' L' U2 L U R U R' U R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL L 68",
+   "subset": "L",
+   "group": "L6",
+   "setup": "R2' U R' U R' U' R U' R' U' R U R U' R2'",
+   "algs": [
+    "R2 U R' U' R' U R U R' U R U' R U' R2",
+    "y' R U2 R' U' R U' R2 U2 R U R' U' R U R' U R",
+    "U2 R' U2 R' U' R2 U' R U R' U' R U2 R U' R",
+    "y2 R U2 R2 U2 R' U R' U' R U2 R U2 R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL L 69",
+   "subset": "L",
+   "group": "L6",
+   "setup": "R' U2' R U R' U R U2' R' U' R U' R' U2' R",
+   "algs": [
+    "y R U2 R' U' R U' R' U2 R U R' U R U2 R'",
+    "R' U2 R U R' U R L' U' L U' L' U2 L",
+    "y R U2 R' U' R U' R' L U L' U L U2 L'",
+    "R' U2 R U R' U R U2 R' U' R U' R' U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL L 70",
+   "subset": "L",
+   "group": "L6",
+   "setup": "R' U' R U' R' U2' R U2' R' U2' R U R' U R",
+   "algs": [
+    "y R U R' U R U2 R' U2 R U2 R' U' R U' R'",
+    "R' U' R U' R' U2 R U2 R' U2 R U R' U R",
+    "y R U R' U R U2 R' L U2 L' U' L U' L'",
+    "R' U' R U' R' U2 R L' U2 L U L' U L"
+   ]
+  },
+  {
+   "key": "ZBLL L 71",
+   "subset": "L",
+   "group": "L6",
+   "setup": "R U2' R' U' R U R' U' R U R' U' R U' R' y",
+   "algs": [
+    "y' R U R' U R U' R' U R U' R' U R U2 R'",
+    "y2 R' U' R U' R' U R U' R' U R U' R' U2 R",
+    "y2 R' U2 R U R' U' R U R' U' R U R' U R",
+    "y' r U r' U R U' R' U R U' R' U R U' R' r U' r'"
+   ]
+  },
+  {
+   "key": "ZBLL L 72",
+   "subset": "L",
+   "group": "L6",
+   "setup": "R U2' R' L' U' L U' L' U2' L R U R'",
+   "algs": [
+    "R U R' U R U' R' U R U2 R' U' R U2 R' U' R U' R'",
+    "R U' R' L' U2 L U L' U L R U2 R'",
+    "y' R U2 R' U2 R' U' R U R U' R' U2 R' U2 R",
+    "R' U' R' F D' R U R' D R2 U' R' F' R"
+   ]
+  },
+  {
+   "key": "ZBLL T 1",
+   "subset": "T",
+   "group": "T1",
+   "setup": "L' U L U2' R' L' U L U R U R' U R y'",
+   "algs": [
+    "y R' U' R U' R' U' R U2 L' R' U R U' L",
+    "y2 S R U' R2 U B' U' R2 U B R' S'",
+    "y' R' U2 R' U' D R' U' R D' R U R U R2",
+    "y R' U2 R2 U R2 U R F' R U2 R' U2 R' F R"
+   ]
+  },
+  {
+   "key": "ZBLL T 2",
+   "subset": "T",
+   "group": "T1",
+   "setup": "L' U R' U' L U' R' U2' R' U R' U' R U2' R2'",
+   "algs": [
+    "y R' U2 R2 U R' U' R' U2 F' R U2 R U2 R' F",
+    "R' U2 R U' R' D R' U R U R' U2 R U' D' R",
+    "M U R' F' r U r U' r' F M U' M'",
+    "R2 U2 R' U R U' R U2 R U L' U R U' L"
+   ]
+  },
+  {
+   "key": "ZBLL T 3",
+   "subset": "T",
+   "group": "T1",
+   "setup": "R' U' R U R' F2' R U2' R' U2' R' F2' R2'",
+   "algs": [
+    "y2 R' U' R' D' R U' M' U2 r' D R2",
+    "R2 F2 R U2 R U2 R' F2 R U' R' U R",
+    "R U R' U' D R' U R' U' R' U R2 D'",
+    "y2 R' U' R' D' R U' R' r U2 r' D R2"
+   ]
+  },
+  {
+   "key": "ZBLL T 4",
+   "subset": "T",
+   "group": "T1",
+   "setup": "R' D R' U R D' R' U R2' U' R2' U' R2' y'",
+   "algs": [
+    "y2 F R2 D R' U' R D' R2 U' R U2 R' U' F'",
+    "y' R D R' U' R D' R2 U R U' R' U' R U R' U' R",
+    "R U R' U' R' U' F R f' R' U R S",
+    "y R2 U R2 U R2 U' R D R' U' R D' R"
+   ]
+  },
+  {
+   "key": "ZBLL T 5",
+   "subset": "T",
+   "group": "T1",
+   "setup": "R U L' U R' U' L U' R U R' U2' R U2' R' y",
+   "algs": [
+    "y F R U R' U' R U R' U' F' R U R' U' R' F R F'",
+    "y' R U2 R' U2 R U' R' U r' F R F' r U' R'",
+    "y' R U2 R' U2 R U' R' U L' U R U' L U' R'",
+    "y r' D' r U' r' F r U' r' F D r2 U r' U' r' F r F'"
+   ]
+  },
+  {
+   "key": "ZBLL T 6",
+   "subset": "T",
+   "group": "T1",
+   "setup": "F' r U R' U' L' U l y'",
+   "algs": [
+    "y2 R' U' R' D' R U R' D R2",
+    "y' F R F' r U R' U' r'",
+    "y R' F' r U R U' r' F"
+   ]
+  },
+  {
+   "key": "ZBLL T 7",
+   "subset": "T",
+   "group": "T1",
+   "setup": "R' U' R F U' R' U' R U F' R' U2' R",
+   "algs": [
+    "R' U2 R F U' R' U R U F' R' U R",
+    "R U2 D' R U' R U R U' R2 D U' R'",
+    "R' U2 R U' R2 F' R U R U' R' F R U2 R' U R",
+    "R' U' R' D' R U2 R' D R U R U' R' U R U R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL T 8",
+   "subset": "T",
+   "group": "T1",
+   "setup": "L' R' U R U' L R' U' R U' R' U R y",
+   "algs": [
+    "y' R' U' R U R' U R L' U R' U' R L",
+    "R U R' U' R U' R' U' F R U R' U' R' F' R",
+    "R' F' U' F U R U R' U' F U R U' R' F' R",
+    "y' R' U' R U R' U R r' F R' F' r R"
+   ]
+  },
+  {
+   "key": "ZBLL T 9",
+   "subset": "T",
+   "group": "T1",
+   "setup": "F R U' R' U' R U2' R' U' F' y'",
+   "algs": [
+    "y F U R U2 R' U R U R' F'",
+    "L U2 R' U2 R U2 L' U' R' U R",
+    "y2 R U2 r' F2 r U2 R' U' L' U L",
+    "y F U R U2 R' U R U R' F' U'"
+   ]
+  },
+  {
+   "key": "ZBLL T 10",
+   "subset": "T",
+   "group": "T1",
+   "setup": "F' R U2' R' U2' R' F R U R U' R' y'",
+   "algs": [
+    "y R U R' U' R' F' R U2 R U2 R' F",
+    "y L' U2 L U2 L F' L' U' L' U L F",
+    "y r' F2 r U2 r U' r' U' r' F r F",
+    "y R U R' U2 R U R' y' R' U' R U2 R' U' R"
+   ]
+  },
+  {
+   "key": "ZBLL T 11",
+   "subset": "T",
+   "group": "T1",
+   "setup": "R' U' R U' R' U R U L U' R' U M x",
+   "algs": [
+    "y' F U R' U' R F' R' U' R U R' U R",
+    "y R U R' U' R U R2 D' R U2 R' D R U' R U' R'",
+    "x' M' U' R U L' U' R' U' R U R' U R",
+    "L R' U' R U L' U' R' U' R U R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL T 12",
+   "subset": "T",
+   "group": "T1",
+   "setup": "R' U' R' D' R U2' R' D R U R U' R' U' R y",
+   "algs": [
+    "y' R' U R U R' U' R' D' R U2 R' D R U R",
+    "F' U f U2 R U2 R' U2 S'",
+    "y r' F R U2 F U2 F' U2 M'",
+    "y' R' U r U2 B U2 B' U2 M"
+   ]
+  },
+  {
+   "key": "ZBLL T 13",
+   "subset": "T",
+   "group": "T2",
+   "setup": "R U R' U' R B2' R' U2' R U2' R B2' R2' y2'",
+   "algs": [
+    "y2 R' U' R U D' R U' R U R U' R2 D",
+    "R U R D R' U R r' U2 r D' R2",
+    "y2 R2 B2 R' U2 R' U2 R B2 R' U R U' R'",
+    "R U R D R' U M U2 r D' R2"
+   ]
+  },
+  {
+   "key": "ZBLL T 14",
+   "subset": "T",
+   "group": "T2",
+   "setup": "R D' R U2' R2' U R2' U R2' U' R D R'",
+   "algs": [
+    "y' R' D' R U R' D R2 U' R' U R U R' U' R U R'",
+    "R' D R2 U' R' U R U R' U' R U R2 D' R",
+    "y2 R' U' R U R U f' U' F R U' R' S",
+    "R D' R' U R2 U' R2 U' R2 U2 R' D R'"
+   ]
+  },
+  {
+   "key": "ZBLL T 15",
+   "subset": "T",
+   "group": "T2",
+   "setup": "L U' R U R' L' U2' R U' R' U' R U' R' y'",
+   "algs": [
+    "y R U R' U R U R' U2 L R U' R' U L'",
+    "y2 R' U' R U F U' R' U2 R U F' R' U2 R U2",
+    "y' L U L' U L U L' U2 L R U' L' U R'",
+    "S R' U R2 U' F U R2 U' F' R S'"
+   ]
+  },
+  {
+   "key": "ZBLL T 16",
+   "subset": "T",
+   "group": "T2",
+   "setup": "R' U2' R2' U R' U' R' U2' F R U R U' R' F' y2'",
+   "algs": [
+    "y2 F R U R' U' R' F' U2 R U R U' R2 U2 R",
+    "M U' r U R' U' R' F R F' M U M'",
+    "y' F U2 F' U F U' R U' R' U' R U2 R' U2 F'",
+    "L2 U2 L U' L' U L' U2 L' U' R U' L' U R'"
+   ]
+  },
+  {
+   "key": "ZBLL T 17",
+   "subset": "T",
+   "group": "T2",
+   "setup": "F R' F' r U R U' r' y",
+   "algs": [
+    "y' r U R' U' r' F R F'",
+    "R U R D R' U' R D' R2",
+    "R' F' R U R' U' R' F R U R",
+    "x R' U' R D' R' U R D x'"
+   ]
+  },
+  {
+   "key": "ZBLL T 18",
+   "subset": "T",
+   "group": "T2",
+   "setup": "R' U' L U' R U L' U R' U' R U2' R' U2' R y",
+   "algs": [
+    "R' U' R U' R2 F' R U R U' R' F U R U' R' U2 R",
+    "R2 D' R U2 R' D R U R U' R' U R U' R' U R U' R' U2 R",
+    "y' R F R' U R U' R' U R U' F' R2 F' R U R U' R' F",
+    "R U R D R' U' R D' r2 U' M2 U2 M2 U' M2"
+   ]
+  },
+  {
+   "key": "ZBLL T 19",
+   "subset": "T",
+   "group": "T2",
+   "setup": "R U R' B' U R U R' U' B R U2' R' y2'",
+   "algs": [
+    "U2 R U R D R' U2 R D' R' U' R' U R U' R' U' R U' R'",
+    "y R2 U R' U' R' U R' U2 D R' U2 R D'",
+    "L U2 r' D' F r U' r' F' D r U' L'",
+    "y2 R U2 R' f' L U L' U' L' f R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL T 20",
+   "subset": "T",
+   "group": "T2",
+   "setup": "L R U' R' U L' R U R' U R U' R' y",
+   "algs": [
+    "y' R U R' U' R U' R' L U' R U R' L'",
+    "y' R U S' R' U' R S R2 F R F'",
+    "y2 x' D R U' R' U R' U' D R' U R D2 x",
+    "F U R' F2 R U' F' U' R U2 R' r U r' U2"
+   ]
+  },
+  {
+   "key": "ZBLL T 21",
+   "subset": "T",
+   "group": "T2",
+   "setup": "F R U R' U' R' F' R U2' R U2' R' y",
+   "algs": [
+    "y' R U2 R' U2 R' F R U R U' R' F'",
+    "y R' U' R U2 R' F R U R' U' R' F' R U' R",
+    "y R' F R U R U' R' F' U' R U' R' U2 R U R'",
+    "y R' U' R U2 R' U' R y R U R' U2 R U R'"
+   ]
+  },
+  {
+   "key": "ZBLL T 22",
+   "subset": "T",
+   "group": "T2",
+   "setup": "F' L' U L U L' U2' L U F y",
+   "algs": [
+    "y' F' U' r' F2 r U F R U' R'",
+    "y' F' U' L' U2 L U' L' U' L F",
+    "y2 R' U' R U' R' U R' F' R U R U' R' F R",
+    "y B' U' R' U2 R U' R' U' R B"
+   ]
+  },
+  {
+   "key": "ZBLL T 23",
+   "subset": "T",
+   "group": "T2",
+   "setup": "R U R D R' U2' R D' R' U' R' U R U R' y",
+   "algs": [
+    "y' R U' R' U' R U R D R' U2 R D' R' U' R'",
+    "y2 f R' F' U2 R' U2 R U2 S'",
+    "F U' B' R2 U' R2 U R2 F' B",
+    "y' R U' r' U2 F' U2 F U2 M'"
+   ]
+  },
+  {
+   "key": "ZBLL T 24",
+   "subset": "T",
+   "group": "T2",
+   "setup": "R U R' U R U' R' U' L' U R U' L R' y2'",
+   "algs": [
+    "y2 R L' U R' U' L U R U R' U' R U' R'",
+    "y R' U' R U R' U' R2 D R' U2 R D' R' U R' U R",
+    "S' R U R' S R U' R' U' R U R' U' R' F R F'",
+    "y' f' L' U L U' f R U R' U' R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL T 25",
+   "subset": "T",
+   "group": "T3",
+   "setup": "L' U R' U' R L U2' R' U' R",
+   "algs": [
+    "R' U R U2 L' R' U R U' L",
+    "R' U R U2 r' R' F R F' r",
+    "R' U' R' U' R U R' F' R U R' U' R' F R'",
+    "y2 L' U R' U' L R U2 R' U' R"
+   ]
+  },
+  {
+   "key": "ZBLL T 26",
+   "subset": "T",
+   "group": "T3",
+   "setup": "R U R' U R U2' R D R' U R D' R' U' R' y",
+   "algs": [
+    "y R U R2 F R F' R U' R' F' U F",
+    "y' R U R D R' U' R D' R' U2 R' U' R U' R'",
+    "L' U2 L U L' U L U' L' U R U' L U R'",
+    "R U R' U R U2 R D R' U R D' R' U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL T 27",
+   "subset": "T",
+   "group": "T3",
+   "setup": "L U' R U R' L' U2' R U R' y2'",
+   "algs": [
+    "y2 R U' R' U2 L R U' R' U L'",
+    "y2 R' F R U R' U' R' F' R2 U' R' U2 R",
+    "r U R2 F R F' R U2 r' U r U r' U2",
+    "R' U2 R U R2 F R U R U' R' F' R"
+   ]
+  },
+  {
+   "key": "ZBLL T 28",
+   "subset": "T",
+   "group": "T3",
+   "setup": "R' U' R U' R' U2' R' D' R U' R' D R U R y",
+   "algs": [
+    "y' R' U' R' D' R U R' D R U2 R U R' U R",
+    "R U2 R' U' R' F R2 U' R' U' R U R' F' R U' R'",
+    "y R' F R' F' R2 U' R' U R f R' f'",
+    "y f R f' R' U' R U R2 F R F' R"
+   ]
+  },
+  {
+   "key": "ZBLL T 29",
+   "subset": "T",
+   "group": "T3",
+   "setup": "R' U2' R U R' U R F U R U2' R' U R U R' F'",
+   "algs": [
+    "F R U' R' U' R U2 R' U' F' R' U' R U' R' U2 R",
+    "y' R U R' U R' D' R U R' D R U R' F R U R U' R' F'",
+    "r' U' R' F2 R F' R' F2 R2 U' R' U2 r"
+   ]
+  },
+  {
+   "key": "ZBLL T 30",
+   "subset": "T",
+   "group": "T3",
+   "setup": "F R U' R' U' R U2' R' U' F' R' U' R U' R' U2' R",
+   "algs": [
+    "R' U2 R U R' U R F U R U2 R' U R U R' F'",
+    "r' U2 R U R2 F2 R F R' F2 R U r",
+    "y2 F R U R' U' R' F' R U' R' D' R U' R' D R U' R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL T 31",
+   "subset": "T",
+   "group": "T3",
+   "setup": "F' r2' U2' R' F' R U2' r' U r' y2'",
+   "algs": [
+    "y2 r U' r U2 R' F R U2 r2 F",
+    "R' U R U2 R' U' F' R U R' U R U2 R' F R",
+    "y2 F' r2 U2 R' F' R U2 r' U r'",
+    "y' F B' R U R' U' R' F R2 U' R' U' R U R' F' S"
+   ]
+  },
+  {
+   "key": "ZBLL T 32",
+   "subset": "T",
+   "group": "T3",
+   "setup": "R' U' R U R U R2' F' R U R U' R' F R U' R2' U R y2'",
+   "algs": [
+    "y2 R' U' R2 U R' F' R U R' U' R' F R2 U' R' U' R' U R",
+    "R U R' U' R' U L' U2 R U' R' U2 L R2 U' R'",
+    "y' r U R' U' r' F R F' U R U R' U' R' F R2 U' R' U' R U R' F'",
+    "y2 F R U' R' S U' R U f' U R2 F R F' R"
+   ]
+  },
+  {
+   "key": "ZBLL T 33",
+   "subset": "T",
+   "group": "T3",
+   "setup": "R U R' D U R2' U2' R2' U R2' U R2' D' R U' R'",
+   "algs": [
+    "R U' R' U R U R' U' R U R' U' R' D' R U' R' D R",
+    "y2 R' U' R U' R' U R F U' R' U2 R U F'",
+    "y2 R' U' R U' R' U R U L U2 R' U2 R U2 L'",
+    "y2 R' U' R U' R' U R U L U2 R' U2 R U2 L' U"
+   ]
+  },
+  {
+   "key": "ZBLL T 34",
+   "subset": "T",
+   "group": "T3",
+   "setup": "L' U2' R U2' R' U2' L U R U R' U' R U' R'",
+   "algs": [
+    "R U R' U R U' R' U' L' U2 R U2 R' U2 L",
+    "R U R' U R U' R' F' U' L' U2 L U F",
+    "R U R' U R U' R' U' R' F2 R F2 L' U2 L",
+    "y2 R' U R U' R' U' R U R' U' R U R D R' U R D' R'"
+   ]
+  },
+  {
+   "key": "ZBLL T 35",
+   "subset": "T",
+   "group": "T3",
+   "setup": "R' U' R U' R' U R F U' R' U2' R U F'",
+   "algs": [
+    "y2 R' D' R U R' D R U R U' R' U R U' R' U' R U R'",
+    "F U' R' U2 R U F' R' U' R U R' U R",
+    "y2 F U R U2 R' U R U R' F' R' U2 R U R' U R",
+    "R U2 R' F' R U R' U' R' F R U2 R U' R' U' R U R'"
+   ]
+  },
+  {
+   "key": "ZBLL T 36",
+   "subset": "T",
+   "group": "T3",
+   "setup": "R U R' U R U' R' U' L' U2' R U2' R' U2' L y'",
+   "algs": [
+    "R D R' U' R D' R' U' R' U R U' R' U R U R' U' R",
+    "y L' U2 R U2 R' U2 L U R U R' U' R U' R'",
+    "y2 F' U' L' U2 L U F R U R' U' R U' R'",
+    "F' U L U2 L' U' F L U L' U' L U' L'"
+   ]
+  },
+  {
+   "key": "ZBLL T 37",
+   "subset": "T",
+   "group": "T4",
+   "setup": "R U R' U' L' U2' R U R' U2' L R U' R' y'",
+   "algs": [
+    "R' D' R U R' D R2 U R' U2 R U' R' U' R U' R'",
+    "y R U R' L' U2 R U' R' U2 L U R U' R'",
+    "y2 F U F' U2 R F R' U' R F' R' U' F U' F'",
+    "y S2 R U R' S' U R' U' F R' f' R2 U R"
+   ]
+  },
+  {
+   "key": "ZBLL T 38",
+   "subset": "T",
+   "group": "T4",
+   "setup": "R U2' R' U' R U' R D' R U2' R' D R U2' R",
+   "algs": [
+    "y' R U R2 D' R U2 R' D R U2 R U R' U' R U' R'",
+    "R' U2 R' D' R U2 R' D R' U R' U R U2 R'",
+    "y' R2 F' R U S' R U' R' f R f R f'"
+   ]
+  },
+  {
+   "key": "ZBLL T 39",
+   "subset": "T",
+   "group": "T4",
+   "setup": "R' U' R F U' R' U' R U F' U R' U R y'",
+   "algs": [
+    "y R' U' R U' F U' R' U R U F' R' U R",
+    "y2 R D R' U' R D' R2 U' R U2 R' U R U R' U R",
+    "y R D' R2 U' R U2 R' U R U R' U R U' R D R'",
+    "y R' U' R U2 R2 F' R U R U' R' F R U2 R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL T 40",
+   "subset": "T",
+   "group": "T4",
+   "setup": "R' U2' R U R' U R' D R' U2' R D' R' U2' R' y2'",
+   "algs": [
+    "R' U2 R' D' R U2 R' D R2 U' R' U2 R U R' U R",
+    "y2 R U2 R D R' U2 R D' R U' R U' R' U2 R",
+    "y' R' F2 R U' R2 F2 R2 U' R' U2 R' F2 R2",
+    "F R U R' U' F' R U R' U R U' R' U' R' F R F'"
+   ]
+  },
+  {
+   "key": "ZBLL T 41",
+   "subset": "T",
+   "group": "T4",
+   "setup": "x R2' D2' R U2' R' D2' R U2' l y",
+   "algs": [
+    "y' x R' U2 R' D2 R U2 R' D2 R2 x'",
+    "y2 R U2 R' U R U R' y' R' U' R U2 R' U' R"
+   ]
+  },
+  {
+   "key": "ZBLL T 42",
+   "subset": "T",
+   "group": "T4",
+   "setup": "x' R2' D2' R' U2' R D2' R' U2' l' y",
+   "algs": [
+    "y' x' R U2 R D2 R' U2 R D2 R2 x",
+    "R' U2 R U' R' F R U R' U' R' F' R U' R",
+    "R' U2 R U' R' U' R y R U R' U2 R U R'"
+   ]
+  },
+  {
+   "key": "ZBLL T 43",
+   "subset": "T",
+   "group": "T4",
+   "setup": "F R U' R' U R U R' U R U' R' F' y2'",
+   "algs": [
+    "y2 F R U R' U' R U' R' U' R U R' F'",
+    "f U R U' R' U R' U' R f' R' U R",
+    "y R' F' U' F U R F R' F' R U R U' R'",
+    "y2 F R U R' U' R U' R' U' R U R' F' U2"
+   ]
+  },
+  {
+   "key": "ZBLL T 44",
+   "subset": "T",
+   "group": "T4",
+   "setup": "L' R' U R U' L R' U' R U2' R U R2' U R2' U2' R' y2'",
+   "algs": [
+    "y' R U R' U2 R U' R' U2 R U' R2 F' R U R U' R' F",
+    "F' U' F U R' F R2 U R' U' R' F' R2 U R'",
+    "y R U R' U2 R D' R U' R' U' R U2 R' U D R'",
+    "r U2 R2 F R F' U2 r' F R U R U' R' F'"
+   ]
+  },
+  {
+   "key": "ZBLL T 45",
+   "subset": "T",
+   "group": "T4",
+   "setup": "R' U2' R U R' U R' D' R U' R' D R U R y'",
+   "algs": [
+    "y R' U' R' D' R U R' D R U' R U' R' U2 R",
+    "y2 r' D' r U' r' F2 r U' r' F' D r",
+    "y2 F U' R' U2 R' U2 R U' R' U' R U R U F'"
+   ]
+  },
+  {
+   "key": "ZBLL T 46",
+   "subset": "T",
+   "group": "T4",
+   "setup": "R U' R' U' R U2' R' U2' R' D' R U' R' D R",
+   "algs": [
+    "y R U R' U R' D' R U' R' D R U R U2 R'",
+    "y2 R F R' U R U2 R' U R U F' R'",
+    "y R U R D R' U' R D' R' U R' U R U2 R'",
+    "R' D' R U R' D R U2 R U2 R' U R U R'"
+   ]
+  },
+  {
+   "key": "ZBLL T 47",
+   "subset": "T",
+   "group": "T4",
+   "setup": "x M U' L U2' R' U R U2' R' U L' U L",
+   "algs": [
+    "r U R' U' r' F R F' R' U2 R U R' U R",
+    "R' U R2 D R' U R D' R' U R' U' R U' R' U' R",
+    "y f R' F' R U2 R' F R F' R U2 R' S'",
+    "M' f' U' f r' U' R U' R U R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL T 48",
+   "subset": "T",
+   "group": "T4",
+   "setup": "R U' R' U' R U' R' U R' D' R U R' D R2' U R' y2'",
+   "algs": [
+    "y2 R U2 R' U' R U' R2 F' r U R U' r' F",
+    "y2 R U' R2 D' R U' R' D R U' R U R' U R U R'",
+    "y2 F R U R' U' R' F' R U F' R U R' U' R' F R2 U' R'",
+    "y2 M F R F' r U R' U R' U' R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL T 49",
+   "subset": "T",
+   "group": "T5",
+   "setup": "R' U' R U2' R D R' U' R D' R2' U R U' R' U R y'",
+   "algs": [
+    "y R' U' R U R' U' R2 D R' U R D' R' U2 R' U R",
+    "R' U' R U R2 D' R U2 R' D R2 U2 R' U2 R",
+    "y' R2 U2 R U2 R' U L' R U R' U' R2 L",
+    "F U R' D' r U2 r' D R2 U' R' U F'"
+   ]
+  },
+  {
+   "key": "ZBLL T 50",
+   "subset": "T",
+   "group": "T5",
+   "setup": "R2' U R U2' R' U R D' R U2' R' D U' R",
+   "algs": [
+    "R U' R' U R U R' U' R U R' U R' D' R U R' D R",
+    "R' U D' R U2 R' D R' U' R U2 R' U' R2",
+    "F U' R2 U R' U R U2 R2 U' R U2 R' F'",
+    "y R D R' U R D' R' U R' U R U' R' U R U R' U' R"
+   ]
+  },
+  {
+   "key": "ZBLL T 51",
+   "subset": "T",
+   "group": "T5",
+   "setup": "R U R' U R U R2' D' r U2' r' D R2' U R' y'",
+   "algs": [
+    "y R U' R2 D' r U2 r' D R2 U' R' U' R U' R'",
+    "y R' U' R U' R' U' R2 D r' U2 r D' R2 U' R",
+    "y2 R U2 R' U2 R U R2 D' R U' R' D R U2 R U' R'",
+    "R U R' U' R' U R D R' U' R2 D' R D R2 D' R"
+   ]
+  },
+  {
+   "key": "ZBLL T 52",
+   "subset": "T",
+   "group": "T5",
+   "setup": "R2' U R2' U R D' R U' R' D R U' R2'",
+   "algs": [
+    "y2 R U R' U2 R' D' R U R' D R2 U' R' U R U' R'",
+    "R2 U R' D' R U R' D R' U' R2 U' R2",
+    "y2 R' U F' R' U2 R U2 F U' R' U R2",
+    "f R2 D R' U R D' R U' R' f' R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL T 53",
+   "subset": "T",
+   "group": "T5",
+   "setup": "F R' F' r U R U' F R' F' r U R U' r2' y2'",
+   "algs": [
+    "y2 r2 U R' U' r' F R F' U R' U' r' F R F'",
+    "y R U R D R' U R D' R' U L' U R' U' L",
+    "y2 F U R' D' R U R' D R U' R' D' R U' R' D R F'",
+    "y2 R2 D' R U' R' D R U R U R' U2 R' D' R U2 R' D R2"
+   ]
+  },
+  {
+   "key": "ZBLL T 54",
+   "subset": "T",
+   "group": "T5",
+   "setup": "R' U2' R' U2' R2' U R F R U R U' R' F' R2' y2'",
+   "algs": [
+    "y2 R2 F R U R' U' R' F' R' U' R2 U2 R U2 R",
+    "y r U r' R U R' U' R U R' U' r U' r' F R U R' U' F'",
+    "f' U' F R' D' R U2 R' D R U' f R' F' R",
+    "R U R' U R U' R' U R L' U L U2 R' U' L' U2 L"
+   ]
+  },
+  {
+   "key": "ZBLL T 55",
+   "subset": "T",
+   "group": "T5",
+   "setup": "R U' R2' D' r U2' r' D R2' U R' y2'",
+   "algs": [
+    "y2 R U' R2 D' r U2 r' D R2 U R'",
+    "R U R' U R U' R' L' U2 R U R' U2 L",
+    "y R U R' U' R2 D R' U2 R D' R2 U R U' R'",
+    "L' U2 R U' R' U2 L R U R' U' R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL T 56",
+   "subset": "T",
+   "group": "T5",
+   "setup": "R' U R2' D r' U2' r D' R2' U' R",
+   "algs": [
+    "R' U R2 D r' U2 r D' R2 U' R",
+    "y R' U' R U R2 D' R U2 R' D R2 U' R' U R",
+    "y2 R' U' R U' R' U R U R' F' R U R' U' R' F R2",
+    "L' U' L U' L' U L R U2 L' U' L U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL T 57",
+   "subset": "T",
+   "group": "T5",
+   "setup": "R2' U' R2' U' R' D R' U R D' R' U R2' y2'",
+   "algs": [
+    "R' U' R U2 R D R' U' R D' R2 U R U' R' U R",
+    "y2 R2 U' R D R' U' R D' R U R2 U R2",
+    "R' U2 R U2 R2 D' R U2 R' D R2 U' R' U R",
+    "y F U' R U R2 D' r U2 r' D R U' F'"
+   ]
+  },
+  {
+   "key": "ZBLL T 58",
+   "subset": "T",
+   "group": "T5",
+   "setup": "R2' F2' R U2' R U2' R' F' R U R' U' R' F' R2' y'",
+   "algs": [
+    "y R' D' R U' R' D R U' R U' R' U R U' R' U' R U R'",
+    "y2 R' U R U' R' U' R U R' U' R U' R D R' U' R D' R'",
+    "y' R2 U R U2 R' U R D' R U2 R' D U' R",
+    "F R U2 R' U R2 U2 R' U' R U' R2 U F'"
+   ]
+  },
+  {
+   "key": "ZBLL T 59",
+   "subset": "T",
+   "group": "T5",
+   "setup": "R U R' U2' R' D' R U R' D R2' U' R' U R U' R' y'",
+   "algs": [
+    "y R U R' U' R U R2 D' R U' R' D R U2 R U' R'",
+    "y2 R U R' U' R2 D R' U2 R D' R2 U2 R U2 R'",
+    "y' R2 U' R U F' U2 R' U2 R F U' R",
+    "L U L' U' L2 D L' U2 L D' L2 U2 L U2 L'"
+   ]
+  },
+  {
+   "key": "ZBLL T 60",
+   "subset": "T",
+   "group": "T5",
+   "setup": "F R U R' U' R' F' R U R' F' R U R U' R' F R U' R' y2'",
+   "algs": [
+    "y2 R U R' F' R U R' U' R' F R U' R' F R U R U' R' F'",
+    "y R U R' U R U R2 D' r U2 r' D R2 U R'",
+    "y R' U R2 D r' U2 r D' R2 U R U R' U R",
+    "y' R U R' U2 R' D' R U R' D R2 U' R' U2 R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL T 61",
+   "subset": "T",
+   "group": "T6",
+   "setup": "R' U' R U' R' U2' R U' R' U2' R U R' U R y",
+   "algs": [
+    "y2 R U' R' U2 R U R' U2 R U R' U R U' R'",
+    "y' R' U' R U' R' U2 R U R' U2 R U R' U R",
+    "y' r U R' U' r' F R F' R2 x F R F' R U2 r' U r U2 x' U2",
+    "L U' L' U2 L U L' U2 L U L' U L U' L'"
+   ]
+  },
+  {
+   "key": "ZBLL T 62",
+   "subset": "T",
+   "group": "T6",
+   "setup": "R U R' U R U2' R' U R U2' R' U' R U' R' y",
+   "algs": [
+    "y' R U R' U R U2 R' U' R U2 R' U' R U' R'",
+    "R' U R U2 R' U' R U2 R' U' R U' R' U R",
+    "y2 L' U L U2 L' U' L U2 L' U' L U' L' U L",
+    "y L U L' U L U2 L' U' L U2 L' U' L U' L'"
+   ]
+  },
+  {
+   "key": "ZBLL T 63",
+   "subset": "T",
+   "group": "T6",
+   "setup": "R' U2' R2' U R2' U R U' R U R' U' R U' R' y",
+   "algs": [
+    "y' R U R' U R U' R' U R' U' R2 U' R2 U2 R",
+    "y R' U R U2 R' U' R U' R U R' U' R' U' R U2 R U2 R'",
+    "R U' R U2 R U2 R' U R U R' U' R' U R' U'",
+    "y R' F' U' F U' R U R2 F R F' U R"
+   ]
+  },
+  {
+   "key": "ZBLL T 64",
+   "subset": "T",
+   "group": "T6",
+   "setup": "R U2' R' U' R U' R' U' R U R' U R U2' R'",
+   "algs": [
+    "R U2 R' U' R U' R' U R U R' U R U2 R'",
+    "y2 L U2 L' U' L U' L' U L U L' U L U2 L'",
+    "R U2 R' U' R U' R' U R U R' U R U2 R' U'",
+    "y' R U R' f' z F' R U R' U' R' F R2 U' R' f z'"
+   ]
+  },
+  {
+   "key": "ZBLL T 65",
+   "subset": "T",
+   "group": "T6",
+   "setup": "R U2' R2' U' R2' U' R' U R' U' R U R' U R y",
+   "algs": [
+    "y' R' U' R U' R' U R U' R U R2 U R2 U2 R'",
+    "R' U R2 U R' U R' U' R U' R' U' R U R U' R'",
+    "y L' U' L U' L' U L U' L U L2 U L2 U2 L'",
+    "y z D R' U R' D' R U' R U' R D R' U D' z'"
+   ]
+  },
+  {
+   "key": "ZBLL T 66",
+   "subset": "T",
+   "group": "T6",
+   "setup": "R' U2' R U R' U R U R' U' R U' R' U2' R y2'",
+   "algs": [
+    "y2 R' U2 R U R' U R U' R' U' R U' R' U2 R",
+    "L' U2 L U L' U L U' L' U' L U' L' U2 L",
+    "R U2 R2 U R' U2 R2 U R U' R U' R U' R2",
+    "y2 R' U2 R U R' U R U L' U' L U' L' U2 L"
+   ]
+  },
+  {
+   "key": "ZBLL T 67",
+   "subset": "T",
+   "group": "T6",
+   "setup": "R' U' R U' R U2' R2' U' R2' U' R2' U R y",
+   "algs": [
+    "y' R' U' R2 U R2 U R2 U2 R' U R' U R",
+    "R U2 R' U2 R' U2 R U R U' R' U R' U R",
+    "L' U L2 F' L' F r' F U' F U F r",
+    "y L' U' L2 U L2 U L2 U2 L' U L' U L"
+   ]
+  },
+  {
+   "key": "ZBLL T 68",
+   "subset": "T",
+   "group": "T6",
+   "setup": "R U R' U R' U2' R2' U R2' U R2' U' R' y",
+   "algs": [
+    "y' R U R2 U' R2 U' R2 U2 R U' R U' R'",
+    "R U' R2 F R F' R U' B U' B' U' R'",
+    "y2 R' U2 R U2 R U2 R' U' R' U R U' R U' R'",
+    "R U2 R' U2 R' U' F U R U' R U R' U' F'"
+   ]
+  },
+  {
+   "key": "ZBLL T 69",
+   "subset": "T",
+   "group": "T6",
+   "setup": "R' U' R U' R' U2' R2' U R' U R U2' R'",
+   "algs": [
+    "R U2 R' U' R U' R2 U2 R U R' U R",
+    "y2 L U2 L' U' L U' L2 U2 L U L' U L",
+    "R U2 R' U' R U' R' U2 L' U2 L U L' U L",
+    "y' R' U R2 U R' U R U2 R' U' R U R' U R U2 R2 U R"
+   ]
+  },
+  {
+   "key": "ZBLL T 70",
+   "subset": "T",
+   "group": "T6",
+   "setup": "R U R' U R U2' R2' U' R U' R' U2' R y2'",
+   "algs": [
+    "y2 R' U2 R U R' U R2 U2 R' U' R U' R'",
+    "L' U2 L U L' U L2 U2 L' U' L U' L'",
+    "L' U2 L U L' U L U2 R U2 R' U' R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL T 71",
+   "subset": "T",
+   "group": "T6",
+   "setup": "R U R' U' R' U R U R U' R' U R' U R U2' R' U' R",
+   "algs": [
+    "R' U R U2 R' U' R U' R U R' U' R' U' R U R U' R'",
+    "y R2 U R2 U R U' R' U R2 U2 R' U R' U R U' R'",
+    "y' R U R' U R U' R2 U' R' U' R U R' U' R2 U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL T 72",
+   "subset": "T",
+   "group": "T6",
+   "setup": "R' U2' R U R' U R U2' R U2' R' U' R U' R' y",
+   "algs": [
+    "y' R U R' U R U2 R' U2 R' U' R U' R' U2 R",
+    "y' R U R' U R U2 R' L' U' L U' L' U2 L",
+    "y2 R U R' U' R' F D' R U R' D R2 U' R' F'",
+    "y L' U' L U' L' U2 L R U R' U R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL H 1",
+   "subset": "H",
+   "group": "H1",
+   "setup": "R U R' U R U2' R2' F' r U R U' r' F y'",
+   "algs": [
+    "y F' r U R' U' r' F R2 U2 R' U' R U' R'",
+    "R U2 R' U' R U' R' F R U' R' U' R U2 R' U' F'",
+    "R' F R U R' U' R' F' R U R2 U2 R' U' R U' R'",
+    "y R' U' F' U F R U R U R' U' R' F R F'"
+   ]
+  },
+  {
+   "key": "ZBLL H 2",
+   "subset": "H",
+   "group": "H1",
+   "setup": "R U R D R' U' R D' R2' U R U2' R' U' R U' R' y",
+   "algs": [
+    "y' F R' F' r U R U' r2 F2 r U L' U L",
+    "y' R U R' U R U2 R' U' R2 D R' U R D' R' U' R'",
+    "y2 L' R U R' U R U' R' U2 L U' R U2 R'",
+    "y2 R U R' U' R' F R U R U' R' F' U' R' U2 R U R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL H 3",
+   "subset": "H",
+   "group": "H1",
+   "setup": "R' U' R' D' R U R' D R' U R' U R U2' R'",
+   "algs": [
+    "y' R U2 R' U' R U R' U2 R' F R2 U' R' U' R U R' F'",
+    "y R U R D R' U R' U' R U R2 D' R U' R U' R'",
+    "R U2 R' U' R U' R D' R U' R' D R U R",
+    "y R U' R' U' R' D' R U' R' D R2 U' R2 D' R U' R' D R"
+   ]
+  },
+  {
+   "key": "ZBLL H 4",
+   "subset": "H",
+   "group": "H1",
+   "setup": "R' U' F U' R2' U R2' U F' R2' U2' R' y",
+   "algs": [
+    "y F' R U2 R' U2 R' F U' R U R U' R' U' R' U R",
+    "y2 R' U2 R U R' U R' D R' U R D' R' U' R'",
+    "y R' D R2 U' R2 D' R U' R' D R2 U2 R2 D' R",
+    "y' R U2 R2 F U' R2 U' R2 U F' U R"
+   ]
+  },
+  {
+   "key": "ZBLL H 5",
+   "subset": "H",
+   "group": "H1",
+   "setup": "R2' F2' r U r' F R2' U2' B' R B R' y",
+   "algs": [
+    "y2 R' U2 R2 U R2 U R U2 R' F R U R U' R' F'",
+    "R U R' U R U' R' U R U' R2 F' R U R U' R' F R U' R'",
+    "R' F' R U R' U' R' F D' R U' R' D R U2 R",
+    "y R U2 R' U L' U2 R U2 R' U2 L R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL H 6",
+   "subset": "H",
+   "group": "H1",
+   "setup": "R U2' R' U F2' R U2' R' U2' R' F2' R2' U R' y",
+   "algs": [
+    "y' R U2 R' U' R U R' U' F' R U R' U' R' F R2 U' R'",
+    "y' r U2 R' U' R U' r' U R U2 R' U2 R' F R F'",
+    "y R' U2 R U' L U2 R' U2 R U2 L' R' U R",
+    "L F L' U' L U L F' D L' U L D' L' U2 L' U'"
+   ]
+  },
+  {
+   "key": "ZBLL H 7",
+   "subset": "H",
+   "group": "H1",
+   "setup": "R U2' R2' U' R U' R' U2' F R U R U' R' F' y",
+   "algs": [
+    "R U R' U R U' R2 F' R U2 R U2 R' F R U' R'",
+    "y' F R U R' U' R' F' U2 R U R' U R2 U2 R'",
+    "y R' D' R U2 R' D R U R U2 R' U R U' R' U' R U' R'",
+    "y2 F R U' R' U' R U2 R' U' F' R U2 R' U' R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL H 8",
+   "subset": "H",
+   "group": "H1",
+   "setup": "F U R U' R' U R U2' R' U' R U R' F' y2'",
+   "algs": [
+    "y2 F R U' R' U R U2 R' U' R U R' U' F'",
+    "y2 f R U R' U' f' R U R' U' R' F R F'"
+   ]
+  },
+  {
+   "key": "ZBLL H 9",
+   "subset": "H",
+   "group": "H1",
+   "setup": "R' U' F R' F' R U' R U R' F U R U' R' F' R",
+   "algs": [
+    "R F R2 U' R2 U' R2 U2 R2 U' F' R'",
+    "y2 F R' F' R2 U2 R' U R U2 R' U R U' R2 F R F'",
+    "y' R' U R D' R U R' U2 R U R' U D R' U' R",
+    "R' F R U R' U' F' R U' R' U R' F R F' U R"
+   ]
+  },
+  {
+   "key": "ZBLL H 10",
+   "subset": "H",
+   "group": "H1",
+   "setup": "R' U' F' R U R' U' R' F R2' U2' R' U2' R y",
+   "algs": [
+    "y' R' U2 R U2 R2 F' R U R U' R' F U R",
+    "y L' U2 M' x' D R2 U R2 u' R2 B",
+    "F' B L2 B' L2 U L2 U L2 U' L2 F"
+   ]
+  },
+  {
+   "key": "ZBLL H 11",
+   "subset": "H",
+   "group": "H1",
+   "setup": "R U R' U R U' R' U' R' F' R U2' R U2' R' F y'",
+   "algs": [
+    "y F' R U2 R' U2 R' F R U R U R' U' R U' R'",
+    "y2 f R2 S' U' R2 U' R2 U R2 F'",
+    "F B' R2 B R2 U' R2 U' R2 U R2 F'",
+    "U L U2 L' U2 L2 F L' U' L' U L F' U' L'"
+   ]
+  },
+  {
+   "key": "ZBLL H 12",
+   "subset": "H",
+   "group": "H1",
+   "setup": "F U' R U' R' U R U R' U2' R U2' R' U F'",
+   "algs": [
+    "F U' R U2 R' U2 R U' R' U' R U R' U F'",
+    "y' R D' R U2 R' U2 R U' R' U' R U R' D R'",
+    "y f U2 R F R' F' R U2 R U2 R2 U2 f'",
+    "L' F' L2 U L2 U L2 U2 L2 U F L"
+   ]
+  },
+  {
+   "key": "ZBLL H 13",
+   "subset": "H",
+   "group": "H2",
+   "setup": "R2' D R' U2' R D' R2' U' R2' D R' U' R D' R2' y2'",
+   "algs": [
+    "y' R' U2 R U R' U' F' R U R' U' R' F R U2 R",
+    "y2 R2 D R' U R D' R2 U R2 D R' U2 R D' R2",
+    "y r U R' U R U2 r2 F' r U' L' U L U L F' L' F",
+    "L2 D L' U L D' L2 U L2 D L' U2 L D' L2"
+   ]
+  },
+  {
+   "key": "ZBLL H 14",
+   "subset": "H",
+   "group": "H2",
+   "setup": "R U R' U R2' D R' U' R D' R2' U R U2' R' y",
+   "algs": [
+    "y' R U2 R' U' R2 D R' U R D' R2 U' R U' R'",
+    "y R' U2 R2 U R D' R U R' D R' U2 R'",
+    "y R U' L D' F2 D L' U2 R' U' R2 U2 R",
+    "y' L' U2 L2 U L D' L U L' D L' U2 L'"
+   ]
+  },
+  {
+   "key": "ZBLL H 15",
+   "subset": "H",
+   "group": "H2",
+   "setup": "R2' D' R U2' R' D R2' U R2' D' R U R' D R2' y2'",
+   "algs": [
+    "y2 R2 D' R U' R' D R2 U' R2 D' R U2 R' D R2",
+    "R' U2 R U R' U R2 y R U' R' U' R U2 R' U' F'",
+    "y' R' U L' U' R U2 L U' L' U' L U L' U' L",
+    "y L' U R' U' L U2 R U' R' U' R U R' U' R"
+   ]
+  },
+  {
+   "key": "ZBLL H 16",
+   "subset": "H",
+   "group": "H2",
+   "setup": "R' U2' R' D R' U R D' R U R2' U2' R' y",
+   "algs": [
+    "y R' U2 R U R2 D' R U' R' D R2 U R' U R",
+    "y2 R2 D' R U2 R' D R' U R2 U R2 U2 R'",
+    "y' R U2 R2 U' R' D R' U' R D' R U2 R",
+    "y L U2 L2 U' L' D L' U' L D' L U2 L"
+   ]
+  },
+  {
+   "key": "ZBLL H 17",
+   "subset": "H",
+   "group": "H2",
+   "setup": "L U' R' U L' U R2' U R2' U R U' R U' R' y2'",
+   "algs": [
+    "F R' F' R U2 R U2 R' U' R' F2 r U r' F R",
+    "y2 R U R' U R' U' R2 U' R2 U' L U' R U L'",
+    "y R' D' R U R' D R2 U R' U2 R U2 R' U R U2 R'",
+    "R' U2 R' D' R2 D2 R' U R D2 R' U R' D R2"
+   ]
+  },
+  {
+   "key": "ZBLL H 18",
+   "subset": "H",
+   "group": "H2",
+   "setup": "L' U R U' L U' R2' U' R2' U' R' U R' U R y2'",
+   "algs": [
+    "y2 R' U' R U' R' U F' R U R' U' R' F R2 U' R' U R",
+    "y2 R' U' R U' R U R2 U R2 U L' U R' U' L",
+    "U' R' U' R F D R' U R U' R' U R D' R' U' R F'",
+    "R U2 R D R2 D2 R U' R' D2 R U' R D' R2 U"
+   ]
+  },
+  {
+   "key": "ZBLL H 19",
+   "subset": "H",
+   "group": "H2",
+   "setup": "R2' U R' U' R' U2' R' U2' R U R' D R' U R D'",
+   "algs": [
+    "y' F R U' R' U' R U2 R' U' F' U R U R' U R U2 R'",
+    "y' R' U' R f U R U2 R' U2 R' U2 R2 U R' f'",
+    "R' U' R D' R U' R' U2 R U2 R U R U' R2 D",
+    "y R U R' U' R' U2 R2 D R' U R D' R2 U R2 U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL H 20",
+   "subset": "H",
+   "group": "H2",
+   "setup": "F U R U2' R' U R U R' F' R U2' R' U' R U' R' y'",
+   "algs": [
+    "y R U R' U R U2 R' F R U' R' U' R U2 R' U' F'",
+    "y2 R2 D' r U2 r' D R' U R2 U R2 U2 R'",
+    "y R U' L U L2 R' U2 L U L' U L U L U' L'",
+    "y' L U' R U R2 L' U2 R U R' U R U R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL H 21",
+   "subset": "H",
+   "group": "H2",
+   "setup": "L U' R' U L' U R U R' U R",
+   "algs": [
+    "R' F' R U2 R U2 R' F U' R U' R'",
+    "R' U' R U' R' U' L U' R U L'",
+    "R' U' R2 D R' U2 R D' R' U R' U2 R",
+    "y2 L' U' L U' L' U' R U' L U R'"
+   ]
+  },
+  {
+   "key": "ZBLL H 22",
+   "subset": "H",
+   "group": "H2",
+   "setup": "L' U R U' L U' R' U' R U' R'",
+   "algs": [
+    "R U R' U R U r' F R' F' r",
+    "R U R' U R U L' U R' U' L",
+    "y R' F R U R' U' R' F' R U' R U R' U R",
+    "R U R2 D' R U2 R' D R U' R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL H 23",
+   "subset": "H",
+   "group": "H2",
+   "setup": "r' U r U r' U' r U R2' F R F' R y'",
+   "algs": [
+    "y R' F R' F' R2 U' r' U r U' r' U' r",
+    "y R U' L' U R2 U' R L U2 R' U' R",
+    "y R U R' U R U2 R D' R U' R' D R U R"
+   ]
+  },
+  {
+   "key": "ZBLL H 24",
+   "subset": "H",
+   "group": "H2",
+   "setup": "r U' r' U' r U r' U' l R U' R' U l' y",
+   "algs": [
+    "y' R U R2 F R F' r U' r' U r U r'",
+    "y R U2 R' U' R U' R' U L' U R U' L U R'",
+    "y' R' U' R U' R' U2 R' D R' U R D' R' U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL H 25",
+   "subset": "H",
+   "group": "H3",
+   "setup": "F R' U R U2' R2' U' R U2' R' U' R2' U F'",
+   "algs": [
+    "F U' R2 U R U2 R' U R2 U2 R' U' R F'",
+    "y2 R' F R' F' R2 U R' U' R U' f R' f'"
+   ]
+  },
+  {
+   "key": "ZBLL H 26",
+   "subset": "H",
+   "group": "H3",
+   "setup": "R U R' L' U2' R U R' U2' L R U2' R' U' R U' R' y",
+   "algs": [
+    "y R U' R2 U' F2 U' R2 U R2 U F2 R2 U R'",
+    "y' F R U R' U' R U R' U' F' U R' F' U' F U R",
+    "y r U2 R2 F R F' R U2 r' L' U2 L U L' U L",
+    "y r U2 R2 F R F' R U2 r' U2 R' U2 R U R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL H 27",
+   "subset": "H",
+   "group": "H3",
+   "setup": "F U R U' R' U R U' R' U R U' R' F' y'",
+   "algs": [
+    "y F R U R' U' R U R' U' R U R' U' F'",
+    "y F U R U' R' U R U' R' U R U' R' F'",
+    "y R' F2 R2 U2 R' F2 R U2 R2 F2 R",
+    "y f U R U' R' U R U' R' U R U' R' f'"
+   ]
+  },
+  {
+   "key": "ZBLL H 28",
+   "subset": "H",
+   "group": "H3",
+   "setup": "x' U' R U' R' U R' F2' R U' R U R' U x",
+   "algs": [
+    "x' U' R U' R' U R' F2 R U' R U R' U x",
+    "R U' L' U R' U' L R U' L' U R' U' L",
+    "F R' F R F' R U2 R' F R' F' R F'",
+    "R U' r' F R' F' r R U' r' F R' F' r"
+   ]
+  },
+  {
+   "key": "ZBLL H 29",
+   "subset": "H",
+   "group": "H3",
+   "setup": "R' U' R U' L U' R' U L' U2' R2' U2' R' U' R U' R'",
+   "algs": [
+    "R' U2 R U R' U R U R' U' R U R' F' R U R' U' R' F R2",
+    "R' U2 R U R' U R U' r U2 R2 F R F' R U2 r'",
+    "L' U L U' L' U' L U R' U' R U L' U' L U2 R' U' R",
+    "R U R' U R U2 R2 U2 L U' R U L' U R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL H 30",
+   "subset": "H",
+   "group": "H3",
+   "setup": "R U R' U L' U R U' L U2' R2' U2' R U R' U R",
+   "algs": [
+    "R' U' R U' R' U2 R2 U2 L' U R' U' L U' R U' R'",
+    "R U' R' U R U R' U' L U L' U' R U R' U2 L U L'",
+    "R' F2 r2 U' r' F r' F2 R2 U R' U R U2 R'",
+    "R U2 R' U' R U' R' U' R U R' L' U2 R U R' U2 L"
+   ]
+  },
+  {
+   "key": "ZBLL H 31",
+   "subset": "H",
+   "group": "H3",
+   "setup": "L U2' R' U R U2' L' R' U R U' R' U2' R U R' U R y",
+   "algs": [
+    "R' U' F' U F R U' F U R U' R' U R U' R' F'",
+    "y' R' U' R U' R' U2 R U R' U' R U R' F' R U R' U' R' F R2",
+    "y R U' R2 F2 U' R2 U' R2 U F2 U R2 U R'",
+    "y R' U2 R F' r' F r U F U' R' U2 F R F'"
+   ]
+  },
+  {
+   "key": "ZBLL H 32",
+   "subset": "H",
+   "group": "H3",
+   "setup": "R' F R' F' R2' U R' U' R y U' R U' R' y",
+   "algs": [
+    "y' R U R' U y' R' U R U' R2 F R F' R",
+    "F R' U R U2 R2 U' R U2 R' U' R2 U F'",
+    "y2 f R f' U R' U R U' R2 F R F' R",
+    "y' F U F' U2 L2 U' L2 U' L2 U2 L2 F U' F'"
+   ]
+  },
+  {
+   "key": "ZBLL H 33",
+   "subset": "H",
+   "group": "H4",
+   "setup": "R U2' R' U' R U R' U' R U' R'",
+   "algs": [
+    "R U R' U R U' R' U R U2 R'",
+    "y' f R f' U f R' f' U f R2 f'",
+    "y2 L U L' U L U' L' U L U2 L'",
+    "y' U R U R' U R U' R' U R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL H 34",
+   "subset": "H",
+   "group": "H4",
+   "setup": "R' U2' R U R' U' R U R' U R",
+   "algs": [
+    "R' U' R U' R' U R U' R' U2 R",
+    "y' U' L' U' L U' L' U L U' L' U2 L",
+    "y2 L' U' L U' L' U L U' L' U2 L"
+   ]
+  },
+  {
+   "key": "ZBLL H 35",
+   "subset": "H",
+   "group": "H4",
+   "setup": "R' U' R U' R' U R U' R' U2' R y",
+   "algs": [
+    "y' R' U2 R U R' U' R U R' U R",
+    "y L' U2 L U L' U' L U L' U L"
+   ]
+  },
+  {
+   "key": "ZBLL H 36",
+   "subset": "H",
+   "group": "H4",
+   "setup": "R U R' U R U' R' U R U2' R' y",
+   "algs": [
+    "y' R U2 R' U' R U R' U' R U' R'",
+    "U L U2 L' U' L U L' U' L U' L'",
+    "y L U2 L' U' L U L' U' L U' L'"
+   ]
+  },
+  {
+   "key": "ZBLL H 37",
+   "subset": "H",
+   "group": "H4",
+   "setup": "R U2' R' U' R U' R' U' R' U' R U' R' U2' R y",
+   "algs": [
+    "y' R' U2 R U R' U R U R U R' U R U2 R'",
+    "y' R U2 R2 U2 R' U2 R U2 R' U2 R2 U2 R",
+    "R U R2 U' R2 U R2 U2 R2 U2 R' U R' U R",
+    "y R' U R U R' U R U R U R' U R' U' R2 U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL H 38",
+   "subset": "H",
+   "group": "H4",
+   "setup": "R' U2' R U R' U R U R U R' U R U2' R' y'",
+   "algs": [
+    "y R U2 R' U' R U' R' U' R' U' R U' R' U2 R",
+    "y R U2 R' U' R U' R' U r' F' r U' r' F2 r",
+    "R L F2 L' R U2 R2 F U2 y' R' U2 R' U2 R' U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL H 39",
+   "subset": "H",
+   "group": "H4",
+   "setup": "R' U' R U' R' U2' R U R U2' R' U' R U' R'",
+   "algs": [
+    "R U R' U R U2 R' U' R' U2 R U R' U R",
+    "y2 R' U' R U' R' U2 R U R U2 R' U' R U' R'",
+    "R' U' R U' R' U2 R U R U2 R' U' R U' R'",
+    "R' U' R' r2 U' R' U R' r2 U' r' U2 r"
+   ]
+  },
+  {
+   "key": "ZBLL H 40",
+   "subset": "H",
+   "group": "H4",
+   "setup": "R' U' R U' R U R2' U R U' R U R' U' R U R' U' R U' R'",
+   "algs": [
+    "R U R' U R U' R' U R U' R' U R' U' R2 U' R' U R' U R",
+    "F U R' F R F' R U' R' U R' F R F' R U' R' F'",
+    "R U R' U R U' R' U R2 U R U R U' R' U' R' U R'",
+    "R' F R U R' F R U' R' F' R U' R' F R U R' F R U' R' F' R"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 1",
+   "subset": "Pi",
+   "group": "Pi1",
+   "setup": "L R' U' R U' R' U R U2' L' U R' U2' R",
+   "algs": [
+    "y' R U R' U R U2 R2 F' r U R U' r' F",
+    "y' R U R' U R U2 R2 U' R' F R U R U' R' F' R",
+    "y F U R U2 R' U R U R' F' R U R' U R U2 R'",
+    "y2 R U2 R' U' R U' R' U r U R' U' r' F R F'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 2",
+   "subset": "Pi",
+   "group": "Pi1",
+   "setup": "L' R U R' U R U' R' U2' L U' R U2' R'",
+   "algs": [
+    "y' r' F' r U' r' F2 r2 U R' U' r' F R F'",
+    "y R' U' R U' R' U2 R U' R U R D R' U' R D' R2",
+    "R U2 R' U L' U2 R U R' U' R U' R' L",
+    "y' L' U' L U' L' U2 L r U R' U' r' F R F'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 3",
+   "subset": "Pi",
+   "group": "Pi1",
+   "setup": "R U2' R' U' R U' R D' R U' R' D R U R y2'",
+   "algs": [
+    "F R U' R' U R U R2 F' R U2 R U' R' U R U2 R' U'",
+    "y2 R' U' R' D' R U R' D R' U R' U R U2 R'",
+    "S R U R U' R' F U R' U' R U R' U' f'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 4",
+   "subset": "Pi",
+   "group": "Pi1",
+   "setup": "R' U2' R U R' U R' D R' U R D' R' U' R' y2'",
+   "algs": [
+    "y2 R U R D R' U' R D' R U' R U' R' U2 R",
+    "y' R' U' F U' R2 U R2 U F' R2 U2 R'",
+    "y' R' D R2 U2 R2 D' R U R' D R2 U R2 D' R"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 5",
+   "subset": "Pi",
+   "group": "Pi1",
+   "setup": "R U R2' F' U2' R U R' U R2' U2' R' U F R U' R'",
+   "algs": [
+    "F R' F' R U2 R U2 R' U' r U R' U R U2 r'",
+    "R U R' U R' F R F' R' U' F' U F R2 U' R'",
+    "y R U R2 F' R U R U' R' F U R U' R' U R U2 R'",
+    "y R U R2 D' R U R' D R2 U2 R' U R U R' U R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 6",
+   "subset": "Pi",
+   "group": "Pi1",
+   "setup": "R' U2' R2' U R2' U R U2' R' F R U R U' R' F'",
+   "algs": [
+    "F R U R' U' R' F' R U2 R' U' R2 U' R2 U2 R",
+    "y R' U2 R' D' R U R' D F' R U R U' R' F R U'",
+    "y' R U L' R' U2 R U2 R' U2 L U' R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 7",
+   "subset": "Pi",
+   "group": "Pi1",
+   "setup": "R' U' R U' R' U R U R' F R U R' U' R' F' R2'",
+   "algs": [
+    "R2 F R U R U' R' F' R U' R' U' R U R' U R",
+    "y R U2 R2 U' R U' R' U2 F R U R U' R' F'",
+    "y' R U R' U R U2 R' F U R U2 R' U R U R' F'",
+    "R U2 R2 U' R' D R' U' R D2 L F2 L' D R2"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 8",
+   "subset": "Pi",
+   "group": "Pi1",
+   "setup": "F R U' R' U R U2' R' U' R U R' U' F' y'",
+   "algs": [
+    "y F U R U' R' U R U2 R' U' R U R' F'",
+    "R' U R U R' U R U' R2 D' R U' R' D R U' R",
+    "R U y R U' R' U R U2 R' U' R U R' F'",
+    "U R' U2 R2 F' R2 F R2 U2 R' U2 F' R F U2 R2 U'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 9",
+   "subset": "Pi",
+   "group": "Pi1",
+   "setup": "F' R U2' R' U2' R' F R U R U R' U' R U' R' y",
+   "algs": [
+    "y' R U R' U R U' R' U' R' F' R U2 R U2 R' F",
+    "y F R2 U' R2 U R2 U S R2 f'",
+    "R U R' U L' U2 R U R' U2 L R U2 R'",
+    "y F R2 U' R2 U R2 U F' B U2 B'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 10",
+   "subset": "Pi",
+   "group": "Pi1",
+   "setup": "F U' R U2' R' U2' R U' R' U' R U R' U F' y",
+   "algs": [
+    "y' F U' R U' R' U R U R' U2 R U2 R' U F'",
+    "y R' B' U' R2 U2 R2 U' R2 U' R2 B R",
+    "y R' F' R U R U' R' F U R2 U R2 U R U' R U' R2",
+    "R U' L U' R' U L' U' R' U' R2 U' R2 U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 11",
+   "subset": "Pi",
+   "group": "Pi1",
+   "setup": "R' U R U R' U' R' D' R U' R' D R U' R' D' R U R' D R2' y'",
+   "algs": [
+    "y' R F U R2 U2 R2 U R2 U R2 F' R'",
+    "y R2 D' R U' R' D R U R' D' R U R' D R U R U' R' U' R",
+    "y2 R' U R U' D' R U' R' U2 R U' R' D R' U' R",
+    "y L U L2 R U2 L2 U L2 U L2 U R' U' L'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 12",
+   "subset": "Pi",
+   "group": "Pi1",
+   "setup": "R' U2' R U2' R2' F' R U R U' R' F U R",
+   "algs": [
+    "R' U' F' R U R' U' R' F R2 U2 R' U2 R",
+    "R' U' R U' L U2 R' U' L' U2 L R U2 L'",
+    "y' B' R2 U R2 U' R2 U' S R2 F z'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 13",
+   "subset": "Pi",
+   "group": "Pi2",
+   "setup": "R2' D' R U' R' D R2' U' R2' D' R U2' R' D R2' y'",
+   "algs": [
+    "y R2 D' R U2 R' D R2 U R2 D' R U R' D R2",
+    "y R2 U' R2 F U R2 U' R2 F' U' R2 U R2",
+    "y2 R' U R U' R' U R U R' U2 L' U R U' L",
+    "L' U L U' L' U L U L' U2 R' U L U' R"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 14",
+   "subset": "Pi",
+   "group": "Pi2",
+   "setup": "R2' D R' U R D' R2' U R2' D R' U2' R D' R2' y",
+   "algs": [
+    "y' R2 D R' U2 R D' R2 U' R2 D R' U' R D' R2",
+    "y' R2 U R2 B' U' R2 U R2 B U R2 U' R2",
+    "R' U2 R2 U R2 U R2 U' R' U' R' F R2 U' R' U' R U R' F'",
+    "L U2 R' U L' U L U' L' U' L U' R U2 L'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 15",
+   "subset": "Pi",
+   "group": "Pi2",
+   "setup": "R' U2' R U R2' D' R U' R' D R2' U R' U R",
+   "algs": [
+    "R' U' R U' R2 D' R U R' D R2 U' R' U2 R",
+    "R' U2 R' D R' U R D' R U R2 U2 R'",
+    "y2 L' U2 L' D L' U L D' L U L2 U2 L' U2"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 16",
+   "subset": "Pi",
+   "group": "Pi2",
+   "setup": "R U2' R' U' R2' D R' U R D' R2' U' R U' R'",
+   "algs": [
+    "R U R' U R2 D R' U' R D' R2 U R U2 R'",
+    "R U2 R D' R U' R' D R' U' R2 U2 R",
+    "y2 L U L' U L2 D L' U' L D' L2 U L U2 L'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 17",
+   "subset": "Pi",
+   "group": "Pi2",
+   "setup": "R2' D' R U2' R' D R2' U R' U R U R' U2' R U R' U R",
+   "algs": [
+    "R' U' R U R2 F' R U R U' R' F U' R U R' U R",
+    "R' U' R U' R' U2 R U' R' U' R U' R2 D' R U2 R' D R2",
+    "R U2 R2 U' R2 U' R' U R' U2 L U' R U L'",
+    "y' R' U2 R U R' U2 R U2 R' U R2 D R' U R D' R'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 18",
+   "subset": "Pi",
+   "group": "Pi2",
+   "setup": "R' F' R U2' R U2' R' F R' U' R2' U' R' U R' U R y'",
+   "algs": [
+    "y R U2 R' U' R U2 R' U2 R U' R2 D' R U' R' D R",
+    "y' R' U' F' R U2 R' U' R U' R' F U R U R' U2 R",
+    "R' U2 R2 U R2 U R U' R U2 L' U R' U' L",
+    "y R' U' R U' R U R2 U R F' R U2 R' U2 R' F R"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 19",
+   "subset": "Pi",
+   "group": "Pi2",
+   "setup": "R U R' U R U2' R' F R U' R' U' R U2' R' U' F' y",
+   "algs": [
+    "y' F U R U2 R' U R U R' F' R U2 R' U' R U' R'",
+    "y' R2 D R' U R D' R2 U R U2 R2 U' R U' R' U2 R",
+    "y R U2 R2 U' R2 U' R D' r U2 r' D R2",
+    "y R' U' R U' R' U2 R2 U R' U' R' F' R U2 R U2 R' F"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 20",
+   "subset": "Pi",
+   "group": "Pi2",
+   "setup": "r' F' r U R U2' r' F2' r U' R' U R U2' R' y2'",
+   "algs": [
+    "y2 R U2 R' U' R U' R' U' F U R U2 R' U R U R' F'",
+    "y2 R U2 R' U' R U r' F2 r U2 R' U' r' F r",
+    "L' U2 L U L' U' R U2 R' U2 L U R U' R'",
+    "R2 U R' U' R' U2 R' U2 R U R' D R' U R D'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 21",
+   "subset": "Pi",
+   "group": "Pi2",
+   "setup": "R U R' U R U L' U R' U' L y2'",
+   "algs": [
+    "y2 L' U R U' L U' R' U' R U' R'",
+    "y' R U2 R' U R' D' R U2 R' D R2 U' R'",
+    "y R' U' R U' R' U R' F R U R U' R' F' R",
+    "R' U L U' R U' L' U' L U' L'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 22",
+   "subset": "Pi",
+   "group": "Pi2",
+   "setup": "R U R' U R U2' R D' R U' R' D R U R",
+   "algs": [
+    "r' U r U r' U' r U R2 F R F' R",
+    "R' U' R' D' R U R' D R' U2 R' U' R U' R'",
+    "U R U R' U R U2 R' U R U' L' U R' U' L"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 23",
+   "subset": "Pi",
+   "group": "Pi2",
+   "setup": "R' U' R U' R' U2' R' D R' U R D' R' U' R'",
+   "algs": [
+    "r U' r' U' r U r' U' R2 B' R' B R' U",
+    "r U' r' U' r U r' F R' F' R2 U' R'",
+    "R U R D R' U' R D' R U2 R U R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 24",
+   "subset": "Pi",
+   "group": "Pi2",
+   "setup": "L' U' L U' L' U' R U' L U R'",
+   "algs": [
+    "y' R U R' U F' R U2 R' U2 R' F R",
+    "R U' L' U R' U L U L' U L",
+    "R U' r' F R' F r U r' F r"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 25",
+   "subset": "Pi",
+   "group": "Pi3",
+   "setup": "R' U' R U' R' U R U' R2' D' R U R' D R U R",
+   "algs": [
+    "R' U' R' D' R U' R' D R2 U R' U' R U R' U R",
+    "R' U2 R U R' U' R U2 L U' R' U R L'",
+    "R' U2 R U R' U' R U F R' U R U' F'",
+    "y2 L' U2 L U L' U' L U2 R U' L' U M' x'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 26",
+   "subset": "Pi",
+   "group": "Pi3",
+   "setup": "F' R U R' U' R' F R U' R U' R' U' R U R' U R U R'",
+   "algs": [
+    "R U' R' U' R U' R' U R U R' U R' F' R U R U' R' F",
+    "y R2 F R U R U' R' F' R U2 R U R2 U R2 U2 R'",
+    "y' R U2 R' U L U' R' U' R2 U' R2 U2 R L'",
+    "y' R U2 R F2 R2 U' R U' R' U R2 F2 R2"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 27",
+   "subset": "Pi",
+   "group": "Pi3",
+   "setup": "R U2' R' U' R U R' U2' L' U R U' R' L y'",
+   "algs": [
+    "y R U R' U R U' R' U R2 D R' U' R D' R' U' R'",
+    "y L' R U R' U' L U2 R U' R' U R U2 R'",
+    "y M F R' F' r U2 R U' R' U R U2 R'",
+    "F' U' L U L' F U L U' L' U L U2 L' U"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 28",
+   "subset": "Pi",
+   "group": "Pi3",
+   "setup": "R' F R U R' U' R' F' R2' U' R' U R U' R' U2' R y2'",
+   "algs": [
+    "y2 R' U2 R U R' U' R U R2 F R U R U' R' F' R",
+    "L' R U2 R2 U' R2 U' R' U' L U R' U2 R",
+    "y R2 B2 R2 U R' U' R U' R2 B2 R U2 R",
+    "y F' U R' F U' R' F' R2 F2 R' F' U R"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 29",
+   "subset": "Pi",
+   "group": "Pi3",
+   "setup": "R U2' R' U2' R' F R2' U' R' U2' R U2' R' U' F' y'",
+   "algs": [
+    "R U' L' U R' U' L U' R U' L' U R' U' L",
+    "y F U R U2 R' U2 R U R2 F' R U2 R U2 R'",
+    "L U' R U R' L' U2 R U2 R' U R U2 R'",
+    "L' U2 R U' L U' R' U' R U2 L' U M' x'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 30",
+   "subset": "Pi",
+   "group": "Pi3",
+   "setup": "R U R' U' R' F R2' U R' U' R U R' U' F' y'",
+   "algs": [
+    "y F U R U' R' U R U' R2 F' R U R U' R'",
+    "y' R U' R U2 R U2 R2 U R' F2 R' U R' U' R2 F2",
+    "R U R' U R' F R2 U' R' U' R U R' F' U R U' R'",
+    "y2 L' U' L U L F' L2 U' L U L' U' L U F"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 31",
+   "subset": "Pi",
+   "group": "Pi3",
+   "setup": "x U R' U' R U2' L U L' U x' U' R U' R' U' R U' R' y2'",
+   "algs": [
+    "F U R U' R2 F' R2 U R' F' U' F U2 R U' R'",
+    "y R U R' U' R U R2 D' R U R' D R U R U' R' U R U2 R'",
+    "F U' R2 U R U' R' U R2 U2 R' U' R' U R U' R F'",
+    "y R U R' U R U2 R' U' R U R' U R2 D R' U2 R D' R2"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 32",
+   "subset": "Pi",
+   "group": "Pi3",
+   "setup": "r' F' r U r U2' r' F2' U' R U R' U' R U' R' y",
+   "algs": [
+    "y' R U R' U R U' R2 F R F' R U' R' F' U F",
+    "f R U R2 D' R U' R' D R S' R U R' U' F'",
+    "y' F' U' L' U L S' L D L' U' L D' L2 U L f U2",
+    "y2 R' D' R U R' D R U2 R U2 R' U R U' R' U' R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 33",
+   "subset": "Pi",
+   "group": "Pi3",
+   "setup": "l U2' l' U2' R' U2' R B2' U R' U R y'",
+   "algs": [
+    "y r' F R F' r U R' U R U2 R' U' R U' R'",
+    "y R' F R F' r U R' U R U2 r' U' R U' R'",
+    "y' L' U' L U' F2 L' U2 L U2 L F2 L'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 34",
+   "subset": "Pi",
+   "group": "Pi3",
+   "setup": "R2' D' R U' R' D R U' R U R' U' R U R' U R y",
+   "algs": [
+    "y' R' U' R U' R' U R U' R' U R' D' R U R' D R2",
+    "y L' U R U' L U R2 U' R U' R' U2 R",
+    "y R B2 R' U R2 B2 R' U' R' U' R2 B2 R2"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 35",
+   "subset": "Pi",
+   "group": "Pi3",
+   "setup": "R' F2' R U' R2' F2' R U R U R2' F2' R2' y'",
+   "algs": [
+    "y2 R2 D R' U R D' R' U R' U' R U R' U' R U' R'",
+    "y R U2 R' U' R U' R2 U r f' U f r'",
+    "y R U2 R' U' R U' R' U2 r' F R F' r U R'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 36",
+   "subset": "Pi",
+   "group": "Pi3",
+   "setup": "R U R' U F2' R U2' R' U2' R' F2' R",
+   "algs": [
+    "R' U' R U' R' U2 R U' L' U R U' L U R'",
+    "R' F2 R U2 R U2 R' F2 U' R U' R'",
+    "y2 L' U' L U' L' U2 L U L' U R U' L U R'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 37",
+   "subset": "Pi",
+   "group": "Pi4",
+   "setup": "R' U2' R U R' U' R U R2' F R U R U' R' F' R",
+   "algs": [
+    "R' F R U R' U' R' F' R2 U' R' U R U' R' U2 R",
+    "y' R U R' U R2 F2 R' U2 R' U2 R2 F2 R2",
+    "y F' R U R' U R U' R' U' R' F R U' R U' R' U R U R'",
+    "y R' U' F R F2 R2 F R U F' R U' F"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 38",
+   "subset": "Pi",
+   "group": "Pi4",
+   "setup": "R U R' U R U' R' U R2' D R' U' R D' R' U' R'",
+   "algs": [
+    "R U R D R' U R D' R2 U' R U R' U' R U' R'",
+    "R U2 R' U' R U R' U2 r' F R F' M'",
+    "R U2 R' U' R U R' U2 L' U R U' M' x'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 39",
+   "subset": "Pi",
+   "group": "Pi4",
+   "setup": "R U2' R' U L U' R' U' R2' U' R2' U2' R L'",
+   "algs": [
+    "R U2 R2 U' R2 U' R' U2 R' F R U R' U' R' F' R2",
+    "y' R2 F2 R2 U' R U R' U R2 F2 R' U2 R'",
+    "y F' R U R' U' R' F R U' R U' R' U' R U R' U R U R'",
+    "R' U2 R U R U2 R' U2 R' F' R U2 R U2 R' F R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 40",
+   "subset": "Pi",
+   "group": "Pi4",
+   "setup": "R' U' R' D' R U' R' D R2' U R' U' R U R' U R y",
+   "algs": [
+    "y' R' U' R U' R' U R U' R2 D' R U R' D R U R",
+    "y2 F U R' U' R F' U' R' U R U' R' U2 R",
+    "y' R' U R' F R2 U R' U' R U R' U' F' R U2 R' U R",
+    "y' R' U' R U' R' U R U2 R D R' U R D' R2 U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 41",
+   "subset": "Pi",
+   "group": "Pi4",
+   "setup": "F U R U' R' U R U' R2' F' R U R U' R'",
+   "algs": [
+    "R U R' U' R' F R2 U R' U' R U R' U' F'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 42",
+   "subset": "Pi",
+   "group": "Pi4",
+   "setup": "L U' R U R' L' U2' R U2' R' U R U2' R' y2'",
+   "algs": [
+    "y2 R U2 R' U2 R' F R2 U' R' U2 R U2 R' U' F'",
+    "y2 R' U' R' D' R U' D R' D' R U2 R' D R D' R' D R2"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 43",
+   "subset": "Pi",
+   "group": "Pi4",
+   "setup": "R2' F2' U R U R2' U' R' U' F2' R2' U' R U' R' y",
+   "algs": [
+    "y R U2 R' U' R U R' U' R' D' R U' R' D R2 U' R' U R U' R'",
+    "R U2 R' U R2 D R' U2 R D' R2 U' R U2 R' U' R U R'",
+    "y R' U2 R U' D' R2 D R2 U' R' D' R D R' U R2",
+    "y' R U R' U R2 F2 U R U R2 U' R' U' F2 R2"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 44",
+   "subset": "Pi",
+   "group": "Pi4",
+   "setup": "R U R' U R U' R' U F2' r U2' r' U' r' F r",
+   "algs": [
+    "r' F' r U r U2 r' F2 U' R U R' U' R U' R'",
+    "y' F U R U' R' S R' D' R U R' D R2 U' R' f'",
+    "y2 R U R' U R U R' U' R U2 R' U2 R' D' R U' R' D R",
+    "U' F' U' F R U R' F R' F' R2 U R' U' R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 45",
+   "subset": "Pi",
+   "group": "Pi4",
+   "setup": "R' U' R U' B2' R' U2' R U2' l U2' l'",
+   "algs": [
+    "R U R' U R U2 R' U' R U' L' U R' U' L",
+    "R B2 R' U2 R' U2 R B2 U R' U R",
+    "R U R' U R U2 R' U' R U' r' F R' F' r",
+    "y2 R U2 R' U2 R' F2 R F2 U L' U L"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 46",
+   "subset": "Pi",
+   "group": "Pi4",
+   "setup": "R' U' R U' R' U R U' R' U R' D' R U R' D R2' y2'",
+   "algs": [
+    "y' R' U2 R U R' U R2 U' r' F R' F' r",
+    "y' R' U2 R U R' U R2 U' L' U R' U' L",
+    "y2 R2 D' R U' R' D R U' R U R' U' R U R' U R",
+    "y' R2 B2 R2 U R U R B2 R2 U' R B2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 47",
+   "subset": "Pi",
+   "group": "Pi4",
+   "setup": "R2' D R' U R D' R' U R' U' R U R' U' R U' R' y'",
+   "algs": [
+    "y R U R' U R U' R' U R U' R D R' U' R D' R2",
+    "y' L U' R' U L' U' R2 U R' U R U2 R'",
+    "y' R' F2 R U' R2 F2 R U R U R2 F2 R2",
+    "y R U' L' U R' U' L U2 R U R' U R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 48",
+   "subset": "Pi",
+   "group": "Pi4",
+   "setup": "R' F2' R U2' R U2' R' F2' U' R U' R' y",
+   "algs": [
+    "y' R U R' U F2 R U2 R' U2 R' F2 R",
+    "y2 R U R' U R U' R' U R' D' R U2 R' D R2 U' R' U2 R U2 R'",
+    "U' R U R' F' R U' r' F R' F r U F",
+    "y R U' L' U R' U' L U R' U2 R U R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 49",
+   "subset": "Pi",
+   "group": "Pi5",
+   "setup": "R' U2' R2' U R U R2' D' R U' R' D U' R'",
+   "algs": [
+    "y R U2 R' U2 R' U' F U R2 U' R' U R U' R' F'",
+    "R U D' R U R' D R2 U' R' U' R2 U2 R",
+    "y2 R' U2 R U' R D R' U' R D' R2 U R U' R' U R",
+    "y2 R F' U' R2 U' F U F' R2 U F R'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 50",
+   "subset": "Pi",
+   "group": "Pi5",
+   "setup": "R U2' R' U' F' R U2' R' U' R U' R' F R U' R' y",
+   "algs": [
+    "y' R U R' F' R U R' U R U2 R' F U R U2 R'",
+    "R' F' U' F U' R U S' R' U R S",
+    "r' U' R U' R' U R U' R' U R' F R F' U r",
+    "y2 S' R U R' S U R U' B U' B' R'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 51",
+   "subset": "Pi",
+   "group": "Pi5",
+   "setup": "F R2' U' R U' R U' R' U2' R' U R2' F' y2'",
+   "algs": [
+    "y2 R F U' R2 U2 R U R' U R2 U F' R'",
+    "y2 R2 D R' U2 R D' R' U' R' U R2 D R' U2 R D' R2",
+    "S' R U R' S R U' R2 F' U' F U' R U R' U R",
+    "R2 D' R U2 R' D R2 U R' U' R' D' R U2 R' D R2"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 52",
+   "subset": "Pi",
+   "group": "Pi5",
+   "setup": "R U2' R' U R' D' R U R' D R2' U' R' U R U' R' y'",
+   "algs": [
+    "y R U R' U' R U R2 D' R U' R' D R U' R U2 R'",
+    "R' U R U F R' U R U' F' U' R' U' R",
+    "F' L' U' L U L' U' L2 U F U' L' U2 L' U2 L",
+    "y' R U2 R2 U' R' U' R2 D R' U R U D' R"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 53",
+   "subset": "Pi",
+   "group": "Pi5",
+   "setup": "F R U' R' U2' R' U2' R2' U R2' U R U' F'",
+   "algs": [
+    "F U R' U' R2 U' R2 U2 R U2 R U R' F'",
+    "y2 R U' R2 D' R U2 R' D U2 R2 U R2 U R",
+    "F U R' U' R2 U' R2 U2 R F' L' U L",
+    "y' R' U' R' F R F' R U' R' U2 R S R' F' R S' R' F R U' M' U2 M"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 54",
+   "subset": "Pi",
+   "group": "Pi5",
+   "setup": "R2' D' R U2' R' D R U2' R' D' R U' R' D R U R y'",
+   "algs": [
+    "y R' U' R' D' R U R' D R U2 R' D' R U2 R' D R2",
+    "R U2 R2 F R F' R' F R F' R' F R F' R U2 R'",
+    "y R2 D' R U2 R' D R U2 R' D' R U' R' D R U R",
+    "y' R' F2 D R U2 R' D' R2 U2 R' F2 R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 55",
+   "subset": "Pi",
+   "group": "Pi5",
+   "setup": "R U R' U R U R' U' R U R D R' U R D' R2'",
+   "algs": [
+    "R2 D R' U' R D' R' U' R' U R U' R' U' R U' R'",
+    "R U R' U L' U2 R U2 R' U2 L U' R U' R'",
+    "y2 R U R' U R U R' U' R U R D R' U R D' R2",
+    "y2 L2 D L' U' L D' L' U' L' U L U' L' U' L U' L'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 56",
+   "subset": "Pi",
+   "group": "Pi5",
+   "setup": "R' U' R U' R' U' R U R' U' R' D' R U' R' D R2'",
+   "algs": [
+    "R2 D' R U R' D R U R U' R' U R U R' U R",
+    "R' U' R U2 F U' R' U2 R U F' U2 R' U R",
+    "L U L' U R' U L U R U R' U M x",
+    "y2 R' U' R U' R' U' R U R' U' R' D' R U' R' D R2"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 57",
+   "subset": "Pi",
+   "group": "Pi5",
+   "setup": "R U R' U' R U R2' D' R U' R' D R U' R U2' R' y2'",
+   "algs": [
+    "y2 R U2 R' U R' D' R U R' D R2 U' R' U R U' R'",
+    "y2 R' U R U F U R' U' R F' U' R' U' R",
+    "y L' U2 L U2 L U F' U' L2 U L U' L' U L F",
+    "y' F' R U F2 U R' U' R F2 U' R' F"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 58",
+   "subset": "Pi",
+   "group": "Pi5",
+   "setup": "F R2' U' R U2' R U R' U R' U R2' F'",
+   "algs": [
+    "R2 D R' U2 R D' R2 U' R U R D R' U2 R D' R2",
+    "R F U' R2 U' R U' R' U2 R2 U F' R'",
+    "F R2 U' R U' R U' R' U2 R' U R2 F'",
+    "y2 R2 U R' U2 R' U' R U R D R' U R D' R' U R U' R2"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 59",
+   "subset": "Pi",
+   "group": "Pi5",
+   "setup": "R' U2' R U' R D R' U' R D' R2' U R U' R' U R y",
+   "algs": [
+    "y' r U R' U R' F R F' R U' R' U R U2 r'",
+    "R F' U' R2 F U' F' U R2 U F R'",
+    "y' R' U' R U R' U' R2 D R' U R D' R' U R' U2 R",
+    "y2 F R U R' U' R U R2 U' F' U R U2 R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 60",
+   "subset": "Pi",
+   "group": "Pi5",
+   "setup": "R U R' F' R U R' U R U2' R' F U R U2' R' y'",
+   "algs": [
+    "y R U2 R' U' F' R U2 R' U' R U' R' F R U' R'",
+    "y2 S' R' U' R S U' R' U F' U F R",
+    "r U R' U R U' R' U x' R F' R U' R' U F' L'",
+    "y R U2 R2 U' R2 U' M' x' U' R' U L' U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 61",
+   "subset": "Pi",
+   "group": "Pi6",
+   "setup": "R' U2' R2' U R2' U R2' U2' R'",
+   "algs": [
+    "R U2 R2 U' R2 U' R2 U2 R",
+    "R U2 R2 U' R2 U' R2 U2 R U2",
+    "y2 L U2 L2 U' L2 U' L2 U2 L"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 62",
+   "subset": "Pi",
+   "group": "Pi6",
+   "setup": "R' U' R U' R' U2' R2' U2' R' U' R U' R' y'",
+   "algs": [
+    "y' R' U2 R U R' U R2 U R' U R U2 R'",
+    "S' r' U r2 U' r2 U' r2 U r' S",
+    "y R U R' U R U2 R2 U2 R U R' U R",
+    "R U2 R' U' R U' R' U2 R' U' R U' R' U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 63",
+   "subset": "Pi",
+   "group": "Pi6",
+   "setup": "R U' R' U2' R U R' U2' R U R' U2' R U2' R' y",
+   "algs": [
+    "y' R U2 R' U2 R U' R' U2 R U' R' U2 R U R'",
+    "S R2 S' R U2 R2 U R2 U' R2 U2 R",
+    "y2 R U R' U' R2 U R' U R' U' R U R U2 R2",
+    "y R U2 L' U R' U' R U R' U' R L U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 64",
+   "subset": "Pi",
+   "group": "Pi6",
+   "setup": "R' U R U2' R' U' R U2' R' U' R U2' R' U2' R y'",
+   "algs": [
+    "y R' U2 R U2 R' U R U2 R' U R U2 R' U' R",
+    "y2 R U R' U' R2 U R' U R U2 R2 U' R U R'",
+    "y2 S' U2 S R U2 R2 U' R2 U R2 U2 R'",
+    "y L' U2 R U' L U L' U' L U L' R' U2 L"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 65",
+   "subset": "Pi",
+   "group": "Pi6",
+   "setup": "R U2' R' U2' R U' R' U2' R U' R' U2' R U R' y2'",
+   "algs": [
+    "y2 R' U R U' R2 U2 R U R' U R2 U' R' U R",
+    "y' r U2 R2 F R F' R' F R F' R U2 r'",
+    "R' U2 R2 U R2 U' R2 U2 R' S R2 S'",
+    "y2 R U' R' U2 R U R' U2 R U R' U2 R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 66",
+   "subset": "Pi",
+   "group": "Pi6",
+   "setup": "R' U2' R U2' R' U R U2' R' U R U2' R' U' R y2'",
+   "algs": [
+    "y2 R U' R' U R2 U2 R' U' R U' R2 U R U' R'",
+    "R U2 R2 U' R2 U R2 U2 R S R2 S'",
+    "y2 R2 U2 R U R U' R' U R' U R2 U' R' U R",
+    "y2 R' U R U2 R' U' R U2 R' U' R U2 R' U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 67",
+   "subset": "Pi",
+   "group": "Pi6",
+   "setup": "R' U2' R U R' U R2' U R' U R U2' R' y'",
+   "algs": [
+    "y R U2 R' U' R U' R2 U' R U' R' U2 R",
+    "S' r U' r2 U r2 U r2 U' r S",
+    "y' R' U' R U' R' U2 R2 U2 R' U' R U' R'",
+    "R' U2 R U R' U R U2 R U R' U R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 68",
+   "subset": "Pi",
+   "group": "Pi6",
+   "setup": "R U2' R2' U' R2' U' R2' U2' R",
+   "algs": [
+    "R' U2 R2 U R2 U R2 U2 R'",
+    "R' U2 R2 U R2 U R2 U2 R' U2",
+    "y2 L' U2 L2 U L2 U L2 U2 L'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 69",
+   "subset": "Pi",
+   "group": "Pi6",
+   "setup": "R' U2' R2' U R' U R U2' R' U' R' U R",
+   "algs": [
+    "R U R' U R U2 R' U' R U R' U R U2 R'",
+    "R' U' R U R U2 R' U' R U' R2 U2 R",
+    "F' U' r' F r S' U' r' F r f",
+    "F' U' L' U L S' U' L' U L f"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 70",
+   "subset": "Pi",
+   "group": "Pi6",
+   "setup": "R U2' R2' U' R U' R' U2' R U R U' R'",
+   "algs": [
+    "R' U' R U' R' U2 R U R' U' R U' R' U2 R",
+    "R U R' U' R' U2 R U R' U R2 U2 R'",
+    "R U2 R2 U' R U' R' U2 R U R U' R'",
+    "y2 F U R U' R' S U R U' R' f'"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 71",
+   "subset": "Pi",
+   "group": "Pi6",
+   "setup": "R U2' R' U' R U' R' U' R U2' R' U' R U' R' y'",
+   "algs": [
+    "y R U R' U R U2 R' U R U R' U R U2 R'",
+    "R' U2 R U R' U R U R' U2 R U R' U R",
+    "y' R' U' R U' R' U2 R U' R' U' R U' R' U2 R",
+    "y R2 D' R U' R' D R U R' D' R U2 R' D R U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL Pi 72",
+   "subset": "Pi",
+   "group": "Pi6",
+   "setup": "R U2' R' U' R U R2' U2' R2' U R2' U R2' U' R'",
+   "algs": [
+    "F R U R' U' R U R' U' F' R U R' U' M' U R U' r'",
+    "R U R2 U' R2 U' R2 U2 R2 U' R' U R U2 R'",
+    "R U R' U' R' U' R U R U R' U' R' U R U' R U' R'",
+    "S R' U2 R2 U S R2 S' U' R2 U2 R S'"
+   ]
+  },
+  {
+   "key": "ZBLL S 1",
+   "subset": "S",
+   "group": "S1",
+   "setup": "L' R U' L U R' U2' L' U2' L",
+   "algs": [
+    "y2 R' U2 R U F R' U R U' F'",
+    "L' U2 L U2 R U' L' U R' L",
+    "U2 R' U2 R U F R' U R U' F' U'"
+   ]
+  },
+  {
+   "key": "ZBLL S 2",
+   "subset": "S",
+   "group": "S1",
+   "setup": "R U2' R' U' R2' D R' U R D' R' U2' R' y'",
+   "algs": [
+    "R U R' U R U' R2 F' R U R U' R' F R U' R'",
+    "y R U2 R D R' U' R D' R2 U R U2 R'",
+    "R U R' U R U L U2 R' U R U2 R' L'"
+   ]
+  },
+  {
+   "key": "ZBLL S 3",
+   "subset": "S",
+   "group": "S1",
+   "setup": "R D R' U' R D' R2' U' R U2' R' U' R",
+   "algs": [
+    "R' U R U2 R' U R2 D R' U R D' R'",
+    "y' R U R' U R2 D R' U' R D' R' U' R'",
+    "y' R' U' R U R2 F' R U R U' R' F U R",
+    "y' R U R' U2 R' D' R U' R' D R2 U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL S 4",
+   "subset": "S",
+   "group": "S1",
+   "setup": "R U2' R2' D' R U2' R' D R2' U' R' U R U' R' y2'",
+   "algs": [
+    "y2 S' U2 L' U2 L U2 L F' L' f",
+    "R' U2 R D R D' R' U' R D R' D' U2 R' U R",
+    "y2 R' U2 R U2 R' U R L' U R' U' R L",
+    "y L' U2 L U F L' U' L U L F' L2 U L"
+   ]
+  },
+  {
+   "key": "ZBLL S 5",
+   "subset": "S",
+   "group": "S1",
+   "setup": "L' U R U' L U2' R' U' L' U R U' R' L",
+   "algs": [
+    "y R' F R U R' U' R' F' D' R U R' D R2",
+    "U' R2 D' R U' R' D R2 F R' U R U' F'",
+    "y' R2 D' R U' R' D R2 F R' U R U' F'",
+    "L' R U R' U' L U R U2 L' U R' U' L"
+   ]
+  },
+  {
+   "key": "ZBLL S 6",
+   "subset": "S",
+   "group": "S1",
+   "setup": "R U B' U R2' U' R2' U' B R' U R' U R y",
+   "algs": [
+    "F' R U R' U R U2 R' F U R U' R' U2 R U' R'",
+    "y' R U' R2 U2 R2 U R' D' U R U R' D U' R' U R",
+    "y' R' U2 R' D R' U R D' R U R U' R U' R'",
+    "F' U' F U' F R' D R2 U R2 D' R U' F'"
+   ]
+  },
+  {
+   "key": "ZBLL S 7",
+   "subset": "S",
+   "group": "S1",
+   "setup": "R2' F2' U' R F2' R' U F' R U R U' R' F' U R y'",
+   "algs": [
+    "y' R' U' R U R2 U' R' U' R U D' R U R' D R'",
+    "y' R' U2 R U R' U R2 U R' F' R U R' U' R' F R2 U' R'",
+    "R' U L' U2 R U' R' U2 R U2 L U L' U L",
+    "S' r' F' r U r U' r' S L' U' L U F"
+   ]
+  },
+  {
+   "key": "ZBLL S 8",
+   "subset": "S",
+   "group": "S1",
+   "setup": "U' R2' D r' U2' r D' R2' U' R U' R' y2'",
+   "algs": [
+    "y2 R U R' U R2 D r' U2 r D' R2",
+    "y2 R U R' U R2 D r' U2 r D' R2 U",
+    "y2 F R U R2 U' R2 U' R2 U2 R U R U R' F'"
+   ]
+  },
+  {
+   "key": "ZBLL S 9",
+   "subset": "S",
+   "group": "S1",
+   "setup": "R' U' R U' R U R D R' U' R D' R U2' R y",
+   "algs": [
+    "y R U R' U' R U R2 D' R U R' D R U R U2 R'",
+    "y' R' U2 R' D R' U R D' R' U' R' U R' U R",
+    "y' R' U2 R U R' U' R' F' R U R U' R' F R U R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL S 10",
+   "subset": "S",
+   "group": "S1",
+   "setup": "R2' D R' U2' R D' R2' U' R U' R' y2'",
+   "algs": [
+    "y2 R U R' U R2 D R' U2 R D' R2"
+   ]
+  },
+  {
+   "key": "ZBLL S 11",
+   "subset": "S",
+   "group": "S1",
+   "setup": "R U R' F' R U2' R' U2' R' F R2' U' R'",
+   "algs": [
+    "y' R' D' R U2 R' D R U' R U R' U2 R U R'",
+    "R U R2 F' R U2 R U2 R' F R U' R'",
+    "R U R2 F' R U2 R U2 R' F R U' R' U",
+    "F R' U' R2 U' R2 U2 R2 U' R' F'"
+   ]
+  },
+  {
+   "key": "ZBLL S 12",
+   "subset": "S",
+   "group": "S1",
+   "setup": "R U2' R' U R U L U' R' U L' U R U' R'",
+   "algs": [
+    "R U2 R D R' U2 R D' R' U R' U R U2 R'",
+    "R U R' U' L U' R U L' U' R' U' R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL S 13",
+   "subset": "S",
+   "group": "S2",
+   "setup": "R' D' R U2' R' D R2' U' R' U2' R U R' U R U R' y2'",
+   "algs": [
+    "R U R' U' R2 U' L' U R2 U' L U' R U2 R'",
+    "y2 R U' R' U' R U' R' U2 R U R2 D' R U2 R' D R",
+    "R2 u R' U R2 U' R u' R2 U F' U2 F",
+    "D' R2 U R' U R2 U' R U' R2 D R' U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL S 14",
+   "subset": "S",
+   "group": "S2",
+   "setup": "x' R U' R' D R2' U l' U R' U' R U R' U' F' y'",
+   "algs": [
+    "R U R' U R' F R F' R U' R' F' U F R U' R'",
+    "f R2 f' U R2 u' R U' R2 U R' u R2",
+    "y R D R' U2 R D' R2 U R U2 R' U' R U' R' U' R"
+   ]
+  },
+  {
+   "key": "ZBLL S 15",
+   "subset": "S",
+   "group": "S2",
+   "setup": "R' U2' F' R U R' U' R' F R2' U R' U R y'",
+   "algs": [
+    "y R' U' F2 U' R2 U R2 U F2 R2 U2 R'",
+    "y R' U' R U' R2 F' R U R U' R' F U2 R",
+    "y R2 D' R U2 R' D R U R U' R' U R U' R' U2 R",
+    "y R' U' R U L U2 R' U R U2 L' U R' U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL S 16",
+   "subset": "S",
+   "group": "S2",
+   "setup": "R U R' U' L' U2' R U' R' U2' L U' R U2' R' y2'",
+   "algs": [
+    "y2 R U2 R' U' R U R' U' R U R D R' U2 R D' R2",
+    "y2 R U2 R D R2 U' R U R2 D' R U' R U' R'",
+    "R U R' U R U2 R' U R U R' U' R' F R2 U' R' U' R U R' F'",
+    "U2 R U2 R' U' R U R' U' R U R D R' U2 R D' R2"
+   ]
+  },
+  {
+   "key": "ZBLL S 17",
+   "subset": "S",
+   "group": "S2",
+   "setup": "R U2' R' L' U2' R U' R' U2' R L U2' R' y'",
+   "algs": [
+    "y' F R' U R U F' R' U F U F' R",
+    "R U' L' U R2 D2 R U' R' D2 R L",
+    "R U R' U R U2 R2 U2 R U2 R' F R U R' U' R' F' R2",
+    "R U R' U R U2 R2 U2 R' D' R U' R' D R U R U' R' U' R"
+   ]
+  },
+  {
+   "key": "ZBLL S 18",
+   "subset": "S",
+   "group": "S2",
+   "setup": "R U R2' D R2' D' R2' U' R2' D R2' D' R",
+   "algs": [
+    "R' D R2 D' R2 U R2 D R2 D' R2 U' R'",
+    "y' F R' U2 R F' R' F U2 F' R",
+    "y' x U R' B2 R U' R' U B2 U' R x'",
+    "y' R' F R' D' R U2 R' D R U2 F' R"
+   ]
+  },
+  {
+   "key": "ZBLL S 19",
+   "subset": "S",
+   "group": "S2",
+   "setup": "R U2' R' U' R U2' R' U R U' R' U' R U R2' D' R U' R' D R",
+   "algs": [
+    "y' R U R' U R U' R D R' U R r' U2 r D' R2",
+    "R' F r2 R2 U2 r U r' U2 R r2 F' R2",
+    "y2 R2 D' r U2 r' R U R' D R U' R U R' U R",
+    "y2 r' U r' F' r' U' r' U2 R' F' R U2 r U r'"
+   ]
+  },
+  {
+   "key": "ZBLL S 20",
+   "subset": "S",
+   "group": "S2",
+   "setup": "R U R' U L' U2' R U L U2' R' U L' U L y'",
+   "algs": [
+    "R U' R' U' R U R D R' U2 R D' R2 U R U2 R'",
+    "y' F R U R' U' R' F' U2 R U R U' R' U R' U R",
+    "y R' U2 R U R2 D' R U2 R' D R U R U' R' U' R",
+    "y R2 U' R2 U' R' U2 R U2 R U D' R U' R' D"
+   ]
+  },
+  {
+   "key": "ZBLL S 21",
+   "subset": "S",
+   "group": "S2",
+   "setup": "R' U' R U' R' U R' D' R U' R' D R U2' R y",
+   "algs": [
+    "y' R' U2 R' D' R U R' D R U' R U R' U R",
+    "y' R' U2 R U' R D R' U R D' R' U R' U R",
+    "y2 R U R' L' U2 R U2 R' U2 L U2 R U' R'",
+    "y R' B2 R U R U R' U2 R U R2 B2 R"
+   ]
+  },
+  {
+   "key": "ZBLL S 22",
+   "subset": "S",
+   "group": "S2",
+   "setup": "R2' D' R2' U2' R' F2' U F2' U R2' D R' y'",
+   "algs": [
+    "y2 R U R' U R U' R D R' U R D' R' U2 R'",
+    "R U R' f' R U R' U R U2 R' U f R U' R'",
+    "y2 R U R' U R' D' R U R' D R U' R U2 R'",
+    "y R D' R2 U' F2 U' F2 R U2 R2 D R2"
+   ]
+  },
+  {
+   "key": "ZBLL S 23",
+   "subset": "S",
+   "group": "S2",
+   "setup": "R2' D R' U R D' R' U R' U' R U' R' y",
+   "algs": [
+    "y' R U R' U R U' R D R' U' R D' R2",
+    "y2 L R U2 R' U' R U2 L2 U R' U' L",
+    "y' L' U R U' L U R' L U2 L' U' L U' L'"
+   ]
+  },
+  {
+   "key": "ZBLL S 24",
+   "subset": "S",
+   "group": "S2",
+   "setup": "R' U' R U' R' U R' D' R U R' D R2' y2'",
+   "algs": [
+    "y2 R2 D' R U' R' D R U' R U R' U R",
+    "R U R' U' R' F R F' r U R' U R U2 r'",
+    "y R' U' R U' R' U2 R L' U R U' L U R'",
+    "R U' L' U R2 U2 L U' L' U2 L R"
+   ]
+  },
+  {
+   "key": "ZBLL S 25",
+   "subset": "S",
+   "group": "S3",
+   "setup": "R U2' R' U' R U R D R' U2' R D' R2'",
+   "algs": [
+    "R2 D R' U2 R D' R' U' R' U R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL S 26",
+   "subset": "S",
+   "group": "S3",
+   "setup": "R' U2' R' F' R U R U' R' F U2' R y",
+   "algs": [
+    "y' R' U2 F' R U R' U' R' F R U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL S 27",
+   "subset": "S",
+   "group": "S3",
+   "setup": "L U2' R' U L' U L U' R U2' L' R' U2' R",
+   "algs": [
+    "y R' U2 R U R' U' R' D' R U2 R' D R2",
+    "R' U2 R U R' U' R U R2 F' R U R U' R' F R",
+    "R' U2 R L U2 R' U L' U' L U' R U2 L'",
+    "R' U' R' D' R U R' D R U2 R U R' U' R U R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL S 28",
+   "subset": "S",
+   "group": "S3",
+   "setup": "L U2' F L' U' L U L F' L' U2' L'",
+   "algs": [
+    "y R U R' U R U' R2 D' R U R' D R2 U2 R'",
+    "y R U2 R' U2 R' F R2 U R' U' R U R' U' F'",
+    "L U2 L F L' U' L' U L F' U2 L'",
+    "z U R2 U F U' R' U' R U F' R2 U'"
+   ]
+  },
+  {
+   "key": "ZBLL S 29",
+   "subset": "S",
+   "group": "S3",
+   "setup": "L' U R U' L U R'",
+   "algs": [
+    "R U' L' U R' U' L",
+    "R U' r' F R' F' r",
+    "y2 L U' R' U L' U' R",
+    "R U' L' U R' U' L U"
+   ]
+  },
+  {
+   "key": "ZBLL S 30",
+   "subset": "S",
+   "group": "S3",
+   "setup": "R2' U' R U' R U R' U R2' D' U R U R' U' R U' R' D",
+   "algs": [
+    "y' R' U2 R2 U R D' R U R' D R2 U' R U' R'",
+    "F R2 D R' U R D' R2 U' R U R' U' R U R' U' F'",
+    "U2 R' U' R U' R' U R U' R2 D' R U R' D R2 U' R' U2 R",
+    "R U R' U R U' R' U' D R2 U' R U' R' U R' U R2 D'"
+   ]
+  },
+  {
+   "key": "ZBLL S 31",
+   "subset": "S",
+   "group": "S3",
+   "setup": "R U R' U R U L' U R' U L U L' U L",
+   "algs": [
+    "y' R U R' U R U2 R2 U R U2 L' R' U R U' L",
+    "R U' R' U R U' R' F R' F' R U' F' U F",
+    "L' U' L U' L' U' R U' L U' R' U' R U' R'",
+    "y' R U R' U R U2 R2 U R U2 R' L' U R U' L"
+   ]
+  },
+  {
+   "key": "ZBLL S 32",
+   "subset": "S",
+   "group": "S3",
+   "setup": "D R' U' R D' R U' R' U R2' U R' U' R2' y",
+   "algs": [
+    "y2 R U R' F' R U R' U R U' R' U' R' F R2 U' R'",
+    "y' D' R2 U R U' R2 U' R U R' D R' U R",
+    "y2 R U R' F' R U R' U R U' R' U' R' F R2 U' R' U",
+    "R U R' U R U R' U' R U R D R' U' R D' R' U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL S 33",
+   "subset": "S",
+   "group": "S3",
+   "setup": "R' U' R2' U2' R2' D U' R2' U' R2' U R2' D' R2' U' R y'",
+   "algs": [
+    "y R' U' R' U R2 D' U2 R U R' U' D R'",
+    "R' L' U2 R L2 U' R' U L2 U2 R U' L",
+    "y' R' U2 R y R U' R' U' R U2 R' U' y' R' U' R",
+    "y R' U' R' U R2 U2 D' R U R' U' D R'"
+   ]
+  },
+  {
+   "key": "ZBLL S 34",
+   "subset": "S",
+   "group": "S3",
+   "setup": "F R U' R' U R U R2' F' R U R U R' U' R U' R'",
+   "algs": [
+    "y2 L U' R' U L' R' U' R' U' R' U R U R2",
+    "y R' U2 R U R' U' R' D' r U2 r' D R2",
+    "y R' D' L D R' D' L' D' F2 R2 B2 U R2 F2 L2 D' R2 U'",
+    "R U R' U R U' R' U' R' F R2 U' R' U' R U R' F' U"
+   ]
+  },
+  {
+   "key": "ZBLL S 35",
+   "subset": "S",
+   "group": "S3",
+   "setup": "L' U R U' L R U R U R U' R' U' R2'",
+   "algs": [
+    "R2 D r' U2 r D' R' U' R' U R U2 R'",
+    "y R' U' R U' R' U R U' R D R' U' R D' R' U R' U2 R",
+    "R2 U R U R' U' R' U' R' L' U R' U' L",
+    "y2 z U2 R U R U' R' U' R' D' U' R U' R' D"
+   ]
+  },
+  {
+   "key": "ZBLL S 36",
+   "subset": "S",
+   "group": "S3",
+   "setup": "R U R U' R2' D U2' R' U' R D' U R y",
+   "algs": [
+    "y' R' U' D R' U R D' U2 R2 U R' U' R'",
+    "y' R' U' D R' U R U2 D' R2 U R' U' R'",
+    "y2 R U' R' y' U' R' U2 R U' R' U' R y R U2 R'",
+    "y2 R U' R' U' y' R' U2 R U' R' U' R y R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL S 37",
+   "subset": "S",
+   "group": "S4",
+   "setup": "R U2' R' U2' L' U R U' R' L",
+   "algs": [
+    "L' R U R' U' L U2 R U2 R'",
+    "M F R' F' r U2 R U2 R'",
+    "r' R F R' F' r U2 R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL S 38",
+   "subset": "S",
+   "group": "S4",
+   "setup": "R U' R' U2' R U' R2' D' R U' R' D R y'",
+   "algs": [
+    "y R' D' R U R' D R2 U R' U2 R U R'",
+    "y' R' U2 R2 D R' U' R D' R' U2 R' U R",
+    "R U2 R2 U' R2 U' R2 U' L U' R U L'",
+    "U R' D' R U R' D R2 U R' U2 R U R'"
+   ]
+  },
+  {
+   "key": "ZBLL S 39",
+   "subset": "S",
+   "group": "S4",
+   "setup": "R' U2' R' D' R U R' D R2' U' R' U2' R y'",
+   "algs": [
+    "y R' U2 R U R2 D' R U' R' D R U2 R",
+    "F R U' R' U' R U R' U R U' R2 F' R U R U' R'",
+    "L' R' U2 R U R' U2 L U R U R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL S 40",
+   "subset": "S",
+   "group": "S4",
+   "setup": "S U2' R U2' R' U2' R' F R f'",
+   "algs": [
+    "f R' F' R U2 R U2 R' U2 S'",
+    "y R U R2 F' R U R U' R' F U R U2 R'",
+    "y' L R U' R' U L' R U R' U2 R U2 R'",
+    "y R U R' F' R U R' U' R' F R2 U' R' L U' R' U L' U' R"
+   ]
+  },
+  {
+   "key": "ZBLL S 41",
+   "subset": "S",
+   "group": "S4",
+   "setup": "L' R U' L U R' U' L' U2' R U' L U R' y'",
+   "algs": [
+    "y R U' L' U R' U2 L U R U' L' U R' L",
+    "y' L' R U R' U' L U R2 D R' U' R D' R2",
+    "y' M F R' F' r U R2 D R' U' R D' R2",
+    "R' U2 R U R' U R' D' r U2 r' D R U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL S 42",
+   "subset": "S",
+   "group": "S4",
+   "setup": "F R U R' F R' F' U2' R2' U R2' U R F' y'",
+   "algs": [
+    "R' F' R U R U R' U' R U' R' F R U R' U R U' R'",
+    "y' R' U' F U' R2 U R2 U F' R U' R U' R'",
+    "y L U' R' U L' U R' D' R U2 R' D R2",
+    "y' R' U2 R2 U R2 U D' R U R' D R U2 R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL S 43",
+   "subset": "S",
+   "group": "S4",
+   "setup": "R' U' R U' R2' D' r U2' r' D R2' y2'",
+   "algs": [
+    "y2 R2 D' r U2 r' D R2 U R' U R",
+    "y2 L U2 L' U R' U2 L U' L' R U R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL S 44",
+   "subset": "S",
+   "group": "S4",
+   "setup": "R U R' U' R2' U R U R' U' D R' U' R D' R",
+   "algs": [
+    "F U R U' R' S R' F' R U R U' R' S'",
+    "R' D R' U R D' U R U' R' U' R2 U R U' R'",
+    "R U R' U R U2 R2 U2 R U R' F' R U R' U' R' F R2 U' R' U R",
+    "F U R U' R' S R' F' R U R U' R' S' U'"
+   ]
+  },
+  {
+   "key": "ZBLL S 45",
+   "subset": "S",
+   "group": "S4",
+   "setup": "R U R' U R U2' R2' L U L' U' R U2' L U2' L' y'",
+   "algs": [
+    "F R U R' U' R' F' R U2 R U' R' U R U2 R'",
+    "y R U R2 F' r U R U' r' F U R U2 R'",
+    "R' U2 R U R D R' U R D' R2 U R U' R' U R",
+    "R' U2 R U2 R2 D' R U R' D R2 U' R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL S 46",
+   "subset": "S",
+   "group": "S4",
+   "setup": "R' U2' R' D' R U2' R' D R U' R U' R' U2' R",
+   "algs": [
+    "R' U2 R U R' U R' D' R U2 R' D R U2 R",
+    "R U R' U R U2 R' U2 R U R' U' R' F R2 U' R' U' R U R' F'",
+    "R U R' U R U2 R' L' U' L U L F' L2 U L U L' U' L F",
+    "y R U' L U' R2 D' F2 D R2 U2 L' R'"
+   ]
+  },
+  {
+   "key": "ZBLL S 47",
+   "subset": "S",
+   "group": "S4",
+   "setup": "R' U' R U R' F R U R' U' R' F' R2'",
+   "algs": [
+    "R2 F R U R U' R' F' R U' R' U R",
+    "R U R' U' R' F R2 U' R' U' R U R' F' R U R' U R U2 R'",
+    "R2 F R U R U' R' F' R U' R' U R U",
+    "R' U R U R' U' R' D' R U R' D R2 U R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL S 48",
+   "subset": "S",
+   "group": "S4",
+   "setup": "R' U' R U' R2' D' R U2' R' D R2' y2'",
+   "algs": [
+    "y2 R2 D' R U2 R' D R2 U R' U R",
+    "L2 D' L U2 L' D L2 U L' U L",
+    "R U R' U R U2 x R D2 R U R' D2 R U' R"
+   ]
+  },
+  {
+   "key": "ZBLL S 49",
+   "subset": "S",
+   "group": "S5",
+   "setup": "R U R' U L' U2' R U2' R' U2' R L U2' R' y'",
+   "algs": [
+    "y R2 U R2 F' R U2 R' U' R U' R' F R2 U' R2",
+    "y2 R U' R D R2 U' R U' R' U2 R2 D' R' U R'",
+    "y2 R U' R' U' R U' R' U2 R U R' U R' D' R U R' D R",
+    "y' z R' U' R' U R U R F' R' U2 R U R' U' R U F z'"
+   ]
+  },
+  {
+   "key": "ZBLL S 50",
+   "subset": "S",
+   "group": "S5",
+   "setup": "L' U2' R U' R' U2' L R U R' U' R U R' U' R U' R' y",
+   "algs": [
+    "y F U R' F R F' R U' R' U R U' R' F'",
+    "y' F' L' U' L U L' U' L F' L F L' U F",
+    "y' R U R' U R U' R' U R U' R' L' U2 R U R' U2 L"
+   ]
+  },
+  {
+   "key": "ZBLL S 51",
+   "subset": "S",
+   "group": "S5",
+   "setup": "R U' R2' D' U' R U' R' D U2' R2' U R' y",
+   "algs": [
+    "y' R U' R2 U2 D' R U R' U D R2 U R'",
+    "U R' U R2 U D R' U R D' U2 R2 U' R",
+    "y2 R' U' R U R' F' R U R' U' R' F R U2 R U R' U R",
+    "y' R U' R2 U2 R F' U R' U' R F R' U2 R2 U R'"
+   ]
+  },
+  {
+   "key": "ZBLL S 52",
+   "subset": "S",
+   "group": "S5",
+   "setup": "R' U2' R L U2' R' U2' R U2' L' U R' U R y",
+   "algs": [
+    "y F' R U R' D R U R' U' D' R U' R' F",
+    "R' U R U2 R' U2 R' F' R U R U' R' F U' R",
+    "R' U R' D' R2 U2 R' U' R U' R2 D R U' R",
+    "y R2 U' R2 B R' U' R U' R' U2 R B' R2 U R2"
+   ]
+  },
+  {
+   "key": "ZBLL S 53",
+   "subset": "S",
+   "group": "S5",
+   "setup": "L' U' L U R U' L' U R' U R U' L U R' y",
+   "algs": [
+    "y' R' U2 R2 U R' F' R U R' U' R' F R2 U' R2 U R",
+    "y' R' U' F U R U' R' F' R2 U R' U' R' F R F'",
+    "y' R U' L' U R' U' R U' L U R' U' L' U L",
+    "R U R' U' L' U R U' L U' L' U R' U' L"
+   ]
+  },
+  {
+   "key": "ZBLL S 54",
+   "subset": "S",
+   "group": "S5",
+   "setup": "R U2' R' U2' L' U' L U' R U L' U R' U2' L y2'",
+   "algs": [
+    "F R U R' U R U2 R U2 R2 U' R2 U' R2 F'",
+    "R' U2 R U R' U' L U' L' U2 R U L U2 L'",
+    "R U R2 F2 R U2 R U2 R' F2 U R U2 R'",
+    "y' f R' F' R f' R' D R U R' D' R U2 F"
+   ]
+  },
+  {
+   "key": "ZBLL S 55",
+   "subset": "S",
+   "group": "S5",
+   "setup": "R' U2' L U' R U L' R' U R U' R' U2' R y'",
+   "algs": [
+    "R' U2 R U R' U' R F U' R' U' R U F'",
+    "R U R' U R U2 R' F R U' R' U' R U R' F' R U R' U' R' F R F'",
+    "y' R U2 R' U' R U R' U' F' R U2 R' U' R U' R' F R U' R'",
+    "y R' U2 R U R' U' R L U' R' U L' U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL S 56",
+   "subset": "S",
+   "group": "S5",
+   "setup": "R U2' R' U' R U L' R' U R U' L U2' R' y",
+   "algs": [
+    "L' U2 R U' R' U2 L U R U' R' U R U2 R'",
+    "y2 r F' U2 F r' U2 R' U' R' U R' U R2",
+    "y' R' U' R f R' U R U' F' R U R' U' R' F R f'",
+    "F R' F' R U R U' R' F U R U2 R' U' R U R' F'"
+   ]
+  },
+  {
+   "key": "ZBLL S 57",
+   "subset": "S",
+   "group": "S5",
+   "setup": "R U2' L' U R' U' L U' R U' R' y2'",
+   "algs": [
+    "y2 R U R' U L' U R U' L U2 R'",
+    "U2 R U R' U r' F R F' r U2 R'",
+    "F' R U2 R' U2 R' F2 R U R U' R' F'",
+    "y2 R U R' F' r U R' U R U2 r' F R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL S 58",
+   "subset": "S",
+   "group": "S5",
+   "setup": "R U2' R2' U' R2' U' R' F U' R' U' R U F'",
+   "algs": [
+    "F U' R' U R U F' R U R2 U R2 U2 R'",
+    "R U R' D' R2 U R U' R2 D R' U R2 U2 R'",
+    "R U R U R U' R2 D R' U R D' R U2 R'",
+    "R U R' U R U' R' U R U R' F' R U R' U' R' F R2 U' R' U2 R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL S 59",
+   "subset": "S",
+   "group": "S5",
+   "setup": "R' U' R U' L U' R' U L' U2' R",
+   "algs": [
+    "R' U2 L U' R U L' U R' U R",
+    "R' U R U2 R' U R U2 R D R' U' R D' R'",
+    "U2 r' F2 R F' r U R' U r' F r",
+    "y2 L' U2 R U' L U R' U L' U L"
+   ]
+  },
+  {
+   "key": "ZBLL S 60",
+   "subset": "S",
+   "group": "S5",
+   "setup": "F R U' R2' U' R U' R' U2' R2' U R' F'",
+   "algs": [
+    "F R U' R2 U2 R U R' U R2 U R' F'",
+    "R' F R F' U R U R' U2 F R' F' R",
+    "y2 R U R' F' R U R' U R U2 R' F R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL S 61",
+   "subset": "S",
+   "group": "S6",
+   "setup": "R U' R' U2' R U' R' U2' R U2' R' U R U R' y2'",
+   "algs": [
+    "y' R U R' U' R' U2 R U R' U R U' R U' R'",
+    "y L' R u R2 u' R2 U R U' L",
+    "S r U R' U R U2 r' U2 S'"
+   ]
+  },
+  {
+   "key": "ZBLL S 62",
+   "subset": "S",
+   "group": "S6",
+   "setup": "R2' U' R' U R U R' U2' R' U R2' U R2' y",
+   "algs": [
+    "R U R' U R U' R' U R' U' R2 U' R' U R' U R",
+    "y' R2 U' R2 U' R U2 R U' R' U' R U R2",
+    "R U R' U R U' R' U' L' U' L U2 R U' R' U' L' U L",
+    "R U R' U R U2 R U' R' U' R U R U R U' R"
+   ]
+  },
+  {
+   "key": "ZBLL S 63",
+   "subset": "S",
+   "group": "S6",
+   "setup": "R U2' R2' U2' R2' U R2' U R2' U' R'",
+   "algs": [
+    "R U R2 U' R2 U' R2 U2 R2 U2 R'",
+    "y R U2 R' U2 R' U2 R U R' U R2 U2 R'",
+    "y2 R' U' R2 U R U R' U' R U R2 U2 R' U'"
+   ]
+  },
+  {
+   "key": "ZBLL S 64",
+   "subset": "S",
+   "group": "S6",
+   "setup": "R' U' R U' R' U2' R y",
+   "algs": [
+    "y' R' U2 R U R' U R",
+    "y' R' U2 R U R' U R U2",
+    "y L' U2 L U L' U L"
+   ]
+  },
+  {
+   "key": "ZBLL S 65",
+   "subset": "S",
+   "group": "S6",
+   "setup": "R' U' R U R U2' R' U' R U' R' U R' U R y2'",
+   "algs": [
+    "R U R' U R U R U R U R U' R' U' R2",
+    "y' R2 U R' U' R' U' R U2 R' U' R2 U' R2",
+    "y2 R' U' R U' R U R' U R U2 R' U' R' U R",
+    "R U' R' U R U R2 U' R U' R U R2 U R"
+   ]
+  },
+  {
+   "key": "ZBLL S 66",
+   "subset": "S",
+   "group": "S6",
+   "setup": "R' U' R U' R' U R U' R U R2' U R U' R U' R' y'",
+   "algs": [
+    "R U R2 F' R U2 R U' R' U' R' F R2 U' R'",
+    "y R U R' U R' U' R2 U' R' U R' U' R U R' U R",
+    "y' R' U2 R U R' U R2 U' R U R U R U' R' U' R2",
+    "y' R2 U R U' R' U' R U2 R U' R2 U' R2"
+   ]
+  },
+  {
+   "key": "ZBLL S 67",
+   "subset": "S",
+   "group": "S6",
+   "setup": "R U2' R' U' R U' R'",
+   "algs": [
+    "R U R' U R U2 R'",
+    "R U R2 U' R2 U R' S R2 S'",
+    "R U R' U R U2 R' U2"
+   ]
+  },
+  {
+   "key": "ZBLL S 68",
+   "subset": "S",
+   "group": "S6",
+   "setup": "R' U' R2' U R2' U R2' U2' R2' U2' R",
+   "algs": [
+    "R' U2 R2 U2 R2 U' R2 U' R2 U R",
+    "R' U2 R2 U R' U R U2 R' U2 R' U2 R",
+    "y' R' U2 R2 U R U' R' U R U R2 U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL S 69",
+   "subset": "S",
+   "group": "S6",
+   "setup": "R2' U R U R2' U' R' U' R2' U' R U' R'",
+   "algs": [
+    "y' R U R' U' R' U2 R U R U' R' U R' U R",
+    "R U R' U R2 U R U R2 U' R' U' R2",
+    "y' R2 U' R' U' R2 U R U R2 U R' U R",
+    "R U R' U R U' R' U' R' U2 R U R U' R2 U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL S 70",
+   "subset": "S",
+   "group": "S6",
+   "setup": "R U R' U' R' U' R U R U' R' U' R' U R y",
+   "algs": [
+    "y' R' U' R U R U R' U' R' U R U R U' R'",
+    "R' F' U' F U R F U R U' R' F'",
+    "y F' L' U' L U F U' F U R U' R' F'",
+    "y' R' U2 R2 U R U R U' R' U' R2 U R"
+   ]
+  },
+  {
+   "key": "ZBLL S 71",
+   "subset": "S",
+   "group": "S6",
+   "setup": "R U2' R2' U' R2' U' R' U R' U R y2'",
+   "algs": [
+    "y' R' U2 R2 U R2 U R U' R U' R'",
+    "y2 R' U' R U' R U R2 U R2 U2 R'",
+    "y L' U2 L2 U L2 U L U' L U' L'",
+    "z U' R' U R' U R U2 R U2 R2 U'"
+   ]
+  },
+  {
+   "key": "ZBLL S 72",
+   "subset": "S",
+   "group": "S6",
+   "setup": "R2' D' R2' U2' L F2' L' R' D R U' R U' R'",
+   "algs": [
+    "R U R' U' R U R' U R U R U2 R' U' R U' R' U R'",
+    "R U R' U R U2 R' U R U R' U R' U' R2 U' R' U R' U R",
+    "y' R' F R U R' U' R' F' R U' R' D' R U2 R' D R2",
+    "R2 U' S' U2 S U' R' U R' U R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 1",
+   "subset": "AS",
+   "group": "AS1",
+   "setup": "R U2' R' U2' B' U R U R' U' B R U' R' y",
+   "algs": [
+    "y' R2 D R' U2 R D' R' U' R' U R U' R' U R U2 R'",
+    "y' R U R' U R' D R2 U' R' U R2 D' R' U2 R'",
+    "y' R U R' U' L' U2 R U' R' U2 L U' R U2 R'",
+    "y R U R2 F' U' F U R F R' F' R2 U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 2",
+   "subset": "AS",
+   "group": "AS1",
+   "setup": "R' U' F2' U' R2' U R2' U F2' R2' U2' R'",
+   "algs": [
+    "y2 R' U2 F' R U R' U' R' F R2 U R' U R",
+    "R U2 R2 F2 U' R2 U' R2 U F2 U R",
+    "y2 R' U2 R U R' U' R U R' U' R' D' R U2 R' D R2",
+    "R U2 R2 F2 D' F2 U' F2 D F2 U R"
+   ]
+  },
+  {
+   "key": "ZBLL AS 3",
+   "subset": "AS",
+   "group": "AS1",
+   "setup": "R' U2' R U' L U' R2' U L' U' R2' U' R' U R",
+   "algs": [
+    "y2 R' U R U R' U R U2 R' U' R2 D R' U2 R D' R'",
+    "D R2 U' R U' R2 U R' U R2 D' R U2 R'",
+    "R' U' R U' R D' R U2 R' D R U2 R U2 R",
+    "R U R' U' R' F R U2 F' U' F U' R U R' U' F'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 4",
+   "subset": "AS",
+   "group": "AS1",
+   "setup": "F' U2' F' R2' u' L F2' L' u R2' F2'",
+   "algs": [
+    "y' R' D' R U2 R' D R2 U' R' U2 R U R' U R U R'",
+    "y2 R' U2 R' U2 F' R U R U' R' F R' U2 R U2 R",
+    "y2 r U' r' U2 R' F R U2 F2 U' R U' R' F'",
+    "y' R U2 R U2 R' U' R' U R F' R U2 R' U2 R' F"
+   ]
+  },
+  {
+   "key": "ZBLL AS 5",
+   "subset": "AS",
+   "group": "AS1",
+   "setup": "F R' U2' R F' R' F U2' F' R y2'",
+   "algs": [
+    "y2 R' F U2 F' R F R' U2 R F'",
+    "y2 R' F U2 R' D' R U2 R' D R F' R",
+    "y2 x R' U B2 U' R U R' B2 R U' x'",
+    "y' R U R2 D R2 D' R2 U' R2 D R2 D' R"
+   ]
+  },
+  {
+   "key": "ZBLL AS 6",
+   "subset": "AS",
+   "group": "AS1",
+   "setup": "z' D U R2' U' L' U R2' z R2' U L' U' R",
+   "algs": [
+    "y2 R' F U' F' U' R F U' R' U' R F'",
+    "y2 R U R' U R' U' R U' R D R' U R D' U' R2 U2 R",
+    "y2 R' F U' F' U' R F U' R' U' R F' U",
+    "L' R' D2 R U R' D2 R2 U' L U R'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 7",
+   "subset": "AS",
+   "group": "AS1",
+   "setup": "F R2' F' U2' R' U2' R2' U2' R U2' R F R F' R y'",
+   "algs": [
+    "y2 R2 D r' U2 r R' U' R D' R' U R' U' R U' R'",
+    "R B' r2 R2 U2 r' U' r U2 R' r2 B R2",
+    "y R' U' R U' R' U R' D' R U' R' r U2 r' D R2",
+    "y R' F R' F' R' U2 R' U2 R2 U2 R U2 F R2 F'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 8",
+   "subset": "AS",
+   "group": "AS1",
+   "setup": "L' U' L U' R U2' L' U' R' U2' L U' R U' R' y'",
+   "algs": [
+    "y' R U2 R' U' R2 D R' U2 R D' R' U' R' U R U R'",
+    "y2 R' U' R U' R U R' U' R' U2 F R U R U' R' F'",
+    "y' R2 U R2 U R U2 R' U2 R' U' D R' U R D'",
+    "y' R2 F' R2 U R2 D' F' U' D F' U F2 R2"
+   ]
+  },
+  {
+   "key": "ZBLL AS 9",
+   "subset": "AS",
+   "group": "AS1",
+   "setup": "L' U2' R L U' L' U2' R' U2' L U2' R U' R' y'",
+   "algs": [
+    "y2 R' U' R U' R D R' U' R D' R' U R' U2 R",
+    "y2 R' U' R U' R' U R' D' R U' R' D R U2 R",
+    "y R U R D' R' U2 R D R' D' R' U2 R U' D R'",
+    "y R U R' U2 L' U2 R U2 L U L' R' U2 L"
+   ]
+  },
+  {
+   "key": "ZBLL AS 10",
+   "subset": "AS",
+   "group": "AS1",
+   "setup": "L U2' R' U L' U' L R U R' U L' U' R y'",
+   "algs": [
+    "y R U2 R D R' U' R D' R' U R' U' R U' R'",
+    "y R U2 R' U R' D' R U' R' D R U' R U' R'",
+    "y R' U L U' R U' R' L' U L U' R U2 L'",
+    "y R U2 R D R' U' R D' R' U R' U' R U' R' U2"
+   ]
+  },
+  {
+   "key": "ZBLL AS 11",
+   "subset": "AS",
+   "group": "AS1",
+   "setup": "R U R' U R U' R D R' U' R D' R2' y2'",
+   "algs": [
+    "y2 R2 D R' U R D' R' U R' U' R U' R'",
+    "y2 L' U R U' L2 U2 R' U R U2 L' R'",
+    "U R U R' U' D R' U' R U R2 U' R U R2 D'",
+    "y2 R' F' r U R U' r' F r' F' r U' r' F2 r"
+   ]
+  },
+  {
+   "key": "ZBLL AS 12",
+   "subset": "AS",
+   "group": "AS1",
+   "setup": "R2' D' R U' R' D R U' R U R' U R y'",
+   "algs": [
+    "y R' U' R U' R' U R' D' R U R' D R2",
+    "y' r U2 R' U' R U' r' F R' F' R U R U' R'",
+    "y' R U' L' U R' U' L R' U2 R U R' U R"
+   ]
+  },
+  {
+   "key": "ZBLL AS 13",
+   "subset": "AS",
+   "group": "AS2",
+   "setup": "R' D' R U R' D R2' U R' U2' R U R'",
+   "algs": [
+    "R U' R' U2 R U' R2 D' R U' R' D R",
+    "y' L U' R' U L' U R2 U R2 U R2 U2 R'",
+    "y R' U' R U2 R D R' U R D' R2 U2 R",
+    "y R' U' R U' R2 D' R U R' D R U R"
+   ]
+  },
+  {
+   "key": "ZBLL AS 14",
+   "subset": "AS",
+   "group": "AS2",
+   "setup": "R U R2' F' R U R U' R' F U R U2' R' y'",
+   "algs": [
+    "S U2 R U2 R' U2 R' F R f'",
+    "y R U2 R' U' F' R U R' U' R' F R2 U' R'",
+    "y2 R U2 R' U2 R U' R' L U' R U R' L'",
+    "y2 R U' R U F' U2 R' U2 R F U' R2"
+   ]
+  },
+  {
+   "key": "ZBLL AS 15",
+   "subset": "AS",
+   "group": "AS2",
+   "setup": "x M U R' U' L U2' R U2' R' y2'",
+   "algs": [
+    "y2 R U2 R' U2 L' U R U' R' L",
+    "y' F U2 F' U' R' F U' F' U R",
+    "y2 R U2 R' U2 r' F R F' r R'",
+    "y2 R U2 R' U2 L' U R U' M' x'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 16",
+   "subset": "AS",
+   "group": "AS2",
+   "setup": "L' R' U2' R U R' U2' L U R U R' U R",
+   "algs": [
+    "y' R' U2 R' D' R U R' D R2 U' R' U2 R",
+    "R' U' R U' R' U' L' U2 R U' R' U2 R L"
+   ]
+  },
+  {
+   "key": "ZBLL AS 17",
+   "subset": "AS",
+   "group": "AS2",
+   "setup": "R' U' F U' R2' U R2' U F' R U' R U' R' y'",
+   "algs": [
+    "y R U R' U' R U' R' F' R U R' U R U' R' U' R' F R",
+    "y R U R' U R' F U' R2 U' R2 U F' U R",
+    "y R U R' U2 R' D' R U' R' D U' R2 U' R2 U2 R",
+    "y' R' U2 R' D' r U2 r' R U' R' D R2 U' R' U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL AS 18",
+   "subset": "AS",
+   "group": "AS2",
+   "setup": "L U' R' U L' U2' R U L U' R' U L' R",
+   "algs": [
+    "y R2 D R' U R D' R2 U' r' F R F' M'",
+    "y R2 D R' U R D' R2 U' L' U R U' R' L",
+    "y2 R L' U' L U R' U' L' U2 R U' L U R'",
+    "y2 F2 D F' U F D' F2 R' F U' F' U R"
+   ]
+  },
+  {
+   "key": "ZBLL AS 19",
+   "subset": "AS",
+   "group": "AS2",
+   "setup": "L U L' U L U2' R U2' R' U' R U2' L' U R'",
+   "algs": [
+    "y2 S R U R' U' R' F R S' R U R' U' F'",
+    "y2 S R U R' U' R' F R f' F R U R' U' F'",
+    "F R' F' U2 R U F' R' U R U F R U' R'",
+    "R U' L U2 R' U R U2 R' U2 L' U' L U' L'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 20",
+   "subset": "AS",
+   "group": "AS2",
+   "setup": "R2' D' r U2' r' D R2' U R' U R y2'",
+   "algs": [
+    "y2 R' U' R U' R2 D' r U2 r' D R2",
+    "R D' R U' R D R' U R2 D' R U2 D R' U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL AS 21",
+   "subset": "AS",
+   "group": "AS2",
+   "setup": "R2' D' R U2' R' D R2' U R' U R y2'",
+   "algs": [
+    "y2 R' U' R U' R2 D' R U2 R' D R2",
+    "y2 R' U' R U' R2 D' R U2 R' D R2 U",
+    "y2 R' U' R U' R2 D' R U2 R' D R2 U'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 22",
+   "subset": "AS",
+   "group": "AS2",
+   "setup": "R U R2' F' r U R U' r' F U R U2' R' y'",
+   "algs": [
+    "y2 R U2 R' U' R U R' U2 R' F R U R U' R' F'",
+    "y R U2 R' U' F' r U R' U' r' F R2 U' R'",
+    "y L U L' U L U2 L2 R U R' U' L U2 R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 23",
+   "subset": "AS",
+   "group": "AS2",
+   "setup": "R' F' R U R' U' R' F R U' R U R' U' R U R' U R y'",
+   "algs": [
+    "R' U2 R' D' R U2 R' D R U' R U' R' U2 R",
+    "y R' U' R U' R' U R U' R' U R' F' R U R U' R' F R",
+    "y R' U' R U' R' U y' R' U2 R U' R' U' R B",
+    "F R U R2 U' R U' R U R2 U R2 U' R' U F'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 24",
+   "subset": "AS",
+   "group": "AS2",
+   "setup": "R2' F R U R U' R' F' R U' R' U R",
+   "algs": [
+    "R' U' R U R' F R U R' U' R' F' R2",
+    "y L U2 L' U2 R' U L2 U' R U L' U' L'",
+    "y R U2 R' U2 R' F R2 U' R' U' R U R' F'",
+    "R' U' R U R' F R U R' U' R' F' R2 U'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 25",
+   "subset": "AS",
+   "group": "AS3",
+   "setup": "R2' D R' U2' R D' R' U' R' U R U2' R' y",
+   "algs": [
+    "y' R U2 R' U' R U R D R' U2 R D' R2"
+   ]
+  },
+  {
+   "key": "ZBLL AS 26",
+   "subset": "AS",
+   "group": "AS3",
+   "setup": "R' U2' F' R U R' U' R' F R U2' R y2'",
+   "algs": [
+    "y2 R' U2 R' F' R U R U' R' F U2 R",
+    "U2 R' U2 R' F' R U R U' R' F U2 R U2"
+   ]
+  },
+  {
+   "key": "ZBLL AS 27",
+   "subset": "AS",
+   "group": "AS3",
+   "setup": "R' U2' R U R' U' R' D' R U2' R' D R2'",
+   "algs": [
+    "R2 D' R U2 R' D R U R U' R' U2 R",
+    "R' F' R U R' U' R' F R2 U' R' U R U' R' U2 R",
+    "y2 L' U' L U F R U2 R' U' x U2 L U r'",
+    "y L' U2 L R U R' F' R U R' U' R' F R2 U' R' U2 L' U2 L"
+   ]
+  },
+  {
+   "key": "ZBLL AS 28",
+   "subset": "AS",
+   "group": "AS3",
+   "setup": "R2' D R2' U2' R U R' U R2' D' R' U2' R' y'",
+   "algs": [
+    "y2 F U R U' R' U R U' R2 F' R U2 R U2 R'",
+    "y2 R U2 R2 D' R U' R' D R2 U R' U' R U' R'",
+    "y R U2 R D R2 U' R U' R' U2 R2 D' R2",
+    "y' L U2 F L' U' L U L F' L' U2 L'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 29",
+   "subset": "AS",
+   "group": "AS3",
+   "setup": "R' U2' R2' U R D' R U R' D R2' U' R U' R' y2'",
+   "algs": [
+    "y F U R U' R' U R U' R' U R2 D R' U' R D' R2 F'",
+    "y' R' U2 R U R2 D' R U' R' D R2 U R' U' R U R' U R",
+    "y2 R U R' U R2 D' R U' R' D R' U' R2 U2 R",
+    "R U' R' F D U R U' R' U R U' R' D' R' F' R"
+   ]
+  },
+  {
+   "key": "ZBLL AS 30",
+   "subset": "AS",
+   "group": "AS3",
+   "setup": "L U' R' U L' U' R",
+   "algs": [
+    "y2 L' U R U' L U R'",
+    "R' U L U' R U L'",
+    "y2 r' F R F' r U R'",
+    "z D' R U R' D R U' z'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 31",
+   "subset": "AS",
+   "group": "AS3",
+   "setup": "L' U' L U' L' U' R U' L U' R' U' R U' R' y2'",
+   "algs": [
+    "y2 R' U R U R' U' R' D' R U R' D R U R U' R' U2 R",
+    "y' L' U R' U' R L U2 R' U' R2 U2 R' U' R U' R'",
+    "y R U2 R' U' R U R D R' U R D' R' U' R' U R U R'",
+    "y2 R U R' U R U L' U R' U L U L' U L"
+   ]
+  },
+  {
+   "key": "ZBLL AS 32",
+   "subset": "AS",
+   "group": "AS3",
+   "setup": "R' U2' R' D' R U' R' D R U R U' R' U R U R' U R",
+   "algs": [
+    "y R U R2 F' R U R U R' U' R U' R' F R U' R'",
+    "y2 D R' U' R D' R U' R' U R2 U R' U' R2",
+    "y R2 U' R' U R2 U R' U' R D' R U' R' D",
+    "R' U' R U' R' U' R U R' U' R' D' R U R' D R U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL AS 33",
+   "subset": "AS",
+   "group": "AS3",
+   "setup": "R2' U R U R' U' R' U' R' L' U R' U' L y2'",
+   "algs": [
+    "y' R U2 R' U' R U R D r' U2 r D' R2",
+    "y2 R' U2 R' D' R U R' D R U' R U R' U' R U R' U R",
+    "y2 L' U R U' L R U R U R U' R' U' R2"
+   ]
+  },
+  {
+   "key": "ZBLL AS 34",
+   "subset": "AS",
+   "group": "AS3",
+   "setup": "R2' F2' R2' U R U' R F2' R' U2' R' U R U2' R' y'",
+   "algs": [
+    "y' R U R U' R2 D U2 R' U' R U D' R",
+    "y R U2 R' U' R U2 R F2 R' U R' U' R2 F2 R2",
+    "S U' R U R U' R2 U R F R' f'",
+    "y R U R' U R U' R' U R U2 R D' R U' R' D R U R"
+   ]
+  },
+  {
+   "key": "ZBLL AS 35",
+   "subset": "AS",
+   "group": "AS3",
+   "setup": "L' U' L' U L2' D' U2' L U L' D U' L' y",
+   "algs": [
+    "y R D' U R U' R' U2 D R2 U' R U R",
+    "R' U2 R U R' U' R U R' U R U R2 D' R U' R' D R U R",
+    "y' L U D' L U' L' U2 D L2 U' L U L",
+    "y' F' U' f R U R2 U' R U R U' S'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 36",
+   "subset": "AS",
+   "group": "AS3",
+   "setup": "F2' R U' R' U' R U2' R2' U' R F2' R' U R y2'",
+   "algs": [
+    "R2 D' r U2 r' D R U R U' R' U2 R",
+    "y2 F R U' R' U R U R2 F' R U R U R' U' R U' R'",
+    "y2 R' U' R F2 R' U R2 U2 R' U R U R' F2"
+   ]
+  },
+  {
+   "key": "ZBLL AS 37",
+   "subset": "AS",
+   "group": "AS4",
+   "setup": "R U R' U R U L U2' R' U R U2' R' L'",
+   "algs": [
+    "R U R' F' R U R' U' R' F R2 U R' U' R U' R'",
+    "y' R U2 R' U' R2 D R' U R D' R' U2 R'",
+    "L R U2 R' U' R U2 L' U' R' U' R U' R'",
+    "R' U' R U' R' U2 R' F2 R U2 R U2 R' F R U R' U' R' F R2 U2"
+   ]
+  },
+  {
+   "key": "ZBLL AS 38",
+   "subset": "AS",
+   "group": "AS4",
+   "setup": "R U R' U' R U R2' D' R U2' R' D R2' U2' R' y",
+   "algs": [
+    "y2 f' L F L' U2 L' U2 L U2 S",
+    "y L' R' U R U' L R' U' R U2 R' U2 R",
+    "y2 R2 U' R U' R2 D' R U R' D R U R U' R",
+    "y' R U2 R2 D' R U2 R' D R2 U' R' U R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 39",
+   "subset": "AS",
+   "group": "AS4",
+   "setup": "R' U2' R U2' L U' R' U M x",
+   "algs": [
+    "y' F U R' U' R F' U' R' U2 R",
+    "y2 L' R U' L U R' U2 L' U2 L",
+    "x' M' U' R U L' U2 R' U2 R",
+    "y2 x M U' L U R' U2 L' U2 L"
+   ]
+  },
+  {
+   "key": "ZBLL AS 40",
+   "subset": "AS",
+   "group": "AS4",
+   "setup": "R' U R U2' R' U R2' D R' U R D' R' y",
+   "algs": [
+    "R' U' F' R U R' U' R' F R2 U' R' U R",
+    "y R U R D R' U R D' R2 U' R U' R'",
+    "y R U2 R2 D' R U R' D R U2 R U' R'",
+    "y' R U' R' U2 L' U R U' L2 U' R' U L'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 41",
+   "subset": "AS",
+   "group": "AS4",
+   "setup": "R' U2' R' D R' U R D' R U R U' R U' R' y'",
+   "algs": [
+    "y R U R' U2 R U R' U' F' R U2 R' U' R U' R' F",
+    "y2 R2 D R' U2 R D' R U' R2 U' R' U R' U R",
+    "y' L' U R U' L U' R D R' U2 R D' R2",
+    "y R U R' U R' U' R' D R' U' R D' R U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL AS 42",
+   "subset": "AS",
+   "group": "AS4",
+   "setup": "R L' U R' U' L U R U2' L' U R' U' L y'",
+   "algs": [
+    "R2 D' R U' R' D F R U R U' R' F' R",
+    "F U R' U' R F' R2 D' R U R' D R2",
+    "y L' U R U' L U2 R' U' L' U R U' L R'",
+    "R U2 R' U' R U' R D r' U2 r D' R' U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 43",
+   "subset": "AS",
+   "group": "AS4",
+   "setup": "R U R' U R2' D r' U2' r D' R2' y2'",
+   "algs": [
+    "y2 R2 D r' U2 r D' R2 U' R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 44",
+   "subset": "AS",
+   "group": "AS4",
+   "setup": "L' U R' U2' L U' L' U2' L U2' R U R' U R",
+   "algs": [
+    "y R U R' U R U' R2 F R F' r U' r' U r U r'",
+    "R U R' U' R' U2 R U R' U R2 U r' F R' F' r",
+    "R D' R U' R' D U' R' U R U R2 U' R' U R",
+    "R' U' R U' R' U2 L' U2 L U L' U2 R U' L"
+   ]
+  },
+  {
+   "key": "ZBLL AS 45",
+   "subset": "AS",
+   "group": "AS4",
+   "setup": "R U R' U' L U' R U L' U' R' U' R U2' R'",
+   "algs": [
+    "R U2 R' U' R U' R D R' U2 R D' R' U2 R'",
+    "R U2 R' U R U L U' R' U L' U R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 46",
+   "subset": "AS",
+   "group": "AS4",
+   "setup": "R' U2' L U' R2' U L' R' U2' R U R' U' R' U R y",
+   "algs": [
+    "R U2 R' U' R' D' R U' R' D R2 U' R' U R U' R'",
+    "y' R' U' R U' R' F' R U R' U' R' F R U R U' R' U2 R",
+    "y' R' U' R U' R U R D R' U' R D' R U2 R",
+    "y' R' U' R U R U' R' U2 R L U' R2 U L' U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL AS 47",
+   "subset": "AS",
+   "group": "AS4",
+   "setup": "R U R' U R2' D R' U2' R D' R2' y2'",
+   "algs": [
+    "y2 R2 D R' U2 R D' R2 U' R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 48",
+   "subset": "AS",
+   "group": "AS4",
+   "setup": "F R' U' R2' U' R2' U2' R2' U' R' F' y'",
+   "algs": [
+    "R U' R' U2 R U' R' U R' D' R U2 R' D R",
+    "R U R' F' R U2 R' U2 R' F R2 U' R'",
+    "R U R' F' R U2 R' U2 R' F R2 U' R' U'",
+    "y F R U R2 U2 R2 U R2 U R F'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 49",
+   "subset": "AS",
+   "group": "AS5",
+   "setup": "R U R' U L' U R U' L U2' R'",
+   "algs": [
+    "y R U' R' F' R U R' U' R' F R2 U' R' U2 R U' R'",
+    "R U2 L' U R' U' L U' R U' R'",
+    "R U' R' U2 R U' R' U2 R' D' R U R' D R"
+   ]
+  },
+  {
+   "key": "ZBLL AS 50",
+   "subset": "AS",
+   "group": "AS5",
+   "setup": "F U' R' U R U F' R U R2' U R2' U2' R' y",
+   "algs": [
+    "y' R U2 R2 U' R2 U' R' F U' R' U' R U F'",
+    "y' R U2 R2 U' R2 F' R U R' U' R' F U' R'",
+    "y' R U2 R2 U' R2 U' R' U2 R' F' R U R' U' R' F R2",
+    "y' R U2 R' D R' U' R D' R2 U R' U' R' U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 51",
+   "subset": "AS",
+   "group": "AS5",
+   "setup": "F R U' R2' U2' R U R' U R2' U R' F' y2'",
+   "algs": [
+    "R U R' F' R U2 R' U' R U' R' F R U' R'",
+    "y2 R' F R F' U2 R U' R' U' F R' F' R",
+    "y2 F R U' R2 U' R U' R' U2 R2 U R' F'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 52",
+   "subset": "AS",
+   "group": "AS5",
+   "setup": "R' U2' L U' R U L' U R' U R y2'",
+   "algs": [
+    "y2 R' U' R U' L U' R' U L' U2 R",
+    "L' U' L U' R U' L' U R' U2 L",
+    "y' R D R' U R D' R' U2 R' U' R U2 R' U' R",
+    "y2 R' F R f' U2 R U' R' U' f R' F' R"
+   ]
+  },
+  {
+   "key": "ZBLL AS 53",
+   "subset": "AS",
+   "group": "AS5",
+   "setup": "R' U2' L R2' U2' R' U' R U2' L' U R2' U R y2'",
+   "algs": [
+    "y2 F R' F' R U R U' R2 F R U R' U' F' U R",
+    "y' L' U R U' L U L' U R' U' L U R U' R'",
+    "y' r R D R' U R U' D' L' U R' U' x'",
+    "R' U2 R' D' R U R' D F R U R U' R' F' R"
+   ]
+  },
+  {
+   "key": "ZBLL AS 54",
+   "subset": "AS",
+   "group": "AS5",
+   "setup": "L' U2' L U R U2' L' U' L U' R' U R U2' R'",
+   "algs": [
+    "y2 F R2 U R2 U R2 U2 R' U2 R' U' R U' R' F'",
+    "F' U2 R' D R U' R' D' R f R' F R f'",
+    "R U2 R' U' F2 R U2 R' U2 R' F2 R2 U' R'",
+    "R U2 R' U' R U L' U L U2 R' U' L' U2 L"
+   ]
+  },
+  {
+   "key": "ZBLL AS 55",
+   "subset": "AS",
+   "group": "AS5",
+   "setup": "R' U2' R U R' U' R L U' R' U L' U2' R y'",
+   "algs": [
+    "y' F U' R' U R U F' R' U R U' R' U2 R",
+    "y R' U2 L U' R U L' R' U R U' R' U2 R",
+    "y' R U R' U R U' R' U r' F R F' r U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 56",
+   "subset": "AS",
+   "group": "AS5",
+   "setup": "R U2' L' U R' U' L R U' R' U R U2' R' y",
+   "algs": [
+    "y' F R U' R' U R U2 R' U' F' R U R' U' R' F R F'",
+    "y' R U2 R' U' R U R' r' F R F' r U2 R'",
+    "y' R U2 R' U' R U R' L' U R U' L U2 R'",
+    "y R' F' U' F U R F R U R' U' R U R' U' F'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 57",
+   "subset": "AS",
+   "group": "AS5",
+   "setup": "L' U2' R L U2' L' U2' R' U2' L U' R U' R' y'",
+   "algs": [
+    "y' R2 U R2 F' R U R' U R U2 R' F R2 U' R2",
+    "y R U R' U L' U2 R U2 L U2 L' R' U2 L",
+    "y' R U2 R' F' R U R' U F U F' U R' F R2 U' R'",
+    "R U' R D R2 U2 R U R' U R2 D' R' U R'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 58",
+   "subset": "AS",
+   "group": "AS5",
+   "setup": "F U R' F R F' R U' R' U R U' R' F' y",
+   "algs": [
+    "y' F R U R' U' R U R' F R' F' R U' F'",
+    "y L' U2 R U' R' U2 L R U R' U' R U R' U' R U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 59",
+   "subset": "AS",
+   "group": "AS5",
+   "setup": "R2' U2' R U' R' U R' U L' U R' U' L U' R' y2'",
+   "algs": [
+    "y2 R' U F' R U R' U' R' F R U2 R U2 R' U' R",
+    "y' R2 U' R2 B R' U2 R U R' U R B' R2 U R2",
+    "y2 R' U R' D' R2 U R' U R U2 R2 D R U' R",
+    "y2 R U L' U R U' L U' R U' R U R' U2 R2"
+   ]
+  },
+  {
+   "key": "ZBLL AS 60",
+   "subset": "AS",
+   "group": "AS5",
+   "setup": "L U' R U' R2' U L' U' R U2' L U R U2' R' L' y'",
+   "algs": [
+    "y' R U' R2 D' U' R U' R' U2 D R2 U R'",
+    "y R' U R2 U2 D R' U' R D' U' R2 U' R",
+    "y L R U2 R' U' L' U2 R' U L U' R2 U R' U L'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 61",
+   "subset": "AS",
+   "group": "AS6",
+   "setup": "R2' U' R2' U' R U R2' U' R2' U R' U R2' y",
+   "algs": [
+    "y R2 U R2 U R' U2 R' U R U R' U' R2",
+    "R' U' R U' R' U R U' R U R2 U R U' R U' R'",
+    "y' F R U R' U F' U' F U' R U R' U' F'",
+    "R' U' R U' R2 U' R' U' R' U R U R U' R"
+   ]
+  },
+  {
+   "key": "ZBLL AS 62",
+   "subset": "AS",
+   "group": "AS6",
+   "setup": "R' U2' R U R U R U R' U' R U R U' R U' R' y2'",
+   "algs": [
+    "y R' U' R U R U2 R' U' R U' R' U R' U R",
+    "y R2 U R2 U R U2 R' U R U R U' R2",
+    "y R U2 R' U' R U' R' U' R U' R U R U R U' R' U' R2"
+   ]
+  },
+  {
+   "key": "ZBLL AS 63",
+   "subset": "AS",
+   "group": "AS6",
+   "setup": "R2' U' R' U' R U R U R U R U R' U R",
+   "algs": [
+    "y2 R U R' U R' U' R U' R' U2 R U R U' R'",
+    "R' U' R U' R' U' R' U' R' U' R' U R U R2",
+    "y R2 U' R U R U R' U2 R U R2 U R2",
+    "U S' r U2 R' U' R U' r' U2 S"
+   ]
+  },
+  {
+   "key": "ZBLL AS 64",
+   "subset": "AS",
+   "group": "AS6",
+   "setup": "R' U' R U' R U R' U' R U R2' U R2' U' R' U R U' R' y'",
+   "algs": [
+    "y' R' U' R U' R U R2 U R U' R U R' U' R U' R'",
+    "y R U R' U' R U R2 U' R2 U' R' U R U' R' U R' U R",
+    "y R2 U' R' U R U R' U2 R' U R2 U R2"
+   ]
+  },
+  {
+   "key": "ZBLL AS 65",
+   "subset": "AS",
+   "group": "AS6",
+   "setup": "R' U2' R2' U2' R2' U' R2' U' R2' U R",
+   "algs": [
+    "R' U' R2 U R2 U R2 U2 R2 U2 R",
+    "y R U2 R' U' R U' R' U R U' R U R U R U' R' U' R2",
+    "y2 R U R2 U' R' U' R U R' U' R2 U2 R",
+    "y' R' U2 R U2 R U2 R' U' R U' R2 U2 R"
+   ]
+  },
+  {
+   "key": "ZBLL AS 66",
+   "subset": "AS",
+   "group": "AS6",
+   "setup": "R U R' U R U2' R' y'",
+   "algs": [
+    "y R U2 R' U' R U' R'",
+    "y' L U2 L' U' L U' L'",
+    "y' M' U2 R U2 M R' U' R U' R' U2",
+    "y R U2 R' U' R U' R' U2"
+   ]
+  },
+  {
+   "key": "ZBLL AS 67",
+   "subset": "AS",
+   "group": "AS6",
+   "setup": "R U R2' U' R2' U' R2' U2' R2' U2' R'",
+   "algs": [
+    "R U2 R2 U2 R2 U R2 U R2 U' R'",
+    "R U2 R2 U' R U' R' U2 R U2 R U2 R'",
+    "R' U' R U' R' U2 R U' R U' R U R U R U' R' U' R2",
+    "y R U2 R2 U' R' U R U' R' U' R2 U R"
+   ]
+  },
+  {
+   "key": "ZBLL AS 68",
+   "subset": "AS",
+   "group": "AS6",
+   "setup": "R' U2' R U R' U R",
+   "algs": [
+    "R' U' R U' R' U2 R",
+    "y2 r' F' r U' r' F2 r",
+    "y R U' R' U' R U R' U R U' R' U R U2 R' U2 R U' R'",
+    "R' U' R U' R' U2 R U2"
+   ]
+  },
+  {
+   "key": "ZBLL AS 69",
+   "subset": "AS",
+   "group": "AS6",
+   "setup": "R' U' R U R U R' U' R' U R U R U' R' y'",
+   "algs": [
+    "y R U R' U' R' U' R U R U' R' U' R' U R",
+    "y R U2 R2 U' R' U' R' U R U R2 U' R'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 70",
+   "subset": "AS",
+   "group": "AS6",
+   "setup": "R2' U' R' U' R2' U R U R2' U R' U R",
+   "algs": [
+    "y R' U' R U R U2 R' U' R' U R U' R U' R'",
+    "R' U' R U' R U R' U' R' U2 R U R U' R'",
+    "y R2 U R U R2 U' R' U' R2 U' R U' R'",
+    "R' U' R U' R2 U' R' U' R2 U R U R2"
+   ]
+  },
+  {
+   "key": "ZBLL AS 71",
+   "subset": "AS",
+   "group": "AS6",
+   "setup": "R' U2' R2' U R2' U R U' R U' R' y2'",
+   "algs": [
+    "y2 R U R' U R' U' R2 U' R2 U2 R",
+    "y R U2 R2 U' R2 U' R' U R' U R",
+    "y2 r U R' U R' U' R2 U' r' R' U2 R",
+    "y' R U' R' U' R U' R' U R U' R' U R U R' U' R U2 R'"
+   ]
+  },
+  {
+   "key": "ZBLL AS 72",
+   "subset": "AS",
+   "group": "AS6",
+   "setup": "R2' U R' U R U2' R U2' R U R' U R2' U R' y'",
+   "algs": [
+    "y' R2 D' R U2 R' D R U R' F R U R U' R' F' R",
+    "R' F2 R D R' D' F2 U' R2 U R' U' R2",
+    "R2 U' S R2 S' R2 U R U' R U' R' U2 R",
+    "y R U' R U R' U R U2 R' U' R' U' R U' R' U R U' R'"
+   ]
+  }
+ ]
+}
