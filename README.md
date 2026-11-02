@@ -13,7 +13,7 @@ One codebase (Svelte 5 + TypeScript + Vite) for three shells: browser/PWA, Andro
 ```bash
 npm install
 npm run dev            # http://localhost:5173
-npm test               # 790 unit and component tests in 24 files
+npm test               # 795 unit and component tests in 24 files
 npm run check          # type-check (svelte-check)
 npm run lint           # eslint
 npm run e2e            # 38 real-browser checks against the build on :4173
@@ -110,8 +110,9 @@ src/views/         Solve, Train, Library, Drills, Settings
   algorithms per case, your default, your own additions (machine-checked), per-algorithm stats and estimated
   recall.
 - **Drills:** Cross, 2-look OLL, 2-look PLL, BLD memo.
-- **Import:** csTimer, CSV (TwistyTimer-style and generic), plain time lists, best-effort CubeDesk JSON.
-  Duplicates are skipped; files over 5 MB are refused rather than parsed on the main thread.
+- **Import:** csTimer, CubeDesk, CSV (TwistyTimer-style and generic), plain time lists. Sessions, penalties
+  (+2 and DNF) and scrambles survive; other puzzles and trainer solves are skipped with a note. Duplicates are
+  skipped and files over 5 MB are refused rather than parsed on the main thread.
 - **Settings:** themes (Midnight, AMOLED, High contrast), text size to 130%, hold time, inspection, recall
   target, personalised scheduling, backup export/restore, screen layout.
 - **Keyboard:** every action is a named, rebindable command (Space, W, Z/X/C, A/D, S, F, End by default).
@@ -140,8 +141,10 @@ src/views/         Solve, Train, Library, Drills, Settings
 - Algorithms are machine-checked starting points, not a claim about what you like executing; swap the default per
   case in the Library.
 - Not tested on a real phone or inside the Tauri shell yet, and no TalkBack/screen-reader pass.
-- The csTimer importer is unit-tested against the documented layout, not a real export file; CubeDesk's format
-  could not be verified, so its importer is best effort.
+- csTimer and CubeDesk are the only importers read from the apps' own code rather than guessed: csTimer's export
+  is covered by a real file that cstimer.net wrote (`src/lib/core/fixtures/cstimer-export.json`), CubeDesk's by
+  its export/import source (`types/solve.ts`, `types/session.ts`, `server/models/solve.ts`) and not a downloaded
+  file, because cubedesk.io now keeps export behind an account.
 
 ## Licence
 

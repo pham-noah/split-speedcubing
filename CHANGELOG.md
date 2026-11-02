@@ -12,6 +12,14 @@ The F2L library is now the standard one, and so are PLL and OLL.
 The Android **namespace** is deliberately still `org.example.split`, because that is the Java package `MainActivity` lives in and the manifest's `.MainActivity` resolves against it; renaming it means moving the Java package, which needs a gradle build to verify.
 
 ### Added
+- A CubeDesk export is read as what it is instead of being guessed at: sessions come from the file's own session
+  list, a solve belongs to the session it names, a DNF (stored as `time: -1` with the real time in `raw_time`)
+  is now imported as a DNF rather than silently dropped, and a +2 is taken from `raw_time` because CubeDesk has
+  already added the two seconds to `time`. Other puzzles and trainer solves are skipped with a note.
+- The csTimer importer is checked against a file cstimer.net itself wrote
+  (`src/lib/core/fixtures/cstimer-export.json`, three 3x3 solves plus one 4x4, produced by the app's own
+  `storage.exportAll()`), so the empty-session padding, the numeric session names and the `+2`/DNF rows are
+  covered by a real export rather than by a fixture that agreed with the parser.
 - ZBLL ships its 472 cases: the seven SpeedCubeDB subsets, each case with the algorithm that page lists first
   plus up to three more the simulator accepts (427 bundled alternatives). `scripts/gen-zbl-scdb.ts` writes the
   seven data files and refuses to write unless every line keeps F2L solved with the last-layer edges oriented,

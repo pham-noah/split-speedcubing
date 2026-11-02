@@ -75,14 +75,63 @@ type Obj = Record<string, unknown>;
 const isObj = (v: unknown): v is Obj => !!v && typeof v === 'object' && !Array.isArray(v);
 function solveFromObj(o: Obj): ImportedSolve | null {
   const time = typeof o.time === 'number' ? o.time : typeof o.time === 'string' ? Number(o.time) : NaN;
-  if (!isFinite(time) || time <= 0) return null;
-  const dnf = o.dnf === true || o.dnf === 1 || o.penalty === 'DNF';
+  if (!isFinite(time)) return null;
+  const scramble = typeof o.scramble === 'string' ? o.scramble : '';
+  const ts = toTs(o.ended_at) ?? toTs(o.created_at) ?? toTs(o.date) ?? toTs(o.started_at) ?? 0;
+  // CubeDesk writes a DNF as time -1 with dnf: true; either alone is enough
+  if (o.dnf === true || o.dnf === 1 || o.penalty === 'DNF' || time < 0) return { ms: 0, pen: 'DNF', scramble, ts };
+  if (time <= 0) return null;
   const plus = o.plus_two === true || o.plusTwo === true || o.plus2 === true || o.penalty === '+2';
-  return {
-    ms: Math.round(time * 1000), pen: dnf ? 'DNF' : plus ? '+2' : '',
-    scramble: typeof o.scramble === 'string' ? o.scramble : '',
-    ts: toTs(o.ended_at) ?? toTs(o.created_at) ?? toTs(o.date) ?? toTs(o.started_at) ?? 0,
-  };
+  return { ms: Math.round(time * 1000), pen: plus ? '+2' : '', scramble, ts };
+}
+
+// CubeDesk stores a +2 with the penalty already added to `time` (bulkPlusTwoSolves: time = raw_time + 2),
+// and a DNF as time -1 with the real time left in raw_time.
+function cubeDeskSolve(o: Obj): ImportedSolve | null {
+  const time = typeof o.time === 'number' ? o.time : Number(o.time);
+  const raw = typeof o.raw_time === 'number' ? o.raw_time : Number(o.raw_time);
+  const ts = toTs(o.ended_at) ?? toTs(o.started_at) ?? 0;
+  const scramble = typeof o.scramble === 'string' ? o.scramble : '';
+  if (o.dnf === true || time < 0) {
+    return { ms: isFinite(raw) && raw > 0 ? Math.round(raw * 1000) : 0, pen: 'DNF', scramble, ts };
+  }
+  if (!isFinite(time) || time <= 0) return null;
+  if (o.plus_two === true) {
+    const base = isFinite(raw) && raw > 0 ? raw : time - 2;
+    return { ms: Math.round(base * 1000), pen: '+2', scramble, ts };
+  }
+  return { ms: Math.round(time * 1000), pen: '', scramble, ts };
+}
+
+// { "solves": [...], "sessions": [{ "id", "name", "order" }] } — CubeDesk's own export
+// (types/solve.ts: time in seconds, a DNF stored as -1, trainer solves are not session solves).
+function parseCubeDesk(root: Obj): ImportResult | null {
+  const { solves, sessions } = root;
+  if (!Array.isArray(solves) || !Array.isArray(sessions)) return null;
+  const notes: string[] = [];
+  const nameOf = new Map<string, string>();
+  sessions.filter(isObj).forEach((s, i) => {
+    const id = typeof s.id === 'string' ? s.id : '';
+    if (id) nameOf.set(id, typeof s.name === 'string' && s.name.trim() ? s.name.trim() : `Session ${i + 1}`);
+  });
+  const buckets = new Map<string, ImportedSolve[]>();
+  let other = 0, trainer = 0, junk = 0;
+  for (const raw of solves) {
+    if (!isObj(raw)) { junk++; continue; }
+    if (typeof raw.trainer_name === 'string' && raw.trainer_name) { trainer++; continue; }
+    const event = typeof raw.event_type === 'string' ? raw.event_type : typeof raw.cube_type === 'string' ? raw.cube_type : '';
+    if (event && !['333', '333oh'].includes(event)) { other++; continue; }
+    const id = typeof raw.session_id === 'string' ? raw.session_id : '';
+    const s = id ? cubeDeskSolve(raw) : null;
+    if (!id || !s) { junk++; continue; }
+    buckets.set(id, [...(buckets.get(id) ?? []), s]);
+  }
+  const out: ImportedSession[] = [];
+  for (const [id, list] of buckets) out.push({ name: nameOf.get(id) ?? `Session ${id.slice(0, 6)}`, solves: list });
+  if (other) notes.push(`Skipped ${other} solve${other > 1 ? 's' : ''} for other puzzles. This app times 3x3 only.`);
+  if (trainer) notes.push(`Skipped ${trainer} trainer solve${trainer > 1 ? 's' : ''}: only your history is imported.`);
+  if (junk) notes.push(`Skipped ${junk} solve${junk > 1 ? 's' : ''} that had no session or an unreadable time.`);
+  return { format: 'CubeDesk', sessions: out, notes };
 }
 function parseGenericJson(root: unknown): ImportResult {
   const found: { name: string; solves: ImportedSolve[] }[] = [];
@@ -169,6 +218,10 @@ export function parseImport(text: string): ImportResult {
     let root: unknown;
     try { root = JSON.parse(t); } catch { return { format: 'unknown', sessions: [], notes: ['That is not valid JSON.'] }; }
     if (isObj(root) && Object.keys(root).some(k => /^session\d+$/.test(k))) return parseCsTimer(root);
+    if (isObj(root)) {
+      const desk = parseCubeDesk(root);
+      if (desk) return desk;
+    }
     const g = parseGenericJson(root);
     return g.sessions.length ? g : { format: 'unknown', sessions: [], notes: ['No solves found in this JSON file.'] };
   }

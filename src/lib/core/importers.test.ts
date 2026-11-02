@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
 import { parseImport, parseTimeText, withTimestamps } from './importers';
 
 const csTimer = JSON.stringify({
@@ -24,6 +25,22 @@ describe('csTimer import', () => {
   it('3x3 without scrType is accepted', () => {
     const only = parseImport(JSON.stringify({ session1: [[[0, 9000], '', '', 1]], properties: { sessionData: '{"1":{"name":"A","opt":{}}}' } }));
     expect(only.sessions.length).toBe(1);
+  });
+  it('reads a file cstimer.net itself wrote', () => {
+    // src/lib/core/fixtures/cstimer-export.json is the output of csTimer's own export (storage.exportAll +
+    // properties), produced in the running app on 2026-11-02 from three seeded 3x3 solves and one 4x4.
+    const text = readFileSync(new URL('./fixtures/cstimer-export.json', import.meta.url), 'utf8');
+    const real = parseImport(text);
+    expect(real.format).toBe('csTimer');
+    expect(real.sessions.length).toBe(1);
+    const s = real.sessions[0];
+    expect(s.name).toBe('Main');
+    expect(s.solves.map(x => [x.ms, x.pen])).toEqual([[12340, ''], [8500, '+2'], [0, 'DNF']]);
+    expect(s.solves[0].scramble).toBe("R U R' U'");
+    expect(s.solves[1].ts).toBe(1700000100000);
+    expect(real.notes.join(' ')).toContain('other puzzles');
+    // every empty session csTimer writes must be skipped, not turned into an empty one here
+    expect(real.sessions.every(x => x.solves.length > 0)).toBe(true);
   });
 });
 
@@ -60,6 +77,45 @@ describe('CSV and list import', () => {
     expect(r.format).toBe('List of times');
     expect(r.sessions[0].solves.map(s => s.pen)).toEqual(['', '', '+2', 'DNF']);
     expect(r.notes.join(' ')).toContain('1 line');
+  });
+});
+
+describe('CubeDesk export', () => {
+  // the shape kash/cubedesk writes (types/solve.ts, types/session.ts): time in seconds, a DNF as -1,
+  // trainer_name for trainer solves, session_id linking a solve to its session
+  const desk = JSON.stringify({
+    sessions: [{ id: 's1', name: 'Main', order: 1 }, { id: 's2', name: 'One-handed', order: 2 }],
+    solves: [
+      { time: 9.84, raw_time: 9.84, event_type: '333', scramble: "R U R' U'", session_id: 's1', dnf: false, plus_two: false, trainer_name: null, ended_at: 1700000000000 },
+      { time: 12.4, raw_time: 10.4, event_type: '333', scramble: 'F B', session_id: 's1', dnf: false, plus_two: true, trainer_name: null, ended_at: 1700000100000 },
+      { time: -1, raw_time: 30.1, event_type: '333', scramble: 'L D', session_id: 's1', dnf: true, plus_two: false, trainer_name: null, ended_at: 1700000200000 },
+      { time: 21.5, raw_time: 21.5, event_type: '333oh', scramble: 'B2', session_id: 's2', dnf: false, plus_two: false, trainer_name: null, ended_at: 1700000300000 },
+      { time: 45.0, raw_time: 45.0, event_type: '444', scramble: 'R2', session_id: 's1', dnf: false, plus_two: false, trainer_name: null, ended_at: 1700000400000 },
+      { time: 3.2, raw_time: 3.2, event_type: '333', scramble: 'U', session_id: null, dnf: false, plus_two: false, trainer_name: 'PLL trainer', ended_at: 1700000500000 },
+    ],
+  });
+  const r = parseImport(desk);
+  it('is recognised as CubeDesk and keeps its sessions', () => {
+    expect(r.format).toBe('CubeDesk');
+    expect(r.sessions.map(s => s.name)).toEqual(['Main', 'One-handed']);
+    expect(r.sessions.map(s => s.solves.length)).toEqual([3, 1]);
+  });
+  it('reads seconds, a +2 flag and a DNF stored as -1', () => {
+    const s = r.sessions[0].solves;
+    expect(s[0]).toEqual({ ms: 9840, pen: '', scramble: "R U R' U'", ts: 1700000000000 });
+    // CubeDesk's +2 is already inside `time` (12.4 = 10.4 + 2), so the raw time is what gets the penalty here
+    expect(s[1]).toMatchObject({ ms: 10400, pen: '+2' });
+    // a DNF is stored as time -1 with the real time in raw_time; it used to be dropped entirely
+    expect(s[2]).toMatchObject({ ms: 30100, pen: 'DNF' });
+    expect(r.sessions[1].solves[0].ms).toBe(21500);
+  });
+  it('skips other puzzles and trainer solves, and says so', () => {
+    const notes = r.notes.join(' ');
+    expect(notes).toContain('other puzzles');
+    expect(notes).toContain('trainer');
+  });
+  it('does not mistake a csTimer export for it', () => {
+    expect(parseImport(csTimer).format).toBe('csTimer');
   });
 });
 
