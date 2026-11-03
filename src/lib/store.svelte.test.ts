@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { SETS } from './data';
+import { effective } from './core/stats';
 
 // minimal DOM stub: the store only touches documentElement for theme and text size
 (globalThis as any).document = { documentElement: { dataset: {}, style: {} } };
@@ -274,5 +275,58 @@ describe('store: the weekly safety copy', () => {
     store.update({ autoBackup: false });
     store.update({ lastBackupAt: 0 });
     expect(store.needsAutoBackup()).toBe(false);
+  });
+});
+
+describe('undo and penalties across a second session', () => {
+  it('puts a deleted solve back at its GLOBAL position, not its index inside the session', () => {
+    const a = store.data.session;
+    store.addSession('Undo A');
+    const A = store.session.id;
+    store.addSolve(1000, 'R U');            // global 0
+    store.addSession('Undo B');
+    store.addSolve(2000, 'F B');            // global 1
+    store.switchSession(A);
+    store.addSolve(3000, 'L D');            // global 2 — session index 1, which is the trap
+    const target = store.solves.at(-1)!;
+    const globalIndex = store.data.solves.findIndex(s => s.id === target.id);
+    expect(globalIndex).toBeGreaterThan(store.solves.findIndex(s => s.id === target.id));
+
+    store.deleteSolve(target.id);
+    store.restoreSolve(target, globalIndex);
+
+    // a session-relative index would have spliced it in before B's solve
+    expect(store.data.solves.slice(-3).map(s => s.ms)).toEqual([1000, 2000, 3000]);
+    expect(store.solves.map(s => s.ms)).toEqual([1000, 3000]);
+
+    store.switchSession(a);
+  });
+
+  it('refuses to restore a solve that is already in the list', () => {
+    store.addSession('Undo C');
+    store.addSolve(4000, 'R U');
+    const s = store.solves.at(-1)!;
+    const n = store.data.solves.length;
+    store.restoreSolve(s, 0);
+    expect(store.data.solves.length).toBe(n);
+  });
+
+  it('a drill penalty reaches the number the screen shows, and only its own mode', () => {
+    store.addDrill({ type: 'cross', ms: 5000, memo: null, ok: true });
+    store.addDrill({ type: 'pll2', ms: 7000, memo: null, ok: true });
+    const shown = (type: 'cross' | 'pll2') => {
+      const d = store.data.drills.filter(x => x.type === type).at(-1)!;
+      return effective({ ms: d.ms, pen: d.pen ?? '' });      // what Drills.svelte's exec() does
+    };
+
+    store.penDrill('cross', '+2');
+    expect(shown('cross')).toBe(5000 + 2000);
+    expect(store.data.drills.filter(d => d.type === 'pll2').at(-1)!.pen).toBeUndefined();
+
+    store.penDrill('cross', 'DNF');
+    expect(shown('cross')).toBe(Infinity);                   // a DNF is not "best"
+
+    store.penDrill('cross', '');
+    expect(shown('cross')).toBe(5000);
   });
 });

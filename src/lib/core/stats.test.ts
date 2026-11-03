@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { averageOf, meanOf, best, bestAverage, formatTime, effective, runningAverage, attemptExec, type Solve } from './stats';
+import { averageOf, meanOf, mean, best, bestAverage, formatTime, effective, runningAverage, attemptExec, type Solve } from './stats';
 const mk = (ms: number, pen: Solve['pen'] = ''): Solve => ({ id: String(Math.random()), ms, pen, scramble: '', event: '333', ts: 0 });
 const list = (...v: (number | [number, Solve['pen']])[]) => v.map(x => (Array.isArray(x) ? mk(x[0], x[1]) : mk(x)));
 
@@ -27,6 +27,11 @@ describe('stats', () => {
   it('mo3 with a DNF is DNF', () => {
     expect(meanOf(list(1000, 2000, 3000), 3)).toBe(2000);
     expect(meanOf(list(1000, 2000, [3000, 'DNF']), 3)).toBe(Infinity);
+  });
+  it('a plain mean over already-resolved times, and null for an empty list', () => {
+    expect(mean([1000, 2000, 3000])).toBe(2000);
+    expect(mean([])).toBeNull();
+    expect(mean([0])).toBe(0);
   });
   it('best single and best average', () => {
     expect(best(list(9000, [5000, '+2'], 8000))).toBe(7000);

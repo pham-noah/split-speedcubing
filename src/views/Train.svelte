@@ -14,7 +14,7 @@
   import { caseScramble, randomAuf } from '../lib/core/alg';
   import { pickNext, mastery, gradeForAttempt } from '../lib/core/srs';
   import { CASE_TARGET_MS } from '../lib/core/targets';
-  import { formatTime, attemptExec, type Penalty } from '../lib/core/stats';
+  import { formatTime, attemptExec, mean, type Penalty } from '../lib/core/stats';
   import { codeLabel } from '../lib/core/shortcuts';
 
   const HINT: Record<CaseSet, string> = {
@@ -45,7 +45,6 @@
   let result = $state<{ ms: number; recog: number | null } | null>(null);
   let lastId: string | null = null;
 
-  const mean = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
   const inScope = (c: CaseDef) => set !== 'F2L' || slotFilter === 'All' || c.slot === slotFilter;
   const list = $derived(store.casesFor(set).filter(inScope));
   const cards = $derived(store.cardsFor(set));
@@ -104,7 +103,7 @@
       avg: (() => {
         const all = Object.values(store.data.cards).flatMap(c => c.attempts).filter(a => a.ts >= sessionStart);
         const ex = all.map(attemptExec).filter(Number.isFinite);
-        return ex.length ? ex.reduce((x, y) => x + y, 0) / ex.length : null;
+        return mean(ex);
       })(),
     } : null;
     drill = null; started = false;

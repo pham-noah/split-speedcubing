@@ -1,6 +1,6 @@
 <script lang="ts">
   import { store } from '../store.svelte';
-  import { averageOf, best, effective, formatTime } from '../core/stats';
+  import { averageOf, best, effective, formatTime, mean } from '../core/stats';
   import ShortcutsSide from './ShortcutsSide.svelte';
   const { onClose }: { onClose: () => void } = $props();
   let name = $state('');
@@ -10,11 +10,10 @@
   const info = (id: string) => {
     const s = store.data.solves.filter(x => x.session === id);
     const times = s.map(effective).filter(Number.isFinite);
-    const mean = times.length ? times.reduce((a, b) => a + b, 0) / times.length : null;
     const last = s.reduce((m, x) => Math.max(m, x.ts), 0);
     const days = last ? Math.floor((Date.now() - last) / 86400000) : null;
     const when = days == null ? 'never' : days <= 0 ? 'today' : days === 1 ? 'yesterday' : `${days} days ago`;
-    return `${s.length} solves · best ${formatTime(best(s))} · avg ${formatTime(mean)} · ao12 ${formatTime(averageOf(s, 12))} · last ${when}`;
+    return `${s.length} solves · best ${formatTime(best(s))} · avg ${formatTime(mean(times))} · ao12 ${formatTime(averageOf(s, 12))} · last ${when}`;
   };
   function create() { store.addSession(name); name = ''; onClose(); }
   // Escape goes back; so does the "New scramble" key (S by default), matching the timer screen

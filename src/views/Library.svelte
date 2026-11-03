@@ -13,7 +13,7 @@
   import { mastery, recall, dueLabel, gradeForAttempt } from '../lib/core/srs';
   import { CASE_TARGET_MS } from '../lib/core/targets';
   import { moveCount, caseScramble, randomAuf } from '../lib/core/alg';
-  import { formatTime, attemptExec, type Penalty } from '../lib/core/stats';
+  import { formatTime, attemptExec, mean, type Penalty } from '../lib/core/stats';
   import { makeHints } from '../lib/core/hints';
   import TrainHistory from '../lib/ui/TrainHistory.svelte';
   import PenaltyRow from '../lib/ui/PenaltyRow.svelte';
@@ -96,7 +96,6 @@
   const card = $derived(sel ? store.card(sel.id) : null);
   const algs = $derived(sel ? store.algsFor(sel.id) : []);
   const current = $derived(sel ? store.algFor(sel.id) : '');
-  const mean = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
   const short = (n: string) => n.replace('-perm', '').replace('OLL ', '').replace('F2L ', '').replace('ZBLL ', '');
   // OLL cells show the case name ("Sune"), not just its number; the number is still in the panel
   const label = (c: { name: string; nick?: string }) => (set === 'OLL' ? (c.nick ?? c.name) : short(c.name));

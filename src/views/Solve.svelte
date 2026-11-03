@@ -8,7 +8,7 @@
   import Deltas from '../lib/ui/Deltas.svelte';
   import ShortcutsSide from '../lib/ui/ShortcutsSide.svelte';
   import { ScrambleQueue } from '../lib/core/scramble';
-  import { averageOf, best, effective, formatTime, type Penalty, type Solve } from '../lib/core/stats';
+  import { averageOf, best, effective, formatTime, mean, type Penalty, type Solve } from '../lib/core/stats';
 
   const queue = new ScrambleQueue();
   let scramble = $state('Generating scramble…');
@@ -32,7 +32,7 @@
     if (done.length < 2 || !last) return null;
     const t = effective(last);
     if (!Number.isFinite(t)) return null;
-    const avg = done.reduce((a, b) => a + b, 0) / done.length;
+    const avg = mean(done) ?? 0;
     return t - avg;
   });
   let history = $state(false);

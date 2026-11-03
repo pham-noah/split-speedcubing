@@ -80,6 +80,25 @@ A preview left listening on :4174 by an earlier run is now detected by port and 
 - `app.test.ts` waits up to 4 s for a lazy screen chunk instead of 1 s: the old budget failed whenever
   a build ran beside the tests.
 
+### Fixed
+- The release check is offered only where it can succeed. `Caps` gained `updateCheck`, the desktop adapter is the
+  only one that sets it, and Settings gates on it instead of `kind !== 'web'`. Android declares no `INTERNET`
+  permission — that is what makes the app provably offline — so every check there could only ever have reported
+  "Could not reach GitHub", with no way for the user to fix it.
+- Docs caught up with the app: the README's test and e2e counts (800 and 43, not 795 and 38), its "44 px targets"
+  claim (the controls are 34-38 px on purpose), its "strict CSP with no network access" line (the updater needs
+  `connect-src https://api.github.com`) and its project layout, which had never listed ZBLL. `PRIVACY.md` no longer
+  claims the app never touches the network, and describes the opt-in check in its own section.
+- The F-Droid template is named for the real application id (`docs/fdroid/com.noah.split.yml`) and pins 0.5.0 /
+  code 5, and `docs/RELEASING.md` no longer tells you to `rm -rf android`, which would have deleted the gitignored
+  signing key with it.
+
+### Changed (internals)
+- One `mean()` in `core/stats.ts` replaces six hand-rolled copies across the views and panels, so "every displayed
+  average uses the same rules" is a single function rather than a habit.
+- The `format` script is gone: `prettier --write .` rewrites `app.css` from 790 lines to 1 500 and buries any real
+  diff.
+
 ## [0.4.0] - 2026-10-26
 
 Trainer polish, and the trainer now grades itself.

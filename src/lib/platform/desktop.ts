@@ -4,7 +4,7 @@ import { markShell, pickFileViaInput, saveFileViaAnchor } from './dom';
 
 export const platform: Platform = {
   kind: 'desktop',
-  caps: { backButton: false, saveFile: true, fileDialogs: false, openLinks: true },
+  caps: { backButton: false, saveFile: true, fileDialogs: false, openLinks: true, updateCheck: true },
   shell() {
     markShell('desktop');
     // a webview has nowhere to navigate to: hand every external link to the system browser instead

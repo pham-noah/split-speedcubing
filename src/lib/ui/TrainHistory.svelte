@@ -1,7 +1,7 @@
 <script lang="ts">
   import { store } from '../store.svelte';
   import ShortcutsSide from './ShortcutsSide.svelte';
-  import { formatTime, attemptExec, runningAverage } from '../core/stats';
+  import { formatTime, attemptExec, runningAverage, mean } from '../core/stats';
 
   // Training history: the attempts made while training, not solve times. One case, or all of them.
   const { caseId = null, onBack }: { caseId?: string | null; onBack: () => void } = $props();
@@ -50,7 +50,7 @@
   );
   const execs = $derived(all.map(exec).filter(Number.isFinite));
   const bestExec = $derived(execs.length ? execs.reduce((a, b) => (b < a ? b : a), Infinity) : null);
-  const avgExec = $derived(execs.length ? execs.reduce((a, b) => a + b, 0) / execs.length : null);
+  const avgExec = $derived(mean(execs));
 
   // per case: where the time goes, slowest first — what to drill next
   const byCase = $derived.by(() => {
@@ -59,7 +59,7 @@
       if (caseId && id !== caseId) continue;
       const ex = card.attempts.map(a => attemptExec(a)).filter(Number.isFinite);
       if (!ex.length) continue;
-      out.push({ id, avg: ex.reduce((x, y) => x + y, 0) / ex.length, best: Math.min(...ex), n: ex.length });
+      out.push({ id, avg: mean(ex) ?? 0, best: Math.min(...ex), n: ex.length });
     }
     return out.sort((a, b) => b.avg - a.avg).slice(0, 6);
   });

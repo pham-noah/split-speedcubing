@@ -16,6 +16,12 @@ describe('platform adapters', () => {
     expect(desktop.caps.backButton).toBe(false);
   });
 
+  it('only desktop can check for updates: Android asks for no INTERNET permission, so a fetch there cannot succeed', () => {
+    expect(desktop.caps.updateCheck).toBe(true);
+    expect(android.caps.updateCheck).toBe(false);
+    expect(web.caps.updateCheck).toBe(false);
+  });
+
   it('every shell can save a file', () => {
     for (const p of [web, android, desktop]) expect(p.caps.saveFile).toBe(true);
   });

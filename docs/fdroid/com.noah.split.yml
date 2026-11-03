@@ -1,0 +1,38 @@
+# Template for an F-Droid inclusion request (merge request to https://gitlab.com/fdroid/fdroiddata).
+# The file name is the applicationId from android/app/build.gradle; fdroiddata requires that match.
+# Not yet tested against F-Droid's build server: compare with the current documentation and similar
+# Capacitor apps in fdroiddata before submitting, because build recipes change.
+Categories:
+  - Time
+  - Games
+License: GPL-3.0-or-later
+AuthorName: Noah Pham
+SourceCode: https://github.com/pham-noah/split-speedcubing
+IssueTracker: https://github.com/pham-noah/split-speedcubing/issues
+Changelog: https://github.com/pham-noah/split-speedcubing/blob/HEAD/CHANGELOG.md
+
+AutoName: Split
+
+RepoType: git
+Repo: https://github.com/pham-noah/split-speedcubing.git
+
+Builds:
+  - versionName: 0.5.0
+    versionCode: 5
+    commit: v0.5.0
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm   # Node 22+ is required; adjust to what the build server provides
+    init: cd ../.. && npm ci
+    gradle:
+      - yes
+    prebuild: cd ../.. && npm run build:android && npx cap sync android
+    scanignore:
+      - android/capacitor-cordova-android-plugins
+    # no ndk or extra tools are needed, and the app declares no permissions to strip
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 0.5.0
+CurrentVersionCode: 5

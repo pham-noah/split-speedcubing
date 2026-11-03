@@ -30,8 +30,8 @@ export function averageOf(solves: Solve[], n: number): number | null {
   if (solves.length < n) return null;
   const v = solves.slice(-n).map(effective).sort((a, b) => a - b);
   const trimmed = v.slice(1, -1);
-  const mean = trimmed.reduce((a, b) => a + b, 0) / trimmed.length;
-  return Number.isFinite(mean) ? mean : Infinity;
+  const avg = trimmed.reduce((a, b) => a + b, 0) / trimmed.length;
+  return Number.isFinite(avg) ? avg : Infinity;
 }
 // mean of 3: no trimming, any DNF makes it DNF
 export function meanOf(solves: Solve[], n: number): number | null {
@@ -40,6 +40,9 @@ export function meanOf(solves: Solve[], n: number): number | null {
   const m = v.reduce((a, b) => a + b, 0) / n;
   return Number.isFinite(m) ? m : Infinity;
 }
+/** Plain mean over times already resolved through `effective`/`attemptExec`: the one place a screen
+ *  does arithmetic on a list, so a panel and a card beside it cannot disagree. */
+export const mean = (times: number[]): number | null => (times.length ? times.reduce((a, b) => a + b, 0) / times.length : null);
 // Best WCA average of n over every window: one pass, keeping the window sorted rather than re-sorting
 // it each step, which is quadratic across a long history.
 export function bestAverage(solves: Solve[], n: number): number | null {
@@ -58,8 +61,8 @@ export function bestAverage(solves: Solve[], n: number): number | null {
     if (win.length === n) {
       let sum = 0;
       for (let k = 1; k < n - 1; k++) sum += win[k];   // drop the best and the worst
-      const mean = sum / (n - 2);
-      const a = Number.isFinite(mean) ? mean : Infinity;
+      const avg = sum / (n - 2);
+      const a = Number.isFinite(avg) ? avg : Infinity;
       if (bestSoFar === null || a < bestSoFar) bestSoFar = a;
     }
   }
@@ -79,7 +82,7 @@ export function runningAverage(times: number[], n: number): (number | null)[] {
   return times.map((_, i) => {
     if (i + 1 < n) return null;
     const w = times.slice(i + 1 - n, i + 1).sort((a, b) => a - b);
-    const mean = w.slice(1, -1).reduce((a, b) => a + b, 0) / (n - 2);
-    return Number.isFinite(mean) ? mean : Infinity;
+    const avg = w.slice(1, -1).reduce((a, b) => a + b, 0) / (n - 2);
+    return Number.isFinite(avg) ? avg : Infinity;
   });
 }

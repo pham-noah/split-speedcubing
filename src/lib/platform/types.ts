@@ -3,6 +3,8 @@ export interface Caps {
   saveFile: boolean;
   fileDialogs: boolean;
   openLinks: boolean;
+  /** the shell can reach the release feed; Android cannot, it declares no INTERNET permission */
+  updateCheck: boolean;
 }
 
 export interface Platform {

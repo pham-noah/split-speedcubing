@@ -4,7 +4,7 @@
   import TimerPad from '../lib/ui/TimerPad.svelte';
   import { ScrambleQueue } from '../lib/core/scramble';
   import { make2Look, type TwoLook } from '../lib/core/twolook';
-  import { formatTime, effective } from '../lib/core/stats';
+  import { formatTime, effective, mean } from '../lib/core/stats';
   import ShortcutsSide from '../lib/ui/ShortcutsSide.svelte';
   import ScrambleWalk from '../lib/ui/ScrambleWalk.svelte';
   import { hoverEnter, hoverLeave } from '../lib/ui/hover';
@@ -84,7 +84,6 @@
 
   const results = $derived(store.data.drills.filter(d => d.type === mode));
   const recent = $derived(results.slice(-10));
-  const mean = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
   const okOnly = $derived(recent.filter(d => d.ok));
   // a penalty has to reach the numbers, not just the button: +2 adds two seconds, a DNF has no time
   const exec = (d: DrillResult) => effective({ ms: d.ms, pen: d.pen ?? '' });

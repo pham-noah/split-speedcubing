@@ -376,7 +376,7 @@
     {:else}
       <div class="mu">Built by Noah Pham. Source and issues: github.com/pham-noah/split-speedcubing</div>
     {/if}
-    {#if platform.kind !== 'web'}
+    {#if platform.caps.updateCheck}
       <label class="row sp" style="min-height:44px"
         ><span>Check for updates</span><input
           type="checkbox"
