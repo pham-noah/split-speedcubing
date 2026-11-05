@@ -1,0 +1,3 @@
+Everything answers when you touch it now: buttons squash on press and settle back, the timer button draws a ring while you hold it, and the colour that floods the screen shows Hold, Release and the time at its centre.
+
+Saves are much cheaper on a long history: a solve writes one record instead of copying the whole history, and a graded case writes one case. Personalising the schedule now runs off the UI thread.

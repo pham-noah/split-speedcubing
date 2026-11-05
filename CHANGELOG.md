@@ -2,6 +2,66 @@
 
 All notable changes to Split. Format based on [Keep a Changelog](https://keepachangelog.com); versions follow [SemVer](https://semver.org).
 
+## [0.6.0] - 2026-11-05
+
+The app now answers when you touch it, and a long history no longer costs you a stutter on every solve.
+
+### Added
+- **Press feedback on everything.** Buttons, chips, case cells, segments, tabs and the round Solve button squash to
+  0.955 on pointer-down in 90 ms and settle back on a 260 ms spring. Before this the Android tap highlight was
+  suppressed and the first visual answer was the click landing, so a press read as nothing happening.
+- **The hold has something to watch.** The timer button sinks to 0.93 with a glow while you hold it, and a ring
+  draws itself in over exactly the hold time set in Settings (150/300/500 ms).
+- **The full-screen cover carries its own state.** It sits above the timer button, so a hold used to hide the
+  "Release!" cue and the wait was blind. The flood and its contents are now two layers: a stationary stage at the
+  centre of the screen shows the ring, `Hold`, `Release`, then the running time. Its ink is measured from the
+  colour it will paint, because white on the default blue did not clear 4.5:1.
+- **Motion across the rest of the app:** screens rise 6 px as they open, the tab you land on pops and its icon leans
+  in, segment and case cells answer their own press, the intro sheet and the phone case sheet come in rather than
+  appearing, undo banners rise from the bottom edge, history rows stagger in, the due badge pops when it changes,
+  a new scramble lands one move at a time, and the three stat numbers plus the finished time get an entrance when
+  they change. All of it is transform/opacity only, 180–260 ms, and none of it runs under
+  `prefers-reduced-motion`.
+
+### Changed (speed)
+- **A save copies only what changed.** `$state.snapshot(this.data)` walked the whole history on every write:
+  measured 960 ms per save at 10 000 solves in Chrome. The store keeps the plain copies it last handed to storage
+  and refreshes only what differs, comparing a solve on the two fields that can still change. Same build, same
+  data: 14 ms. A test mutates a solve and a card straight on the state object — where no store method marks
+  anything — and requires both to survive a reload, so a stale copy cannot pass quietly.
+- **Cards have their own IndexedDB store.** They used to live inside the `kv['app']` blob, so every solve and every
+  penalty tap rewrote 2 MB of card records (472 cases × 60 attempts). They are now keyed, written as a delta from
+  the ids the store touched, and deleted when they leave the data. One changed solve: 38.6 ms at 1 000 solves and
+  99.1 ms at 50 000 before; 1.6 ms and 54.3 ms after.
+- **The FSRS optimiser runs in a worker.** Replaying thousands of reviews used to churn the main thread for 4.6 s
+  at 2 512 usable reviews; it now takes 3.1 s off-thread with one 150 ms frame instead of a hundred small ones, and
+  falls back to the same function inline where there is no `Worker`.
+- **History derives only the rows it draws.** The ao5/ao12 deltas were computed for the whole session while the
+  list shows the last 200 rows: 62.5 ms at 50 000 solves, 0.29 ms over the 211 solves whose windows those rows
+  actually read, with identical numbers on every row on screen.
+- **The Library's hint overlay is no longer quadratic.** It called `byName()` inside the grid's `{#each}` — 472
+  filter-and-sort passes per keystroke on ZBLL. Hoisted to one `$derived`: 90.8 ms to 27.0 ms per keystroke,
+  measured in the same browser probe before and after.
+
+### Fixed
+- `normalize()` checked the numbers a backup carries but not the strings: a hand-edited file could keep
+  `{ alg: 5, name: 7 }` and throw inside the ZBLL importer. Own ZBLL cases and drill rows are now validated like
+  solves are, and cube colours must be hex.
+- Due counts read `Date.now()` inside a `$derived`, which only recomputes when something else writes, so a case
+  that came due while the app sat open stayed invisible. The store owns the clock and refreshes it once a minute;
+  every screen reads `store.now`.
+- `deleteSession()` wrote its snapshot into the slot "Undo restore" reads, so that button started bringing back
+  data a restore never replaced. A session delete has its own undo, and the button names the action it undoes.
+- A new ZBLL case imported without a name was numbered `length + added + 1`, growing twice per push, so own cases
+  would have been named 1, 3, 5 ….
+- `npm run e2e` could not run on Windows: the csTimer fixture was written to `/tmp` (which node resolves on the
+  current drive while Chrome resolves it elsewhere, so the upload never attached), and `npm run e2e:offline`
+  could not start at all — it spawned the `.bin` shim, which is a shell script with no `.cmd` on Windows, found the
+  port holder with `ss`, and bound `localhost` (::1) while its readiness probe asked 127.0.0.1. Both suites now run
+  here: 38 checks on a plain build, 41 with the worker.
+- The README is curated rather than stale: counts matched to the code, the e2e section says how to get a browser,
+  and the measured costs above are written down as known limits.
+
 ## [0.5.0] - 2026-10-30
 
 The F2L library is now the standard one, and so are PLL and OLL.
