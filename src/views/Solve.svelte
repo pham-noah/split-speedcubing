@@ -79,7 +79,7 @@
     else if (store.is(e, 'sessions')) sessions = true;
     else if (store.is(e, 'scramble')) newScramble();
   }
-    // the walkthrough eats the space the timer needs on a desktop-sized window
+  // the walkthrough eats the space the timer needs on a desktop-sized window
   let wide = $state(false);
   $effect(() => {
     const m = matchMedia('(min-width:1100px)');
@@ -89,7 +89,7 @@
     return () => m.removeEventListener('change', on);
   });
 
-// Back closes history / sessions first
+  // Back closes history / sessions first
   $effect(() => {
     if (history || sessions)
       return nav.onBack(() => {
@@ -105,7 +105,7 @@
 {#if sessions}<Sessions onClose={() => (sessions = false)} />
 {:else if history}<History onBack={() => (history = false)} />
 {:else}
-  <main class="page wide">
+  <main class="page wide solve fill">
     <h1 class="sr">Solve</h1>
     <div class="split">
       <div class="col" style="gap:12px">
@@ -202,7 +202,7 @@
           </div>
         {/if}
         {#if store.shown('solve.stats')}
-          <div class="row">
+          <div class="row stats-dock">
             <div class="card">
               <div class="mu">Best</div>
               {#key formatTime(best(solves))}<b class="mono num">{formatTime(best(solves))}</b>{/key}

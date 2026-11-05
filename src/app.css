@@ -1,256 +1,1384 @@
-@font-face{font-family:"Manrope";src:url("../node_modules/@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2") format("woff2");font-weight:200 800;font-display:swap}
-@font-face{font-family:"JetBrains Mono";src:url("../node_modules/@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2") format("woff2");font-weight:100 800;font-display:swap}
-:root{--bg:#0F1115;--card:#181B22;--line:#2A2F3A;--tx:#E8EAF0;--mu:#A3ACBA;--am:#F5B83D;--bl:#5AA9FF;--on-am:#1A1300;--learn:#2B4A73;--good:#59D98A;--bad:#FF6B6B;color-scheme:dark}
-:root[data-theme=amoled]{--bg:#000;--card:#0B0B0D;--line:#22262E}
-:root[data-theme=contrast]{--bg:#000;--card:#000;--line:#fff;--tx:#fff;--mu:#E0E0E0;--am:#FFE600;--bl:#00D5FF;--learn:#00507A}
-*{box-sizing:border-box}
+@font-face {
+  font-family: 'Manrope';
+  src: url('../node_modules/@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2') format('woff2');
+  font-weight: 200 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('../node_modules/@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2') format('woff2');
+  font-weight: 100 800;
+  font-display: swap;
+}
+:root {
+  --bg: #0f1115;
+  --card: #181b22;
+  --line: #2a2f3a;
+  --tx: #e8eaf0;
+  --mu: #a3acba;
+  --am: #f5b83d;
+  --bl: #5aa9ff;
+  --on-am: #1a1300;
+  --learn: #2b4a73;
+  --good: #59d98a;
+  --bad: #ff6b6b;
+  color-scheme: dark;
+}
+:root[data-theme='amoled'] {
+  --bg: #000;
+  --card: #0b0b0d;
+  --line: #22262e;
+}
+:root[data-theme='contrast'] {
+  --bg: #000;
+  --card: #000;
+  --line: #fff;
+  --tx: #fff;
+  --mu: #e0e0e0;
+  --am: #ffe600;
+  --bl: #00d5ff;
+  --learn: #00507a;
+}
+* {
+  box-sizing: border-box;
+}
 /* Android draws a rectangular highlight over whatever you tap; on the round Solve tab that reads
    as a square overlay. The pressed state is already shown by the tab colours. */
-button,a,label,[role=button]{-webkit-tap-highlight-color:transparent}
-a.link{color:var(--am);text-decoration:underline;text-underline-offset:2px;font-weight:600}
-html{font-size:100%}
-body{margin:0;background:var(--bg);color:var(--tx);font-family:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-user-select:none;user-select:none;touch-action:manipulation;padding:env(safe-area-inset-top) 0 0}
-button{font:inherit;color:inherit;cursor:pointer}
-h1{margin:0;font-size:2.1rem;font-weight:800;letter-spacing:-.5px}
-.mono,.time,.scr,input,textarea{font-family:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace}
+button,
+a,
+label,
+[role='button'] {
+  -webkit-tap-highlight-color: transparent;
+}
+a.link {
+  color: var(--am);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 600;
+}
+html {
+  font-size: 100%;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--tx);
+  font-family:
+    'Manrope',
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  padding: env(safe-area-inset-top) 0 0;
+}
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+h1 {
+  margin: 0;
+  font-size: 2.1rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+.mono,
+.time,
+.scr,
+input,
+textarea {
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+}
 /* algorithms must be selectable: people copy them out of the case panel */
-.mono,.scr{user-select:text;-webkit-user-select:text}
-.mu{color:var(--mu);font-size:.85rem;font-weight:600}
-.page{max-width:560px;margin:0 auto;padding:14px 18px calc(104px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px;min-height:100vh}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;content-visibility:auto;contain-intrinsic-size:auto 96px}
-.hero{padding:20px;display:flex;flex-direction:column;gap:6px}
-.hero .n{font-size:3.4rem;font-weight:800;line-height:1}
-.btn.big-cta{min-height:46px;border-radius:12px;font-size:1rem;margin-top:8px}
-.btn.row-btn{min-height:44px;text-align:left;padding:0 13px;justify-content:flex-start}
-.col{display:flex;flex-direction:column;gap:10px}
-.row{display:flex;gap:8px;align-items:center}
-.row>*{flex:1;min-width:0}
-.sp{justify-content:space-between;gap:12px}.sp>*{flex:0 1 auto}
-.chip{display:inline-flex;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 11px;min-height:34px;font-weight:800;font-size:.85rem}
-.btn{min-height:38px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-weight:700;padding:0 11px;font-size:.92rem}
+.mono,
+.scr {
+  user-select: text;
+  -webkit-user-select: text;
+}
+.mu {
+  color: var(--mu);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.page {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 14px 18px calc(104px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 100vh;
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 96px;
+}
+.hero {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.hero .n {
+  font-size: 3.4rem;
+  font-weight: 800;
+  line-height: 1;
+}
+.btn.big-cta {
+  min-height: 46px;
+  border-radius: 12px;
+  font-size: 1rem;
+  margin-top: 8px;
+}
+.btn.row-btn {
+  min-height: 44px;
+  text-align: left;
+  padding: 0 13px;
+  justify-content: flex-start;
+}
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.row > * {
+  flex: 1;
+  min-width: 0;
+}
+.sp {
+  justify-content: space-between;
+  gap: 12px;
+}
+.sp > * {
+  flex: 0 1 auto;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 11px;
+  min-height: 34px;
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+.btn {
+  min-height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  font-weight: 700;
+  padding: 0 11px;
+  font-size: 0.92rem;
+}
 /* Press: the answer is on pointer-down, not on release, and it settles on a small spring rather than
    snapping back — that overshoot at the end is the whole "liquid" feeling. Only transform and colour,
    so it stays on the compositor; 90 ms in, 260 ms out. */
-.btn,.chip,.cell,.seg button,nav>button,nav>.mid button,.big,summary,.card button{
-  transition:transform .26s cubic-bezier(.34,1.46,.64,1),background-color .12s ease,border-color .12s ease,color .12s ease,box-shadow .2s ease}
-.btn:active,.chip:active,.cell:active,.seg button:active,nav>button:active,nav>.mid button:active,summary:active,.card button:active{
-  transform:scale(.955);transition-duration:.09s,.06s,.06s,.06s,.12s}
+.btn,
+.chip,
+.cell,
+.seg button,
+nav > button,
+nav > .mid button,
+.big,
+summary,
+.card button {
+  transition:
+    transform 0.26s cubic-bezier(0.34, 1.46, 0.64, 1),
+    background-color 0.12s ease,
+    border-color 0.12s ease,
+    color 0.12s ease,
+    box-shadow 0.2s ease;
+}
+.btn:active,
+.chip:active,
+.cell:active,
+.seg button:active,
+nav > button:active,
+nav > .mid button:active,
+summary:active,
+.card button:active {
+  transform: scale(0.955);
+  transition-duration: 0.09s, 0.06s, 0.06s, 0.06s, 0.12s;
+}
 /* the two filled buttons get a whisper of light when pressed, so the press reads even at a glance */
-.btn.p:active,.seg button.on:active,nav .mid button.on:active{filter:brightness(1.08)}
-.btn.p{background:var(--am);color:var(--on-am);border:0;font-weight:800}
-.btn.on{border:2px solid var(--am);color:var(--am)}
-button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible,a:focus-visible,.cell:focus-visible{outline:3px solid var(--bl);outline-offset:2px}
-.time{font-size:clamp(3rem,9vh,4.4rem);font-weight:800;letter-spacing:-2px;text-align:center;line-height:1}
-.scr{font-size:.95rem;font-weight:600;color:var(--mu);text-align:center;line-height:1.5;min-height:3em;overflow-wrap:anywhere}
-.big{position:relative;isolation:isolate;width:min(180px,23vh);height:min(180px,23vh);min-width:128px;min-height:128px;border-radius:50%;border:0;background:var(--bl);color:#06121F;font-size:1.3rem;font-weight:800;align-self:center;margin:6px 0;touch-action:none}
-.big[data-s=hold]{background:var(--am);color:var(--on-am);transform:scale(.93);box-shadow:0 14px 44px -14px var(--am)}
-.big[data-s=ready]{background:#fff;color:#000;animation:readypulse .9s ease-in-out infinite}
-.big[data-s=run]{background:#3A404C;color:var(--tx)}
+.btn.p:active,
+.seg button.on:active,
+nav .mid button.on:active {
+  filter: brightness(1.08);
+}
+.btn.p {
+  background: var(--am);
+  color: var(--on-am);
+  border: 0;
+  font-weight: 800;
+}
+.btn.on {
+  border: 2px solid var(--am);
+  color: var(--am);
+}
+input[type='checkbox'] {
+  appearance: none;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  border-radius: 8px;
+  border: 2px solid var(--line);
+  background: var(--bg);
+  position: relative;
+  cursor: pointer;
+}
+input[type='checkbox']:checked {
+  background: var(--bl);
+  border-color: var(--bl);
+}
+input[type='checkbox']:checked::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 4px;
+  width: 6px;
+  height: 11px;
+  border: solid #06121f;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+a:focus-visible,
+.cell:focus-visible {
+  outline: 3px solid var(--bl);
+  outline-offset: 2px;
+}
+.time {
+  font-size: clamp(3rem, 9vh, 4.4rem);
+  font-weight: 800;
+  letter-spacing: -2px;
+  text-align: center;
+  line-height: 1;
+}
+.scr {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--mu);
+  text-align: center;
+  line-height: 1.5;
+  min-height: 3em;
+  overflow-wrap: anywhere;
+}
+/* the timer takes the middle of the screen instead of sitting under the scramble with a dead zone below:
+   align-self on the button only works inside a column, which this was not until 1100 px wide */
+.timer-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-block: auto;
+}
+/* with the timer centred in the space above it, the stat row takes the space below, so the screen stops
+   ending in a dead zone above the tab bar — which needs the column between them to actually be tall */
+.stats-dock {
+  margin-top: auto;
+}
+@media (max-width: 1099px) {
+  .page.fill {
+    min-height: calc(100dvh - 58px);
+  }
+  .page.fill > .split,
+  .page.fill > .split > .col {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+}
+.chart {
+  width: 100%;
+  height: 190px;
+  display: block;
+}
+/* four counts in a row is fine on a desktop and too tight on a phone, where they became ragged columns */
+@media (max-width: 899px) {
+  .mstats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 14px;
+  }
+  .mstats > div {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .search {
+    max-width: none;
+  }
+}
+
+.big {
+  position: relative;
+  isolation: isolate;
+  width: min(180px, 23vh);
+  height: min(180px, 23vh);
+  min-width: 128px;
+  min-height: 128px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--bl);
+  color: #06121f;
+  font-size: 1.3rem;
+  font-weight: 800;
+  align-self: center;
+  margin: 6px 0;
+  touch-action: none;
+}
+.big[data-s='hold'] {
+  background: var(--am);
+  color: var(--on-am);
+  transform: scale(0.93);
+  box-shadow: 0 14px 44px -14px var(--am);
+}
+.big[data-s='ready'] {
+  background: #fff;
+  color: #000;
+  animation: readypulse 0.9s ease-in-out infinite;
+}
+.big[data-s='run'] {
+  background: #3a404c;
+  color: var(--tx);
+}
 /* Holding: a ring closes in over exactly the hold time, so the wait has a shape and the Release
    moment is the ring arriving. --hold is set from Settings (150/300/500 ms) by TimerPad. */
-.big[data-s=hold]::after{content:'';position:absolute;inset:-7px;border-radius:50%;border:3px solid var(--am);
-  pointer-events:none;animation:holdring var(--hold,300ms) cubic-bezier(.25,.1,.25,1) forwards}
-@keyframes holdring{from{transform:scale(1.16);opacity:.28}to{transform:scale(.985);opacity:1}}
-@keyframes readypulse{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:9px}
-.cell{border-radius:12px;border:2px dashed #4A5160;background:none;color:var(--mu);padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.8rem;font-weight:800}
-.cell.learning{border:2px solid var(--learn);background:var(--card)}
-.cell.mastered{border:2px solid var(--bl);background:var(--card);color:var(--tx)}
-.cell.sel{outline:3px solid var(--am)}
-.cell{position:relative;content-visibility:auto;contain-intrinsic-size:92px;contain:layout paint style}
-.cell.dim{opacity:.22}
-/* case names can be long ("Spotted Chameleon"): two lines, then an ellipsis */
-.clabel{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-align:center;line-height:1.15;font-size:.72rem;max-width:100%;word-break:break-word}
-.hint{position:absolute;top:3px;right:3px;background:var(--am);color:var(--on-am);border-radius:6px;padding:1px 5px;font:800 .7rem/1.3 "JetBrains Mono",monospace;letter-spacing:.5px}
-.seg{display:flex;flex-wrap:wrap;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;min-width:0}
-.seg button{flex:1 1 68px;min-width:0;min-height:36px;padding:0 7px;border:0;border-radius:9px;background:none;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.seg button.on{background:var(--am);color:var(--on-am)}
-nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;align-items:center;padding-bottom:env(safe-area-inset-bottom)}
-nav>*{display:flex;align-items:center;justify-content:center;gap:6px;flex:1;min-width:0;min-height:58px;padding:0 2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background:none;border:0;border-top:3px solid transparent;color:var(--mu);font-weight:600;font-size:.75rem}
-.nav-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}   /* icon-only on phones, but still announced */
-nav .on{color:var(--am);border-top-color:var(--am)}
-nav .mid{display:flex;justify-content:center;border:0;overflow:visible}   /* the round button rises above the bar: never clip it */
-nav .mid button{width:68px;height:68px;margin-top:-26px;border-radius:50%;border:4px solid var(--bg);background:#262B36;color:var(--am);font-weight:800;font-size:.85rem}
-nav .mid button.on{background:var(--am);color:var(--on-am)}
-input,textarea{width:100%;min-height:44px;border-radius:10px;border:1px solid #3A404C;background:var(--bg);color:var(--tx);padding:8px 12px;font:600 1rem ui-monospace,Menlo,Consolas,monospace;-webkit-user-select:text;user-select:text}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-/* the button's own colour change stays snappy; the transform shares the press system above */
-@media (prefers-reduced-motion:reduce){.big{transition:background .12s}}
-@media (min-width:900px){.page{max-width:720px}}
-.split{display:block}
-.side{display:none}
-@media (min-width:1100px){.page.wide{max-width:1020px}.split{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:28px;align-items:start;padding-left:108px}.split>div:first-child{min-height:calc(100dvh - 72px)}.timer-slot{display:flex;flex-direction:column;gap:12px;margin-block:auto}.walk{gap:8px}.cube-panel{padding:6px}.side{display:flex;flex-direction:column;gap:18px;border-left:1px solid var(--line);padding-left:24px}}
-.kbd{font:600 .8rem "JetBrains Mono",monospace;background:var(--bg);border:1px solid #3A404C;border-radius:6px;padding:2px 8px;min-width:28px;text-align:center}
-/* the shortcut rail: a right-hand side panel like the trainer's, desktop only */
-.rail{display:none}
-@media (min-width:1100px){
-  body.has-rail{padding-right:250px}
-  .rail{display:flex;flex-direction:column;gap:18px;position:fixed;right:0;top:0;bottom:0;width:250px;padding:24px 18px;border-left:1px solid var(--line);background:var(--bg);z-index:10;overflow:auto}
+.big[data-s='hold']::after {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  border: 3px solid var(--am);
+  pointer-events: none;
+  animation: holdring var(--hold, 300ms) cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
-.dots{display:flex;gap:8px;justify-content:center}.dots i{width:9px;height:9px;border-radius:50%;background:#3A404C}.dots i.on{background:var(--am)}
-.overlay{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom))}
-.overlay .sheet{max-width:440px;width:100%;display:flex;flex-direction:column;gap:18px;text-align:center}
-.overlay h2{margin:0;font-size:1.9rem;font-weight:800;letter-spacing:-.5px}
-.overlay p{margin:0;color:var(--mu);line-height:1.55;font-size:1.05rem}
-.empty{text-align:center;color:var(--mu);padding:22px 12px;line-height:1.5}
-.empty b{color:var(--tx);display:block;font-size:1.05rem;margin-bottom:4px}
+@keyframes holdring {
+  from {
+    transform: scale(1.16);
+    opacity: 0.28;
+  }
+  to {
+    transform: scale(0.985);
+    opacity: 1;
+  }
+}
+@keyframes readypulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.025);
+  }
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(86px, 1fr));
+  gap: 9px;
+}
+.cell {
+  border-radius: 12px;
+  border: 2px dashed #5e6779;
+  background: none;
+  color: var(--mu);
+  padding: 6px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+.cell.learning {
+  border: 2px solid var(--learn);
+  background: var(--card);
+}
+.cell.mastered {
+  border: 2px solid var(--bl);
+  background: var(--card);
+  color: var(--tx);
+}
+.cell.sel {
+  outline: 3px solid var(--am);
+}
+.cell {
+  position: relative;
+  content-visibility: auto;
+  contain-intrinsic-size: 92px;
+  contain: layout paint style;
+}
+.cell.dim {
+  opacity: 0.22;
+}
+/* case names can be long ("Spotted Chameleon"): two lines, then an ellipsis */
+.clabel {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-align: center;
+  line-height: 1.15;
+  font-size: 0.72rem;
+  max-width: 100%;
+  word-break: break-word;
+}
+.hint {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  background: var(--am);
+  color: var(--on-am);
+  border-radius: 6px;
+  padding: 1px 5px;
+  font:
+    800 0.7rem/1.3 'JetBrains Mono',
+    monospace;
+  letter-spacing: 0.5px;
+}
+.seg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 4px;
+  min-width: 0;
+}
+.seg button {
+  flex: 1 1 68px;
+  min-width: 0;
+  min-height: 36px;
+  padding: 0 7px;
+  border: 0;
+  border-radius: 9px;
+  background: none;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.seg button.on {
+  background: var(--am);
+  color: var(--on-am);
+}
+/* six swatches in one row: wrapped as flex, the sixth fell onto a line of its own */
+.accents {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+.accents button {
+  min-width: 0;
+  width: 100%;
+  min-height: 44px;
+  padding: 0;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 800;
+}
+.accents button[aria-pressed='true'] {
+  box-shadow:
+    0 0 0 2px var(--bg),
+    0 0 0 4px var(--tx);
+}
+nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--card);
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+nav > * {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  min-height: 58px;
+  padding: 0 2px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  background: none;
+  border: 0;
+  border-top: 3px solid transparent;
+  color: var(--mu);
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+.nav-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+} /* icon-only on phones, but still announced */
+nav .on {
+  color: var(--am);
+  border-top-color: var(--am);
+}
+nav .mid {
+  display: flex;
+  justify-content: center;
+  border: 0;
+  overflow: visible;
+} /* the round button rises above the bar: never clip it */
+nav .mid button {
+  width: 68px;
+  height: 68px;
+  margin-top: -26px;
+  border-radius: 50%;
+  border: 4px solid var(--bg);
+  background: #262b36;
+  color: var(--am);
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+nav .mid button.on {
+  background: var(--am);
+  color: var(--on-am);
+}
+input,
+textarea {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 10px;
+  border: 1px solid #3a404c;
+  background: var(--bg);
+  color: var(--tx);
+  padding: 8px 12px;
+  font:
+    600 1rem ui-monospace,
+    Menlo,
+    Consolas,
+    monospace;
+  -webkit-user-select: text;
+  user-select: text;
+}
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+/* the button's own colour change stays snappy; the transform shares the press system above */
+@media (prefers-reduced-motion: reduce) {
+  .big {
+    transition: background 0.12s;
+  }
+}
+@media (min-width: 900px) {
+  .page {
+    max-width: 720px;
+  }
+}
+.split {
+  display: block;
+}
+.side {
+  display: none;
+}
+@media (min-width: 1100px) {
+  .page.wide {
+    max-width: 1180px;
+  }
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 32px;
+    align-items: start;
+    padding-left: 0;
+  }
+  .split > div:first-child {
+    min-height: calc(100dvh - 72px);
+  }
+  .timer-slot {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-block: auto;
+  }
+  .walk {
+    gap: 8px;
+  }
+  .cube-panel {
+    padding: 6px;
+  }
+  .side {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    border-left: 1px solid var(--line);
+    padding-left: 24px;
+  }
+}
+.kbd {
+  font:
+    600 0.8rem 'JetBrains Mono',
+    monospace;
+  background: var(--bg);
+  border: 1px solid #3a404c;
+  border-radius: 6px;
+  padding: 2px 8px;
+  min-width: 28px;
+  text-align: center;
+}
+/* the shortcut rail: a right-hand side panel like the trainer's, desktop only */
+.rail {
+  display: none;
+}
+@media (min-width: 1100px) {
+  body.has-rail {
+    padding-right: 250px;
+  }
+  .rail {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 250px;
+    padding: 24px 18px;
+    border-left: 1px solid var(--line);
+    background: var(--bg);
+    z-index: 10;
+    overflow: auto;
+  }
+}
+.dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+.dots i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #3a404c;
+}
+.dots i.on {
+  background: var(--am);
+}
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));
+}
+.overlay .sheet {
+  max-width: 440px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  text-align: center;
+}
+.overlay h2 {
+  margin: 0;
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+.overlay p {
+  margin: 0;
+  color: var(--mu);
+  line-height: 1.55;
+  font-size: 1.05rem;
+}
+.empty {
+  text-align: center;
+  color: var(--mu);
+  padding: 22px 12px;
+  line-height: 1.5;
+}
+.empty b {
+  color: var(--tx);
+  display: block;
+  font-size: 1.05rem;
+  margin-bottom: 4px;
+}
+.brand {
+  display: none;
+}
 /* Desktop / wide windows: the bottom tab bar becomes a left sidebar (Solve stays in the middle of the list) */
-@media (min-width:900px){
-  body{padding-left:210px}
-  .page{max-width:680px;padding-bottom:40px}
-  nav{top:0;right:auto;width:210px;flex-direction:column;align-items:stretch;justify-content:center;gap:6px;padding:20px 12px;border-top:0;border-right:1px solid var(--line)}
-  nav>*{flex:none;justify-content:flex-start;min-height:46px;border-top:0;border-left:3px solid transparent;border-radius:10px;text-align:left;padding:0 14px;font-size:.95rem;font-weight:800}
-  .nav-label{position:static;width:auto;height:auto;overflow:visible;clip:auto;margin-left:2px}
-  nav .on{border-left-color:var(--am);background:#262B36}
-  nav .mid{display:block;padding:0}
-  nav .mid button{width:100%;height:46px;margin:0;border:0;border-radius:10px;font-size:.95rem;text-align:left;padding:0 14px;background:none;color:var(--mu)}
-  nav .mid button.on{background:#262B36;color:var(--am)}
+@media (min-width: 900px) {
+  body {
+    padding-left: 210px;
+  }
+  .brand {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding: 0 14px 16px;
+    letter-spacing: -0.3px;
+  }
+  .brand b {
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+  .brand span {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--mu);
+  }
+  .page {
+    max-width: 680px;
+    padding-bottom: 40px;
+  }
+  nav {
+    top: 0;
+    right: auto;
+    width: 210px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 6px;
+    padding: 22px 12px;
+    border-top: 0;
+    border-right: 1px solid var(--line);
+  }
+  nav > * {
+    flex: none;
+    justify-content: flex-start;
+    min-height: 46px;
+    border-top: 0;
+    border-left: 3px solid transparent;
+    border-radius: 10px;
+    text-align: left;
+    padding: 0 14px;
+    font-size: 0.95rem;
+    font-weight: 800;
+  }
+  .nav-label {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    margin-left: 2px;
+  }
+  nav .on {
+    border-left-color: var(--am);
+    background: #262b36;
+  }
+  nav .mid {
+    display: block;
+    padding: 0;
+  }
+  nav .mid button {
+    width: 100%;
+    height: 46px;
+    margin: 0;
+    border: 0;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    text-align: left;
+    padding: 0 14px;
+    background: none;
+    color: var(--mu);
+  }
+  nav .mid button.on {
+    background: #262b36;
+    color: var(--am);
+  }
 }
 /* Desktop-only affordances (keyboard hints), and a tighter phone layout so Solve and Drills fit one screen */
-.pc-only{display:none}
-@media (min-width:900px){.pc-only{display:initial}}
+.pc-only {
+  display: none;
+}
+@media (min-width: 900px) {
+  .pc-only {
+    display: initial;
+  }
+}
 /* the timer colour grows out of the button to fill the screen, then shrinks back */
 /* The timer colour floods out of the button until it owns the whole screen. It leaves fast and
    arrives with a little overshoot (the curve passes 1 for a moment), which is what makes a circle
    growing read as liquid rather than as a wipe; going away it is slower, so the time can be read. */
-.cover{position:fixed;left:var(--cx,50%);top:var(--cy,50%);width:200vmax;height:200vmax;margin:-100vmax 0 0 -100vmax;border-radius:50%;background:var(--cover,var(--bl));transform:scale(.012);opacity:0;transition:transform .5s cubic-bezier(.36,.66,.3,1),opacity .28s ease;z-index:40;pointer-events:none;will-change:transform}
+.cover {
+  position: fixed;
+  left: var(--cx, 50%);
+  top: var(--cy, 50%);
+  width: 200vmax;
+  height: 200vmax;
+  margin: -100vmax 0 0 -100vmax;
+  border-radius: 50%;
+  background: var(--cover, var(--bl));
+  transform: scale(0.012);
+  opacity: 0;
+  transition:
+    transform 0.5s cubic-bezier(0.36, 0.66, 0.3, 1),
+    opacity 0.28s ease;
+  z-index: 40;
+  pointer-events: none;
+  will-change: transform;
+}
 /* What the flood is showing lives here, not inside it: the circle is scaled from the button, so a
    child would arrive at the button's position and be stretched by the animation. */
-.cover-stage{position:fixed;inset:0;z-index:41;pointer-events:none;display:grid;place-items:center;opacity:0;transition:opacity .2s ease}
-.cover-stage.on{opacity:1;transition:opacity .14s linear .16s}   /* arrives with the surface, not before it */
-.cover.on{transform:scale(1);opacity:1;transition:transform .44s cubic-bezier(.18,.9,.22,1.03),opacity .12s linear}
+.cover-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 41;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.cover-stage.on {
+  opacity: 1;
+  transition: opacity 0.14s linear 0.16s;
+} /* arrives with the surface, not before it */
+.cover.on {
+  transform: scale(1);
+  opacity: 1;
+  transition:
+    transform 0.44s cubic-bezier(0.18, 0.9, 0.22, 1.03),
+    opacity 0.12s linear;
+}
 /* a soft off-centre highlight: a flat colour reads as a shape, this reads as a surface */
-.cover::before{content:'';position:absolute;inset:0;border-radius:50%;pointer-events:none;
-  background:radial-gradient(58% 58% at 50% 32%,rgba(255,255,255,.16),rgba(255,255,255,0) 62%)}
+.cover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(58% 58% at 50% 32%, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 62%);
+}
 /* The hold reports itself on the cover, because the cover is what you are looking at: a ring that
    fills over exactly the configured hold time, and the word that turns from "Hold" to "Release". */
-.cover-hold{position:relative;display:grid;place-items:center}
-.hold-ring{width:clamp(168px,40vh,280px);aspect-ratio:1;overflow:visible;transform:rotate(-90deg)}
+.cover-hold {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.hold-ring {
+  width: clamp(168px, 40vh, 280px);
+  aspect-ratio: 1;
+  overflow: visible;
+  transform: rotate(-90deg);
+}
 /* No vector-effect: it makes the dash get measured in screen pixels while the path is in user units,
    which left a quarter of the ring unpainted however the dash was written. */
-.hold-ring circle{fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
-.hold-ring .track{opacity:.22}
+.hold-ring circle {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+.hold-ring .track {
+  opacity: 0.22;
+}
 /* r=46 in the 100-unit viewBox: 2π·46 ≈ 289 user units, so one dash of that length covers the circle */
-.hold-ring .fill{stroke-dasharray:289;stroke-dashoffset:289;animation:holdfill var(--hold,300ms) cubic-bezier(.3,.7,.4,1) forwards}
-.hold-ring.full .fill{animation:none;stroke-dashoffset:0}
-@keyframes holdfill{from{stroke-dashoffset:289}to{stroke-dashoffset:0}}
-.hold-word{position:absolute;font-size:clamp(1.3rem,4.6vh,2.2rem);font-weight:800;letter-spacing:-.5px;
-  transition:opacity .16s ease}
+.hold-ring .fill {
+  stroke-dasharray: 289;
+  stroke-dashoffset: 289;
+  animation: holdfill var(--hold, 300ms) cubic-bezier(0.3, 0.7, 0.4, 1) forwards;
+}
+.hold-ring.full .fill {
+  animation: none;
+  stroke-dashoffset: 0;
+}
+@keyframes holdfill {
+  from {
+    stroke-dashoffset: 289;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.hold-word {
+  position: absolute;
+  font-size: clamp(1.3rem, 4.6vh, 2.2rem);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  transition: opacity 0.16s ease;
+}
 /* "Hold" waits quietly; "Release" is the one word that has to be impossible to miss */
-.cover-hold:not(.ready) .hold-word{opacity:.72}
-.cover-hold.ready .hold-word{animation:readypulse .9s ease-in-out infinite}
-.cover-time{font-size:clamp(3rem,16vh,8rem);font-weight:800;letter-spacing:-2px;line-height:1;animation:coverpop .34s cubic-bezier(.2,.7,.3,1)}
-.cover-time.hi{animation:coverpop .5s cubic-bezier(.2,.7,.3,1)}
-@keyframes coverpop{from{transform:scale(.88);opacity:.65}to{transform:scale(1);opacity:1}}
-@media (prefers-reduced-motion:reduce){
+.cover-hold:not(.ready) .hold-word {
+  opacity: 0.72;
+}
+.cover-hold.ready .hold-word {
+  animation: readypulse 0.9s ease-in-out infinite;
+}
+.cover-time {
+  font-size: clamp(3rem, 16vh, 8rem);
+  font-weight: 800;
+  letter-spacing: -2px;
+  line-height: 1;
+  animation: coverpop 0.34s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+.cover-time.hi {
+  animation: coverpop 0.5s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+@keyframes coverpop {
+  from {
+    transform: scale(0.88);
+    opacity: 0.65;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
   /* no growing, no bounce, no ring: the same events shown as colour and opacity only */
-  .cover,.cover.on{transition:opacity .15s linear;transform:scale(1)}
-  .cover-stage,.cover-stage.on{transition:opacity .15s linear}
-  .cover::before{display:none}
-  .cover-time.hi{animation:none}
-  .big[data-s=ready]{animation:none}
-  .big[data-s=hold]::after{display:none}
+  .cover,
+  .cover.on {
+    transition: opacity 0.15s linear;
+    transform: scale(1);
+  }
+  .cover-stage,
+  .cover-stage.on {
+    transition: opacity 0.15s linear;
+  }
+  .cover::before {
+    display: none;
+  }
+  .cover-time.hi {
+    animation: none;
+  }
+  .big[data-s='ready'] {
+    animation: none;
+  }
+  .big[data-s='hold']::after {
+    display: none;
+  }
   /* a sweep is a moving thing, so with reduced motion there is no ring fill at all: the track stays as
      a frame and the word alone says Hold or Release. Leaving the fill at its end value would read as
      "ready" from the first frame. */
-  .hold-ring .fill{display:none;animation:none}
-  .hold-word{transition:none}
-  .cover-hold.ready .hold-word{animation:none}
-  .cover-time{animation:none}
-  .btn,.chip,.cell,.seg button,nav>button,nav>.mid button,.big,summary,.card button{transition:background-color .12s ease,border-color .12s ease,color .12s ease}
-  .btn:active,.chip:active,.cell:active,.seg button:active,nav>button:active,.big:active,summary:active,.card button:active{transform:none}
-  .big[data-s=hold],.big[data-s=ready]{animation:none;transform:none;box-shadow:none}
+  .hold-ring .fill {
+    display: none;
+    animation: none;
+  }
+  .hold-word {
+    transition: none;
+  }
+  .cover-hold.ready .hold-word {
+    animation: none;
+  }
+  .cover-time {
+    animation: none;
+  }
+  .btn,
+  .chip,
+  .cell,
+  .seg button,
+  nav > button,
+  nav > .mid button,
+  .big,
+  summary,
+  .card button {
+    transition:
+      background-color 0.12s ease,
+      border-color 0.12s ease,
+      color 0.12s ease;
+  }
+  .btn:active,
+  .chip:active,
+  .cell:active,
+  .seg button:active,
+  nav > button:active,
+  .big:active,
+  summary:active,
+  .card button:active {
+    transform: none;
+  }
+  .big[data-s='hold'],
+  .big[data-s='ready'] {
+    animation: none;
+    transform: none;
+    box-shadow: none;
+  }
 }
-@media (max-width:899px){
-  .page{padding:10px 14px calc(74px + env(safe-area-inset-bottom));gap:9px;min-height:0}
-  h1{font-size:1.7rem}
-  .card{padding:12px;border-radius:14px}
-  .btn{min-height:36px}
-  .scr{min-height:2.4em;line-height:1.4}
-  .time{font-size:clamp(2rem,6vh,2.6rem)}
-  .cover-time{font-size:clamp(2.6rem,12vh,5rem)}
-  .big{width:min(146px,18vh);height:min(146px,18vh);min-width:106px;min-height:106px;margin:2px 0;font-size:1.05rem}
-  .seg button{min-height:34px;padding:0 4px;font-size:.85rem}
-  .empty{padding:14px 10px}
-  nav>*{min-height:54px;font-size:.7rem;padding:0 1px}
+@media (max-width: 899px) {
+  .page {
+    padding: 10px 14px calc(74px + env(safe-area-inset-bottom));
+    gap: 9px;
+    min-height: 0;
+  }
+  h1 {
+    font-size: 1.7rem;
+  }
+  .card {
+    padding: 12px;
+    border-radius: 14px;
+  }
+  .btn {
+    min-height: 36px;
+  }
+  .scr {
+    min-height: 2.4em;
+    line-height: 1.4;
+  }
+  .time {
+    font-size: clamp(2rem, 6vh, 2.6rem);
+  }
+  .cover-time {
+    font-size: clamp(2.6rem, 12vh, 5rem);
+  }
+  .big {
+    width: min(168px, 23vh);
+    height: min(168px, 23vh);
+    min-width: 124px;
+    min-height: 124px;
+    margin: 2px 0;
+    font-size: 1.05rem;
+  }
+  .seg button {
+    min-height: 34px;
+    padding: 0 4px;
+    font-size: 0.85rem;
+  }
+  .seg.filters {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 3px;
+    padding: 3px;
+  }
+  .seg.filters button {
+    min-height: 34px;
+    padding: 0 2px;
+    font-size: 0.78rem;
+    flex: none;
+  }
+  .empty {
+    padding: 14px 10px;
+  }
+  nav > * {
+    min-height: 54px;
+    font-size: 0.7rem;
+    padding: 0 1px;
+  }
 }
 
 /* phones: three newest attempt rows, and the 3D walkthrough stays a desktop tool (the notation is still shown) */
-@media (max-width:899px){
-  .deltas .drows .drow:nth-child(n+4) { display: none; }
-  .cube-panel, .alg-line { display: none !important; }
+@media (max-width: 899px) {
+  .deltas .drows .drow:nth-child(n + 4) {
+    display: none;
+  }
+  .cube-panel,
+  .alg-line {
+    display: none !important;
+  }
 }
 
 /* a write or read failed: say so, instead of looking like nothing happened */
-.banner{position:fixed;left:0;right:0;top:0;z-index:60;display:flex;gap:10px;align-items:center;padding:10px 14px;background:#3A1A1A;border-bottom:1px solid var(--bad);font-size:.9rem;content-visibility:visible}
+.banner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 60;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 14px;
+  background: #3a1a1a;
+  border-bottom: 1px solid var(--bad);
+  font-size: 0.9rem;
+  content-visibility: visible;
+}
 
 /* the scramble line doubles as the walkthrough's position indicator */
-.scr .now { color: var(--am); font-weight: 800; }
-.scr .now::after { content: ''; }
+.scr .now {
+  color: var(--am);
+  font-weight: 800;
+}
+.scr .now::after {
+  content: '';
+}
 
 /* a count on a tab, e.g. cases due */
-.badge { display: inline-block; margin-left: 6px; min-width: 18px; padding: 1px 5px; border-radius: 9px;
-  background: var(--am); color: var(--on-am); font: 800 .7rem "JetBrains Mono", monospace; }
+.badge {
+  display: inline-block;
+  margin-left: 6px;
+  min-width: 18px;
+  padding: 1px 5px;
+  border-radius: 9px;
+  background: var(--am);
+  color: var(--on-am);
+  font:
+    800 0.7rem 'JetBrains Mono',
+    monospace;
+}
 
 /* phones: the case panel opens as a sheet over the grid instead of below it */
-@media (max-width:899px){
-  #case-panel { position: fixed; left: 0; right: 0; bottom: calc(58px + env(safe-area-inset-bottom)); z-index: 45;
-    max-height: 74vh; overflow-y: auto; border-radius: 18px 18px 0 0; border-bottom: 0;
-    box-shadow: 0 -12px 30px rgba(0,0,0,.55); background: var(--card); }
+@media (max-width: 899px) {
+  #case-panel {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: calc(58px + env(safe-area-inset-bottom));
+    z-index: 45;
+    max-height: 74vh;
+    overflow-y: auto;
+    border-radius: 18px 18px 0 0;
+    border-bottom: 0;
+    box-shadow: 0 -12px 30px rgba(0, 0, 0, 0.55);
+    background: var(--card);
+  }
+}
+
+/* history: hairline rows instead of 37 bordered cards, and headers aligned to the values */
+.hrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0 12px;
+  gap: 8px;
+}
+.hnum {
+  flex: none;
+  width: 44px;
+}
+.htime {
+  flex: none;
+  width: 64px;
+}
+.hdelta {
+  flex: 1;
+  text-align: right;
+}
+.hrow-card {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: none;
+  padding: 4px 12px;
+}
+.hrow-card:hover {
+  background: var(--card);
 }
 
 /* a progress row stacks its counts under the set name when the screen is narrow */
-@media (max-width:899px){
-  .prow { flex-direction: column; align-items: flex-start; gap: 2px; }
+@media (max-width: 899px) {
+  .prow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
 }
 
 /* ---- motion ------------------------------------------------------------------------------------
    Everything here animates transform or opacity only, so it stays on the compositor. Timings are
    short on purpose (180-260 ms): the app answers immediately, then settles. Any keyframe that could
    move the page is cancelled in the reduced-motion block at the end of this section. */
-@keyframes page-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-@keyframes pop-in{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
-@keyframes rise-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-@keyframes tok-in{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
-@keyframes tab-pop{from{transform:scale(.95)}to{transform:scale(1)}}
-@keyframes seg-pop{from{transform:scale(.94)}to{transform:scale(1)}}
-@keyframes cell-pop{from{transform:scale(.96)}to{transform:scale(1)}}
-@keyframes fade-in{from{opacity:0}to{opacity:1}}
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes tok-in {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes tab-pop {
+  from {
+    transform: scale(0.95);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@keyframes seg-pop {
+  from {
+    transform: scale(0.94);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@keyframes cell-pop {
+  from {
+    transform: scale(0.96);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 
 /* a screen arrives instead of appearing */
-.page{animation:page-in .18s ease-out}
+.page {
+  animation: page-in 0.18s ease-out;
+}
 /* the tab you land on pops once, and the icon leans in a hair */
-nav>button.on,nav>.mid button.on{animation:tab-pop .24s cubic-bezier(.34,1.46,.64,1)}
-nav>button svg{transition:transform .2s cubic-bezier(.34,1.46,.64,1)}
-nav>button.on svg{transform:scale(1.08)}
+nav > button.on,
+nav > .mid button.on {
+  animation: tab-pop 0.24s cubic-bezier(0.34, 1.46, 0.64, 1);
+}
+nav > button svg {
+  transition: transform 0.2s cubic-bezier(0.34, 1.46, 0.64, 1);
+}
+nav > button.on svg {
+  transform: scale(1.08);
+}
 /* the segment and the case cell you pick answer immediately, then settle */
-.seg button.on{animation:seg-pop .2s cubic-bezier(.34,1.46,.64,1)}
-.cell.sel{animation:cell-pop .24s cubic-bezier(.34,1.46,.64,1)}
+.seg button.on {
+  animation: seg-pop 0.2s cubic-bezier(0.34, 1.46, 0.64, 1);
+}
+.cell.sel {
+  animation: cell-pop 0.24s cubic-bezier(0.34, 1.46, 0.64, 1);
+}
 /* the scramble arrives one move at a time, left to right */
-.scr span{animation:tok-in .2s ease-out backwards;animation-delay:calc(var(--i,0) * 10ms)}
+.scr span {
+  animation: tok-in 0.2s ease-out backwards;
+  animation-delay: calc(var(--i, 0) * 10ms);
+}
 /* a number that changes gets a small entrance rather than flicking over */
-.num{animation:pop-in .2s ease-out}
-.time.done{animation:pop-in .22s cubic-bezier(.34,1.46,.64,1)}
-.badge{animation:pop-in .22s cubic-bezier(.34,1.46,.64,1)}
+.num {
+  animation: pop-in 0.2s ease-out;
+}
+.time.done {
+  animation: pop-in 0.22s cubic-bezier(0.34, 1.46, 0.64, 1);
+}
+.badge {
+  animation: pop-in 0.22s cubic-bezier(0.34, 1.46, 0.64, 1);
+}
 /* undo banners and error banners rise out of the bottom edge */
-[role=status].card,[role=alert].card{animation:rise-in .2s ease-out}
+[role='status'].card,
+[role='alert'].card {
+  animation: rise-in 0.2s ease-out;
+}
 /* the intro sheet and sheets on phones */
-.overlay{animation:fade-in .18s ease-out}
-.overlay .sheet{animation:pop-in .26s cubic-bezier(.2,.8,.2,1)}
+.overlay {
+  animation: fade-in 0.18s ease-out;
+}
+.overlay .sheet {
+  animation: pop-in 0.26s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
 /* rows in a long list stagger in, but only the ones you can see */
-.row-in{animation:rise-in .22s ease-out backwards;animation-delay:calc(var(--i,0) * 16ms)}
+.row-in {
+  animation: rise-in 0.22s ease-out backwards;
+  animation-delay: calc(var(--i, 0) * 16ms);
+}
 /* pointer devices get a hover answer too; touch does not, so it costs nothing on a phone */
-@media (hover:hover){
-  .btn:hover,.chip:hover,.seg button:hover,summary:hover{filter:brightness(1.14)}
-  .cell:hover{border-color:var(--am)}
+@media (hover: hover) {
+  .btn:hover,
+  .chip:hover,
+  .seg button:hover,
+  summary:hover {
+    filter: brightness(1.14);
+  }
+  .cell:hover {
+    border-color: var(--am);
+  }
 }
-@media (max-width:899px){
-  #case-panel{animation:sheet-in .24s cubic-bezier(.2,.8,.2,1)}
-  @keyframes sheet-in{from{opacity:.6;transform:translateY(26px)}to{opacity:1;transform:none}}
+@media (max-width: 899px) {
+  #case-panel {
+    animation: sheet-in 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  @keyframes sheet-in {
+    from {
+      opacity: 0.6;
+      transform: translateY(26px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
 }
-@media (prefers-reduced-motion:reduce){
-  .page,nav>button.on,nav>.mid button.on,.seg button.on,.cell.sel,.scr span,.num,.time.done,.badge,
-  [role=status].card,[role=alert].card,.overlay,.overlay .sheet,.row-in,#case-panel{animation:none}
-  nav>button svg{transition:none}
-  @media (hover:hover){ .btn:hover,.chip:hover,.seg button:hover,summary:hover{filter:none} }
+@media (prefers-reduced-motion: reduce) {
+  .page,
+  nav > button.on,
+  nav > .mid button.on,
+  .seg button.on,
+  .cell.sel,
+  .scr span,
+  .num,
+  .time.done,
+  .badge,
+  [role='status'].card,
+  [role='alert'].card,
+  .overlay,
+  .overlay .sheet,
+  .row-in,
+  #case-panel {
+    animation: none;
+  }
+  nav > button svg {
+    transition: none;
+  }
+  @media (hover: hover) {
+    .btn:hover,
+    .chip:hover,
+    .seg button:hover,
+    summary:hover {
+      filter: none;
+    }
+  }
 }

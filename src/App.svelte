@@ -16,7 +16,7 @@
   let Screen = $state<any>(null);
   let loaded: View | null = null;
   let loading: View | null = null;
-  let chunkError = $state<string | null>(null);   // a screen's code failed to download
+  let chunkError = $state<string | null>(null); // a screen's code failed to download
   const Current = $derived<any>(Screen);
 
   /** load a screen's chunk; `force` retries the one that failed */
@@ -27,7 +27,7 @@
     chunkError = null;
     try {
       const m = await VIEWS[v]();
-      if (nav.view !== v) return;        // the user moved on while it downloaded
+      if (nav.view !== v) return; // the user moved on while it downloaded
       Screen = m.default;
       loaded = v;
     } catch (err) {
@@ -36,12 +36,16 @@
       if (loading === v) loading = null;
     }
   }
-  $effect(() => { void show(nav.view); });
+  $effect(() => {
+    void show(nav.view);
+  });
   // once the first screen is up, quietly fetch the others (the browser caches the chunks)
   $effect(() => {
     if (!Screen) return;
     const idle = (window as any).requestIdleCallback ?? ((fn: () => void) => setTimeout(fn, 1200));
-    idle(() => { for (const [v, load] of Object.entries(VIEWS)) if (v !== loaded) load(); });
+    idle(() => {
+      for (const [v, load] of Object.entries(VIEWS)) if (v !== loaded) load();
+    });
   });
 
   store.init();
@@ -63,7 +67,10 @@
   $effect(() => {
     if (!store.ready) return;
     const el = document.getElementById('splash');
-    if (el) { el.classList.add('hide'); setTimeout(() => el.remove(), 300); }
+    if (el) {
+      el.classList.add('hide');
+      setTimeout(() => el.remove(), 300);
+    }
   });
   /** A link inside the app has nowhere to go: every shell hands it to its own browser. A shell that
    *  refuses — no permission, no url scope — says so on screen instead of failing silently. */
@@ -83,14 +90,20 @@
   }
   /** desktop only: the shell owns the window, so F11 is the real thing rather than a browser key */
   async function toggleFull() {
-    try { await platform.toggleFullscreen(); } catch (err) { console.warn('[fullscreen]', err); }
+    try {
+      await platform.toggleFullscreen();
+    } catch (err) {
+      console.warn('[fullscreen]', err);
+    }
   }
   const typing = (e: Event) => /INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement).tagName);
   const GO: Record<string, View> = { goSolve: 'solve', goTrain: 'train', goLibrary: 'lib', goDrills: 'drills', goSettings: 'set' };
   const ORDER: View[] = ['train', 'lib', 'solve', 'drills', 'set']; // the order the tabs sit in
   const cycle = (step: number) => nav.go(ORDER[(ORDER.indexOf(nav.view) + step + ORDER.length) % ORDER.length]);
   /** a tap on a tab must not throw away a running solve: the keys are blocked for the same reason */
-  const go = (v: View) => { if (!store.timerRunning) nav.go(v); };
+  const go = (v: View) => {
+    if (!store.timerRunning) nav.go(v);
+  };
 
   type Dir = 'up' | 'down' | 'left' | 'right';
   const ARROWS: Record<string, Dir> = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right' };
@@ -102,8 +115,9 @@
     if (/INPUT|TEXTAREA|SELECT/.test(t.tagName)) return false; // let the caret move
     const scope = document.querySelector('[role=dialog]') ?? document.querySelector('main');
     if (!scope) return false;
-    const els = [...scope.querySelectorAll<HTMLElement>('button, a[href], input, select, textarea, [tabindex="0"]')]
-      .filter(el => !el.hasAttribute('disabled') && el.tabIndex >= 0 && !el.closest('[hidden]'));
+    const els = [...scope.querySelectorAll<HTMLElement>('button, a[href], input, select, textarea, [tabindex="0"]')].filter(
+      (el) => !el.hasAttribute('disabled') && el.tabIndex >= 0 && !el.closest('[hidden]'),
+    );
     if (!els.length) return false;
     const active = document.activeElement as HTMLElement | null;
     const inside = !!active && active !== document.body && scope.contains(active);
@@ -113,16 +127,25 @@
       return true;
     }
     const r = active!.getBoundingClientRect();
-    const boxes = els.map(el => { const b = el.getBoundingClientRect(); return { x: b.x, y: b.y, w: b.width, h: b.height }; });
-    const cx = r.x + r.width / 2, cy = r.y + r.height / 2;
-    let best = -1, bestScore = Infinity;
+    const boxes = els.map((el) => {
+      const b = el.getBoundingClientRect();
+      return { x: b.x, y: b.y, w: b.width, h: b.height };
+    });
+    const cx = r.x + r.width / 2,
+      cy = r.y + r.height / 2;
+    let best = -1,
+      bestScore = Infinity;
     boxes.forEach((b, i) => {
-      const dx = b.x + b.w / 2 - cx, dy = b.y + b.h / 2 - cy;
+      const dx = b.x + b.w / 2 - cx,
+        dy = b.y + b.h / 2 - cy;
       const primary = dir === 'down' ? dy : dir === 'up' ? -dy : dir === 'right' ? dx : -dx;
       if (primary <= 1) return; // only look in that direction
       const perp = dir === 'down' || dir === 'up' ? Math.abs(dx) : Math.abs(dy);
       const score = primary + perp * 2;
-      if (score < bestScore) { bestScore = score; best = i; }
+      if (score < bestScore) {
+        bestScore = score;
+        best = i;
+      }
     });
     if (best < 0) return false;
     els[best].focus();
@@ -131,22 +154,46 @@
 
   function onKey(e: KeyboardEvent) {
     if (typing(e) || !store.ready || nav.hintActive) return;
-    if (e.key === 'F11' && platform.caps.fullscreen) { e.preventDefault(); void toggleFull(); return; }
-    if (store.is(e, 'back')) { if (nav.back()) e.preventDefault(); return; }
+    if (e.key === 'F11' && platform.caps.fullscreen) {
+      e.preventDefault();
+      void toggleFull();
+      return;
+    }
+    if (store.is(e, 'back')) {
+      if (nav.back()) e.preventDefault();
+      return;
+    }
     if (!store.data.settings.introSeen) return;
     // a tab shortcut in the middle of a solve would throw the solve away: Esc stops the clock first
     if (store.timerRunning) return;
-    for (const [cmd, v] of Object.entries(GO)) if (store.is(e, cmd)) { nav.go(v); e.preventDefault(); return; }
-    if (store.is(e, 'cube')) { store.cubeHidden = !store.cubeHidden; e.preventDefault(); return; }
-    if (store.is(e, 'tabPrev')) { cycle(-1); e.preventDefault(); return; }
-    if (store.is(e, 'tabNext')) { cycle(1); e.preventDefault(); return; }
+    for (const [cmd, v] of Object.entries(GO))
+      if (store.is(e, cmd)) {
+        nav.go(v);
+        e.preventDefault();
+        return;
+      }
+    if (store.is(e, 'cube')) {
+      store.cubeHidden = !store.cubeHidden;
+      e.preventDefault();
+      return;
+    }
+    if (store.is(e, 'tabPrev')) {
+      cycle(-1);
+      e.preventDefault();
+      return;
+    }
+    if (store.is(e, 'tabNext')) {
+      cycle(1);
+      e.preventDefault();
+      return;
+    }
     if (moveFocus(e)) e.preventDefault();
   }
   const tab = (v: View) => ({ 'aria-current': nav.view === v ? ('page' as const) : undefined });
   // how many cases are actually due right now, shown on the Train tab
   const dueCount = $derived.by(() => {
     if (!store.ready) return 0;
-    return Object.values(store.data.cards).filter(c => c.seen && c.due <= store.now).length;
+    return Object.values(store.data.cards).filter((c) => c.seen && c.due <= store.now).length;
   });
 </script>
 
@@ -155,7 +202,9 @@
 {#if store.ready}
   {#if store.loadError}
     <div class="banner" role="alert">
-      <span style="flex:1;min-width:0"><b>Your saved data could not be read.</b> {store.loadError}. Anything you add now is saved normally.</span>
+      <span style="flex:1;min-width:0"
+        ><b>Your saved data could not be read.</b> {store.loadError}. Anything you add now is saved normally.</span
+      >
       <button class="btn" style="flex:none;min-height:36px" onclick={() => store.init()}>Try again</button>
     </div>
   {/if}
@@ -167,7 +216,9 @@
   {/if}
   {#if store.saveError}
     <div class="banner" role="alert">
-      <span style="flex:1;min-width:0"><b>Changes are not being saved.</b> {store.saveError}. Your solves stay here while the app is open.</span>
+      <span style="flex:1;min-width:0"
+        ><b>Changes are not being saved.</b> {store.saveError}. Your solves stay here while the app is open.</span
+      >
       <button class="btn" style="flex:none;min-height:36px" onclick={() => store.flush()}>Try again</button>
     </div>
   {/if}
@@ -192,7 +243,14 @@
           <div style="font-weight:800;color:#FF8A80">That screen could not load</div>
           <div class="mu">Probably a dropped connection on the first visit. Your data is untouched.</div>
           <div class="row" style="gap:8px">
-            <button class="btn p" style="flex:1" onclick={() => { loaded = null; void show(nav.view, true); }}>Try again</button>
+            <button
+              class="btn p"
+              style="flex:1"
+              onclick={() => {
+                loaded = null;
+                void show(nav.view, true);
+              }}>Try again</button
+            >
           </div>
         </div>
       </main>
@@ -200,13 +258,27 @@
 
     <!-- icons on phones, icon + label on the desktop sidebar; Solve stays the round button -->
     <nav aria-label="Main">
+      <div class="brand" aria-hidden="true"><b>Split</b><span>{__APP_VERSION__}</span></div>
       <button class:on={nav.view === 'train'} {...tab('train')} onclick={() => go('train')} aria-disabled={store.timerRunning}>
-        <NavIcon name="train" /><span class="nav-label">Train</span>{#if dueCount}{#key dueCount}<span class="badge" aria-label="{dueCount} cases due">{dueCount}</span>{/key}{/if}
+        <NavIcon name="train" /><span class="nav-label">Train</span>{#if dueCount}{#key dueCount}<span
+              class="badge"
+              aria-label="{dueCount} cases due">{dueCount}</span
+            >{/key}{/if}
       </button>
-      <button class:on={nav.view === 'lib'} {...tab('lib')} onclick={() => go('lib')} aria-disabled={store.timerRunning}><NavIcon name="library" /><span class="nav-label">Library</span></button>
-      <div class="mid"><button class:on={nav.view === 'solve'} {...tab('solve')} onclick={() => go('solve')} aria-disabled={store.timerRunning}>Solve</button></div>
-      <button class:on={nav.view === 'drills'} {...tab('drills')} onclick={() => go('drills')} aria-disabled={store.timerRunning}><NavIcon name="drills" /><span class="nav-label">Drills</span></button>
-      <button class:on={nav.view === 'set'} {...tab('set')} onclick={() => go('set')} aria-disabled={store.timerRunning}><NavIcon name="settings" /><span class="nav-label">Settings</span></button>
+      <button class:on={nav.view === 'lib'} {...tab('lib')} onclick={() => go('lib')} aria-disabled={store.timerRunning}
+        ><NavIcon name="library" /><span class="nav-label">Library</span></button
+      >
+      <div class="mid">
+        <button class:on={nav.view === 'solve'} {...tab('solve')} onclick={() => go('solve')} aria-disabled={store.timerRunning}
+          >Solve</button
+        >
+      </div>
+      <button class:on={nav.view === 'drills'} {...tab('drills')} onclick={() => go('drills')} aria-disabled={store.timerRunning}
+        ><NavIcon name="drills" /><span class="nav-label">Drills</span></button
+      >
+      <button class:on={nav.view === 'set'} {...tab('set')} onclick={() => go('set')} aria-disabled={store.timerRunning}
+        ><NavIcon name="settings" /><span class="nav-label">Settings</span></button
+      >
     </nav>
   </div>
 

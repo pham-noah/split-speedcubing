@@ -11,7 +11,11 @@
   let msg = $state('');
   let full = $state(false);
   async function toggleFull() {
-    try { full = await platform.toggleFullscreen(); } catch (err) { msg = String(err); }
+    try {
+      full = await platform.toggleFullscreen();
+    } catch (err) {
+      msg = String(err);
+    }
   }
   // the store holds what the last restore or erase replaced; the button below names it
   let fsrsMsg = $state('');
@@ -90,16 +94,15 @@
       {/each}
     </div>
     <div class="mu" id="accent-l">Accent colour</div>
-    <div class="row" role="group" aria-labelledby="accent-l" style="gap:8px;flex-wrap:wrap">
+    <div class="accents" role="group" aria-labelledby="accent-l">
       {#each [['', 'Amber'], ['#5AA9FF', 'Blue'], ['#59D98A', 'Green'], ['#FF6B6B', 'Red'], ['#B58CFF', 'Purple'], ['#F2F2F2', 'White']] as [v, l] (v)}
         <button
-          class="btn"
-          class:on={s.accent === v}
+          class="btn swatch"
           aria-pressed={s.accent === v}
           aria-label={l}
           title={l}
-          style="flex:none;min-width:52px;{v ? `background:${v};color:#12161C;border:0;` : ''}"
-          onclick={() => store.update({ accent: v })}>{v ? '' : 'Amber'}</button
+          style="background:{v || '#F5B83D'};color:#12161C;border:0"
+          onclick={() => store.update({ accent: v })}>{s.accent === v ? '✓' : ''}</button
         >
       {/each}
     </div>
@@ -338,7 +341,9 @@
     >
     <div class="row sp" role="status" aria-live="polite">
       <span class="mu" style="flex:1;min-width:0">{msg}</span>
-      {#if store.canUndoRestore}<button class="btn" style="flex:none" onclick={undoRestore}>{store.undoKind === 'erase' ? 'Undo erase' : 'Undo restore'}</button>{/if}
+      {#if store.canUndoRestore}<button class="btn" style="flex:none" onclick={undoRestore}
+          >{store.undoKind === 'erase' ? 'Undo erase' : 'Undo restore'}</button
+        >{/if}
     </div>
   </section>
 

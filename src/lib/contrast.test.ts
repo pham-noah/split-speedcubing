@@ -20,7 +20,9 @@ function theme(selector: string, base: Record<string, string> = {}): Record<stri
   // prettier puts a space before the brace; the parse must not depend on formatting
   const m = new RegExp(`${selector.replace(/[[\]]/g, '\\$&')}\\s*\\{([^}]*)\\}`).exec(css);
   const out = { ...base };
-  for (const [, k, v] of (m?.[1] ?? '').matchAll(/--([a-z-]+):(#[0-9a-fA-F]{6})/g)) out[k] = v;
+  // prettier writes "--tx: #E9EDF5", hand-edited css wrote "--tx:#E9EDF5": allow the space, or every
+  // token comes back undefined and all 51 assertions fail at once
+  for (const [, k, v] of (m?.[1] ?? '').matchAll(/--([a-z-]+):\s*(#[0-9a-fA-F]{6})/g)) out[k] = v;
   return out;
 }
 const midnight = theme(':root');
