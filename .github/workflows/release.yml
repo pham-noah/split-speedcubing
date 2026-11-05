@@ -88,13 +88,13 @@ jobs:
         run: |
           npm run build:android
           npx cap sync android
-          (cd android && ./gradlew assembleStoreRelease)
+          node scripts/android-build.mjs store
       - name: Build and sign the GitHub APK (INTERNET, self-updating)
         if: steps.key.outputs.present == 'true'
         run: |
           npm run build:android:github
           npx cap sync android
-          (cd android && ./gradlew assembleGithubRelease)
+          node scripts/android-build.mjs github
       - name: Verify both signatures
         if: steps.key.outputs.present == 'true'
         run: |
