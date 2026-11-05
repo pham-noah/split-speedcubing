@@ -103,7 +103,10 @@
       </div>
       {#if finite.length > 1}
         <div class="card">
-          <div class="mu">Last {pts.length} solves (lower is faster)</div>
+          <div class="row sp">
+            <div class="mu">Last {pts.length} solves (lower is faster)</div>
+            <div class="mu mono" style="font-size:.74rem">slow {formatTime(hi)} · fast {formatTime(lo)}</div>
+          </div>
           <svg
             class="chart"
             viewBox="0 0 {W} {H}"

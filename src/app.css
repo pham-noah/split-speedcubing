@@ -397,6 +397,49 @@ a:focus-visible,
   grid-template-columns: repeat(auto-fill, minmax(86px, 1fr));
   gap: 9px;
 }
+/* a case diagram is the content here: give it room on a wide screen instead of eight cramped columns */
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  }
+}
+
+/* Settings is eight screens of scroll on a phone: a chip bar that jumps to a section, and headings that
+   stop underneath it */
+.secnav {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: var(--bg);
+  padding: 8px 0;
+  margin: -8px 0 0;
+  border-bottom: 1px solid var(--line);
+}
+.secnav::-webkit-scrollbar {
+  display: none;
+}
+.secnav button {
+  flex: none;
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--mu);
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.secnav button:active {
+  transform: scale(0.96);
+}
+h2[id] {
+  scroll-margin-top: 56px;
+}
 .cell {
   border-radius: 12px;
   border: 2px dashed #5e6779;
@@ -629,8 +672,17 @@ textarea {
   .walk {
     gap: 8px;
   }
+  /* the cube is a side dish: full width it turned into a band across the screen that the eye hit before
+     the timer */
   .cube-panel {
     padding: 6px;
+    max-width: 360px;
+    margin-inline: auto;
+  }
+  /* penalties are a footnote to the timer, not a second set of primary buttons */
+  .pens {
+    max-width: 520px;
+    margin-inline: auto;
   }
   .side {
     display: flex;

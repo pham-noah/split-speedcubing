@@ -76,7 +76,7 @@ await page.keyboard.press('Digit2'); await sleep(250);
 const stillSolving = await page.evaluate(() => document.querySelector('.big')?.textContent ?? '');
 check('a tab shortcut does not abandon a running solve', /Tap to stop/.test(stillSolving), `(button says "${stillSolving.trim()}")`);
 // the same with a real tap on the tab bar
-await page.evaluate(() => [...document.querySelectorAll('nav button')].find(b => b.textContent.trim() === 'Library')?.click());
+await page.evaluate(() => [...document.querySelectorAll('nav[aria-label="Main"] button')].find(b => b.textContent.trim() === 'Library')?.click());
 await sleep(250);
 const afterTabTap = await page.evaluate(() => document.querySelector('.big')?.textContent ?? '');
 check('tapping a tab does not abandon a running solve', /Tap to stop/.test(afterTabTap), `(button says "${afterTabTap.trim()}")`);
@@ -116,7 +116,7 @@ const retried = await waitForScramble(4000);
 check('retry this scramble loads that solve\'s scramble', norm(storedScr).length > 0 && retried.join(' ') === norm(storedScr), `(${retried.length} moves)`);
 
 // --- training flow
-await clickText(page, 'Train', 'nav button'); await sleep(300);
+await clickText(page, 'Train', 'nav[aria-label="Main"] button'); await sleep(300);
 check('Train opens on the Today screen', /Due for review/.test(await text()));
 await clickText(page, 'Start session'); await sleep(400);
 check('trainer shows a case scramble', (await tokens()).length > 3);
@@ -133,7 +133,7 @@ await page.keyboard.press('Escape'); await sleep(300);
 check('Back returns to Today', /Due for review/.test(await text()));
 
 // --- the F2L library: 41 cases once, a group filter, and the four slots inside the case
-await clickText(page, 'Library', 'nav button'); await sleep(400);
+await clickText(page, 'Library', 'nav[aria-label="Main"] button'); await sleep(400);
 await page.evaluate(() => { const b = [...document.querySelectorAll('.seg button')].find(x => x.textContent.trim() === 'F2L'); b.click(); });
 await sleep(1500);
 const groups = await page.evaluate(() => [...document.querySelectorAll('.seg.groups button')]
@@ -169,10 +169,10 @@ check('the opened F2L case offers FR / FL / BL / BR', !!slots && slots.tabs.join
 check('choosing FL shows that slot\'s rotated algorithm', !!slots && slots.fl !== slots.first && slots.title, slots ? `${slots.first} -> ${slots.fl}` : '');
 await page.keyboard.press('Escape'); await sleep(500);
 check('no update check on the web build', await page.evaluate(() => !document.body.textContent.includes('Check for updates')));
-await clickText(page, 'Solve', 'nav button'); await sleep(300);
+await clickText(page, 'Solve', 'nav[aria-label="Main"] button'); await sleep(300);
 
 // --- Settings: About credits the author and links the source
-await clickText(page, 'Settings', 'nav button'); await sleep(400);
+await clickText(page, 'Settings', 'nav[aria-label="Main"] button'); await sleep(400);
 check('About names the author and links GitHub', await page.evaluate(() => {
   const a = [...document.querySelectorAll('a[href]')].find(x => x.getAttribute('href') === 'https://github.com/pham-noah');
   const about = document.body.textContent.includes('Built by Noah Pham');
@@ -188,14 +188,14 @@ check('About offers a pre-filled issue report', await page.evaluate((version) =>
     && list.getAttribute('href') === 'https://github.com/pham-noah/split-speedcubing/issues';
 }, VERSION));
 
-await clickText(page, 'Solve', 'nav button'); await sleep(300);
+await clickText(page, 'Solve', 'nav[aria-label="Main"] button'); await sleep(300);
 
 // --- csTimer import
 const cs = { session1: [[[0, 12340], "R U R' U'", '', 1700000000], [[2000, 10500], 'F B', '', 1700000100], [[-1, 20000], 'L D', '', 1700000200]], properties: { sessionData: JSON.stringify({ 1: { name: 'Main', opt: {} } }) } };
 // a path Chrome and node both understand: /tmp does not mean the same directory on Windows
 const csFile = join(tmpdir(), 'cstimer-export.txt');
 writeFileSync(csFile, JSON.stringify(cs));
-await clickText(page, 'Settings', 'nav button'); await sleep(300);
+await clickText(page, 'Settings', 'nav[aria-label="Main"] button'); await sleep(300);
 await (await page.$('input[type=file][accept*=".txt"]')).uploadFile(csFile); await sleep(500);
 check('csTimer file is recognised', /csTimer: 3 solves/.test(await text()));
 await clickText(page, 'Import'); await sleep(400);
@@ -205,16 +205,16 @@ check('import reports success', /Imported 3 solves/.test(await text()));
 await clickText(page, 'Extra large'); await sleep(300);
 const overflow = [];
 for (const tab of ['Settings', 'Train', 'Library', 'Drills', 'Solve']) {
-  await clickText(page, tab, 'nav button'); await sleep(400);
+  await clickText(page, tab, 'nav[aria-label="Main"] button'); await sleep(400);
   const w = await page.evaluate(() => ({ s: document.documentElement.scrollWidth, c: document.documentElement.clientWidth }));
   if (w.s > w.c + 1) overflow.push(`${tab} (${w.s}>${w.c})`);
 }
 check('no sideways overflow at Extra large text on a 360px phone', overflow.length === 0, overflow.join(', '));
-await clickText(page, 'Settings', 'nav button'); await sleep(200);
+await clickText(page, 'Settings', 'nav[aria-label="Main"] button'); await sleep(200);
 await clickText(page, 'Normal'); await sleep(200);
 
 // --- offline web version (a build made with VITE_SW=1 registers the worker on a localhost preview)
-await clickText(page, 'Solve', 'nav button'); await sleep(200);
+await clickText(page, 'Solve', 'nav[aria-label="Main"] button'); await sleep(200);
 const sw = await page.evaluate(async () => Promise.race([
   navigator.serviceWorker.ready.then(r => !!r.active),
   new Promise(done => setTimeout(() => done(false), 8000)),

@@ -83,6 +83,18 @@
 <main class="page">
   <h1>Settings</h1>
 
+  <nav class="secnav" aria-label="Settings sections">
+    {#each [['ap-h', 'Appearance'], ['tm-h', 'Timer'], ['cube-h', 'Colours'], ['walk-h', 'Walkthrough'], ['tr-h', 'Training'], ['fs-h', 'Scheduling'], ['pn-h', 'Layout'], ['bk-h', 'Data'], ['ab-h', 'About']] as [id, label] (id)}
+      <button
+        onclick={() => {
+          const el = document.getElementById(id);
+          const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          el?.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' });
+        }}>{label}</button
+      >
+    {/each}
+  </nav>
+
   <section class="col" aria-labelledby="ap-h">
     <h2 id="ap-h" style="margin:0;font-size:1.15rem">Appearance</h2>
     <div class="mu" id="theme-l">Theme</div>

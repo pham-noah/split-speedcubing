@@ -5,6 +5,9 @@ import { mount, tick, flushSync } from 'svelte';
 
 const wait = (ms = 20) => new Promise(r => setTimeout(r, ms));
 const q = <T extends Element = HTMLElement>(sel: string) => document.querySelector<T>(sel);
+// the app's tab bar, not just "the first nav on the page": a view can now carry its own nav (Settings has a
+// section jump bar), and a bare 'nav' selector silently started pointing at that one
+const NAV = 'nav[aria-label="Main"]';
 const byText = (text: string, scope: ParentNode = document) =>
   [...scope.querySelectorAll<HTMLElement>('button, a, label')].find(b => b.textContent?.trim().startsWith(text));
 const press = (code: string, init: KeyboardEventInit = {}) => { window.dispatchEvent(new KeyboardEvent('keydown', { code, key: code, bubbles: true, ...init })); window.dispatchEvent(new KeyboardEvent('keyup', { code, key: code, bubbles: true, ...init })); };
@@ -33,14 +36,14 @@ describe('whole app in a simulated browser', () => {
     expect(dlg).toBeTruthy();
     expect(dlg.getAttribute('aria-modal')).toBe('true');
     expect(dlg.textContent).toContain('Welcome to Split');
-    expect((q('nav')!.parentElement as any).inert).toBe(true);   // background is inert while the intro is open (jsdom exposes it as a property)
+    expect((q(NAV)!.parentElement as any).inert).toBe(true);   // background is inert while the intro is open (jsdom exposes it as a property)
     await audit('intro');
     byText('Next')!.click(); await tick();
     expect(q('[role=dialog]')!.textContent).toContain('Time solves');
     byText('Next')!.click(); await tick();
     byText('Get started')!.click(); await tick(); await wait();
     expect(q('[role=dialog]')).toBeNull();
-    expect((q('nav')!.parentElement as any).inert).toBe(false);
+    expect((q(NAV)!.parentElement as any).inert).toBe(false);
   });
 
   it('Solve screen: empty state, timer button, no accessibility violations', async () => {
@@ -52,7 +55,7 @@ describe('whole app in a simulated browser', () => {
 
   it('every tab opens without errors and passes the accessibility audit', async () => {
     for (const [tab, marker] of [['Train', 'Today'], ['Library', 'Library'], ['Drills', 'Drills'], ['Settings', 'Settings']] as const) {
-      byText(tab, q('nav')!)!.click(); await tick();
+      byText(tab, q(NAV)!)!.click(); await tick();
       for (let i = 0; i < 160; i++) {
         await wait(25); flushSync();
         if (document.querySelector('h1')?.textContent?.includes(marker)) break;
@@ -77,7 +80,7 @@ describe('whole app in a simulated browser', () => {
   });
 
   it('Library: a case opens, shows algorithms, and Back closes it before leaving', async () => {
-    byText('Library', q('nav')!)!.click(); await tick();
+    byText('Library', q(NAV)!)!.click(); await tick();
     for (let i = 0; i < 40 && !q('.grid .cell'); i++) { await wait(25); flushSync(); }
     (q('.grid .cell') as HTMLElement).click(); await tick(); await wait();
     expect(document.body.textContent).toContain('Algorithms');
@@ -88,7 +91,7 @@ describe('whole app in a simulated browser', () => {
   });
 
   it('Train: Today lists progress for every case set', async () => {
-    byText('Train', q('nav')!)!.click(); await tick();
+    byText('Train', q(NAV)!)!.click(); await tick();
     for (let i = 0; i < 40 && !byText('Start session'); i++) { await wait(25); flushSync(); }
     const text = document.body.textContent!;
     for (const set of ['PLL', 'OLL', 'F2L']) expect(text).toContain(set);
@@ -97,7 +100,7 @@ describe('whole app in a simulated browser', () => {
   });
 
   it('Train: Start session shows a scramble; Back returns to Today', async () => {
-    byText('Train', q('nav')!)!.click(); await tick();
+    byText('Train', q(NAV)!)!.click(); await tick();
     for (let i = 0; i < 40 && !byText('Start session'); i++) { await wait(25); flushSync(); }
     byText('Start session')!.click(); await tick(); await wait(30); flushSync();
     expect(q('.scr')!.textContent!.trim().length).toBeGreaterThan(3);
@@ -117,7 +120,7 @@ describe('whole app in a simulated browser', () => {
   });
 
   it('Library: the grid renders a screenful first and fills in the rest', async () => {
-    byText('Library', q('nav')!)!.click(); await tick();
+    byText('Library', q(NAV)!)!.click(); await tick();
     for (let i = 0; i < 40 && !document.querySelector('.grid .cell'); i++) { await wait(25); flushSync(); }
     const f2l = [...document.querySelectorAll<HTMLButtonElement>('.seg button')].find(b => b.textContent?.trim() === 'F2L')!;
     f2l.click(); await tick();
@@ -129,13 +132,13 @@ describe('whole app in a simulated browser', () => {
   });
 
   it('Settings: panels can be hidden and shortcut capture works', async () => {
-    byText('Settings', q('nav')!)!.click(); await tick();
+    byText('Settings', q(NAV)!)!.click(); await tick();
     for (let i = 0; i < 40 && !document.querySelector('input[type=checkbox]'); i++) { await wait(25); flushSync(); }
     const box = [...document.querySelectorAll<HTMLInputElement>('input[type=checkbox]')].find(c => c.closest('label')?.textContent?.includes('Solve: best, ao5'))!;
     box.click(); await tick(); await wait();
-    byText('Solve', q('nav')!)!.click(); await tick(); await wait();
+    byText('Solve', q(NAV)!)!.click(); await tick(); await wait();
     expect(document.body.textContent).not.toContain('Best');   // the best/ao5/ao12 panel is gone (the recent-solves table has its own ao12)
-    byText('Settings', q('nav')!)!.click(); await tick();
+    byText('Settings', q(NAV)!)!.click(); await tick();
     for (let i = 0; i < 40 && !document.querySelector('input[type=checkbox]'); i++) { await wait(25); flushSync(); }
     // the key list is collapsed until asked for
     [...document.querySelectorAll<HTMLButtonElement>('button')].find(b => b.textContent!.trim().startsWith('Show all'))!.click();
@@ -154,7 +157,7 @@ describe('whole app in a simulated browser', () => {
   });
 
   it('timer: hold, release and tap records a solve', async () => {
-    byText('Solve', q('nav')!)!.click(); await tick();
+    byText('Solve', q(NAV)!)!.click(); await tick();
     for (let i = 0; i < 40 && !q('.big'); i++) { await wait(25); flushSync(); }
     const before = document.body.textContent;
     window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true })); await wait(350); flushSync();

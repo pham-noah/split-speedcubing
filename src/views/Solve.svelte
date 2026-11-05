@@ -183,7 +183,7 @@
           </div>
         {/if}
         {#if store.shown('solve.penalties')}
-          <div class="row" style="justify-content:center">
+          <div class="row pens" style="justify-content:center">
             <button
               class="btn"
               class:on={last?.pen === '+2'}
