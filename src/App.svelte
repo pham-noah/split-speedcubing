@@ -65,6 +65,26 @@
     const el = document.getElementById('splash');
     if (el) { el.classList.add('hide'); setTimeout(() => el.remove(), 300); }
   });
+  /** A link inside the app has nowhere to go: every shell hands it to its own browser. A shell that
+   *  refuses — no permission, no url scope — says so on screen instead of failing silently. */
+  let linkError = $state<string | null>(null);
+  function onLink(e: MouseEvent) {
+    const a = (e.target as HTMLElement | null)?.closest?.('a[href]') as HTMLAnchorElement | null;
+    if (!a) return;
+    const href = a.getAttribute('href') ?? '';
+    if (!/^https?:/i.test(href)) return;
+    e.preventDefault();
+    e.stopPropagation();
+    linkError = null;
+    void platform.openLink(href).catch((err) => {
+      linkError = href;
+      console.warn('[link]', href, err);
+    });
+  }
+  /** desktop only: the shell owns the window, so F11 is the real thing rather than a browser key */
+  async function toggleFull() {
+    try { await platform.toggleFullscreen(); } catch (err) { console.warn('[fullscreen]', err); }
+  }
   const typing = (e: Event) => /INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement).tagName);
   const GO: Record<string, View> = { goSolve: 'solve', goTrain: 'train', goLibrary: 'lib', goDrills: 'drills', goSettings: 'set' };
   const ORDER: View[] = ['train', 'lib', 'solve', 'drills', 'set']; // the order the tabs sit in
@@ -111,6 +131,7 @@
 
   function onKey(e: KeyboardEvent) {
     if (typing(e) || !store.ready || nav.hintActive) return;
+    if (e.key === 'F11' && platform.caps.fullscreen) { e.preventDefault(); void toggleFull(); return; }
     if (store.is(e, 'back')) { if (nav.back()) e.preventDefault(); return; }
     if (!store.data.settings.introSeen) return;
     // a tab shortcut in the middle of a solve would throw the solve away: Esc stops the clock first
@@ -129,13 +150,19 @@
   });
 </script>
 
-<svelte:window onkeydown={onKey} />
+<svelte:window onkeydown={onKey} onclickcapture={onLink} />
 
 {#if store.ready}
   {#if store.loadError}
     <div class="banner" role="alert">
       <span style="flex:1;min-width:0"><b>Your saved data could not be read.</b> {store.loadError}. Anything you add now is saved normally.</span>
       <button class="btn" style="flex:none;min-height:36px" onclick={() => store.init()}>Try again</button>
+    </div>
+  {/if}
+  {#if linkError}
+    <div class="banner" role="alert">
+      <span style="flex:1;min-width:0"><b>That link could not be opened.</b> {linkError}</span>
+      <button class="btn" style="flex:none;min-height:36px" onclick={() => (linkError = null)}>Dismiss</button>
     </div>
   {/if}
   {#if store.saveError}

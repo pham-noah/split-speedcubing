@@ -17,16 +17,18 @@ RepoType: git
 Repo: https://github.com/pham-noah/split-speedcubing.git
 
 Builds:
-  - versionName: 0.5.0
-    versionCode: 5
-    commit: v0.5.0
+  - versionName: 0.6.0
+    versionCode: 6
+    commit: v0.6.0
     subdir: android/app
     sudo:
       - apt-get update
       - apt-get install -y nodejs npm   # Node 22+ is required; adjust to what the build server provides
     init: cd ../.. && npm ci
     gradle:
-      - yes
+      # the `store` flavour: no permissions at all, provably offline. assembleRelease no longer exists
+      # because the app builds two flavours (store / github) from one source
+      - assembleStoreRelease
     prebuild: cd ../.. && npm run build:android && npx cap sync android
     scanignore:
       - android/capacitor-cordova-android-plugins

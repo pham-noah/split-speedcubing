@@ -38,7 +38,9 @@ export function pickAsset(assets: Asset[], kind: 'web' | 'android' | 'desktop'):
   const withExt = (ext: string) => assets.filter(a => a.name.toLowerCase().endsWith(ext) && a.url);
   if (kind === 'android') {
     const apks = withExt('.apk');
-    return apks.find(a => /arm64/i.test(a.name)) ?? apks[0] ?? null;
+    // The GitHub build is the one that can check for itself, so a phone already on it should be pointed
+    // at that APK rather than at the store build, which would quietly lose the check.
+    return apks.find(a => /arm64/i.test(a.name)) ?? apks.find(a => !/store/i.test(a.name)) ?? apks[0] ?? null;
   }
   if (kind === 'desktop') {
     const exe = withExt('.exe').find(a => /setup/i.test(a.name)) ?? withExt('.exe')[0];

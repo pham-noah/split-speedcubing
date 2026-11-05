@@ -16,8 +16,8 @@ android {
         applicationId "com.noah.split"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 6
-        versionName "0.6.0"
+        versionCode 7
+        versionName "0.7.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -41,6 +41,15 @@ android {
             signingConfig keystoreFile.exists() ? signingConfigs.release : signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    // Two builds of one app. `store` is what goes to a store: no permissions at all, so it is provably
+    // offline and cannot check for updates. `github` adds the INTERNET permission (src/github/
+    // AndroidManifest.xml) and is the only build that offers the update check. Same applicationId and
+    // signature, so one installs over the other.
+    flavorDimensions += "distribution"
+    productFlavors {
+        store { dimension "distribution" }
+        github { dimension "distribution" }
     }
 }
 

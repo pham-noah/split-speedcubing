@@ -16,10 +16,20 @@ describe('platform adapters', () => {
     expect(desktop.caps.backButton).toBe(false);
   });
 
-  it('only desktop can check for updates: Android asks for no INTERNET permission, so a fetch there cannot succeed', () => {
+  it('only desktop checks for updates in these tests: the Android check is compiled in for the GitHub build', () => {
     expect(desktop.caps.updateCheck).toBe(true);
+    // the store build (this one, __GITHUB_BUILD__ false) declares no INTERNET permission, so a fetch
+    // there cannot succeed; the GitHub build sets the flag and declares it
     expect(android.caps.updateCheck).toBe(false);
     expect(web.caps.updateCheck).toBe(false);
+  });
+
+  it('only desktop owns a window to make fullscreen, and the others are a no-op rather than a throw', async () => {
+    expect(desktop.caps.fullscreen).toBe(true);
+    expect(android.caps.fullscreen).toBe(false);
+    expect(web.caps.fullscreen).toBe(false);
+    await expect(android.toggleFullscreen()).resolves.toBe(false);
+    await expect(web.toggleFullscreen()).resolves.toBe(false);
   });
 
   it('every shell can save a file', () => {

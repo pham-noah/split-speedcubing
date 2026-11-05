@@ -2,6 +2,32 @@
 
 All notable changes to Split. Format based on [Keep a Changelog](https://keepachangelog.com); versions follow [SemVer](https://semver.org).
 
+## [0.7.0] - 2026-11-05
+
+A phone on the GitHub build can now update itself, the desktop shell can go fullscreen, and links finally go
+somewhere.
+
+### Added
+- **Two Android builds from one source.** `store` is what goes to a store: no permissions at all, provably
+  offline, exactly as before. `github` — the APK on the releases page — adds one permission, `INTERNET`, for the
+  opt-in update check, and is the only build where Settings offers that check. Both share `applicationId` and
+  signature, so either installs over the other and your data comes with it. `npm run android:store` and
+  `npm run android:github` build them; CI signs and attaches both to a release (`Split-<version>.apk` and
+  `Split-<version>-store.apk`), and the F-Droid recipe builds `assembleStoreRelease`.
+- **Fullscreen on the desktop.** F11, or the button in Settings. `platform.toggleFullscreen()` sits behind a new
+  `caps.fullscreen`, so only the shell that owns a window shows it.
+
+### Fixed
+- **Links did nothing on the desktop.** The Tauri capability granted `opener:allow-open-url` without a URL scope,
+  so every `openUrl` call was rejected — and the click handler's empty `catch` threw the reason away, which is why
+  it looked like the link was simply dead. The capability now scopes `https`, `http` and `mailto`; every shell
+  routes links through one `platform.openLink()` (desktop: system browser, Android: Custom Tabs intent, web: a
+  tab), and a shell that refuses shows "That link could not be opened" with the URL instead of failing silently.
+- The update check picked the first `.apk` on a release, which after this change could be the store build: a phone
+  already on the GitHub build would have been pointed at an APK that cannot check for itself.
+- `__GITHUB_BUILD__` is a build-time constant (`--mode android-github`), so the store build cannot gain the check
+  by accident: the Android bundle shipped to stores contains `updateCheck:!1`.
+
 ## [0.6.0] - 2026-11-05
 
 The app now answers when you touch it, and a long history no longer costs you a stutter on every solve.

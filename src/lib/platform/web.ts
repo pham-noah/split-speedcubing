@@ -6,7 +6,7 @@ const forceSW = import.meta.env.VITE_SW === '1';
 
 export const platform: Platform = {
   kind: 'web',
-  caps: { backButton: false, saveFile: true, fileDialogs: false, openLinks: true, updateCheck: false },
+  caps: { backButton: false, saveFile: true, fileDialogs: false, openLinks: true, updateCheck: false, fullscreen: false },
   shell() {
     markShell('web');
     if (!('serviceWorker' in navigator) || !location.protocol.startsWith('http')) return;
@@ -20,6 +20,13 @@ export const platform: Platform = {
         .then((rs) => rs.forEach((r) => r.unregister()))
         .catch(() => {});
     }
+  },
+  async openLink(url) {
+    const w = window.open(url, '_blank', 'noopener,noreferrer');
+    if (!w) throw new Error('The browser blocked the new tab');
+  },
+  async toggleFullscreen() {
+    return false;   // the tab is the window here; the shell reports no fullscreen capability
   },
   saveFile: saveFileViaAnchor,
   pickFile: pickFileViaInput,

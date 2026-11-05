@@ -75,7 +75,8 @@ npm run build:desktop   # dist-desktop/  what Tauri packages
 | --- | --- | --- | --- |
 | Hardware Back | – | Capacitor `backButton` | – |
 | Service worker | yes | no | no |
-| Release check | – | – | yes |
+| Release check | – | GitHub build only | yes |
+| Fullscreen | – | – | F11, or the button in Settings |
 
 Saving and restoring a backup is the same anchor + `<input>` in all three. What a shell cannot do is hidden
 (`platform.caps.*`), never disabled.
@@ -83,7 +84,10 @@ Saving and restoring a backup is the same anchor + `<input>` in all three. What 
 **Releases** are at github.com/pham-noah/split-speedcubing/releases. **Updates** are opt-in (off by default, no
 device id): one request to `api.github.com` for the newest release, then a version and a link. Nothing is
 downloaded or installed, and the desktop CSP allows exactly `connect-src https://api.github.com` for it. The repo
-must stay public — an anonymous request to a private one gets a 404, which also breaks "Report a problem".
+must stay public — an anonymous request to a private one gets a 404, which also breaks "Report a problem". Links
+leave the app rather than replacing it: on the desktop they go to the system browser through the opener plugin's
+URL scope, on Android through a Custom Tabs intent, and a shell that refuses shows the URL instead of failing
+silently.
 
 ## Android
 
@@ -95,10 +99,19 @@ opens Android Studio.
 updated again. Without the properties file a release build falls back to the debug key so a fresh clone still
 builds, and that build cannot be updated in place.
 
-The app declares no permissions and turns cloud auto-backup off, which is what makes it provably offline. It
-therefore has no `INTERNET` permission either, so the release check is desktop-only and a phone gets its updates
-from its store. `docs/fdroid/com.noah.split.yml` is the F-Droid inclusion template; `docs/RELEASING.md` is the
-release checklist.
+**Two builds, one app.** `store` is what goes to a store: it declares no permissions at all and turns cloud
+auto-backup off, which is what makes it provably offline, and it therefore cannot reach `api.github.com` — a phone
+with it gets its updates from its store. `github` is the build on the releases page: it adds exactly one
+permission, `INTERNET`, for the opt-in update check, and is the only build where that check is offered. Both share
+`applicationId` and signature, so either installs over the other.
+
+```bash
+npm run android:store    # flavour store  → android/app/build/outputs/apk/store/release/
+npm run android:github   # flavour github → android/app/build/outputs/apk/github/release/
+```
+
+`docs/fdroid/com.noah.split.yml` is the F-Droid inclusion template (it builds `assembleStoreRelease`);
+`docs/RELEASING.md` is the release checklist.
 
 ## Desktop
 

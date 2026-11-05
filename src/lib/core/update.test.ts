@@ -30,6 +30,9 @@ describe('pickAsset', () => {
   it('takes the arm64 APK on Android, else the first APK', () => {
     expect(pickAsset([picked('split-x86.apk'), picked('split-arm64.apk')], 'android')?.name).toBe('split-arm64.apk');
     expect(pickAsset([picked('split-x86.apk')], 'android')?.name).toBe('split-x86.apk');
+    // two builds of the same app: a phone that can check for itself is pointed at the build that still can
+    expect(pickAsset([picked('Split-0.7.0-store.apk'), picked('Split-0.7.0.apk')], 'android')?.name).toBe('Split-0.7.0.apk');
+    expect(pickAsset([picked('Split-0.7.0-store.apk')], 'android')?.name).toBe('Split-0.7.0-store.apk');
   });
 
   it('takes the setup exe on desktop, falling back to msi', () => {

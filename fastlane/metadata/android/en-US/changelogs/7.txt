@@ -1,0 +1,3 @@
+This is the build that can update itself: Settings now offers an opt-in check for a newer release, and it asks github.com once, sending no device id. The store build keeps its promise of no permissions at all and leaves that check out.
+
+Also in this build: two builds of the same app (store and GitHub, signed with the same key so either installs over the other), and on the desktop a fullscreen toggle on F11.

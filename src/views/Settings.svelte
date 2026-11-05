@@ -9,6 +9,10 @@
   const s = $derived(store.data.settings);
   const colours = () => (s.cubeColors && s.cubeColors.length === 6 ? s.cubeColors : DEFAULT_CUBE_COLORS);
   let msg = $state('');
+  let full = $state(false);
+  async function toggleFull() {
+    try { full = await platform.toggleFullscreen(); } catch (err) { msg = String(err); }
+  }
   // the store holds what the last restore or erase replaced; the button below names it
   let fsrsMsg = $state('');
   let fsrsBusy = $state(false);
@@ -319,6 +323,9 @@
       {/if}
       <button class="btn" onclick={restore}>Restore backup</button>
     </div>
+    {#if platform.caps.fullscreen}
+      <button class="btn" onclick={toggleFull}>{full ? 'Leave fullscreen' : 'Fullscreen'}<span class="pc-only"> (F11)</span></button>
+    {/if}
     <button class="btn" onclick={() => store.update({ introSeen: false })}>Show the intro again</button>
     <button
       class="btn"

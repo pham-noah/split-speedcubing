@@ -7,7 +7,10 @@ import { fileURLToPath } from 'node:url';
 const pkg = JSON.parse(readFileSync('./package.json', 'utf8'));
 const TARGETS = ['web', 'android', 'desktop'] as const;
 type Target = (typeof TARGETS)[number];
-const targetOf = (mode: string): Target => ((TARGETS as readonly string[]).includes(mode) ? (mode as Target) : 'web');
+// android-github is the Android build that declares the INTERNET permission and may check for its own
+// updates; the plain android build (the one stores ship) must not
+const targetOf = (mode: string): Target =>
+  mode.startsWith('android') ? 'android' : (TARGETS as readonly string[]).includes(mode) ? (mode as Target) : 'web';
 
 export default defineConfig(({ mode }) => {
   const target = targetOf(mode);
@@ -17,7 +20,10 @@ export default defineConfig(({ mode }) => {
     // edits are made from WSL against files on the Windows drive, which inotify does not report:
     // without polling the dev server keeps serving the old code (looks like "nothing changed")
     server: { watch: { usePolling: true, interval: 300 } },
-    define: { __APP_VERSION__: JSON.stringify(pkg.version) },
+    define: {
+      __APP_VERSION__: JSON.stringify(pkg.version),
+      __GITHUB_BUILD__: JSON.stringify(mode === 'android-github'),
+    },
     resolve: {
       alias: { $platform: fileURLToPath(new URL(`./src/lib/platform/${target}.ts`, import.meta.url)) },
       ...(process.env.VITEST ? { conditions: ['browser'] } : {}),

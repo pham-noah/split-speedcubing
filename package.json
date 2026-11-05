@@ -1,6 +1,6 @@
 {
   "name": "split",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,6 +13,9 @@
     "lint": "eslint .",
     "android:sync": "npm run build:android && cap sync android",
     "android:open": "cap open android",
+    "build:android:github": "vite build --mode android-github && cap copy android",
+    "android:store": "npm run build:android && npx cap sync android && cd android && ./gradlew assembleStoreRelease",
+    "android:github": "npm run build:android:github && npx cap sync android && cd android && ./gradlew assembleGithubRelease",
     "desktop:dev": "tauri dev",
     "desktop:build": "npm run build:desktop && tauri build",
     "tauri": "tauri",
@@ -54,9 +57,11 @@
   },
   "dependencies": {
     "@capacitor/app": "^8.1.2",
+    "@capacitor/browser": "^8.0.5",
     "@capacitor/core": "^8.5.3",
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@fontsource-variable/manrope": "^5.3.0",
+    "@tauri-apps/api": "^2.12.4",
     "@tauri-apps/plugin-opener": "^2.7.2",
     "cubing": "^0.66.1",
     "ts-fsrs": "^5.4.2"
