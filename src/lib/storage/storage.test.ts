@@ -55,4 +55,37 @@ describe('storage + backup', () => {
     expect(() => normalize({ cards: null })).toThrow();
     expect(() => normalize({ solves: [], cards: {}, v: 2 })).toThrow(/newer version/);
   });
+  // the trust boundary has to check strings too: a numeric alg reached the cube simulator, and a
+  // numeric name threw inside zbllNamed the moment the Library imported anything
+  it('drops own ZBLL cases whose id, name or alg is not a string', () => {
+    const d = normalize({ solves: [], cards: {}, zbll: [
+      { id: 'ok', name: 'Mine', alg: "R U R' U'" },
+      { id: 'numalg', name: 'Mine', alg: 5 },
+      { id: 'noname', alg: "R U R' U'" },
+      { id: 'blank', name: 'Mine', alg: '   ' },
+      { id: 7, name: 'Mine', alg: "R U R' U'" },
+      null,
+      'nonsense',
+    ] });
+    expect(d.zbll.map(c => c.id)).toEqual(['ok', 'noname']);
+    expect(d.zbll[1].name).toBe('noname');   // a missing name falls back to the id, which is a string
+  });
+  it('drops drill rows from a mode no screen can show', () => {
+    const d = normalize({ solves: [], cards: {}, drills: [
+      { type: 'cross', ms: 5000, memo: null, ok: true, ts: 1 },
+      { type: 'pll2', ms: 8000, ok: false, ts: 2, pen: '+2', info: 'x' },
+      { type: 'nope', ms: 1000, ok: true, ts: 3 },
+      { type: 'bld', ms: -1, ok: true, ts: 4 },
+      { type: 'bld', ms: NaN, ok: true, ts: 5 },
+      { type: 'oll2', ms: 3000, ok: 'yes', ts: 6, pen: 'bogus' },
+    ] });
+    expect(d.drills.map(r => r.type)).toEqual(['cross', 'pll2', 'oll2']);
+    expect(d.drills[1]).toMatchObject({ pen: '+2', info: 'x' });
+    expect(d.drills[2].ok).toBe(false);        // only a real true counts
+    expect(d.drills[2].pen).toBeUndefined();
+  });
+  it('keeps only hex colours a diagram can actually paint', () => {
+    const d = normalize({ solves: [], cards: {}, settings: { cubeColors: ['#ff0000', 'red', 7, '#00FF00'] } });
+    expect(d.settings.cubeColors).toEqual(['#ff0000', '#00FF00']);
+  });
 });

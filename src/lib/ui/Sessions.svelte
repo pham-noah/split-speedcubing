@@ -50,7 +50,7 @@
   {#if deleted}
     <div class="card row sp" role="status" aria-live="polite" style="border-color:var(--am)">
       <span class="mu">Deleted “{deleted}” and its solves</span>
-      <button class="btn" style="flex:none" onclick={() => { if (store.undoRestore()) deleted = null; }}>Undo</button>
+      <button class="btn" style="flex:none" onclick={() => { if (store.undoDeleteSession()) deleted = null; }}>Undo</button>
     </div>
   {/if}
   <div class="card" style="display:flex;flex-direction:column;gap:8px">

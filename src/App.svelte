@@ -125,8 +125,7 @@
   // how many cases are actually due right now, shown on the Train tab
   const dueCount = $derived.by(() => {
     if (!store.ready) return 0;
-    const now = Date.now();
-    return Object.values(store.data.cards).filter(c => c.seen && c.due <= now).length;
+    return Object.values(store.data.cards).filter(c => c.seen && c.due <= store.now).length;
   });
 </script>
 

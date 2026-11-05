@@ -52,7 +52,7 @@
     if (show === 'new') return !k.seen;
     if (show === 'learning') return k.seen && mastery(k) !== 'mastered';
     if (show === 'mastered') return mastery(k) === 'mastered';
-    if (show === 'due') return k.seen && k.due <= Date.now();
+    if (show === 'due') return k.seen && k.due <= store.now;
     return true;
   };
   // the F2L grid shows the front-right slot only; ZBLL filters by subset and F2L by pair group
@@ -158,7 +158,7 @@
     });
   });
   const learning = $derived(list.reduce((n, c) => { const m = mastery(store.card(c.id)); return n + (m === 'learning' ? 1 : 0); }, 0));
-  const dueNow = $derived(list.filter(c => { const k = store.card(c.id); return k.seen && k.due <= Date.now(); }).length);
+  const dueNow = $derived(list.filter(c => { const k = store.card(c.id); return k.seen && k.due <= store.now; }).length);
   const codesRaw = $derived(makeHints(store.casesFor(set).filter(inScope).map(c => ({ id: c.id, name: c.name }))));
   const codes = $derived(makeHints(list.map(c => ({ id: c.id, name: c.name }))));
   // while the codes are up, the tab keys are part of the code, not navigation
@@ -176,6 +176,9 @@
   const byName = (needle: string) =>
     list.filter(c => named(c).split(/[\s'-]+/).some(w => w.startsWith(needle)))
       .sort((a, b) => nameScore(b, needle) - nameScore(a, needle));
+  // once per keystroke, not once per cell: the grid asked byName() inside its own {#each}, which is
+  // a filter plus a sort over the whole set for every one of the 472 cells
+  const nameMatches = $derived(hint && typed ? byName(typed) : []);
 
   function startTraining(id: string) {
     training = { id, alg: store.algFor(id) };
@@ -302,7 +305,7 @@
     </div>
 
     {#if hint && typed}
-      <div class="mu" role="status" aria-live="polite">“{typed}” · {byName(typed).length + [...codes.values()].filter(code => code.startsWith(typed)).length} match · Enter opens the first</div>
+      <div class="mu" role="status" aria-live="polite">“{typed}” · {nameMatches.length + [...codes.values()].filter(code => code.startsWith(typed)).length} match · Enter opens the first</div>
     {/if}
     {#if hint}<div class="sr" role="status" aria-live="polite">Case codes shown. Type a code, or the start of a case name, to open it. Escape closes this.</div>{/if}
     {#if set === 'F2L' || set === 'ZBLL'}
@@ -341,7 +344,7 @@
         {#each shownList as c (c.id)}
           {@const m = mastery(store.card(c.id))}
           {@const code = shownCode(c)}
-          <button class="cell {m}" class:sel={selId === c.id} class:dim={hint && typed.length > 0 && !code.startsWith(typed) && !byName(typed).includes(c)} onclick={() => pick(c.id)} aria-label="{c.name}, {m}">
+          <button class="cell {m}" class:sel={selId === c.id} class:dim={hint && typed.length > 0 && !code.startsWith(typed) && !nameMatches.includes(c)} onclick={() => pick(c.id)} aria-label="{c.name}, {m}">
             {#if set === 'F2L'}
               <LazyBox width={81} height={76}><CaseThumb alg={store.algFor(c.id)} slotId={c.slot} size={54} /></LazyBox>
             {:else}
@@ -370,7 +373,7 @@
             {#if sel.group}<div class="mu">{sel.group}</div>{/if}
             <div class="mu">{mastery(card)} · {card.attempts.length} attempts</div>
             <div class="mu">Recog {formatTime(stats().recog)} · Exec {formatTime(stats().exec)}</div>
-            <div class="mu">Next review {dueLabel(card)}{#if recall(card, Date.now(), store.data.settings.retention, store.data.settings.fsrsW) != null} · recall ≈ {Math.round(recall(card, Date.now(), store.data.settings.retention, store.data.settings.fsrsW)! * 100)}%{/if}</div>
+            <div class="mu">Next review {dueLabel(card, store.now)}{#if recall(card, store.now, store.data.settings.retention, store.data.settings.fsrsW) != null} · recall ≈ {Math.round(recall(card, store.now, store.data.settings.retention, store.data.settings.fsrsW)! * 100)}%{/if}</div>
           </div>
         </div>
 

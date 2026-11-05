@@ -48,12 +48,12 @@
   const inScope = (c: CaseDef) => set !== 'F2L' || slotFilter === 'All' || c.slot === slotFilter;
   const list = $derived(store.casesFor(set).filter(inScope));
   const cards = $derived(store.cardsFor(set));
-  const due = $derived(list.filter(c => cards[c.id].seen && cards[c.id].due <= Date.now()).length);
+  const due = $derived(list.filter(c => cards[c.id].seen && cards[c.id].due <= store.now).length);
   const fresh = $derived(list.filter(c => !cards[c.id].seen).length);
 
   // averages over the last 7 days, across every set
   const week = $derived.by(() => {
-    const since = Date.now() - 7 * 86_400_000;
+    const since = store.now - 7 * 86_400_000;
     const a = Object.values(store.data.cards).flatMap(c => c.attempts).filter(x => x.ts >= since && x.recog != null);
     return { n: a.length, recog: mean(a.map(x => x.recog!)), exec: mean(a.map(x => x.total - x.recog!)) };
   });

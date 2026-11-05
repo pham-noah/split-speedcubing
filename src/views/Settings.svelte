@@ -9,7 +9,7 @@
   const s = $derived(store.data.settings);
   const colours = () => (s.cubeColors && s.cubeColors.length === 6 ? s.cubeColors : DEFAULT_CUBE_COLORS);
   let msg = $state('');
-  let canUndo = $state(false); // a restore just replaced the data and can be put back
+  // the store holds what the last restore or erase replaced; the button below names it
   let fsrsMsg = $state('');
   let fsrsBusy = $state(false);
   let fsrsProgress = $state(0);
@@ -54,7 +54,6 @@
       // importJson throws before it touches anything, so a wrong file costs nothing
       store.importJson(f.text);
       msg = 'Backup restored.';
-      canUndo = true;
     } catch (err) {
       // keep the specific reason (a backup from a newer version), not just "invalid"
       msg = err instanceof Error && /newer version/.test(err.message) ? err.message : 'That file is not a valid backup.';
@@ -69,8 +68,7 @@
   }
   function undoRestore() {
     if (!store.undoRestore()) return;
-    msg = 'Restore undone. Your earlier data is back.';
-    canUndo = false;
+    msg = 'Undone. Your earlier data is back.';
   }
 </script>
 
@@ -327,14 +325,13 @@
       onclick={() => {
         if (confirm('Erase all solves and progress on this device?')) {
           store.erase();
-          msg = 'Erased. You can put it back while this screen is open.';
-          canUndo = true;
+          msg = 'Erased. You can put it back until something else replaces it.';
         }
       }}>Erase all data</button
     >
     <div class="row sp" role="status" aria-live="polite">
       <span class="mu" style="flex:1;min-width:0">{msg}</span>
-      {#if canUndo}<button class="btn" style="flex:none" onclick={undoRestore}>Undo restore</button>{/if}
+      {#if store.canUndoRestore}<button class="btn" style="flex:none" onclick={undoRestore}>{store.undoKind === 'erase' ? 'Undo erase' : 'Undo restore'}</button>{/if}
     </div>
   </section>
 

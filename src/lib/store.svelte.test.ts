@@ -176,12 +176,15 @@ describe('store: backups that can be undone', () => {
     store.addSolve(8000, 'F B');
     const doomed = store.session.id;
     expect(store.solves.length).toBe(1);
+    const armed = store.canUndoRestore;               // erase() above armed the backup undo
     store.deleteSession(doomed);
     expect(store.data.sessions.some(s => s.id === doomed)).toBe(false);
-    expect(store.canUndoRestore).toBe(true);
-    expect(store.undoRestore()).toBe(true);
+    expect(store.undoKind).toBe('erase');             // the delete did not take the slot over
+    expect(store.canUndoRestore).toBe(armed);
+    expect(store.undoDeleteSession()).toBe(true);
     expect(store.data.sessions.some(s => s.id === doomed)).toBe(true);
     expect(store.data.solves.some(s => s.session === doomed)).toBe(true);
+    expect(store.undoKind).toBe('erase');             // and the erase is still undoable afterwards
   });
   it('erasing everything can be undone', () => {
     store.erase();
@@ -328,5 +331,47 @@ describe('undo and penalties across a second session', () => {
 
     store.penDrill('cross', '');
     expect(shown('cross')).toBe(5000);
+  });
+
+  // deleting a session is undoable on its own: it must not overwrite the snapshot a restore or a wipe
+  // is holding, or "Undo restore" quietly starts bringing back the wrong data
+  it('a session delete leaves the backup undo alone, and can be undone by itself', () => {
+    store.erase();
+    store.undoRestore();                       // nothing armed now
+    expect(store.canUndoRestore).toBe(false);
+
+    store.addSession('Temporary');
+    const id = store.data.sessions.find(s => s.name === 'Temporary')!.id;
+    store.addSolve(4321, 'R U');
+    store.deleteSession(id);
+
+    expect(store.canUndoRestore).toBe(false);  // the delete did not arm the restore button
+    expect(store.undoDeleteSession()).toBe(true);
+    expect(store.data.sessions.some(s => s.id === id)).toBe(true);   // the session and its solve are back
+    expect(store.data.solves.some(s => s.session === id)).toBe(true);
+    expect(store.undoDeleteSession()).toBe(false);                   // one undo per delete
+  });
+
+  it('names the action the undo slot holds, so the button can say which one it undoes', () => {
+    store.erase();
+    expect(store.canUndoRestore).toBe(true);
+    expect(store.undoKind).toBe('erase');
+    store.undoRestore();
+    expect(store.undoKind).toBe(null);
+    store.importJson(JSON.stringify({ solves: [], cards: {} }));
+    expect(store.undoKind).toBe('restore');
+  });
+
+  // a due count read from Date.now() inside a $derived never changes while the app sits open; every
+  // screen reads store.now instead, which the store refreshes once a minute
+  it('a case that comes due shows up when the clock moves', () => {
+    store.erase();
+    store.undoRestore();
+    const id = SETS.PLL[0].id;
+    store.data.cards[id] = { seen: true, due: store.now + 30_000, attempts: [] };
+    const dueNow = () => Object.values(store.data.cards).filter(c => c.seen && c.due <= store.now).length;
+    expect(dueNow()).toBe(0);
+    store.now = store.now + 31_000;
+    expect(dueNow()).toBe(1);
   });
 });

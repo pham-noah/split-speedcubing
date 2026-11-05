@@ -62,6 +62,48 @@ function cleanSessions(raw: unknown): Session[] {
   return out.length ? out : [{ id: 'default', name: 'Session 1' }];
 }
 
+const DRILL_TYPES = new Set(['cross', 'bld', 'oll2', 'pll2']);
+const HEX = /^#[0-9a-f]{6}$/i;
+
+/** The user's own ZBLL cases: `name` is what the Library and the importer match on, so a number here
+ *  used to throw inside `zbllNamed` and leave a broken cell in the grid. */
+function cleanZbll(raw: unknown): CustomCase[] {
+  if (!Array.isArray(raw)) return [];
+  const ids = new Set<string>();
+  const out: CustomCase[] = [];
+  for (const item of raw) {
+    const c = item as Partial<CustomCase> | null;
+    if (!c || typeof c.id !== 'string' || !c.id) continue;
+    if (typeof c.alg !== 'string' || !c.alg.trim()) continue;
+    if (ids.has(c.id)) continue;
+    ids.add(c.id);
+    const name = typeof c.name === 'string' && c.name.trim() ? c.name.trim() : c.id;
+    out.push({ id: c.id, name, alg: c.alg.trim() });
+  }
+  return out;
+}
+
+/** Drill results: the type is one of four, and a row from an unknown mode has no screen to land on. */
+function cleanDrills(raw: unknown): DrillResult[] {
+  if (!Array.isArray(raw)) return [];
+  const out: DrillResult[] = [];
+  for (const item of raw) {
+    const d = item as Partial<DrillResult> | null;
+    if (!d || typeof d.type !== 'string' || !DRILL_TYPES.has(d.type)) continue;
+    if (!finite(d.ms) || d.ms < 0) continue;
+    out.push({
+      type: d.type as DrillResult['type'],
+      ms: d.ms,
+      memo: finite(d.memo) ? d.memo : null,
+      ok: d.ok === true,
+      ts: finite(d.ts) ? d.ts : 0,
+      ...(typeof d.info === 'string' ? { info: d.info } : {}),
+      ...(d.pen === '+2' || d.pen === 'DNF' ? { pen: d.pen } : {}),
+    });
+  }
+  return out;
+}
+
 function cleanSettings(raw: Partial<Settings> | undefined): Settings {
   const d: Settings = { ...defaultSettings(), ...(raw && typeof raw === 'object' ? raw : {}) };
   if (!THEMES.includes(d.theme)) d.theme = 'midnight';
@@ -70,9 +112,9 @@ function cleanSettings(raw: Partial<Settings> | undefined): Settings {
   if (!finite(d.retention)) d.retention = 0.9;
   d.retention = Math.min(0.99, Math.max(0.7, d.retention));
   if (!Number.isFinite(d.walkSpeed) || d.walkSpeed < 150) d.walkSpeed = 900;
-  if (typeof d.coverColor !== 'string' || !/^#[0-9a-f]{6}$/i.test(d.coverColor)) d.coverColor = '';
-  if (typeof d.accent !== 'string' || !/^#[0-9a-f]{6}$/i.test(d.accent)) d.accent = '';
-  d.cubeColors = Array.isArray(d.cubeColors) ? d.cubeColors.filter(c => typeof c === 'string').slice(0, 6) : [];
+  if (typeof d.coverColor !== 'string' || !HEX.test(d.coverColor)) d.coverColor = '';
+  if (typeof d.accent !== 'string' || !HEX.test(d.accent)) d.accent = '';
+  d.cubeColors = Array.isArray(d.cubeColors) ? d.cubeColors.filter(c => typeof c === 'string' && HEX.test(c)).slice(0, 6) : [];
   d.keys = d.keys && typeof d.keys === 'object' ? Object.fromEntries(Object.entries(d.keys).filter(([, v]) => typeof v === 'string')) : {};
   d.hidden = d.hidden && typeof d.hidden === 'object' ? { ...d.hidden } : {};
   d.checkUpdates = d.checkUpdates === true;
@@ -97,8 +139,8 @@ export function normalize(raw: unknown): AppData {
     settings: cleanSettings(r.settings),
     sessions: cleanSessions(r.sessions),
     session: typeof r.session === 'string' ? r.session : 'default',
-    zbll: Array.isArray(r.zbll) ? r.zbll.filter(c => c && c.id && c.alg) : [],
-    drills: Array.isArray(r.drills) ? r.drills.filter(d => d && finite(d.ms) && d.ms >= 0) : [],
+    zbll: cleanZbll(r.zbll),
+    drills: cleanDrills(r.drills),
   };
   if (typeof r.f2lRev === 'number' && Number.isFinite(r.f2lRev)) out.f2lRev = r.f2lRev;
   if (out.settings.fsrsW && !(out.settings.fsrsW.length === 21 && out.settings.fsrsW.every(Number.isFinite))) delete out.settings.fsrsW;

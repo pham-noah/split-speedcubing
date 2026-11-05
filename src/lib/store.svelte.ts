@@ -23,14 +23,25 @@ class Store {
   loadError = $state<string | null>(null);
   /** whether the browser will keep this origin's data, and how much is used */
   durable = $state<Durability>({ persisted: null, usage: null, quota: null });
+  /** Now, refreshed once a minute. Every "is it due yet" read goes through this: a count taken from
+   *  Date.now() inside a $derived only changes when something else writes, so a case that came due
+   *  while the app sat open would stay hidden until the next solve. */
+  now = $state(Date.now());
   focusId = $state<string | null>(null); // case the user asked to train next
+  /** when set, train that case with exactly this algorithm (execution only) */
   focusAlg = $state<string | null>(null);
-  cubeHidden = $state(false);   // the scramble cube panel, toggled with one key from anywhere // when set, train that case with exactly this algorithm (execution only)
+  cubeHidden = $state(false);   // the scramble cube panel, toggled with one key from anywhere
   private storage: Storage = createStorage();
   private timer: ReturnType<typeof setTimeout> | undefined;
   private watching = false;
+  private clock: ReturnType<typeof setInterval> | undefined;
   /** the data a backup restore replaced, kept until the next restore so the last one can be undone */
   private replaced = $state<AppData | null>(null);
+  /** which of the two undoable actions `replaced` came from, so the button that undoes it says the truth */
+  undoKind = $state<'restore' | 'erase' | null>(null);
+  /** a deleted session and its solves, kept until the next delete so a mis-tap does not cost a history.
+   *  Separate from `replaced` on purpose: deleting a session must not overwrite the backup it could undo. */
+  private removed = $state<AppData | null>(null);
 
   async init() {
     try {
@@ -45,6 +56,7 @@ class Store {
     this.apply();
     this.ready = true;
     this.watchUnload();
+    this.startClock();
     // best effort until asked: on Android the origin can be evicted with the app still installed
     void durability().then((d) => (this.durable = d));
   }
@@ -65,6 +77,12 @@ class Store {
     }
     this.data.f2lRev = F2L_DATA_REV;
     this.persist();
+  }
+  private startClock() {
+    if (this.clock || typeof window === 'undefined') return;
+    this.clock = setInterval(() => (this.now = Date.now()), 60_000);
+    // a test runner must not be held open by this timer
+    (this.clock as unknown as { unref?: () => void }).unref?.();
   }
   /** write the pending change before the app is backgrounded or closed, instead of losing it */
   private watchUnload() {
@@ -121,15 +139,24 @@ class Store {
     if (s && name.trim()) { s.name = name.trim(); this.persist(); }
   }
   /** deletes the session and its solves; the last remaining session is emptied instead of removed.
-   *  Undoable: it keeps what it replaced, and a session's history is not something to lose by mis-tap. */
+   *  Undoable through `undoDeleteSession`: a session's history is not something to lose by mis-tap. */
   deleteSession(id: string) {
-    this.replaced = $state.snapshot(this.data) as AppData;
+    this.removed = $state.snapshot(this.data) as AppData;
     this.data.solves = this.data.solves.filter(s => s.session !== id);
     if (this.data.sessions.length > 1) {
       this.data.sessions = this.data.sessions.filter(s => s.id !== id);
       if (this.data.session === id) this.data.session = this.data.sessions[0].id;
     }
     this.persist();
+  }
+  /** put back the session the last delete removed */
+  undoDeleteSession(): boolean {
+    if (!this.removed) return false;
+    this.data = this.removed;
+    this.removed = null;
+    this.apply();
+    this.persist();
+    return true;
   }
 
   addSolve(ms: number, scramble: string, pen: Penalty = '') {
@@ -304,7 +331,9 @@ class Store {
           return;
         }
         if (have.has(alg)) { errors.push(`Line ${n}: duplicate`); return; }
-        this.data.zbll.push({ id: `ZBLL-${uid()}`, name: name || `ZBLL ${this.data.zbll.length + added + 1}`, alg });
+        // length is read before the push and already counts what this loop added: incrementing twice
+        // would name the cases 1, 3, 5 … in an imported file
+        this.data.zbll.push({ id: `ZBLL-${uid()}`, name: name || `ZBLL ${this.data.zbll.length + 1}`, alg });
         have.add(alg);
         added++;
       });
@@ -381,6 +410,7 @@ class Store {
   importJson(text: string) {
     const next = normalize(JSON.parse(text));
     this.replaced = $state.snapshot(this.data) as AppData;
+    this.undoKind = 'restore';
     this.data = next;
     this.apply();
     this.persist();
@@ -391,6 +421,7 @@ class Store {
     if (!this.replaced) return false;
     this.data = this.replaced;
     this.replaced = null;
+    this.undoKind = null;
     this.apply();
     this.persist();
     return true;
@@ -399,6 +430,7 @@ class Store {
    *  years of history, and it is undoable for exactly that reason */
   erase() {
     this.replaced = $state.snapshot(this.data) as AppData;
+    this.undoKind = 'erase';
     this.data = defaultData();
     this.apply();
     this.persist();
