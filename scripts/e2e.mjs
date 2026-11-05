@@ -1,6 +1,8 @@
 // End-to-end checks in a real browser against a running build (npm run build && npm run preview).
 // Run: CHROME_PATH=/path/to/chrome node scripts/e2e.mjs
 import { writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 import { launch, BASE, sleep, clickText } from './browser.mjs';
 
 let failed = 0;
@@ -187,9 +189,11 @@ await clickText(page, 'Solve', 'nav button'); await sleep(300);
 
 // --- csTimer import
 const cs = { session1: [[[0, 12340], "R U R' U'", '', 1700000000], [[2000, 10500], 'F B', '', 1700000100], [[-1, 20000], 'L D', '', 1700000200]], properties: { sessionData: JSON.stringify({ 1: { name: 'Main', opt: {} } }) } };
-writeFileSync('/tmp/cstimer-export.txt', JSON.stringify(cs));
+// a path Chrome and node both understand: /tmp does not mean the same directory on Windows
+const csFile = join(tmpdir(), 'cstimer-export.txt');
+writeFileSync(csFile, JSON.stringify(cs));
 await clickText(page, 'Settings', 'nav button'); await sleep(300);
-await (await page.$('input[type=file][accept*=".txt"]')).uploadFile('/tmp/cstimer-export.txt'); await sleep(500);
+await (await page.$('input[type=file][accept*=".txt"]')).uploadFile(csFile); await sleep(500);
 check('csTimer file is recognised', /csTimer: 3 solves/.test(await text()));
 await clickText(page, 'Import'); await sleep(400);
 check('import reports success', /Imported 3 solves/.test(await text()));

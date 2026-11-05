@@ -39,8 +39,8 @@ npm run dev             # http://localhost:5173
 npm test                # 800 tests in 24 files
 npm run check           # svelte-check: types
 npm run lint            # eslint
-npm run e2e             # 43 real-browser checks against a build on :4173
-npm run e2e:offline     # the same 43 with the service worker, built into dist-sw/ and served on :4174
+npm run e2e             # 38 real-browser checks against a build on :4173
+npm run e2e:offline     # 41: the same suite plus the three that need the worker, on :4174
 npm run version:check   # package.json, Cargo.toml, tauri.conf.json, build.gradle and the changelog agree
 ```
 

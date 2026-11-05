@@ -2,18 +2,21 @@
 // with EXPECT_SW=1, because the offline checks need a build that registers the worker.
 import { spawn, spawnSync } from 'node:child_process';
 import { setTimeout as wait } from 'node:timers/promises';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 
 const PORT = process.env.SW_PORT || '4174';
 const out = 'dist-sw';
 
-// the installed binary directly: an `npx` layer can resolve slowly enough to race the readiness loop
-const VITE = 'node_modules/.bin/vite';
-const build = spawnSync(VITE, ['build', '--mode', 'web', '--outDir', out], { stdio: 'inherit', env: { ...process.env, VITE_SW: '1' } });
+// the installed entry point directly: an `npx` layer can resolve slowly enough to race the readiness loop,
+// and the .bin shim is a shell script on Windows, which spawn cannot run
+const VITE = ['node_modules/vite/bin/vite.js'];
+const build = spawnSync(process.execPath, [...VITE, 'build', '--mode', 'web', '--outDir', out], { stdio: 'inherit', env: { ...process.env, VITE_SW: '1' } });
 if (build.status !== 0) { console.error('offline build failed'); process.exit(1); }
 
 // keep the server's output: if it refuses to start, that log is the only clue
 const fs = await import('node:fs');
-const logPath = '/tmp/split-preview-sw.log';
+const logPath = join(tmpdir(), 'split-preview-sw.log');
 let server = null;
 const stop = () => { try { server?.kill('SIGTERM'); } catch { /* already gone */ } };
 process.on('exit', stop);
@@ -25,6 +28,7 @@ const answered = () => spawnSync('node', ['-e', `fetch('http://127.0.0.1:${PORT}
 // once. Clear only this run's own preview, by port.
 const holderPid = () => {
   const r = spawnSync('ss', ['-ltnp'], { encoding: 'utf8' });
+  if (r.error || r.status !== 0) return null;   // no `ss` (Windows): the retry below still copes with a busy port
   const line = (r.stdout || '').split('\n').find(l => l.includes(`:${PORT} `));
   const m = line && /pid=(\d+)/.exec(line);
   return m ? Number(m[1]) : null;
@@ -41,7 +45,8 @@ if (answered()) {
 let up = false;
 for (let attempt = 0; attempt < 2 && !up; attempt++) {
   const logFile = fs.openSync(logPath, 'w');
-  server = spawn(VITE, ['preview', '--outDir', out, '--port', PORT, '--strictPort'], { stdio: ['ignore', logFile, logFile] });
+  // --host 127.0.0.1: the default binds "localhost", which is ::1 on Windows and never answers on 127.0.0.1
+  server = spawn(process.execPath, [...VITE, 'preview', '--outDir', out, '--host', '127.0.0.1', '--port', PORT, '--strictPort'], { stdio: ['ignore', logFile, logFile] });
   for (let i = 0; i < 80 && !up; i++) {   // 20 s per attempt
     await wait(250);
     up = answered();
@@ -55,7 +60,7 @@ if (!up) {
   process.exit(1);
 }
 
-const run = spawnSync('node', ['scripts/e2e.mjs'], {
+const run = spawnSync(process.execPath, ['scripts/e2e.mjs'], {
   stdio: 'inherit',
   env: { ...process.env, BASE_URL: `http://127.0.0.1:${PORT}/`, EXPECT_SW: '1' },
 });
