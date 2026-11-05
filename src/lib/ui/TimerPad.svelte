@@ -29,6 +29,7 @@
   let audio: AudioContext | undefined;
   let wake: any = null;   // keeps the phone screen on while the clock runs
   let pendingPen: Penalty = '';
+  let ink = $state('#FFFFFF');   // readable ink for whatever colour the cover is, worked out on open
 
   // dark ink on light covers, white on dark ones
   function readable(hex: string): string {
@@ -38,6 +39,9 @@
     if (!cover || !bigEl) return;
     const r = bigEl.getBoundingClientRect();
     cx = r.left + r.width / 2; cy = r.top + r.height / 2;
+    // the flood is --cover or the theme's blue; white on pale blue is unreadable, so measure it
+    const flood = coverColor || getComputedStyle(document.documentElement).getPropertyValue('--bl').trim();
+    ink = readable(flood);
     clearTimeout(flashT); stopped = null; coverOpen = true;
   }
   function closeCoverSoon(ms: number) {
@@ -173,13 +177,20 @@
 
 <div class="time mono" aria-hidden="true">{shownText}</div>
 {#if cover}
-  <div
-    class="cover"
-    class:on={coverOpen}
-    aria-hidden="true"
-    style="--cx:{cx}px;--cy:{cy}px;--cover:{coverColor || 'var(--bl)'};color:{readable(coverColor)}"
-  >
-    {#if stopped != null}
+  <div class="cover" class:on={coverOpen} aria-hidden="true"
+    style="--cx:{cx}px;--cy:{cy}px;--cover:{coverColor || 'var(--bl)'}"></div>
+  <div class="cover-stage" class:on={coverOpen} aria-hidden="true" style="--hold:{holdMs}ms;color:{ink}">
+    {#if st === 'hold' || st === 'ready'}
+      <!-- the cover sits above the button, so the hold has to report itself here or the wait is blind -->
+      <div class="cover-hold" class:ready={st === 'ready'}>
+        <!-- an SVG stroke, not a masked gradient: the sweep is one animated dash offset and it always paints -->
+        <svg class="hold-ring" class:full={st === 'ready'} viewBox="0 0 100 100" aria-hidden="true">
+          <circle class="track" cx="50" cy="50" r="46" />
+          <circle class="fill" cx="50" cy="50" r="46" />
+        </svg>
+        <div class="hold-word">{st === 'ready' ? 'Release' : 'Hold'}</div>
+      </div>
+    {:else if stopped != null}
       <div class="cover-time mono hi">{formatTime(stopped)}</div>
     {:else if st === 'run'}
       <div class="cover-time mono">{hideTime ? 'Solving…' : formatTime(now)}</div>
@@ -187,4 +198,10 @@
   </div>
 {/if}
 <div class="sr" aria-live="polite">{st === 'run' ? 'Timer running' : st === 'ready' ? 'Ready, release to start' : st === 'hold' ? 'Hold' : inspActive ? 'Inspection' : shown != null ? `Time ${formatTime(shown)}` : ''}</div>
-<button class="big" bind:this={bigEl} data-s={st === 'insp' ? 'idle' : st} {disabled} aria-label="{label}. Keyboard: hold {codeLabel(store.key('timer'))}">{label}</button>
+<button
+  class="big"
+  bind:this={bigEl}
+  data-s={st === 'insp' ? 'idle' : st}
+  style="--hold:{holdMs}ms"
+  {disabled}
+  aria-label="{label}. Keyboard: hold {codeLabel(store.key('timer'))}">{label}</button>

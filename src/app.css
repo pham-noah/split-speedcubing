@@ -28,15 +28,30 @@ h1{margin:0;font-size:2.1rem;font-weight:800;letter-spacing:-.5px}
 .sp{justify-content:space-between;gap:12px}.sp>*{flex:0 1 auto}
 .chip{display:inline-flex;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 11px;min-height:34px;font-weight:800;font-size:.85rem}
 .btn{min-height:38px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-weight:700;padding:0 11px;font-size:.92rem}
+/* Press: the answer is on pointer-down, not on release, and it settles on a small spring rather than
+   snapping back — that overshoot at the end is the whole "liquid" feeling. Only transform and colour,
+   so it stays on the compositor; 90 ms in, 260 ms out. */
+.btn,.chip,.cell,.seg button,nav>button,nav>.mid button,.big,summary,.card button{
+  transition:transform .26s cubic-bezier(.34,1.46,.64,1),background-color .12s ease,border-color .12s ease,color .12s ease,box-shadow .2s ease}
+.btn:active,.chip:active,.cell:active,.seg button:active,nav>button:active,nav>.mid button:active,summary:active,.card button:active{
+  transform:scale(.955);transition-duration:.09s,.06s,.06s,.06s,.12s}
+/* the two filled buttons get a whisper of light when pressed, so the press reads even at a glance */
+.btn.p:active,.seg button.on:active,nav .mid button.on:active{filter:brightness(1.08)}
 .btn.p{background:var(--am);color:var(--on-am);border:0;font-weight:800}
 .btn.on{border:2px solid var(--am);color:var(--am)}
 button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible,a:focus-visible,.cell:focus-visible{outline:3px solid var(--bl);outline-offset:2px}
 .time{font-size:clamp(3rem,9vh,4.4rem);font-weight:800;letter-spacing:-2px;text-align:center;line-height:1}
 .scr{font-size:.95rem;font-weight:600;color:var(--mu);text-align:center;line-height:1.5;min-height:3em;overflow-wrap:anywhere}
-.big{width:min(180px,23vh);height:min(180px,23vh);min-width:128px;min-height:128px;border-radius:50%;border:0;background:var(--bl);color:#06121F;font-size:1.3rem;font-weight:800;align-self:center;margin:6px 0;touch-action:none}
-.big[data-s=hold]{background:var(--am);color:var(--on-am)}
-.big[data-s=ready]{background:#fff;color:#000}
+.big{position:relative;isolation:isolate;width:min(180px,23vh);height:min(180px,23vh);min-width:128px;min-height:128px;border-radius:50%;border:0;background:var(--bl);color:#06121F;font-size:1.3rem;font-weight:800;align-self:center;margin:6px 0;touch-action:none}
+.big[data-s=hold]{background:var(--am);color:var(--on-am);transform:scale(.93);box-shadow:0 14px 44px -14px var(--am)}
+.big[data-s=ready]{background:#fff;color:#000;animation:readypulse .9s ease-in-out infinite}
 .big[data-s=run]{background:#3A404C;color:var(--tx)}
+/* Holding: a ring closes in over exactly the hold time, so the wait has a shape and the Release
+   moment is the ring arriving. --hold is set from Settings (150/300/500 ms) by TimerPad. */
+.big[data-s=hold]::after{content:'';position:absolute;inset:-7px;border-radius:50%;border:3px solid var(--am);
+  pointer-events:none;animation:holdring var(--hold,300ms) cubic-bezier(.25,.1,.25,1) forwards}
+@keyframes holdring{from{transform:scale(1.16);opacity:.28}to{transform:scale(.985);opacity:1}}
+@keyframes readypulse{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:9px}
 .cell{border-radius:12px;border:2px dashed #4A5160;background:none;color:var(--mu);padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.8rem;font-weight:800}
 .cell.learning{border:2px solid var(--learn);background:var(--card)}
@@ -59,7 +74,8 @@ nav .mid button{width:68px;height:68px;margin-top:-26px;border-radius:50%;border
 nav .mid button.on{background:var(--am);color:var(--on-am)}
 input,textarea{width:100%;min-height:44px;border-radius:10px;border:1px solid #3A404C;background:var(--bg);color:var(--tx);padding:8px 12px;font:600 1rem ui-monospace,Menlo,Consolas,monospace;-webkit-user-select:text;user-select:text}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-@media (prefers-reduced-motion:no-preference){.big{transition:background .12s}}
+/* the button's own colour change stays snappy; the transform shares the press system above */
+@media (prefers-reduced-motion:reduce){.big{transition:background .12s}}
 @media (min-width:900px){.page{max-width:720px}}
 .split{display:block}
 .side{display:none}
@@ -94,12 +110,57 @@ input,textarea{width:100%;min-height:44px;border-radius:10px;border:1px solid #3
 .pc-only{display:none}
 @media (min-width:900px){.pc-only{display:initial}}
 /* the timer colour grows out of the button to fill the screen, then shrinks back */
-.cover{position:fixed;left:var(--cx,50%);top:var(--cy,50%);width:200vmax;height:200vmax;margin:-100vmax 0 0 -100vmax;border-radius:50%;background:var(--cover,var(--bl));transform:scale(.012);opacity:0;transition:transform .38s cubic-bezier(.22,.61,.36,1),opacity .18s linear;z-index:40;pointer-events:none;display:flex;align-items:center;justify-content:center;will-change:transform}
-.cover.on{transform:scale(1);opacity:1}
-.cover-time{font-size:clamp(3rem,16vh,8rem);font-weight:800;letter-spacing:-2px;line-height:1}
+/* The timer colour floods out of the button until it owns the whole screen. It leaves fast and
+   arrives with a little overshoot (the curve passes 1 for a moment), which is what makes a circle
+   growing read as liquid rather than as a wipe; going away it is slower, so the time can be read. */
+.cover{position:fixed;left:var(--cx,50%);top:var(--cy,50%);width:200vmax;height:200vmax;margin:-100vmax 0 0 -100vmax;border-radius:50%;background:var(--cover,var(--bl));transform:scale(.012);opacity:0;transition:transform .5s cubic-bezier(.36,.66,.3,1),opacity .28s ease;z-index:40;pointer-events:none;will-change:transform}
+/* What the flood is showing lives here, not inside it: the circle is scaled from the button, so a
+   child would arrive at the button's position and be stretched by the animation. */
+.cover-stage{position:fixed;inset:0;z-index:41;pointer-events:none;display:grid;place-items:center;opacity:0;transition:opacity .2s ease}
+.cover-stage.on{opacity:1;transition:opacity .14s linear .16s}   /* arrives with the surface, not before it */
+.cover.on{transform:scale(1);opacity:1;transition:transform .44s cubic-bezier(.18,.9,.22,1.03),opacity .12s linear}
+/* a soft off-centre highlight: a flat colour reads as a shape, this reads as a surface */
+.cover::before{content:'';position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  background:radial-gradient(58% 58% at 50% 32%,rgba(255,255,255,.16),rgba(255,255,255,0) 62%)}
+/* The hold reports itself on the cover, because the cover is what you are looking at: a ring that
+   fills over exactly the configured hold time, and the word that turns from "Hold" to "Release". */
+.cover-hold{position:relative;display:grid;place-items:center}
+.hold-ring{width:clamp(168px,40vh,280px);aspect-ratio:1;overflow:visible;transform:rotate(-90deg)}
+/* No vector-effect: it makes the dash get measured in screen pixels while the path is in user units,
+   which left a quarter of the ring unpainted however the dash was written. */
+.hold-ring circle{fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+.hold-ring .track{opacity:.22}
+/* r=46 in the 100-unit viewBox: 2π·46 ≈ 289 user units, so one dash of that length covers the circle */
+.hold-ring .fill{stroke-dasharray:289;stroke-dashoffset:289;animation:holdfill var(--hold,300ms) cubic-bezier(.3,.7,.4,1) forwards}
+.hold-ring.full .fill{animation:none;stroke-dashoffset:0}
+@keyframes holdfill{from{stroke-dashoffset:289}to{stroke-dashoffset:0}}
+.hold-word{position:absolute;font-size:clamp(1.3rem,4.6vh,2.2rem);font-weight:800;letter-spacing:-.5px;
+  transition:opacity .16s ease}
+/* "Hold" waits quietly; "Release" is the one word that has to be impossible to miss */
+.cover-hold:not(.ready) .hold-word{opacity:.72}
+.cover-hold.ready .hold-word{animation:readypulse .9s ease-in-out infinite}
+.cover-time{font-size:clamp(3rem,16vh,8rem);font-weight:800;letter-spacing:-2px;line-height:1;animation:coverpop .34s cubic-bezier(.2,.7,.3,1)}
 .cover-time.hi{animation:coverpop .5s cubic-bezier(.2,.7,.3,1)}
 @keyframes coverpop{from{transform:scale(.88);opacity:.65}to{transform:scale(1);opacity:1}}
-@media (prefers-reduced-motion:reduce){.cover{transition:opacity .15s linear;transform:scale(1)}.cover-time.hi{animation:none}}
+@media (prefers-reduced-motion:reduce){
+  /* no growing, no bounce, no ring: the same events shown as colour and opacity only */
+  .cover,.cover.on{transition:opacity .15s linear;transform:scale(1)}
+  .cover-stage,.cover-stage.on{transition:opacity .15s linear}
+  .cover::before{display:none}
+  .cover-time.hi{animation:none}
+  .big[data-s=ready]{animation:none}
+  .big[data-s=hold]::after{display:none}
+  /* a sweep is a moving thing, so with reduced motion there is no ring fill at all: the track stays as
+     a frame and the word alone says Hold or Release. Leaving the fill at its end value would read as
+     "ready" from the first frame. */
+  .hold-ring .fill{display:none;animation:none}
+  .hold-word{transition:none}
+  .cover-hold.ready .hold-word{animation:none}
+  .cover-time{animation:none}
+  .btn,.chip,.cell,.seg button,nav>button,nav>.mid button,.big,summary,.card button{transition:background-color .12s ease,border-color .12s ease,color .12s ease}
+  .btn:active,.chip:active,.cell:active,.seg button:active,nav>button:active,.big:active,summary:active,.card button:active{transform:none}
+  .big[data-s=hold],.big[data-s=ready]{animation:none;transform:none;box-shadow:none}
+}
 @media (max-width:899px){
   .page{padding:10px 14px calc(74px + env(safe-area-inset-bottom));gap:9px;min-height:0}
   h1{font-size:1.7rem}
