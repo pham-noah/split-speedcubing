@@ -1,8 +1,11 @@
 // End-to-end checks in a real browser against a running build (npm run build && npm run preview).
 // Run: CHROME_PATH=/path/to/chrome node scripts/e2e.mjs
-import { writeFileSync } from 'node:fs';
+import { writeFileSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
+// the version the app will report, read from the manifest instead of remembered here: a bump used to
+// break this check on the tag build and nowhere else
+const VERSION = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version;
 import { launch, BASE, sleep, clickText } from './browser.mjs';
 
 let failed = 0;
@@ -175,15 +178,15 @@ check('About names the author and links GitHub', await page.evaluate(() => {
   const about = document.body.textContent.includes('Built by Noah Pham');
   return !!a && about && a.getAttribute('target') === '_blank';
 }));
-check('About offers a pre-filled issue report', await page.evaluate(() => {
+check('About offers a pre-filled issue report', await page.evaluate((version) => {
   const link = (label) => [...document.querySelectorAll('a[href]')].find(a => a.textContent.trim() === label);
   const report = link('Report a problem'), list = link('Open issues');
   if (!report || !list) return false;
   const href = decodeURIComponent(report.getAttribute('href') || '');
   return report.getAttribute('href').startsWith('https://github.com/pham-noah/split-speedcubing/issues/new?')
-    && href.includes('What happened') && href.includes('What you expected') && href.includes('Split 0.5.0')
+    && href.includes('What happened') && href.includes('What you expected') && href.includes(`Split ${version}`)
     && list.getAttribute('href') === 'https://github.com/pham-noah/split-speedcubing/issues';
-}));
+}, VERSION));
 
 await clickText(page, 'Solve', 'nav button'); await sleep(300);
 
