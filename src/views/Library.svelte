@@ -682,8 +682,8 @@
                 }}
               />
               {#if error}<div role="alert" style="color:#FF8A80;font-weight:700">{error}</div>{/if}
-              <button class="btn p" onclick={add}>Add algorithm</button>
-              <button class="btn" onclick={trainCase}>Train this case<span class="pc-only"> (Enter)</span></button>
+              <button class="btn" onclick={add}>Add algorithm</button>
+              <button class="btn p" onclick={trainCase}>Train this case<span class="pc-only"> (Enter)</span></button>
               {#if !confirmReset}
                 <button class="btn" style="font-size:.85rem;opacity:.85" onclick={() => (confirmReset = true)}
                   >Reset progress on this case</button
