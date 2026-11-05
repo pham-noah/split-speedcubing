@@ -174,7 +174,7 @@
     <!-- icons on phones, icon + label on the desktop sidebar; Solve stays the round button -->
     <nav aria-label="Main">
       <button class:on={nav.view === 'train'} {...tab('train')} onclick={() => go('train')} aria-disabled={store.timerRunning}>
-        <NavIcon name="train" /><span class="nav-label">Train</span>{#if dueCount}<span class="badge" aria-label="{dueCount} cases due">{dueCount}</span>{/if}
+        <NavIcon name="train" /><span class="nav-label">Train</span>{#if dueCount}{#key dueCount}<span class="badge" aria-label="{dueCount} cases due">{dueCount}</span>{/key}{/if}
       </button>
       <button class:on={nav.view === 'lib'} {...tab('lib')} onclick={() => go('lib')} aria-disabled={store.timerRunning}><NavIcon name="library" /><span class="nav-label">Library</span></button>
       <div class="mid"><button class:on={nav.view === 'solve'} {...tab('solve')} onclick={() => go('solve')} aria-disabled={store.timerRunning}>Solve</button></div>

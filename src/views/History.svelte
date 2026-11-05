@@ -83,7 +83,7 @@
     <div style="display:flex;flex-direction:column;gap:8px">
       {#each list as s, i (s.id)}
         {@const d = deltas.get(s.id)}
-        <div class="card">
+        <div class="card row-in" style="--i:{Math.min(i, 10)}">
           <button class="row sp" style="width:100%;background:none;border:0;padding:0;text-align:left" onclick={() => (open = open === s.id ? null : s.id)} aria-expanded={open === s.id}>
             <span class="mu" style="flex:none;width:44px">#{solves.length - i}</span>
             <b class="mono" style="font-size:1.1rem;flex:none;width:64px">{formatTime(effective(s))}{s.pen === '+2' ? '+' : ''}</b>

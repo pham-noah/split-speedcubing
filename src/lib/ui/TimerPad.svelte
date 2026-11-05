@@ -175,7 +175,7 @@
   onpointercancel={up}
 />
 
-<div class="time mono" aria-hidden="true">{shownText}</div>
+<div class="time mono" class:done={st === 'idle' && shown != null} aria-hidden="true">{shownText}</div>
 {#if cover}
   <div class="cover" class:on={coverOpen} aria-hidden="true"
     style="--cx:{cx}px;--cy:{cy}px;--cover:{coverColor || 'var(--bl)'}"></div>

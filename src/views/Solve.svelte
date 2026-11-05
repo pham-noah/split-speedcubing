@@ -122,7 +122,9 @@
         </div>
         {#if store.shown('solve.scramble')}
           <div class="scr" aria-label="Scramble" aria-live="polite">
-            {#each scrTokens as t, idx (idx)}<span class:now={idx === walkIndex}>{t}</span>{' '}{/each}
+            {#key scramble}
+              {#each scrTokens as t, idx (idx)}<span class:now={idx === walkIndex} style="--i:{idx}">{t}</span>{' '}{/each}
+            {/key}
           </div>
           <button class="btn" style="align-self:center;min-height:40px" onclick={newScramble}>New scramble</button>
         {/if}
@@ -203,15 +205,15 @@
           <div class="row">
             <div class="card">
               <div class="mu">Best</div>
-              <b class="mono">{formatTime(best(solves))}</b>
+              {#key formatTime(best(solves))}<b class="mono num">{formatTime(best(solves))}</b>{/key}
             </div>
             <div class="card">
               <div class="mu">ao5</div>
-              <b class="mono">{formatTime(averageOf(solves, 5))}</b>
+              {#key formatTime(averageOf(solves, 5))}<b class="mono num">{formatTime(averageOf(solves, 5))}</b>{/key}
             </div>
             <div class="card">
               <div class="mu">ao12</div>
-              <b class="mono">{formatTime(averageOf(solves, 12))}</b>
+              {#key formatTime(averageOf(solves, 12))}<b class="mono num">{formatTime(averageOf(solves, 12))}</b>{/key}
             </div>
           </div>
         {/if}

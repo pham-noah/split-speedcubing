@@ -203,3 +203,54 @@ input,textarea{width:100%;min-height:44px;border-radius:10px;border:1px solid #3
 @media (max-width:899px){
   .prow { flex-direction: column; align-items: flex-start; gap: 2px; }
 }
+
+/* ---- motion ------------------------------------------------------------------------------------
+   Everything here animates transform or opacity only, so it stays on the compositor. Timings are
+   short on purpose (180-260 ms): the app answers immediately, then settles. Any keyframe that could
+   move the page is cancelled in the reduced-motion block at the end of this section. */
+@keyframes page-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes pop-in{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+@keyframes rise-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes tok-in{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+@keyframes tab-pop{from{transform:scale(.95)}to{transform:scale(1)}}
+@keyframes seg-pop{from{transform:scale(.94)}to{transform:scale(1)}}
+@keyframes cell-pop{from{transform:scale(.96)}to{transform:scale(1)}}
+@keyframes fade-in{from{opacity:0}to{opacity:1}}
+
+/* a screen arrives instead of appearing */
+.page{animation:page-in .18s ease-out}
+/* the tab you land on pops once, and the icon leans in a hair */
+nav>button.on,nav>.mid button.on{animation:tab-pop .24s cubic-bezier(.34,1.46,.64,1)}
+nav>button svg{transition:transform .2s cubic-bezier(.34,1.46,.64,1)}
+nav>button.on svg{transform:scale(1.08)}
+/* the segment and the case cell you pick answer immediately, then settle */
+.seg button.on{animation:seg-pop .2s cubic-bezier(.34,1.46,.64,1)}
+.cell.sel{animation:cell-pop .24s cubic-bezier(.34,1.46,.64,1)}
+/* the scramble arrives one move at a time, left to right */
+.scr span{animation:tok-in .2s ease-out backwards;animation-delay:calc(var(--i,0) * 10ms)}
+/* a number that changes gets a small entrance rather than flicking over */
+.num{animation:pop-in .2s ease-out}
+.time.done{animation:pop-in .22s cubic-bezier(.34,1.46,.64,1)}
+.badge{animation:pop-in .22s cubic-bezier(.34,1.46,.64,1)}
+/* undo banners and error banners rise out of the bottom edge */
+[role=status].card,[role=alert].card{animation:rise-in .2s ease-out}
+/* the intro sheet and sheets on phones */
+.overlay{animation:fade-in .18s ease-out}
+.overlay .sheet{animation:pop-in .26s cubic-bezier(.2,.8,.2,1)}
+/* rows in a long list stagger in, but only the ones you can see */
+.row-in{animation:rise-in .22s ease-out backwards;animation-delay:calc(var(--i,0) * 16ms)}
+/* pointer devices get a hover answer too; touch does not, so it costs nothing on a phone */
+@media (hover:hover){
+  .btn:hover,.chip:hover,.seg button:hover,summary:hover{filter:brightness(1.14)}
+  .cell:hover{border-color:var(--am)}
+}
+@media (max-width:899px){
+  #case-panel{animation:sheet-in .24s cubic-bezier(.2,.8,.2,1)}
+  @keyframes sheet-in{from{opacity:.6;transform:translateY(26px)}to{opacity:1;transform:none}}
+}
+@media (prefers-reduced-motion:reduce){
+  .page,nav>button.on,nav>.mid button.on,.seg button.on,.cell.sel,.scr span,.num,.time.done,.badge,
+  [role=status].card,[role=alert].card,.overlay,.overlay .sheet,.row-in,#case-panel{animation:none}
+  nav>button svg{transition:none}
+  @media (hover:hover){ .btn:hover,.chip:hover,.seg button:hover,summary:hover{filter:none} }
+}
