@@ -7,7 +7,8 @@ import { validateAlg, solvesCase, isZbllCase } from './core/alg';
 import type { Penalty, Solve } from './core/stats';
 import { keyFor, matches, conflictFor, canBind, type KeyLike } from './core/shortcuts';
 import { withTimestamps, type ImportedSession } from './core/importers';
-import { collectLogs, countPoints, optimizeParameters, MIN_POINTS, type OptResult } from './core/fsrs-optimize';
+import { collectLogs, countPoints, MIN_POINTS, type OptResult } from './core/fsrs-optimize';
+import { optimizeOffThread } from './core/optimize-offthread';
 import { durability, type Durability } from './storage/durability';
 
 const uid = () => crypto.randomUUID?.() ?? String(Date.now() + Math.random());
@@ -354,7 +355,8 @@ class Store {
   get fsrsPoints() { return countPoints(collectLogs(this.data.cards)); }
   readonly fsrsMinPoints = MIN_POINTS;
   async optimizeFsrs(onProgress?: (f: number) => void): Promise<OptResult> {
-    const r = await optimizeParameters(collectLogs($state.snapshot(this.data.cards) as AppData['cards']), undefined, { onProgress, yieldToUi: true });
+    // off the UI thread: replaying thousands of reviews inline is seconds of stutter on a phone
+    const r = await optimizeOffThread(collectLogs($state.snapshot(this.data.cards) as AppData['cards']), onProgress);
     if (r.applied) { this.data.settings.fsrsW = r.w; this.persist(); }
     return r;
   }

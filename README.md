@@ -131,7 +131,8 @@ src/lib/store.svelte.ts   the single app store (runes)
 - **Trainer scrambles** are that inverse plus a random AUF, so you meet each case from different angles.
 - **Scheduling** is FSRS (`ts-fsrs`) over per-case stability and difficulty, aiming at the recall rate set in
   Settings (80–95%, default 90%). `fsrs-optimize.ts` fits the parameters to your own history and keeps them only if
-  they predict held-out cases better.
+  they predict held-out cases better; that replay runs in a worker (`fsrs-worker.ts`), falling back to the main
+  thread where there is none.
 - **Storage** is IndexedDB behind one interface: settings, cards and sessions in one record and every solve in its
   own, so a new solve writes one entry. Older databases migrate on read; `normalize()` is the only place a backup
   file is trusted.
@@ -153,8 +154,9 @@ their own set here.
 - Algorithms are machine-checked starting points, not a claim about what you like executing. Swap the default per
   case in the Library.
 - Not yet used on a real phone for a full session, and no TalkBack/screen-reader pass.
-- Personalising the schedule replays the whole review history on the UI thread: 0.7 s at 590 usable reviews and
-  7.5 s at 7 700 on a desktop, yielding between parameters. On a phone expect a pause of several seconds.
+- Personalising the schedule is a few seconds of work, not an instant: 3.1 s for 2 512 usable reviews in Chrome.
+  It runs off the UI thread, and the worst frame measured during that run was 100 ms, so the timer keeps running
+  but a phone will feel it.
 - csTimer and CubeDesk are the only importers read from the other app's own code rather than guessed: csTimer is
   covered by a file cstimer.net wrote (`src/lib/core/fixtures/cstimer-export.json`), CubeDesk by its export/import
   source, because cubedesk.io keeps export behind an account.
