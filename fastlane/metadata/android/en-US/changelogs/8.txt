@@ -1,0 +1,7 @@
+A design pass over every screen.
+
+Fixed: the history chart could paint nothing when the oldest solve in it was a DNF, the timer was
+left-aligned on a phone, and desktop cards were clipped by the right panel.
+
+Changed: the timer centres with your stats above the tab bar, History is a clean table, Settings has a jump
+bar, bigger case diagrams, and a tidier desktop sidebar.

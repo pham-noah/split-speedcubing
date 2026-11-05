@@ -2,6 +2,35 @@
 
 All notable changes to Split. Format based on [Keep a Changelog](https://keepachangelog.com); versions follow [SemVer](https://semver.org).
 
+## [0.7.1] - 2026-11-05
+
+A design pass over every screen, and three defects it caught that were not cosmetic.
+
+### Fixed
+- **The history chart could paint nothing.** If the oldest solve in the chart's window was a DNF (or any
+  solve without a time), the path opened with a line command instead of a move command, which SVG rejects —
+  so the whole line silently disappeared and the card looked empty.
+- **The timer was left-aligned on a phone.** The button's `align-self` only had an effect inside a flex
+  column, which the block it sat in did not become until 1100px wide.
+- **Cards on the desktop were clipped.** The body already clears the sidebar's 210px and the split padded
+  another 108px on top, leaving a 594px column whose content was cut off at its own edge.
+- The Settings accent row rendered a stray `>` after each swatch, which the new six-column grid turned into
+  visible chevrons.
+
+### Changed
+- **Composition.** The timer centres with the stat row docked above the tab bar instead of ending in a dead
+  zone; History reads as a hairline table whose headers sit over their values; the cube and the penalty row
+  stop competing with the timer; the desktop sidebar has a wordmark and its shortcut list went from sixteen
+  keycap rows to seven plus one line of tab keys.
+- **Small screens.** The filter row is five equal cells so "Due" is no longer orphaned onto its own line; six
+  accent swatches fit one row; the 30-day counts are a 2×2 instead of four ragged columns; checkboxes are
+  drawn by the app rather than by the OS.
+- **Settings** has a sticky jump bar, since eight sections is a lot of scrolling on a phone.
+- **Library** gives each case diagram 112px on a wide screen, and "Train this case" is the primary action on
+  a case instead of "Add algorithm".
+- The case grid's dashed cells are legible (`#5E6779`, was `#4A5160`), and the History chart is labelled
+  slow-to-fast and capped at 190px instead of growing with the column.
+
 ## [0.7.0] - 2026-11-05
 
 A phone on the GitHub build can now update itself, the desktop shell can go fullscreen, and links finally go
