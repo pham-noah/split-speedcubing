@@ -80,6 +80,25 @@ describe('card changes reach the disk', () => {
     expect((await flushAndReload()).cards[id].algs).toEqual([]);
   });
 
+  // Saves deep-copy only what changed, so a stale cached copy would be silent data loss. Two changes
+  // are made straight on the state object, where no store method marks anything: the comparison in
+  // forSave() has to catch both on its own.
+  it('writes a change nothing marked, because the copy is compared before it is reused', async () => {
+    const id = SETS.PLL[7].id;
+    store.addSolve(9000, 'R U');
+    const solveId = store.data.solves.at(-1)!.id;
+    await flushAndReload();
+
+    store.data.solves.find(s => s.id === solveId)!.pen = '+2';   // no method, no marking
+    store.grade(id, 2, 9000, 4000);
+    await flushAndReload();
+    store.data.cards[id].due = 12345;                            // ditto
+    const back = await flushAndReload();
+
+    expect(back.solves.find(s => s.id === solveId)!.pen).toBe('+2');
+    expect(back.cards[id].due).toBe(12345);
+  });
+
   // the delta must not take a stale copy of an untouched card with it
   it('leaves cases it was not told about exactly as they were', async () => {
     const kept = SETS.PLL[5].id, other = SETS.PLL[6].id;

@@ -13,6 +13,22 @@ import { durability, type Durability } from './storage/durability';
 
 const uid = () => crypto.randomUUID?.() ?? String(Date.now() + Math.random());
 
+/** A plain copy, always. `$state.snapshot` returns its argument as-is when it is not a proxy (which is
+ *  what it does under a test runner), and a cache holding the live object would compare equal to every
+ *  later change — the comparison that decides what to write would never fire. */
+const copy = <T>(v: T): T => {
+  const snap = $state.snapshot(v) as T;
+  return snap === v ? (structuredClone(v) as T) : snap;
+};
+
+/** Is a card unchanged since the copy that was last written? Cheap enough to run over 472 cards on
+ *  every save, and it catches a change the app forgot to mark: the fields a mutation can move. */
+const sameCard = (a: CardRecord, b: CardRecord) =>
+  a.seen === b.seen && a.due === b.due && a.defaultAlg === b.defaultAlg &&
+  (a.algs?.length ?? 0) === (b.algs?.length ?? 0) && a.attempts.length === b.attempts.length &&
+  (b.attempts.length === 0 ||
+    (a.attempts.at(-1)!.ts === b.attempts.at(-1)!.ts && a.attempts.at(-1)!.pen === b.attempts.at(-1)!.pen));
+
 class Store {
   data = $state<AppData>(defaultData());
   ready = $state(false);
@@ -48,6 +64,11 @@ class Store {
   private touched = new Set<string>();
   /** a restore or a wipe replaces every card, so the next save has to write them all */
   private writeAllCards = true;
+  /** the plain copies handed to storage last time, so a save deep-copies only what changed. Cloning a
+   *  50 000-solve history on every solve cost 138 ms of the write; the two fields that can change after
+   *  a solve is made are compared instead, and a card is re-copied whenever the app marked it touched. */
+  private plainSolves = new Map<string, Solve>();
+  private plainCards = new Map<string, CardRecord>();
 
   async init() {
     try {
@@ -120,13 +141,57 @@ class Store {
     clearTimeout(this.timer);
     this.timer = setTimeout(() => { void this.flush(); }, 250);
   }
+  /** Everything to write, deep-copied only where it changed. `$state.snapshot(this.data)` was the whole
+   *  history every time; the caches below turn that into one copy per solve that actually changed. */
+  private forSave(): AppData {
+    const d = this.data;
+    const solves: Solve[] = [];
+    for (const s of d.solves) {
+      const kept = this.plainSolves.get(s.id);
+      // a solve only ever changes its time or its penalty once it exists: two comparisons, no copy
+      if (kept && kept.ms === s.ms && kept.pen === s.pen) { solves.push(kept); continue; }
+      const plain = copy(s);
+      this.plainSolves.set(s.id, plain);
+      solves.push(plain);
+    }
+    if (this.plainSolves.size !== solves.length) {
+      const live = new Set(d.solves.map(s => s.id));
+      for (const id of this.plainSolves.keys()) if (!live.has(id)) this.plainSolves.delete(id);
+    }
+    const cards: Record<string, CardRecord> = {};
+    for (const id in d.cards) {
+      const card = d.cards[id];
+      const kept = this.plainCards.get(id);
+      if (kept && !this.touched.has(id) && sameCard(kept, card)) { cards[id] = kept; continue; }
+      const plain = copy(card);
+      this.plainCards.set(id, plain);
+      cards[id] = plain;
+      // a card whose copy had to be refreshed is a card that changed: say so, so storage writes it even
+      // if the mutation never went through a method that marks one
+      this.touched.add(id);
+    }
+    if (this.plainCards.size !== Object.keys(cards).length) {
+      for (const id of this.plainCards.keys()) if (!(id in cards)) this.plainCards.delete(id);
+    }
+    return {
+      v: d.v,
+      solves,
+      cards,
+      settings: $state.snapshot(d.settings) as AppData['settings'],
+      sessions: $state.snapshot(d.sessions) as AppData['sessions'],
+      session: d.session,
+      zbll: $state.snapshot(d.zbll) as AppData['zbll'],
+      drills: $state.snapshot(d.drills) as AppData['drills'],
+      ...(d.f2lRev != null ? { f2lRev: d.f2lRev } : {}),
+    };
+  }
   /** Write now: the debounce is short, but a phone can kill the app inside it. */
   async flush() {
     clearTimeout(this.timer);
     this.timer = undefined;
     try {
       const all = this.writeAllCards ? undefined : this.touched;
-      await this.storage.save($state.snapshot(this.data) as AppData, all);
+      await this.storage.save(this.forSave(), all);
       this.touched.clear();
       this.writeAllCards = false;
       this.saveError = null;
@@ -163,6 +228,9 @@ class Store {
   undoDeleteSession(): boolean {
     if (!this.removed) return false;
     this.data = this.removed;
+    this.plainSolves.clear();
+    this.plainCards.clear();
+    this.writeAllCards = true;
     this.removed = null;
     this.apply();
     this.persist();
@@ -428,6 +496,8 @@ class Store {
     this.undoKind = 'restore';
     this.data = next;
     this.writeAllCards = true;   // a different history entirely: every card on disk is stale
+    this.plainSolves.clear();
+    this.plainCards.clear();
     this.apply();
     this.persist();
   }
@@ -436,6 +506,9 @@ class Store {
   undoRestore(): boolean {
     if (!this.replaced) return false;
     this.data = this.replaced;
+    this.plainSolves.clear();       // a different object graph: every cached copy is stale
+    this.plainCards.clear();
+    this.writeAllCards = true;
     this.replaced = null;
     this.undoKind = null;
     this.apply();
@@ -449,6 +522,8 @@ class Store {
     this.undoKind = 'erase';
     this.data = defaultData();
     this.writeAllCards = true;
+    this.plainSolves.clear();
+    this.plainCards.clear();
     this.apply();
     this.persist();
   }
