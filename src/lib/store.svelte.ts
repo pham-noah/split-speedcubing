@@ -43,11 +43,16 @@ class Store {
   /** a deleted session and its solves, kept until the next delete so a mis-tap does not cost a history.
    *  Separate from `replaced` on purpose: deleting a session must not overwrite the backup it could undo. */
   private removed = $state<AppData | null>(null);
+  /** ids of the cases changed since the last save: 472 cards with 60 attempts each is 2 MB, and a
+   *  graded case used to rewrite all of it. Cleared only once the write succeeded. */
+  private touched = new Set<string>();
+  /** a restore or a wipe replaces every card, so the next save has to write them all */
+  private writeAllCards = true;
 
   async init() {
     try {
       const d = await this.storage.load();
-      if (d) this.data = normalize(d);
+      if (d) { this.data = normalize(d); this.writeAllCards = false; }   // what is on disk now matches
       this.loadError = null;
     } catch (e) {
       // keep running, but say so: silently showing an empty history looks exactly like lost data
@@ -77,6 +82,7 @@ class Store {
       this.data.cards[c.id] = blank;
     }
     this.data.f2lRev = F2L_DATA_REV;
+    this.writeAllCards = true;
     this.persist();
   }
   private startClock() {
@@ -119,7 +125,10 @@ class Store {
     clearTimeout(this.timer);
     this.timer = undefined;
     try {
-      await this.storage.save($state.snapshot(this.data) as AppData);
+      const all = this.writeAllCards ? undefined : this.touched;
+      await this.storage.save($state.snapshot(this.data) as AppData, all);
+      this.touched.clear();
+      this.writeAllCards = false;
       this.saveError = null;
     } catch (e) {
       this.saveError = e instanceof Error ? e.message : 'Could not save to this device';
@@ -223,6 +232,7 @@ class Store {
     return d && list.includes(d) ? d : list[0];
   }
   private ensure(id: string): CardRecord {
+    this.touched.add(id);
     return (this.data.cards[id] ??= { ...newCard(), attempts: [] });
   }
   setDefault(id: string, alg: string) {
@@ -261,6 +271,7 @@ class Store {
   resetCard(id: string) {
     const card = this.data.cards[id];
     if (!card) return;
+    this.touched.add(id);
     this.data.cards[id] = {
       seen: false, due: 0, attempts: [],
       ...(card.algs?.length ? { algs: [...card.algs] } : {}),
@@ -273,12 +284,14 @@ class Store {
     const card = this.data.cards[id];
     const last = card?.attempts.at(-1);
     if (!last) return;
+    this.touched.add(id);
     if (!pen) delete last.pen; else last.pen = pen;
     this.persist();
   }
   deleteLastAttempt(id: string) {
     const card = this.data.cards[id];
     if (!card?.attempts.length) return;
+    this.touched.add(id);
     card.attempts = card.attempts.slice(0, -1);
     this.persist();
   }
@@ -345,7 +358,7 @@ class Store {
   clearZbll() {
     for (const c of SETS.ZBLL) {
       const card = this.data.cards[c.id];
-      if (card) { card.algs = []; card.defaultAlg = undefined; }
+      if (card) { card.algs = []; card.defaultAlg = undefined; this.touched.add(c.id); }
     }
     this.data.zbll = [];
     this.persist();
@@ -414,6 +427,7 @@ class Store {
     this.replaced = $state.snapshot(this.data) as AppData;
     this.undoKind = 'restore';
     this.data = next;
+    this.writeAllCards = true;   // a different history entirely: every card on disk is stale
     this.apply();
     this.persist();
   }
@@ -434,6 +448,7 @@ class Store {
     this.replaced = $state.snapshot(this.data) as AppData;
     this.undoKind = 'erase';
     this.data = defaultData();
+    this.writeAllCards = true;
     this.apply();
     this.persist();
   }
