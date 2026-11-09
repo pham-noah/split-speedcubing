@@ -1,0 +1,1 @@
+Fixed: a stray tap no longer saves a 0.0s solve, the press that stops the timer no longer presses the button underneath it, the Settings jump bar no longer covers the page on a wide window, long session names truncate in the pill, and an unreadable import clears its preview. History opens faster with very large histories.

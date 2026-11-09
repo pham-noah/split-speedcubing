@@ -20,8 +20,7 @@
   let inspElapsed = $state(0);  // elapsed ms of inspection
   let inspActive = $state(false);
   let marked = $state(false);
-  /** a press this soon after the start is a fumble (a double-tap, a second finger), not a solve: it is
-   *  thrown away instead of becoming a 0.05 s personal best that never goes away */
+  /** a press this soon after the start is a fumble, not a solve: dropped rather than saved as a Best */
   const MIN_SOLVE_MS = 300;
   let tooShort = $state(false);
   let coverOpen = $state(false);   // the colour has grown out of the button to fill the screen
@@ -34,11 +33,8 @@
   let wake: any = null;   // keeps the phone screen on while the clock runs
   let pendingPen: Penalty = '';
   let ink = $state('#FFFFFF');   // readable ink for whatever colour the cover is, worked out on open
-  /** The flood is `pointer-events: none`, so the tap that stops the clock lands on whatever sits behind
-   *  it — and the browser then dispatches a click to that element. Stopping over the session chip used
-   *  to stop the timer AND open Sessions; over a case's Skip it did both. Swallow exactly one click
-   *  after a stop, and drop the guard on the next new press so a drag that never clicks cannot eat a
-   *  later tap. */
+  /** The flood is pointer-events:none, so the stop press lands on whatever is behind it and the browser
+   *  then clicks that element. Swallow one click after a stop; a new press clears the guard. */
   let swallowClick = false;
   function onClickCapture(e: MouseEvent) {
     if (!swallowClick) return;

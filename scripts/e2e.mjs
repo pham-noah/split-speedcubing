@@ -70,9 +70,7 @@ await hold(120); await sleep(100);
 check('a too-short hold does not start the timer', /Hold to start/.test(await page.evaluate(() => document.querySelector('.big').textContent)));
 await hold(450); await sleep(150);
 check('long hold starts the timer', /Tap to stop/.test(await page.evaluate(() => document.querySelector('.big').textContent)));
-// When the clock started, worked out from the page's own clock — not from Node's. A loaded machine
-// stretches every sleep and every round-trip between here and the tap, which used to fail this check
-// on a busy runner while the timer itself was perfectly accurate.
+// Start the clock from the page's own clock: sleeps and round-trips stretch on a loaded machine.
 const clockStart = await page.evaluate(() => performance.now() - (parseFloat(document.querySelector('.time').textContent) || 0) * 1000);
 // a tab shortcut in the middle of a solve must not walk away from it
 await page.keyboard.press('Digit2'); await sleep(250);

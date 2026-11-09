@@ -179,8 +179,7 @@ textarea {
   font-weight: 800;
   font-size: 0.85rem;
 }
-/* the session name is user text: it may be any length, so it is the part that gives way, not the row.
-   The vw cap keeps the History button beside it readable on a phone. */
+/* user text: the name gives way, never the row; the vw cap keeps History readable on a phone */
 .chip-name {
   min-width: 0;
   max-width: min(26ch, 45vw);
@@ -188,7 +187,7 @@ textarea {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* the solve screen's two top buttons: the counter keeps its size, the session name gives way */
+/* the counter keeps its size beside a long session name */
 .history-btn {
   flex: none;
   white-space: nowrap;
@@ -290,7 +289,7 @@ a:focus-visible,
   text-align: center;
   line-height: 1;
 }
-/* the same slot also carries a short message ("Too short"); it must not shout in timer type */
+/* a short message in the time slot ("Too short"), not timer type */
 .time.note {
   font-family: inherit;
   font-size: 0.95rem;
@@ -572,8 +571,7 @@ h2[id] {
     0 0 0 2px var(--bg),
     0 0 0 4px var(--tx);
 }
-/* The shell's own bar. Scoped to the main nav on purpose: an unscoped `nav` also matched the Settings
-   section bar (`<nav class="secnav">`), which turned it into a fixed/sticky sidebar and covered the page. */
+/* The shell's bar. Scoped to the main nav: an unscoped `nav` also matches the Settings jump bar. */
 nav[aria-label='Main'] {
   position: fixed;
   left: 0;

@@ -30,14 +30,14 @@ One Svelte 5 + TypeScript codebase, three shells: browser/PWA, Android (Capacito
 - **Accessibility:** labelled landmarks, live regions, a focus trap on the intro, reduced motion; axe-core runs
   over the intro, every tab and two detail panels inside the suite, and every theme is checked for WCAG contrast.
 - **Offline web:** host `dist-web/` and install from the browser; the worker caches the app, fonts and scrambles.
-  The Android build declares no permissions at all, including none to reach the network.
+  The store Android build declares no permissions at all, including none to reach the network.
 
 ## Run it
 
 ```bash
 npm install
 npm run dev             # http://localhost:5173
-npm test                # 800 tests in 24 files
+npm test                # 824 tests in 26 files
 npm run check           # svelte-check: types
 npm run lint            # eslint
 npm run e2e             # 38 real-browser checks against a build on :4173

@@ -2,6 +2,28 @@
 
 All notable changes to Split. Format based on [Keep a Changelog](https://keepachangelog.com); versions follow [SemVer](https://semver.org).
 
+## [0.7.2] - 2026-11-09
+
+A hardening pass over the timer and the import paths, most of it found by trying to break the app on purpose.
+
+### Fixed
+- **A stray tap can no longer invent a personal best.** A press under 300 ms after the start is thrown away
+  with a short "Too short" note instead of being saved as a 0.05 s solve that sits at the top of Best forever.
+- **Stopping the clock no longer presses whatever is behind it.** The tap that stops the timer goes through
+  the full-screen colour, and the browser then clicked the element underneath: stopping over the session chip
+  also opened Sessions, over a trainer's Skip it also skipped the case.
+- **The Settings jump bar no longer covers the page** on a desktop-width window, where it had turned into a
+  tall column pinned over the cards.
+- **A long session name truncates in the pill** instead of stretching the whole screen sideways.
+- **An unreadable import clears its preview** rather than leaving the previous file's solves behind the Import
+  button; a deeply nested JSON file now reports "No solves found" instead of failing.
+- **The desktop wordmark no longer appears in a phone's tab bar**, where it squeezed five tabs into four.
+
+### Changed
+- **A huge imported history no longer stalls the screens.** Opening History with 50 000 solves did about
+  300 ms of work on every tab switch; the solve lists are now built once per change (~100 ms on open).
+- The README no longer claims Back/Esc cannot abandon a running solve — Esc stops and discards it.
+
 ## [0.7.1] - 2026-11-05
 
 A design pass over every screen, and three defects it caught that were not cosmetic.

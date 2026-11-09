@@ -20,7 +20,7 @@
       preview = parseImport(t);
       msg = '';
     } catch {
-      // never leave the previous file's preview (and its Import button) standing under this file's name
+      // never leave the previous file's preview under this file's name
       preview = null;
       msg = 'That file could not be read. Nothing was imported.';
     }

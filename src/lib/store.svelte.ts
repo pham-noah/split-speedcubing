@@ -63,8 +63,7 @@ class Store {
    *  graded case used to rewrite all of it. Cleared only once the write succeeded. */
   private touched = new Set<string>();
   /** Bumped whenever the solve list changes shape. Every screen reads `store.solves`, and filtering the
-   *  whole history on each read cost ~300 ms per screen switch at 50 000 solves; the lists are now built
-   *  once per change and reused. */
+   *  whole history per read is 300 ms at 50 000 solves, so the lists are built once per change. */
   private solvesEpoch = $state(0);
   private solvesCache: { epoch: number; bySession: Map<string, Solve[]> } = { epoch: -1, bySession: new Map() };
   /** a restore or a wipe replaces every card, so the next save has to write them all */

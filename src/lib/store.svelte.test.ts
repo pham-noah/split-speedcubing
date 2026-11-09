@@ -376,8 +376,7 @@ describe('undo and penalties across a second session', () => {
   });
 });
 
-// the per-session lists are cached now (50 000 solves made filtering on every read a 300 ms stall);
-// the cache has to notice every change to the solve list
+// the per-session lists are cached: every change to the solve list has to invalidate them
 describe('store: the per-session solve index stays current', () => {
   it('reflects adds, deletes, undo, imports and a deleted session', () => {
     store.addSession('Index A');

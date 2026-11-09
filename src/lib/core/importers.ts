@@ -135,8 +135,7 @@ function parseCubeDesk(root: Obj): ImportResult | null {
 }
 function parseGenericJson(root: unknown): ImportResult {
   const found: { name: string; solves: ImportedSolve[] }[] = [];
-  // a backup's solves live three or four levels down; anything deeper is not a solve history, and an
-  // unbounded walk over a fuzzed file used to end in "Maximum call stack size exceeded"
+  // a solve history sits three or four levels down; anything deeper is not one, and must not recurse
   const MAX_DEPTH = 32;
   const walk = (v: unknown, name: string, depth = 0) => {
     if (depth > MAX_DEPTH) return;

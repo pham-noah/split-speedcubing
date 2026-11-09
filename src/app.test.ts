@@ -1,7 +1,11 @@
 // @vitest-environment jsdom
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll, vi } from 'vitest';
 import { mount, tick, flushSync } from 'svelte';
 // loaded on first use: importing it up front doubles this file's startup on a slow drive
+
+// The whole app, mounted, plus an axe audit per screen: slower than vitest's 5 s default when the other
+// 25 files are running beside it.
+vi.setConfig({ testTimeout: 20_000 });
 
 const wait = (ms = 20) => new Promise(r => setTimeout(r, ms));
 const q = <T extends Element = HTMLElement>(sel: string) => document.querySelector<T>(sel);
@@ -170,20 +174,20 @@ describe('whole app in a simulated browser', () => {
     expect(before).not.toContain('History · 1');
   });
 
-  // a fumbled double-tap used to save a 0.05 s solve, which then sat at the top of "Best" forever
+  // a fumbled double-tap must not save a 0.05 s solve
   it('a press under 300 ms is thrown away instead of recorded', async () => {
     const history = () => document.body.textContent!.match(/History · (\d+)/)![1];
     const before = history();
     window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true })); await wait(350); flushSync();
-    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space', bubbles: true })); await tick(); await wait(20);
-    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true })); await tick(); await wait(20); flushSync();
-    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space', bubbles: true })); await tick(); await wait(60); flushSync();
+    // start and stop in the same turn, so the gap is microseconds whatever the machine is doing
+    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space', bubbles: true }));
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true }));
+    await tick(); await wait(60); flushSync();
     expect(history()).toBe(before);                        // nothing saved
     expect(q('.time')!.textContent).toContain('Too short'); // and the screen says why
   });
 
-  // the flood that covers the screen is pointer-events:none, so the stop press lands on whatever sits
-  // behind it — and the browser then clicks that element. Stopping over the session chip opened Sessions.
+  // the stop press must not click the control underneath it
   it('the press that stops the clock does not also press what is behind it', async () => {
     const history = () => document.body.textContent!.match(/History · (\d+)/)![1];
     const before = Number(history());
