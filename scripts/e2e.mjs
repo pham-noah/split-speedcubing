@@ -70,7 +70,10 @@ await hold(120); await sleep(100);
 check('a too-short hold does not start the timer', /Hold to start/.test(await page.evaluate(() => document.querySelector('.big').textContent)));
 await hold(450); await sleep(150);
 check('long hold starts the timer', /Tap to stop/.test(await page.evaluate(() => document.querySelector('.big').textContent)));
-const startedAt = Date.now();   // the clock is running from here: measure against it, not a fixed sleep
+// When the clock started, worked out from the page's own clock — not from Node's. A loaded machine
+// stretches every sleep and every round-trip between here and the tap, which used to fail this check
+// on a busy runner while the timer itself was perfectly accurate.
+const clockStart = await page.evaluate(() => performance.now() - (parseFloat(document.querySelector('.time').textContent) || 0) * 1000);
 // a tab shortcut in the middle of a solve must not walk away from it
 await page.keyboard.press('Digit2'); await sleep(250);
 const stillSolving = await page.evaluate(() => document.querySelector('.big')?.textContent ?? '');
@@ -80,12 +83,13 @@ await page.evaluate(() => [...document.querySelectorAll('nav[aria-label="Main"] 
 await sleep(250);
 const afterTabTap = await page.evaluate(() => document.querySelector('.big')?.textContent ?? '');
 check('tapping a tab does not abandon a running solve', /Tap to stop/.test(afterTabTap), `(button says "${afterTabTap.trim()}")`);
-await sleep(400); await tap(); await sleep(300);
+await sleep(400); await tap();
+const ran = await page.evaluate(s => (performance.now() - s) / 1000, clockStart);   // read against the stop, not after it
+await sleep(300);
 const afterSolve = await text();
 check('solve is recorded', /History · 1/.test(afterSolve));
 const shown = await page.evaluate(() => document.querySelector('.time').textContent);
-const elapsed = (Date.now() - startedAt) / 1000;
-check('displayed time is about the elapsed time', Math.abs(parseFloat(shown) - elapsed) < 0.6, `(${shown}s vs ${elapsed.toFixed(2)}s run)`);
+check('displayed time is about the elapsed time', Math.abs(parseFloat(shown) - ran) < 0.35, `(${shown}s vs ${ran.toFixed(2)}s run)`);
 // Esc stops the clock instead of navigating away, and an abandoned solve is not recorded
 await hold(450); await sleep(200); await page.keyboard.press('Escape'); await sleep(250);
 check('Escape cancels a running solve without recording it',
