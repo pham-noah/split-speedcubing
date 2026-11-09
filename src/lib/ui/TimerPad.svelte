@@ -34,6 +34,18 @@
   let wake: any = null;   // keeps the phone screen on while the clock runs
   let pendingPen: Penalty = '';
   let ink = $state('#FFFFFF');   // readable ink for whatever colour the cover is, worked out on open
+  /** The flood is `pointer-events: none`, so the tap that stops the clock lands on whatever sits behind
+   *  it — and the browser then dispatches a click to that element. Stopping over the session chip used
+   *  to stop the timer AND open Sessions; over a case's Skip it did both. Swallow exactly one click
+   *  after a stop, and drop the guard on the next new press so a drag that never clicks cannot eat a
+   *  later tap. */
+  let swallowClick = false;
+  function onClickCapture(e: MouseEvent) {
+    if (!swallowClick) return;
+    swallowClick = false;
+    e.preventDefault();
+    e.stopPropagation();
+  }
 
   // dark ink on light covers, white on dark ones
   function readable(hex: string): string {
@@ -117,6 +129,7 @@
       const ms = performance.now() - t0;
       cancelAnimationFrame(raf);
       st = 'idle';
+      swallowClick = true;   // the click this press will also fire belongs to nothing
       // a fumbled double-tap is not a solve: drop it and say so, rather than saving 0.05 s
       if (ms < MIN_SOLVE_MS) {
         recog = null; pendingPen = ''; marked = false;
@@ -134,6 +147,7 @@
       return;
     }
     tooShort = false;
+    swallowClick = false;   // a new gesture: any guard left from the last one is history
     if (st === 'idle' && inspection && !inspActive) {
       tI = performance.now(); inspElapsed = 0; inspActive = true; beeped = 0; st = 'insp';
       cancelAnimationFrame(raf); raf = requestAnimationFrame(loop);
@@ -170,6 +184,13 @@
 
   // Esc / Android Back cancels the timer instead of leaving the screen, including a solve in progress
   $effect(() => { if (inspActive || st === 'hold' || st === 'ready' || st === 'run') return nav.onBack(() => { cancel(); return true; }); });
+  // the click that follows a stop press must not reach whatever was underneath it (capture, so a
+  // delegated handler on the root never sees it either)
+  $effect(() => {
+    if (typeof window === 'undefined') return;
+    window.addEventListener('click', onClickCapture, true);
+    return () => window.removeEventListener('click', onClickCapture, true);
+  });
   // the browser drops the lock when the tab goes away: take it again if the clock is still running
   $effect(() => {
     const onVis = () => { if (document.visibilityState === 'visible' && st === 'run') keepAwake(); };

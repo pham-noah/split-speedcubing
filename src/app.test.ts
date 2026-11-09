@@ -181,4 +181,20 @@ describe('whole app in a simulated browser', () => {
     expect(history()).toBe(before);                        // nothing saved
     expect(q('.time')!.textContent).toContain('Too short'); // and the screen says why
   });
+
+  // the flood that covers the screen is pointer-events:none, so the stop press lands on whatever sits
+  // behind it — and the browser then clicks that element. Stopping over the session chip opened Sessions.
+  it('the press that stops the clock does not also press what is behind it', async () => {
+    const history = () => document.body.textContent!.match(/History · (\d+)/)![1];
+    const before = Number(history());
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true })); await wait(350); flushSync();
+    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space', bubbles: true })); await tick(); await wait(400);
+    const chip = q('.chip')!;
+    chip.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, button: 0 }));
+    await tick(); await wait(20); flushSync();
+    chip.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    await tick(); await wait(60); flushSync();
+    expect(Number(history())).toBe(before + 1);              // the solve was recorded…
+    expect(document.querySelector('[role=radiogroup]')).toBeNull();   // …and Sessions did not open
+  });
 });
