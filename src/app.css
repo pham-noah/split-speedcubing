@@ -811,15 +811,16 @@ textarea {
   font-size: 1.05rem;
   margin-bottom: 4px;
 }
-.brand {
+.brand,
+nav[aria-label='Main'] > .brand {
   display: none;
-}
+} /* the sidebar wordmark has no room in a phone's bottom bar */
 /* Desktop / wide windows: the bottom tab bar becomes a left sidebar (Solve stays in the middle of the list) */
 @media (min-width: 900px) {
   body {
     padding-left: 210px;
   }
-  .brand {
+  nav[aria-label='Main'] .brand {
     display: flex;
     flex-direction: column;
     gap: 1px;
