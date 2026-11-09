@@ -25,7 +25,8 @@ One Svelte 5 + TypeScript codebase, three shells: browser/PWA, Android (Capacito
 - **Settings:** three themes, text size to 130%, hold time, inspection, recall target, personalised scheduling,
   backup export/restore, screen layout.
 - **Keyboard:** 25 named, rebindable commands; arrow keys walk the screen by position. Android Back / Esc closes
-  the top-most thing first, and no key abandons a solve that is running.
+  the top-most thing first; on the timer screen it stops and discards the solve that is running, and no other key
+  leaves a live solve behind.
 - **Accessibility:** labelled landmarks, live regions, a focus trap on the intro, reduced motion; axe-core runs
   over the intro, every tab and two detail panels inside the suite, and every theme is checked for WCAG contrast.
 - **Offline web:** host `dist-web/` and install from the browser; the worker caches the app, fonts and scrambles.

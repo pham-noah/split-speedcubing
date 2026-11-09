@@ -375,3 +375,27 @@ describe('undo and penalties across a second session', () => {
     expect(dueNow()).toBe(1);
   });
 });
+
+// the per-session lists are cached now (50 000 solves made filtering on every read a 300 ms stall);
+// the cache has to notice every change to the solve list
+describe('store: the per-session solve index stays current', () => {
+  it('reflects adds, deletes, undo, imports and a deleted session', () => {
+    store.addSession('Index A');
+    expect(store.solves.length).toBe(0);           // builds the index
+    store.addSolve(5000, 'R U');
+    expect(store.solves.length).toBe(1);           // add
+    const kept = store.solves[0];
+    store.deleteSolve(kept.id);
+    expect(store.solves.length).toBe(0);           // delete
+    store.restoreSolve(kept, 0);
+    expect(store.solves.length).toBe(1);           // undo
+    expect(store.solves[0].id).toBe(kept.id);
+    const mine = store.session.id;
+    const before = store.data.solves.length;
+    store.importSolves([{ name: 'Imported', solves: [{ ms: 6000, pen: '', scramble: '', ts: 1700000000000 }] }], 'test');
+    expect(store.data.solves.length).toBe(before + 1);   // the import landed in its own session…
+    expect(store.solves.length).toBe(1);                 // …so this one is unchanged
+    store.deleteSession(mine);
+    expect(store.countIn(mine)).toBe(0);                 // and a deleted session's list is gone
+  });
+});

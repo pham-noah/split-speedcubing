@@ -62,6 +62,11 @@ class Store {
   /** ids of the cases changed since the last save: 472 cards with 60 attempts each is 2 MB, and a
    *  graded case used to rewrite all of it. Cleared only once the write succeeded. */
   private touched = new Set<string>();
+  /** Bumped whenever the solve list changes shape. Every screen reads `store.solves`, and filtering the
+   *  whole history on each read cost ~300 ms per screen switch at 50 000 solves; the lists are now built
+   *  once per change and reused. */
+  private solvesEpoch = $state(0);
+  private solvesCache: { epoch: number; bySession: Map<string, Solve[]> } = { epoch: -1, bySession: new Map() };
   /** a restore or a wipe replaces every card, so the next save has to write them all */
   private writeAllCards = true;
   /** the plain copies handed to storage last time, so a save deep-copies only what changed. Cloning a
@@ -80,6 +85,7 @@ class Store {
       this.loadError = e instanceof Error ? e.message : 'Could not read the saved data';
     }
     this.migrateF2L();
+    this.solvesChanged();
     this.apply();
     this.ready = true;
     this.watchUnload();
@@ -202,8 +208,24 @@ class Store {
 
   get session(): Session { return this.data.sessions.find(s => s.id === this.data.session) ?? this.data.sessions[0]; }
   /** solves of the current session, oldest first */
-  get solves(): Solve[] { const id = this.session.id; return this.data.solves.filter(s => (s.session ?? this.data.sessions[0].id) === id); }
-  countIn(id: string) { return this.data.solves.filter(s => s.session === id).length; }
+  get solves(): Solve[] { return this.solvesBySession().get(this.session.id) ?? []; }
+  /** every session's solves, built once per change to the solve list */
+  private solvesBySession(): Map<string, Solve[]> {
+    const epoch = this.solvesEpoch;   // a reactive read: a change to the list re-runs the screens
+    if (this.solvesCache.epoch === epoch) return this.solvesCache.bySession;
+    const bySession = new Map<string, Solve[]>();
+    const fallback = this.data.sessions[0]?.id ?? 'default';
+    for (const s of this.data.solves) {
+      const id = s.session ?? fallback;
+      const list = bySession.get(id);
+      if (list) list.push(s); else bySession.set(id, [s]);
+    }
+    this.solvesCache = { epoch, bySession };
+    return bySession;
+  }
+  /** the list changed shape: the next read rebuilds it */
+  private solvesChanged() { this.solvesEpoch++; }
+  countIn(id: string) { return this.solvesBySession().get(id)?.length ?? 0; }
   switchSession(id: string) { if (this.data.sessions.some(s => s.id === id)) { this.data.session = id; this.persist(); } }
   addSession(name: string) {
     const s = { id: uid(), name: name.trim() || `Session ${this.data.sessions.length + 1}` };
@@ -222,6 +244,7 @@ class Store {
       this.data.sessions = this.data.sessions.filter(s => s.id !== id);
       if (this.data.session === id) this.data.session = this.data.sessions[0].id;
     }
+    this.solvesChanged();
     this.persist();
   }
   /** put back the session the last delete removed */
@@ -232,6 +255,7 @@ class Store {
     this.plainCards.clear();
     this.writeAllCards = true;
     this.removed = null;
+    this.solvesChanged();
     this.apply();
     this.persist();
     return true;
@@ -241,6 +265,7 @@ class Store {
     // a solve started before the first scramble arrived would otherwise be saved with the placeholder text
     const scr = scramble.startsWith('Generating') ? '' : scramble;
     this.data.solves.push({ id: uid(), ms, pen, scramble: scr, event: '333', ts: Date.now(), session: this.session.id });
+    this.solvesChanged();
     this.persist();
   }
   setPenalty(p: Penalty) {
@@ -254,12 +279,13 @@ class Store {
     const s = this.solves.at(-1);
     if (s) this.deleteSolve(s.id);
   }
-  deleteSolve(id: string) { this.data.solves = this.data.solves.filter(s => s.id !== id); this.persist(); }
+  deleteSolve(id: string) { this.data.solves = this.data.solves.filter(s => s.id !== id); this.solvesChanged(); this.persist(); }
   /** put a deleted solve back where it was (undo). `index` is a position in data.solves, not in the
    *  current session: the two differ as soon as there is more than one session. */
   restoreSolve(solve: Solve, index: number) {
     if (this.data.solves.some(s => s.id === solve.id)) return;
     this.data.solves.splice(Math.min(Math.max(0, index), this.data.solves.length), 0, solve);
+    this.solvesChanged();
     this.persist();
   }
   cyclePenalty(id: string) {
@@ -475,6 +501,7 @@ class Store {
       this.data.solves.push(...rows);
       added += rows.length; made++;
     }
+    this.solvesChanged();
     this.persist();
     return { added, duplicates, sessions: made };
   }
@@ -498,6 +525,7 @@ class Store {
     this.writeAllCards = true;   // a different history entirely: every card on disk is stale
     this.plainSolves.clear();
     this.plainCards.clear();
+    this.solvesChanged();
     this.apply();
     this.persist();
   }
@@ -511,6 +539,7 @@ class Store {
     this.writeAllCards = true;
     this.replaced = null;
     this.undoKind = null;
+    this.solvesChanged();
     this.apply();
     this.persist();
     return true;
@@ -524,6 +553,7 @@ class Store {
     this.writeAllCards = true;
     this.plainSolves.clear();
     this.plainCards.clear();
+    this.solvesChanged();
     this.apply();
     this.persist();
   }

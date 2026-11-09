@@ -132,6 +132,14 @@ describe('JSON backups (best effort)', () => {
     expect(parseImport('{bad').notes[0]).toContain('not valid JSON');
     expect(parseImport('   ').notes[0]).toContain('empty');
   });
+  // a fuzzed/hand-built file used to end in "RangeError: Maximum call stack size exceeded", which the
+  // import panel could not catch and which left the previous file's preview standing
+  it('survives a deeply nested JSON file instead of blowing the stack', () => {
+    const deep = '['.repeat(20000) + ']'.repeat(20000);
+    const r = parseImport(deep);
+    expect(r.sessions.length).toBe(0);
+    expect(r.notes.join(' ')).toMatch(/No solves found/i);
+  });
 });
 
 describe('timestamps', () => {

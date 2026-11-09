@@ -107,9 +107,9 @@ describe('whole app in a simulated browser', () => {
     expect(document.body.textContent).toContain('Press once when you recognise');
     // one full attempt: hold to start, press to mark recognition, press to stop
     window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true })); await wait(350); flushSync();
-    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space', bubbles: true })); await tick(); await wait(80);
+    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space', bubbles: true })); await tick(); await wait(400);
     window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true })); await tick(); await wait(30); flushSync();
-    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space', bubbles: true })); await tick(); await wait(30);
+    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space', bubbles: true })); await tick(); await wait(400);
     window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true })); await tick(); await wait(40); flushSync();
     window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space', bubbles: true })); await tick(); await wait(60); flushSync();
     // the case you just trained is revealed by name, next to its diagram
@@ -162,11 +162,23 @@ describe('whole app in a simulated browser', () => {
     const before = document.body.textContent;
     window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true })); await wait(350); flushSync();
     expect(q('.big')!.textContent).toContain('Release');
-    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space', bubbles: true })); await tick(); await wait(80);
+    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space', bubbles: true })); await tick(); await wait(400);
     expect(q('.big')!.textContent).toContain('Tap to stop');
     window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true })); await tick(); await wait(30); flushSync();
     window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space', bubbles: true }));
     expect(document.body.textContent).toContain('History · 1');
     expect(before).not.toContain('History · 1');
+  });
+
+  // a fumbled double-tap used to save a 0.05 s solve, which then sat at the top of "Best" forever
+  it('a press under 300 ms is thrown away instead of recorded', async () => {
+    const history = () => document.body.textContent!.match(/History · (\d+)/)![1];
+    const before = history();
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true })); await wait(350); flushSync();
+    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space', bubbles: true })); await tick(); await wait(20);
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true })); await tick(); await wait(20); flushSync();
+    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space', bubbles: true })); await tick(); await wait(60); flushSync();
+    expect(history()).toBe(before);                        // nothing saved
+    expect(q('.time')!.textContent).toContain('Too short'); // and the screen says why
   });
 });

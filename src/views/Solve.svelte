@@ -116,9 +116,10 @@
             onclick={() => {
               if (!store.timerRunning) sessions = true;
             }}
-            aria-label="Sessions. Current: {store.session.name}">3x3 · {store.session.name} ▾</button
+            aria-label="Sessions. Current: {store.session.name}">3x3 ·
+            <span class="chip-name">{store.session.name}</span> ▾</button
           >
-          <button class="btn" disabled={store.timerRunning} onclick={() => (history = true)}>History · {solves.length}</button>
+          <button class="btn history-btn" disabled={store.timerRunning} onclick={() => (history = true)}>History · {solves.length}</button>
         </div>
         {#if store.shown('solve.scramble')}
           <div class="scr" aria-label="Scramble" aria-live="polite">

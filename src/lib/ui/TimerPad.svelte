@@ -20,6 +20,10 @@
   let inspElapsed = $state(0);  // elapsed ms of inspection
   let inspActive = $state(false);
   let marked = $state(false);
+  /** a press this soon after the start is a fumble (a double-tap, a second finger), not a solve: it is
+   *  thrown away instead of becoming a 0.05 s personal best that never goes away */
+  const MIN_SOLVE_MS = 300;
+  let tooShort = $state(false);
   let coverOpen = $state(false);   // the colour has grown out of the button to fill the screen
   let stopped = $state<number | null>(null); // finished time, shown highlighted on the cover before it shrinks back
   let bigEl: HTMLButtonElement | undefined;
@@ -59,6 +63,7 @@
   const shownText = $derived(
     st === 'run' ? (hideTime ? 'Solving…' : formatTime(now)) :
     inspActive ? inspectionText(inspElapsed) :
+    tooShort ? 'Too short' :
     // no solve yet: an empty line, not a lone dash that reads as a stray divider
     shown == null ? '' : formatTime(shown)
   );
@@ -112,12 +117,23 @@
       const ms = performance.now() - t0;
       cancelAnimationFrame(raf);
       st = 'idle';
+      // a fumbled double-tap is not a solve: drop it and say so, rather than saving 0.05 s
+      if (ms < MIN_SOLVE_MS) {
+        recog = null; pendingPen = ''; marked = false;
+        stopped = null; coverOpen = false;
+        tooShort = true;
+        clearTimeout(flashT);
+        flashT = setTimeout(() => (tooShort = false), 1500);
+        letSleep();
+        return;
+      }
       closeCoverSoon(ms);
       letSleep();
       onfinish({ ms, recog, pen: pendingPen });
       pendingPen = '';
       return;
     }
+    tooShort = false;
     if (st === 'idle' && inspection && !inspActive) {
       tI = performance.now(); inspElapsed = 0; inspActive = true; beeped = 0; st = 'insp';
       cancelAnimationFrame(raf); raf = requestAnimationFrame(loop);
@@ -150,7 +166,7 @@
       coverOpen = false; // let go before the timer was ready: the colour goes back down
     }
   }
-  function cancel() { clearTimeout(holdTimer); cancelAnimationFrame(raf); endInspection(); st = 'idle'; clearTimeout(flashT); coverOpen = false; stopped = null; letSleep(); }
+  function cancel() { clearTimeout(holdTimer); cancelAnimationFrame(raf); endInspection(); st = 'idle'; clearTimeout(flashT); coverOpen = false; stopped = null; tooShort = false; letSleep(); }
 
   // Esc / Android Back cancels the timer instead of leaving the screen, including a solve in progress
   $effect(() => { if (inspActive || st === 'hold' || st === 'ready' || st === 'run') return nav.onBack(() => { cancel(); return true; }); });
@@ -175,7 +191,7 @@
   onpointercancel={up}
 />
 
-<div class="time mono" class:done={st === 'idle' && shown != null} aria-hidden="true">{shownText}</div>
+<div class="time mono" class:done={st === 'idle' && shown != null && !tooShort} class:note={tooShort} aria-hidden="true">{shownText}</div>
 {#if cover}
   <div class="cover" class:on={coverOpen} aria-hidden="true"
     style="--cx:{cx}px;--cy:{cy}px;--cover:{coverColor || 'var(--bl)'}"></div>
@@ -197,7 +213,7 @@
     {/if}
   </div>
 {/if}
-<div class="sr" aria-live="polite">{st === 'run' ? 'Timer running' : st === 'ready' ? 'Ready, release to start' : st === 'hold' ? 'Hold' : inspActive ? 'Inspection' : shown != null ? `Time ${formatTime(shown)}` : ''}</div>
+<div class="sr" aria-live="polite">{st === 'run' ? 'Timer running' : st === 'ready' ? 'Ready, release to start' : st === 'hold' ? 'Hold' : inspActive ? 'Inspection' : tooShort ? 'Too short, not saved' : shown != null ? `Time ${formatTime(shown)}` : ''}</div>
 <button
   class="big"
   bind:this={bigEl}

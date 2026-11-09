@@ -10,15 +10,36 @@
   // parsing happens on the main thread: refuse a file big enough to freeze the screen instead
   const MAX_BYTES = 5 * 1024 * 1024;
   function analyse(t: string) {
-    if (t.length > MAX_BYTES) { preview = null; msg = `That file is too large to read here (${Math.round(t.length / 1024 / 1024)} MB). Split imports solve histories, not raw exports of everything.`; return; }
-    preview = t.trim() ? parseImport(t) : null;
-    msg = '';
+    if (t.length > MAX_BYTES) {
+      preview = null;
+      msg = `That file is too large to read here (${Math.round(t.length / 1024 / 1024)} MB). Split imports solve histories, not raw exports of everything.`;
+      return;
+    }
+    if (!t.trim()) { preview = null; msg = ''; return; }
+    try {
+      preview = parseImport(t);
+      msg = '';
+    } catch {
+      // never leave the previous file's preview (and its Import button) standing under this file's name
+      preview = null;
+      msg = 'That file could not be read. Nothing was imported.';
+    }
   }
   async function pick(e: Event) {
     const f = (e.target as HTMLInputElement).files?.[0];
     if (!f) return;
     fileName = f.name;
-    text = await f.text();
+    preview = null;
+    msg = '';
+    let body = '';
+    try {
+      body = await f.text();
+    } catch {
+      text = '';
+      msg = 'That file could not be read. Nothing was imported.';
+      return;
+    }
+    text = body;
     analyse(text);
   }
   function run() {

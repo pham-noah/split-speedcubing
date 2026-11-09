@@ -135,14 +135,18 @@ function parseCubeDesk(root: Obj): ImportResult | null {
 }
 function parseGenericJson(root: unknown): ImportResult {
   const found: { name: string; solves: ImportedSolve[] }[] = [];
-  const walk = (v: unknown, name: string) => {
+  // a backup's solves live three or four levels down; anything deeper is not a solve history, and an
+  // unbounded walk over a fuzzed file used to end in "Maximum call stack size exceeded"
+  const MAX_DEPTH = 32;
+  const walk = (v: unknown, name: string, depth = 0) => {
+    if (depth > MAX_DEPTH) return;
     if (Array.isArray(v)) {
       const solves = v.filter(isObj).map(solveFromObj).filter((s): s is ImportedSolve => !!s);
       if (solves.length && solves.length >= v.length / 2) found.push({ name, solves });
-      else v.forEach((x, i) => walk(x, isObj(x) && typeof x.name === 'string' ? x.name : `${name} ${i + 1}`));
+      else v.forEach((x, i) => walk(x, isObj(x) && typeof x.name === 'string' ? x.name : `${name} ${i + 1}`, depth + 1));
     } else if (isObj(v)) {
       const nm = typeof v.name === 'string' && v.name ? v.name : name;
-      for (const [k, x] of Object.entries(v)) if (typeof x === 'object' && x) walk(x, nm || k);
+      for (const [k, x] of Object.entries(v)) if (typeof x === 'object' && x) walk(x, nm || k, depth + 1);
     }
   };
   walk(root, 'Imported');
@@ -217,13 +221,18 @@ export function parseImport(text: string): ImportResult {
   if (t.startsWith('{') || t.startsWith('[')) {
     let root: unknown;
     try { root = JSON.parse(t); } catch { return { format: 'unknown', sessions: [], notes: ['That is not valid JSON.'] }; }
-    if (isObj(root) && Object.keys(root).some(k => /^session\d+$/.test(k))) return parseCsTimer(root);
-    if (isObj(root)) {
-      const desk = parseCubeDesk(root);
-      if (desk) return desk;
+    try {
+      if (isObj(root) && Object.keys(root).some(k => /^session\d+$/.test(k))) return parseCsTimer(root);
+      if (isObj(root)) {
+        const desk = parseCubeDesk(root);
+        if (desk) return desk;
+      }
+      const g = parseGenericJson(root);
+      return g.sessions.length ? g : { format: 'unknown', sessions: [], notes: ['No solves found in this JSON file.'] };
+    } catch {
+      // a shape this parser did not expect is a bad file, not a crash
+      return { format: 'unknown', sessions: [], notes: ['No solves found in this JSON file.'] };
     }
-    const g = parseGenericJson(root);
-    return g.sessions.length ? g : { format: 'unknown', sessions: [], notes: ['No solves found in this JSON file.'] };
   }
   const csv = parseCsv(t);
   if (csv && csv.sessions.length) return csv;

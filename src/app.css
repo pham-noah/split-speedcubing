@@ -173,8 +173,25 @@ textarea {
   border-radius: 999px;
   padding: 5px 11px;
   min-height: 34px;
+  min-width: 0;
+  max-width: 100%;
+  white-space: nowrap;   /* "3x3 ·" must not break into a second line inside the pill */
   font-weight: 800;
   font-size: 0.85rem;
+}
+/* the session name is user text: it may be any length, so it is the part that gives way, not the row.
+   The vw cap keeps the History button beside it readable on a phone. */
+.chip-name {
+  min-width: 0;
+  max-width: min(26ch, 45vw);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* the solve screen's two top buttons: the counter keeps its size, the session name gives way */
+.history-btn {
+  flex: none;
+  white-space: nowrap;
 }
 .btn {
   min-height: 38px;
@@ -272,6 +289,15 @@ a:focus-visible,
   letter-spacing: -2px;
   text-align: center;
   line-height: 1;
+}
+/* the same slot also carries a short message ("Too short"); it must not shout in timer type */
+.time.note {
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: var(--am);
+  line-height: 1.4;
 }
 .scr {
   font-size: 0.95rem;
@@ -546,7 +572,9 @@ h2[id] {
     0 0 0 2px var(--bg),
     0 0 0 4px var(--tx);
 }
-nav {
+/* The shell's own bar. Scoped to the main nav on purpose: an unscoped `nav` also matched the Settings
+   section bar (`<nav class="secnav">`), which turned it into a fixed/sticky sidebar and covered the page. */
+nav[aria-label='Main'] {
   position: fixed;
   left: 0;
   right: 0;
@@ -557,7 +585,7 @@ nav {
   align-items: center;
   padding-bottom: env(safe-area-inset-bottom);
 }
-nav > * {
+nav[aria-label='Main'] > * {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -583,17 +611,17 @@ nav > * {
   overflow: hidden;
   clip: rect(0 0 0 0);
 } /* icon-only on phones, but still announced */
-nav .on {
+nav[aria-label='Main'] .on {
   color: var(--am);
   border-top-color: var(--am);
 }
-nav .mid {
+nav[aria-label='Main'] .mid {
   display: flex;
   justify-content: center;
   border: 0;
   overflow: visible;
 } /* the round button rises above the bar: never clip it */
-nav .mid button {
+nav[aria-label='Main'] .mid button {
   width: 68px;
   height: 68px;
   margin-top: -26px;
@@ -604,7 +632,7 @@ nav .mid button {
   font-weight: 800;
   font-size: 0.85rem;
 }
-nav .mid button.on {
+nav[aria-label='Main'] .mid button.on {
   background: var(--am);
   color: var(--on-am);
 }
@@ -811,7 +839,7 @@ textarea {
     max-width: 680px;
     padding-bottom: 40px;
   }
-  nav {
+  nav[aria-label='Main'] {
     top: 0;
     right: auto;
     width: 210px;
@@ -823,7 +851,7 @@ textarea {
     border-top: 0;
     border-right: 1px solid var(--line);
   }
-  nav > * {
+  nav[aria-label='Main'] > * {
     flex: none;
     justify-content: flex-start;
     min-height: 46px;
@@ -843,15 +871,15 @@ textarea {
     clip: auto;
     margin-left: 2px;
   }
-  nav .on {
+  nav[aria-label='Main'] .on {
     border-left-color: var(--am);
     background: #262b36;
   }
-  nav .mid {
+  nav[aria-label='Main'] .mid {
     display: block;
     padding: 0;
   }
-  nav .mid button {
+  nav[aria-label='Main'] .mid button {
     width: 100%;
     height: 46px;
     margin: 0;
@@ -863,7 +891,7 @@ textarea {
     background: none;
     color: var(--mu);
   }
-  nav .mid button.on {
+  nav[aria-label='Main'] .mid button.on {
     background: #262b36;
     color: var(--am);
   }
