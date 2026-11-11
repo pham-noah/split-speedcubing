@@ -9,6 +9,8 @@ repetition and diagrams generated from the algorithms themselves.
 
 One Svelte 5 + TypeScript codebase, three shells: browser/PWA, Android (Capacitor), desktop (Tauri).
 
+[Discord](https://discord.gg/tz42eZyNtD) — questions, bug reports and release news.
+
 ## Features
 
 - **Solve:** hold to start, optional 15 s inspection (warns at 8 and 12 s, +2 at 15, DNF at 17), penalties,
