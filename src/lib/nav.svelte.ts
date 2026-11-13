@@ -8,6 +8,8 @@ class Nav {
   view = $state<View>('solve');
   drillMode = $state<'cross' | 'oll2' | 'pll2' | 'bld'>('cross');
   hintActive = $state(false); // the Library is waiting for a case code: other keys must stay out of it
+  /** set the Solve screen asked the trainer to open (the weakest phase of a split); consumed by Train */
+  trainSet = $state<'PLL' | 'OLL' | 'F2L' | 'ZBLL' | null>(null);
   private trail: View[] = [];
   private handlers: Handler[] = [];
 

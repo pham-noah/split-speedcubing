@@ -134,6 +134,12 @@
     marks = [...marks, t];
   }
 
+  /** a mark that landed on the wrong phase is data, not fate: take the last one back */
+  function unmark() {
+    if (!splits || st !== 'run' || !marks.length) return;
+    marks = marks.slice(0, -1);
+  }
+
   function down() {
     if (disabled) return;
     if (st === 'run') {
@@ -228,7 +234,7 @@
     if (e.button !== 0) return;
     const t = e.target as HTMLElement;
     // the split pill is the one surface that does not stop the clock: its own click marks the phase
-    if (st === 'run' && splits && t.closest('.split-press')) return;
+    if (st === 'run' && splits && t.closest('.split-dock')) return;
     if (st === 'run' ? !t.closest('nav') : !!t.closest('.big')) down();
   }}
   onpointerup={up}
@@ -261,11 +267,18 @@
 {#if splits && st === 'run'}
   <!-- Above the cover (z-index 42): a full-screen flood is exactly where a phase mark has to be findable.
        Tapping it marks a phase; every other surface still stops the clock. -->
-  <button class="split-press" type="button" onclick={() => mark()}
-    aria-label="Mark a phase split, {marks.length} of {PHASES.length - 1} marked">
-    <span>Split</span><span class="mono sp-n">{marks.length}/{PHASES.length - 1}</span>
-    <span class="mono sp-k">{codeLabel(store.key('split'))}</span>
-  </button>
+  <div class="split-dock">
+    <button class="split-press" type="button" onclick={() => mark()}
+      aria-label="Mark a phase split, {marks.length} of {PHASES.length - 1} marked">
+      <span>Split</span><span class="mono sp-n">{marks.length}/{PHASES.length - 1}</span>
+      <span class="mono sp-k">{codeLabel(store.key('split'))}</span>
+    </button>
+    {#if marks.length}
+      <button class="split-undo" type="button" onclick={() => unmark()} aria-label="Undo the last phase mark">
+        Undo
+      </button>
+    {/if}
+  </div>
 {/if}
 <button
   class="big"
@@ -278,12 +291,17 @@
 <style>
   /* Only present while the clock runs and splits are on. Dark and translucent so it stays legible on
      every cover colour (blue, gold, green, red, purple), and above the flood so it can be found at all. */
-  .split-press {
+  .split-dock {
     position: fixed;
     left: 50%;
     bottom: calc(96px + env(safe-area-inset-bottom, 0px));
     transform: translateX(-50%);
     z-index: 42;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .split-press {
     display: inline-flex;
     align-items: center;
     gap: 9px;
@@ -302,7 +320,23 @@
     transition: transform 0.12s ease;
   }
   .split-press:active {
-    transform: translateX(-50%) scale(0.95);
+    transform: scale(0.95);
+  }
+  .split-undo {
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 800;
+    padding: 11px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.26);
+    background: rgba(10, 12, 16, 0.66);
+    color: #fff;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .split-undo:active {
+    transform: scale(0.95);
   }
   .sp-n {
     font-size: 0.78rem;

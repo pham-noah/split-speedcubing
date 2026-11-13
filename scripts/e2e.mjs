@@ -16,7 +16,8 @@ const page = await browser.newPage();
 await page.setViewport({ width: 360, height: 640, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
 const errors = [];
 page.on('pageerror', e => errors.push(e.message));
-page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
+// the URL matters as much as the message: "Failed to load resource" says nothing on its own
+page.on('console', m => { if (m.type() === 'error') errors.push(`${m.text()} @ ${m.location()?.url ?? ''}`); });
 
 await page.goto(BASE, { waitUntil: 'networkidle0' });
 await sleep(600);
@@ -128,19 +129,36 @@ const pillShown = !!(await page.$('.split-press'));
 check('a split pill appears once the clock runs', pillShown);
 if (pillShown) {
   const box = await (await page.$('.split-press')).boundingBox();
-  const tapPill = async () => { await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await page.mouse.down(); await page.mouse.up(); await sleep(200); };
+  const tapAt = async (b) => { await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2); await page.mouse.down(); await page.mouse.up(); await sleep(220); };
+  const tapPill = () => tapAt(box);
   await sleep(150); await tapPill();
   await sleep(200); await tapPill();
   const count = await page.evaluate(() => document.querySelector('.split-press')?.textContent ?? '');
   check('tapping the pill marks a phase without stopping the clock', /2\/3/.test(count) && /Tap to stop/.test(await page.evaluate(() => document.querySelector('.big').textContent)), norm(count));
+  // a mark on the wrong phase is undoable while the clock runs
+  const undoBox = await (await page.$('.split-undo'))?.boundingBox();
+  if (undoBox) { await tapAt(undoBox); await sleep(250); }
+  const afterUndo = await page.evaluate(() => document.querySelector('.split-press')?.textContent ?? '');
+  check('undo takes the last mark back', /1\/3/.test(afterUndo), norm(afterUndo));
+  await tapPill(); await tapPill();   // three marks again: Cross, F2L, OLL, then the stop ends PLL
 }
 await tap(); await sleep(400);
 const splitCard = await page.evaluate(() => {
   const c = [...document.querySelectorAll('main .card')].find(x => /Phases/.test(x.textContent));
   return c ? c.textContent.replace(/\s+/g, ' ').trim() : '';
 });
-check('the last solve shows its phases', /Cross/.test(splitCard) && /F2L/.test(splitCard) && /Rest/.test(splitCard), splitCard.slice(0, 80));
+check('the last solve shows its phases', /Cross/.test(splitCard) && /F2L/.test(splitCard) && /PLL/.test(splitCard), splitCard.slice(0, 80));
 check('the phase bar is drawn', await page.evaluate(() => (document.querySelectorAll('.phbar > span').length ?? 0) >= 2));
+// the phase that took the longest is one tap away from the set that trains it
+const drill = await page.evaluate(() => [...document.querySelectorAll('button')].find(b => /^Drill /.test(b.textContent.trim()))?.textContent.trim() ?? '');
+check('the phase card offers the matching trainer set', /^Drill (Cross|F2L|OLL|PLL)$/.test(drill), drill);
+if (drill) {
+  const wantSet = drill.replace('Drill ', '');
+  await clickText(page, drill); await sleep(700);
+  const trained = await text();
+  check('that link opens a session on that set', new RegExp(`Recognition · ${wantSet}`).test(trained) || new RegExp(`Execution · ${wantSet}`).test(trained), wantSet);
+  await clickText(page, 'Solve', 'nav[aria-label="Main"] button'); await sleep(400);
+}
 // and it survives the reload, through normalize(), which validates every field of a stored solve
 await sleep(600); await page.reload({ waitUntil: 'networkidle0' }); await sleep(800);
 await page.keyboard.press('KeyD'); await sleep(400);
@@ -154,6 +172,23 @@ await page.keyboard.press('Escape'); await sleep(300);
 await clickText(page, 'Settings', 'nav[aria-label="Main"] button'); await sleep(300);
 await clickText(page, 'Split timing'); await sleep(200);   // leave it off, as shipped
 await clickText(page, 'Solve', 'nav[aria-label="Main"] button'); await sleep(300);
+
+// --- 2x2: its own session, its own scrambles, no 3x3 history mixed in
+const before = await page.evaluate(() => document.querySelector('.history-btn')?.textContent.match(/\d+/)?.[0] ?? '0');
+await page.evaluate(() => [...document.querySelectorAll('.seg[aria-label="Puzzle"] button')].find(b => b.textContent.trim() === '2x2')?.click());
+await sleep(900);
+check('the puzzle switch moves to a 2x2 session', await page.evaluate(() =>
+  document.querySelector('.seg[aria-label="Puzzle"] button[aria-pressed="true"]')?.textContent.trim() === '2x2'
+  && /2x2/.test(document.querySelector('.chip')?.textContent ?? '')),
+  await page.evaluate(() => document.querySelector('.chip')?.textContent.trim() ?? ''));
+check('the 2x2 session starts empty', await page.evaluate(() => /History · 0/.test(document.querySelector('.history-btn')?.textContent ?? '')));
+const sq = await waitForScramble(6000);
+check('a 2x2 scramble arrives and stays 2x2-sized', sq.length > 3 && sq.length <= 14 && !sq.some(t => /^[DB]/.test(t)), `(${sq.length} moves)`);
+await hold(450); await sleep(400); await tap(); await sleep(500);
+check('the 2x2 solve lands in the 2x2 session', await page.evaluate(() => /History · 1/.test(document.querySelector('.history-btn')?.textContent ?? '')));
+await page.evaluate(() => [...document.querySelectorAll('.seg[aria-label="Puzzle"] button')].find(b => b.textContent.trim() === '3x3')?.click());
+await sleep(900);
+check('switching back leaves the 3x3 history exactly as it was', await page.evaluate((n) => new RegExp(`History · ${n}`).test(document.querySelector('.history-btn')?.textContent ?? ''), before), `(${before} solves)`);
 
 // --- training flow
 await clickText(page, 'Train', 'nav[aria-label="Main"] button'); await sleep(300);
@@ -246,8 +281,22 @@ await clickText(page, 'Extra large'); await sleep(300);
 const overflow = [];
 for (const tab of ['Settings', 'Train', 'Library', 'Drills', 'Solve']) {
   await clickText(page, tab, 'nav[aria-label="Main"] button'); await sleep(400);
-  const w = await page.evaluate(() => ({ s: document.documentElement.scrollWidth, c: document.documentElement.clientWidth }));
-  if (w.s > w.c + 1) overflow.push(`${tab} (${w.s}>${w.c})`);
+  // Two questions, because they fail differently: does the document scroll sideways (measured against the
+  // viewport, not the client area, so a classic scrollbar's 2px is not counted as overflow), and is there
+  // any element inside the page that sticks out of the box that would have to clip it.
+  const w = await page.evaluate(() => {
+    const de = document.documentElement;
+    const clipped = (el) => {
+      for (let p = el.parentElement; p; p = p.parentElement) {
+        const st = getComputedStyle(p);
+        if (['hidden', 'auto', 'scroll'].includes(st.overflowX) || st.position === 'fixed') return true;
+      }
+      return false;
+    };
+    const out = [...document.querySelectorAll('main *')].filter((el) => el.getBoundingClientRect().right > de.clientWidth + 0.5 && !clipped(el));
+    return { s: de.scrollWidth, c: de.clientWidth, i: innerWidth, out: out.length, first: out[0] ? `${out[0].tagName}.${String(out[0].className).slice(0, 20)}` : '' };
+  });
+  if (w.s > Math.max(w.c, w.i) + 1 || w.out) overflow.push(`${tab} (${w.s}>${Math.max(w.c, w.i)}${w.out ? `, ${w.out} element(s) out: ${w.first}` : ''})`);
 }
 check('no sideways overflow at Extra large text on a 360px phone', overflow.length === 0, overflow.join(', '));
 await clickText(page, 'Settings', 'nav[aria-label="Main"] button'); await sleep(200);

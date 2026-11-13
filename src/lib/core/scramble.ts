@@ -1,11 +1,13 @@
 // Random-state WCA scrambles come from cubing.js (loaded on demand, runs in a worker).
 // If it fails to load (very old webview, offline first run) we fall back to random moves so the timer never blocks.
-export function randomMoveScramble(len = 20, rnd = Math.random): string {
-  const F = 'RLUDFB', axis = (c: string) => F.indexOf(c) >> 1;
+export function randomMoveScramble(len = 20, rnd = Math.random, F = 'RLUDFB'): string {
+  // R/L is one axis, U/D another, F/B the third — read off the full face set, so a 2x2's RUF still
+  // refuses two turns on the same axis in a row
+  const axis = (c: string) => 'RLUDFB'.indexOf(c) >> 1;
   const out: string[] = [];
   let last = '', last2 = '';
   while (out.length < len) {
-    const f = F[Math.floor(rnd() * 6)];
+    const f = F[Math.floor(rnd() * F.length)];
     if (f === last || (f === last2 && axis(last) === axis(f))) continue;
     out.push(f + ['', "'", '2'][Math.floor(rnd() * 3)]);
     last2 = last; last = f;
@@ -22,7 +24,8 @@ export async function newScramble(event = '333'): Promise<string> {
     const make = import('cubing/scramble').then(m => m.randomScrambleForEvent(event)).then(a => a.toString());
     return await Promise.race([make, timeout]);
   } catch {
-    return randomMoveScramble();
+    // a 2x2 has only R, U and F turns, and a WCA 2x2 scramble is 11 moves
+    return event === '222' ? randomMoveScramble(11, Math.random, 'RUF') : randomMoveScramble();
   } finally {
     clearTimeout(timer);   // otherwise every scramble leaves a timer behind
   }

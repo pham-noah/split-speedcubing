@@ -102,6 +102,15 @@
     sessionStart = Date.now();
     next();
   }
+  // The Solve screen's phase card sends you here with the set it thinks is costing you time: open that
+  // set and start a session, rather than landing on Today and asking again.
+  $effect(() => {
+    const want = nav.trainSet;
+    if (!want) return;
+    nav.trainSet = null;
+    set = want;
+    start();
+  });
   function togglePen(p: '+2' | 'DNF' | '') {
     if (!current) return;
     if (!p) return;

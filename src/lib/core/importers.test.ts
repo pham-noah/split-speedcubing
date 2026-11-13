@@ -156,3 +156,24 @@ describe('stored FSRS parameters', () => {
     expect(normalize({ solves: [], cards: {}, settings: { fsrsW: Array(21).fill(0.5) } }).settings.fsrsW?.length).toBe(21);
   });
 });
+
+describe('csTimer puzzles', () => {
+  it('keeps a 2x2 session as 2x2 and still refuses puzzles Split cannot time', () => {
+    const file = JSON.stringify({
+      session1: [[[0, 4000], "R U R'", '', 1700000000]],
+      session2: [[[0, 5000], "R U R'", '', 1700000100]],
+      session3: [[[0, 40000], "R U R'", '', 1700000200]],
+      properties: {
+        sessionData: JSON.stringify({
+          1: { name: '2x2', opt: { scrType: '222so' }, rank: 1 },
+          2: { name: 'Main', opt: {}, rank: 2 },
+          3: { name: '4x4', opt: { scrType: '444wca' }, rank: 3 },
+        }),
+        sessionN: 3,
+      },
+    });
+    const out = parseImport(file);
+    expect(out.sessions.map((s) => [s.name, s.event])).toEqual([['2x2', '222'], ['Main', '333']]);
+    expect(out.notes.join(' ')).toMatch(/3x3 and 2x2/);
+  });
+});

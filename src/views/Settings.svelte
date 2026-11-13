@@ -1,5 +1,6 @@
 <script lang="ts">
   import { store } from '../lib/store.svelte';
+  import { toCsTimer } from '../lib/core/exporters';
   import ShortcutsPanel from '../lib/ui/ShortcutsPanel.svelte';
   import { DEFAULT_CUBE_COLORS } from '../lib/ui/cube-colors';
   import ImportPanel from '../lib/ui/ImportPanel.svelte';
@@ -54,6 +55,18 @@
     await platform.saveFile(`split-${new Date().toISOString().slice(0, 10)}.json`, store.exportJson());
     store.update({ lastBackupAt: Date.now() });
     msg = 'Backup saved.';
+  }
+  /** the same solves in a file csTimer can read back, so leaving is not a one-way door */
+  async function exportCsTimer() {
+    const file = toCsTimer(
+      store.data.sessions.map((sess) => ({
+        name: sess.name,
+        event: sess.event ?? '333',
+        solves: store.data.solves.filter((x) => (x.session ?? store.data.sessions[0].id) === sess.id),
+      })),
+    );
+    await platform.saveFile(`split-cstimer-${new Date().toISOString().slice(0, 10)}.txt`, file);
+    msg = 'csTimer file saved. Import it in csTimer with the import button.';
   }
   async function restore() {
     const f = await platform.pickFile('application/json');
@@ -356,6 +369,9 @@
         </div>
       {/if}
       <button class="btn" onclick={restore}>Restore backup</button>
+      {#if platform.caps.saveFile}
+        <button class="btn" onclick={exportCsTimer}>Export for csTimer</button>
+      {/if}
     </div>
     {#if platform.caps.fullscreen}
       <button class="btn" onclick={toggleFull}>{full ? 'Leave fullscreen' : 'Fullscreen'}<span class="pc-only"> (F11)</span></button>

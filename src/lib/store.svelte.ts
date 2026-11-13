@@ -23,6 +23,10 @@ const copy = <T>(v: T): T => {
 
 /** Is a card unchanged since the copy that was last written? Cheap enough to run over 472 cards on
  *  every save, and it catches a change the app forgot to mark: the fields a mutation can move. */
+/** Same phase split, segment for segment. Two undefined splits are the same split: a cleared one. */
+const sameSplits = (a?: number[], b?: number[]) =>
+  a === b || (!!a && !!b && a.length === b.length && a.every((v, i) => v === b[i]));
+
 const sameCard = (a: CardRecord, b: CardRecord) =>
   a.seen === b.seen && a.due === b.due && a.defaultAlg === b.defaultAlg &&
   (a.algs?.length ?? 0) === (b.algs?.length ?? 0) && a.attempts.length === b.attempts.length &&
@@ -153,8 +157,9 @@ class Store {
     const solves: Solve[] = [];
     for (const s of d.solves) {
       const kept = this.plainSolves.get(s.id);
-      // a solve only ever changes its time or its penalty once it exists: two comparisons, no copy
-      if (kept && kept.ms === s.ms && kept.pen === s.pen) { solves.push(kept); continue; }
+      // once a solve exists only its time, its penalty and its phase split can change: a few comparisons,
+      // no copy. A split that was cleared is `undefined` on both sides, so it compares equal to an edit.
+      if (kept && kept.ms === s.ms && kept.pen === s.pen && sameSplits(kept.splits, s.splits)) { solves.push(kept); continue; }
       const plain = copy(s);
       this.plainSolves.set(s.id, plain);
       solves.push(plain);
@@ -227,8 +232,19 @@ class Store {
   countIn(id: string) { return this.solvesBySession().get(id)?.length ?? 0; }
   switchSession(id: string) { if (this.data.sessions.some(s => s.id === id)) { this.data.session = id; this.persist(); } }
   addSession(name: string) {
-    const s = { id: uid(), name: name.trim() || `Session ${this.data.sessions.length + 1}` };
+    const s = { id: uid(), name: name.trim() || `Session ${this.data.sessions.length + 1}`, event: this.session.event ?? '333' };
     this.data.sessions.push(s); this.data.session = s.id; this.persist();
+  }
+  /** Which puzzle the app is timing. Sessions are per puzzle (their records are kept apart, as they always
+   *  were), so switching lands on the first session of that puzzle or makes one. */
+  setEvent(event: '333' | '222') {
+    if ((this.session.event ?? '333') === event) return;
+    const first = this.data.sessions.find(s => (s.event ?? '333') === event);
+    if (first) { this.data.session = first.id; this.persist(); return; }
+    const s = { id: uid(), name: event === '222' ? '2x2' : 'Session 1', event };
+    this.data.sessions.push(s);
+    this.data.session = s.id;
+    this.persist();
   }
   renameSession(id: string, name: string) {
     const s = this.data.sessions.find(x => x.id === id);
@@ -266,10 +282,19 @@ class Store {
     // the last segment of a split ends at the stop, so a split is never stored without the time it came from
     const seg = splits?.length ? splits : undefined;
     this.data.solves.push({
-      id: uid(), ms, pen, scramble: scr, event: '333', ts: Date.now(), session: this.session.id,
+      id: uid(), ms, pen, scramble: scr, event: this.session.event ?? '333', ts: Date.now(), session: this.session.id,
       ...(seg ? { splits: seg } : {}),
     });
     this.solvesChanged();
+    this.persist();
+  }
+  /** Replace or drop a solve's phase split. A mistimed mark is bad data, not a decision: History lets it
+   *  be cleared, and the averages that read it follow on the next render. */
+  setSplits(id: string, splits: number[] | undefined) {
+    const s = this.data.solves.find(x => x.id === id);
+    if (!s) return;
+    const clean = splits?.filter(n => Number.isFinite(n) && n > 0);
+    if (clean?.length) s.splits = clean; else s.splits = undefined;
     this.persist();
   }
   setPenalty(p: Penalty) {
@@ -498,10 +523,10 @@ class Store {
         const k = `${x.ts}|${x.ms}|${x.scramble}`;
         if (seen.has(k)) { duplicates++; return []; }
         seen.add(k);
-        return [{ id: uid(), ms: x.ms, pen: x.pen, scramble: x.scramble, event: '333', ts: x.ts, session: id }];
+        return [{ id: uid(), ms: x.ms, pen: x.pen, scramble: x.scramble, event: sess.event ?? '333', ts: x.ts, session: id }];
       });
       if (!rows.length) continue;
-      this.data.sessions.push({ id, name: `${sess.name} (${label})` });
+      this.data.sessions.push({ id, name: `${sess.name} (${label})`, event: sess.event ?? '333' });
       this.data.solves.push(...rows);
       added += rows.length; made++;
     }

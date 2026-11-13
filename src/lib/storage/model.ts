@@ -7,7 +7,8 @@ export interface Attempt { ts: number; total: number; recog: number | null; grad
 export interface CardRecord extends Card { algs?: string[]; defaultAlg?: string; alg?: string; attempts: Attempt[] }
 export interface Settings { theme: 'midnight' | 'amoled' | 'contrast'; textSize: number; holdMs: number; inspection: boolean; beeps: boolean; hideTime: boolean; tapStart: boolean; retention: number; keys: Record<string, string>; hidden: Record<string, boolean>; introSeen: boolean; coverOn: boolean; coverColor: string; accent: string; walkAutoplay: boolean; walkSpeed: number; cubeColors: string[]; swapRO: boolean; checkUpdates?: boolean; drillTwoLook?: boolean; lastBackupAt?: number; autoBackup?: boolean; fsrsW?: number[]; splits?: boolean }
 export interface DrillResult { type: 'cross' | 'bld' | 'oll2' | 'pll2'; ms: number; memo: number | null; ok: boolean; ts: number; info?: string; pen?: '+2' | 'DNF' }
-export interface Session { id: string; name: string }
+/** A session times one puzzle. Older backups have no event: they are 3x3, which is all there was. */
+export interface Session { id: string; name: string; event?: '333' | '222' }
 export interface CustomCase { id: string; name: string; alg: string }
 export interface AppData { v: 1; solves: Solve[]; cards: Record<string, CardRecord>; settings: Settings; drills: DrillResult[]; sessions: Session[]; session: string; zbll: CustomCase[]; f2lRev?: number }
 
@@ -65,7 +66,11 @@ function cleanSessions(raw: unknown): Session[] {
     const s = item as Partial<Session> | null;
     if (!s || typeof s.id !== 'string' || !s.id || ids.has(s.id)) continue;
     ids.add(s.id);
-    out.push({ id: s.id, name: typeof s.name === 'string' && s.name.trim() ? s.name.trim() : `Session ${out.length + 1}` });
+    out.push({
+      id: s.id,
+      name: typeof s.name === 'string' && s.name.trim() ? s.name.trim() : `Session ${out.length + 1}`,
+      event: s.event === '222' ? '222' : '333',
+    });
   }
   return out.length ? out : [{ id: 'default', name: 'Session 1' }];
 }

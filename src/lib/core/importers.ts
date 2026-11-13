@@ -1,7 +1,7 @@
 import type { Penalty } from './stats';
 
 export interface ImportedSolve { ms: number; pen: Penalty; scramble: string; ts: number }
-export interface ImportedSession { name: string; solves: ImportedSolve[] }
+export interface ImportedSession { name: string; solves: ImportedSolve[]; event?: '333' | '222' }
 export interface ImportResult { format: string; sessions: ImportedSession[]; notes: string[] }
 
 /** "9.84", "1:05.43", "10.5+", "DNF(12.3)", "12.34" -> {ms, pen}; null if it is not a time. */
@@ -49,7 +49,11 @@ function parseCsTimer(root: Record<string, unknown>): ImportResult {
     const scr = m?.opt?.scrType; // absent for the standard 3x3x3 scrambler
     const rows = root[key];
     if (!Array.isArray(rows) || !rows.length) continue;
-    if (scr && !['333', '333oh'].includes(scr)) { skippedSessions++; skippedSolves += rows.length; continue; }
+    // every 2x2 variant csTimer ships ('222o', '222so', '222eg0', ...) is a 2x2 scramble
+    const event: '333' | '222' = typeof scr === 'string' && scr.startsWith('222') ? '222' : '333';
+    if (scr && !scr.startsWith('222') && !['333', '333oh'].includes(scr)) {
+      skippedSessions++; skippedSolves += rows.length; continue;
+    }
     const out: ImportedSolve[] = [];
     rows.forEach((r, i) => {
       if (!Array.isArray(r) || !Array.isArray(r[0])) return;
@@ -62,9 +66,9 @@ function parseCsTimer(root: Record<string, unknown>): ImportResult {
         ts: toTs(r[3]) ?? i,   // the row's date, or its position, which is what keeps the order
       });
     });
-    if (out.length) sessions.push({ name: m?.name != null && String(m.name).trim() ? String(m.name) : `Session ${n}`, solves: out });
+    if (out.length) sessions.push({ name: m?.name != null && String(m.name).trim() ? String(m.name) : `Session ${n}`, solves: out, event });
   }
-  if (skippedSessions) notes.push(`Skipped ${skippedSessions} session${skippedSessions > 1 ? 's' : ''} (${skippedSolves} solves) for other puzzles. This app times 3x3 only.`);
+  if (skippedSessions) notes.push(`Skipped ${skippedSessions} session${skippedSessions > 1 ? 's' : ''} (${skippedSolves} solves) for other puzzles. This app times 3x3 and 2x2.`);
   return { format: 'csTimer', sessions, notes };
 }
 
@@ -128,7 +132,7 @@ function parseCubeDesk(root: Obj): ImportResult | null {
   }
   const out: ImportedSession[] = [];
   for (const [id, list] of buckets) out.push({ name: nameOf.get(id) ?? `Session ${id.slice(0, 6)}`, solves: list });
-  if (other) notes.push(`Skipped ${other} solve${other > 1 ? 's' : ''} for other puzzles. This app times 3x3 only.`);
+  if (other) notes.push(`Skipped ${other} solve${other > 1 ? 's' : ''} for other puzzles. This app times 3x3 and 2x2.`);
   if (trainer) notes.push(`Skipped ${trainer} trainer solve${trainer > 1 ? 's' : ''}: only your history is imported.`);
   if (junk) notes.push(`Skipped ${junk} solve${junk > 1 ? 's' : ''} that had no session or an unreadable time.`);
   return { format: 'CubeDesk', sessions: out, notes };

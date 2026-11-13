@@ -36,6 +36,15 @@
   let open = $state<string | null>(null);
   let undone = $state<{ solve: (typeof solves)[number]; index: number } | null>(null);
   let undoT: ReturnType<typeof setTimeout> | undefined;
+  /** the split a clear removed, while it can still be put back */
+  let splitUndo = $state<{ id: string; splits: number[] } | null>(null);
+  let splitUndoT: ReturnType<typeof setTimeout> | undefined;
+  function clearSplit(id: string, splits: number[]) {
+    store.setSplits(id, undefined);
+    splitUndo = { id, splits };
+    clearTimeout(splitUndoT);
+    splitUndoT = setTimeout(() => (splitUndo = null), 6000);
+  }
 
   // progress chart of the last 50 solves (DNFs are skipped)
   const pts = $derived(solves.slice(-50).map(effective));
@@ -227,6 +236,9 @@
                   }}>Retry this scramble</button
                 >
                 <button class="btn" onclick={() => store.cyclePenalty(s.id)}>Penalty: {s.pen || 'none'}</button>
+                {#if s.splits?.length}
+                  <button class="btn" onclick={() => clearSplit(s.id, s.splits!)}>Clear split</button>
+                {/if}
                 <button
                   class="btn"
                   onclick={() => {
@@ -249,6 +261,19 @@
         </button>
       {/if}
     </div>
+    {#if splitUndo}
+      {@const su = splitUndo}
+      <div class="card row sp" role="status" aria-live="polite" style="border-color:var(--am)">
+        <span class="mu">Split cleared</span>
+        <button
+          class="btn"
+          onclick={() => {
+            store.setSplits(su.id, su.splits);
+            splitUndo = null;
+          }}>Undo</button
+        >
+      </div>
+    {/if}
     {#if undone}
       {@const u = undone}
       <div class="card row sp" role="status" aria-live="polite" style="border-color:var(--am)">

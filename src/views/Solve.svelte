@@ -10,7 +10,11 @@
   import { ScrambleQueue } from '../lib/core/scramble';
   import { averageOf, best, effective, formatTime, mean, phaseLabels, phaseMeans, type Penalty, type Solve } from '../lib/core/stats';
 
-  const queue = new ScrambleQueue();
+  // The puzzle comes from the session: every session times exactly one, so switching the event switches
+  // sessions and the history, the averages and the scrambles all follow it.
+  const event = $derived(store.session.event ?? '333');
+  const EVENT_NAME: Record<string, string> = { '333': '3x3', '222': '2x2' };
+  let queue = new ScrambleQueue('333');   // replaced by the effect below, which reads the current event
   let scramble = $state('Generating scramble…');
   // History asks for a scramble to be re-timed ("retry this scramble"). Solve stays mounted while
   // History is open, so this has to be an effect on the store rather than a read at init.
@@ -20,8 +24,14 @@
     scramble = r;
     store.retry = null;
   });
-  queue.take().then((s) => {
-    if (scramble.startsWith('Generating')) scramble = s;
+  // a new queue per puzzle: a 2x2 scramble must never be the one a 3x3 solve is timed against
+  $effect(() => {
+    const e = event;
+    queue = new ScrambleQueue(e);
+    scramble = 'Generating scramble…';
+    queue.take().then((s) => {
+      if (scramble.startsWith('Generating')) scramble = s;
+    });
   });
 
   const solves = $derived(store.solves);
@@ -34,6 +44,19 @@
   const phaseAvg = $derived(phaseMeans(solves, 12, split.length));
   // a delta against one solve is always zero: it only means something from the second split solve on
   const comparable = $derived(solves.filter((x) => x.pen !== 'DNF' && x.splits?.length).length > 1);
+  /** where the time went: the biggest phase of this solve, and the set that trains it */
+  const worst = $derived.by(() => {
+    if (!split.length) return null;
+    const total = split.reduce((a, b) => a + b, 0) || 1;
+    let at = 0;
+    split.forEach((v, i) => { if (v > split[at]) at = i; });
+    const label = phaseLabels(split.length)[at];
+    return { label, share: Math.round((100 * split[at]) / total), trainable: label === 'Cross' || label === 'F2L' || label === 'OLL' || label === 'PLL' };
+  });
+  function drill(label: string) {
+    if (label === 'Cross') { nav.drillMode = 'cross'; nav.go('drills'); return; }
+    if (label === 'F2L' || label === 'OLL' || label === 'PLL') { nav.trainSet = label; nav.go('train'); }
+  }
   // how the last solve compares with the session average (finished solves only)
   const vsAvg = $derived.by(() => {
     const done = solves.map(effective).filter(Number.isFinite);
@@ -124,10 +147,17 @@
             onclick={() => {
               if (!store.timerRunning) sessions = true;
             }}
-            aria-label="Sessions. Current: {store.session.name}">3x3 ·
+            aria-label="Sessions. Current: {store.session.name}">{EVENT_NAME[event]} ·
             <span class="chip-name">{store.session.name}</span> ▾</button
           >
           <button class="btn history-btn" disabled={store.timerRunning} onclick={() => (history = true)}>History · {solves.length}</button>
+        </div>
+        <div class="seg" role="group" aria-label="Puzzle" style="align-self:flex-start;width:9.5rem">
+          {#each ['333', '222'] as e (e)}
+            <button class:on={event === e} aria-pressed={event === e} onclick={() => store.setEvent(e as '333' | '222')}
+              >{EVENT_NAME[e]}</button
+            >
+          {/each}
         </div>
         {#if store.shown('solve.scramble')}
           <div class="scr" aria-label="Scramble" aria-live="polite">
@@ -137,7 +167,7 @@
           </div>
           <button class="btn" style="align-self:center;min-height:40px" onclick={newScramble}>New scramble</button>
         {/if}
-        {#if store.shown('solve.cube') && !store.cubeHidden && scramble.includes(' ') && !scramble.startsWith('Generating')}
+        {#if event === '333' && store.shown('solve.cube') && !store.cubeHidden && scramble.includes(' ') && !scramble.startsWith('Generating')}
           <div class="card cube-panel" style="display:flex;justify-content:center">
             <ScrambleWalk
               size={wide ? 58 : 90}
@@ -148,7 +178,7 @@
               onClose={() => (store.cubeHidden = true)}
             />
           </div>
-        {:else}
+        {:else if event === '333'}
           <button
             class="btn"
             style="align-self:center;min-height:0;padding:6px 12px;font-size:.8rem"
@@ -180,7 +210,7 @@
             shown={last ? effective(last) : null}
             cover={store.data.settings.coverOn}
             coverColor={store.data.settings.coverColor}
-            splits={store.data.settings.splits === true}
+            splits={store.data.settings.splits === true && event === '333'}
             onfinish={finish}
           />
         </div>
@@ -240,6 +270,15 @@
                 </div>
               {/each}
             </div>
+            {#if worst}
+              <div class="row sp" style="margin-top:10px;gap:10px">
+                <span class="mu" style="font-size:0.78rem">{worst.label} is {worst.share}% of this solve</span>
+                {#if worst.trainable}
+                  <button class="btn" style="flex:none;min-height:32px;padding:0 12px;font-size:0.82rem"
+                    onclick={() => drill(worst.label)}>Drill {worst.label}</button>
+                {/if}
+              </div>
+            {/if}
           </div>
         {/if}
         {#if store.shown('solve.stats')}

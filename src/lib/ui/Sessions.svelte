@@ -7,13 +7,14 @@
   let editing = $state<string | null>(null);
   let editName = $state('');
   let deleted = $state<string | null>(null);   // the session just removed, while it can still be undone
+  const EVENT_NAME: Record<string, string> = { '333': '3x3', '222': '2x2' };
   const info = (id: string) => {
     const s = store.data.solves.filter(x => x.session === id);
     const times = s.map(effective).filter(Number.isFinite);
     const last = s.reduce((m, x) => Math.max(m, x.ts), 0);
     const days = last ? Math.floor((Date.now() - last) / 86400000) : null;
     const when = days == null ? 'never' : days <= 0 ? 'today' : days === 1 ? 'yesterday' : `${days} days ago`;
-    return `${s.length} solves · best ${formatTime(best(s))} · avg ${formatTime(mean(times))} · ao12 ${formatTime(averageOf(s, 12))} · last ${when}`;
+    return `${s.length === 1 ? '1 solve' : `${s.length} solves`} · best ${formatTime(best(s))} · avg ${formatTime(mean(times))} · ao12 ${formatTime(averageOf(s, 12))} · last ${when}`;
   };
   function create() { store.addSession(name); name = ''; onClose(); }
   // Escape goes back; so does the "New scramble" key (S by default), matching the timer screen
@@ -27,7 +28,10 @@
 
 <main class="page">
   <div class="row sp"><h1>Sessions</h1><button class="btn" onclick={onClose}>Done</button></div>
-  <div class="mu">Each session keeps its own solves and statistics. Training progress is shared.</div>
+  <div class="mu">
+    Each session keeps its own solves, statistics and puzzle. Training progress is shared. A new session is
+    for the puzzle you are timing now ({EVENT_NAME[store.session.event ?? '333']}).
+  </div>
   <div role="radiogroup" aria-label="Current session" style="display:flex;flex-direction:column;gap:8px">
     {#each store.data.sessions as s (s.id)}
       <div class="card" style="display:flex;flex-direction:column;gap:8px">
@@ -37,7 +41,7 @@
           <div class="row"><button class="btn p" onclick={() => { store.renameSession(s.id, editName); editing = null; }}>Save</button><button class="btn" onclick={() => (editing = null)}>Cancel</button></div>
         {:else}
           <button role="radio" aria-checked={store.session.id === s.id} class="btn" class:on={store.session.id === s.id} style="text-align:left;padding:10px 12px;display:flex;flex-direction:column;gap:2px" onclick={() => { store.switchSession(s.id); onClose(); }}>
-            <b>{s.name}</b><span class="mu">{store.session.id === s.id ? 'Current · ' : ''}{info(s.id)}</span>
+            <b>{s.name}</b><span class="mu">{EVENT_NAME[s.event ?? '333']} · {store.session.id === s.id ? 'Current · ' : ''}{info(s.id)}</span>
           </button>
           <div class="row">
             <button class="btn" onclick={() => { editing = s.id; editName = s.name; }}>Rename</button>
