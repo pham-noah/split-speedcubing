@@ -3,9 +3,9 @@
 ![Split trainer on desktop](docs/desktop-trainer.png)
 
 A speedcubing timer and algorithm trainer that keeps everything on the device: no account, no backend, no
-tracking. Time solves with inspection and WCA penalties, then drill **PLL (21)**, **OLL (57)**, **F2L (41 cases
-in 4 slots)** and **ZBLL (472)** with recognition and execution timing, case-specific scrambles, spaced
-repetition and diagrams generated from the algorithms themselves.
+tracking. Time 3x3 or 2x2 solves with inspection and WCA penalties, then drill **PLL (21)**, **OLL (57)**,
+**F2L (41 cases in 4 slots)** and **ZBLL (472)** with recognition and execution timing, case-specific scrambles,
+spaced repetition and diagrams generated from the algorithms themselves.
 
 One Svelte 5 + TypeScript codebase, three shells: browser/PWA, Android (Capacitor), desktop (Tauri).
 
@@ -17,7 +17,11 @@ One Svelte 5 + TypeScript codebase, three shells: browser/PWA, Android (Capacito
   best/ao5/ao12, sessions with their own history, undoable deletes.
 - **Splits (opt-in):** turn split timing on and a Split pill sits over the running clock; each tap (or `/`)
   marks the end of a phase, so a solve reads Cross · F2L · OLL · PLL, each against your last twelve, with the
-  breakdown kept on the solve and totalled on History. Every other surface still stops the solve.
+  breakdown kept on the solve and totalled on History. A mark on the wrong phase is undoable while the clock
+  runs and clearable from History, and the phase that took the longest is one button from the set that trains
+  it. Every other surface still stops the solve.
+- **2x2:** a puzzle switch on the timer. Each puzzle has its own sessions, scrambles (random-state) and
+  history, so 2x2 averages never mix with 3x3 ones.
 - **Train:** Today (due, new, week averages, weak spots, lapses), then per-set drills with recognition and
   execution timing, attempt grading and FSRS scheduling.
 - **History:** best, mean, spread, best ao5/ao12/ao50/ao100, a 50-solve chart and every solve — 200 rows at a
@@ -27,9 +31,10 @@ One Svelte 5 + TypeScript codebase, three shells: browser/PWA, Android (Capacito
   FR/FL/BL/BR; ZBLL lists its 472 filtered by the seven subsets. Several algorithms per case, your default, your
   own additions (machine-checked), per-algorithm stats.
 - **Drills:** Cross, 2-look OLL, 2-look PLL, BLD memo.
-- **Import:** csTimer, CubeDesk, CSV and plain time lists. Sessions, penalties and scrambles survive; other
-  puzzles are skipped with a note, duplicates are skipped, and files over 5 MB are refused instead of parsed on
-  the main thread.
+- **Import / export:** csTimer, CubeDesk, CSV and plain time lists come in — sessions, penalties and scrambles
+  survive, other puzzles are skipped with a note, duplicates are skipped, and files over 5 MB are refused
+  instead of parsed on the main thread. Settings → Data writes the history back out in csTimer's own file
+  shape, so leaving is a round trip rather than a one-way door.
 - **Settings:** three themes, text size to 130%, hold time, inspection, split timing, recall target, personalised scheduling,
   backup export/restore, screen layout.
 - **Keyboard:** 25 named, rebindable commands; arrow keys walk the screen by position. Android Back / Esc closes
@@ -45,11 +50,11 @@ One Svelte 5 + TypeScript codebase, three shells: browser/PWA, Android (Capacito
 ```bash
 npm install
 npm run dev             # http://localhost:5173
-npm test                # 832 tests in 26 files
+npm test                # 836 tests in 27 files
 npm run check           # svelte-check: types
 npm run lint            # eslint
-npm run e2e             # 44 real-browser checks against a build on :4173
-npm run e2e:offline     # 47: the same suite plus the three that need the worker, on :4174
+npm run e2e             # 52 real-browser checks against a build on :4173
+npm run e2e:offline     # 55: the same suite plus the three that need the worker, on :4174
 npm run version:check   # package.json, Cargo.toml, tauri.conf.json, build.gradle and the changelog agree
 ```
 
@@ -184,7 +189,10 @@ their own set here.
   finding where the time goes, not for judging a solve.
 - csTimer and CubeDesk are the only importers read from the other app's own code rather than guessed: csTimer is
   covered by a file cstimer.net wrote (`src/lib/core/fixtures/cstimer-export.json`), CubeDesk by its export/import
-  source, because cubedesk.io keeps export behind an account.
+  source, because cubedesk.io keeps export behind an account. The csTimer export is written the same way, from
+  cstimer.net's storage and import code; it is not claimed to carry anything csTimer keeps outside a session.
+- The trainer covers 3x3 last-layer and F2L cases only. A 2x2 session times solves and keeps its own statistics,
+  but there is no 2x2 case trainer (PBL/CLL) yet.
 
 ## Licence
 

@@ -1,0 +1,1 @@
+2x2: switch puzzle on the timer and it gets its own session, scrambles and history. Splits can be corrected: undo a mark while the clock runs, or clear a wrong one from history, and the phase that took the longest is one tap from the set that trains it. Export for csTimer writes your history in a file csTimer reads back.
