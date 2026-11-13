@@ -1,5 +1,7 @@
 export type Penalty = '' | '+2' | 'DNF';
-export interface Solve { id: string; ms: number; pen: Penalty; scramble: string; event: string; ts: number; session?: string }
+// `splits` is opt-in (Settings → Split timing): the length of each segment of the solve in ms, in the
+// order the marks were made, with the last one running to the stop. Absent on every solve timed without it.
+export interface Solve { id: string; ms: number; pen: Penalty; scramble: string; event: string; ts: number; session?: string; splits?: number[] }
 
 // Effective time in ms: DNF is Infinity, +2 adds 2000.
 export const effective = (s: Pick<Solve, 'ms' | 'pen'>) => (s.pen === 'DNF' ? Infinity : s.ms + (s.pen === '+2' ? 2000 : 0));
@@ -84,5 +86,56 @@ export function runningAverage(times: number[], n: number): (number | null)[] {
     const w = times.slice(i + 1 - n, i + 1).sort((a, b) => a - b);
     const avg = w.slice(1, -1).reduce((a, b) => a + b, 0) / (n - 2);
     return Number.isFinite(avg) ? avg : Infinity;
+  });
+}
+
+/** Sample standard deviation of the finished times: the "how consistent am I" number next to the mean.
+ *  A DNF has no number to include, so it is skipped rather than counted as the mean. */
+export function stdDev(times: number[]): number | null {
+  const v = times.filter(Number.isFinite);
+  if (v.length < 2) return null;
+  const m = v.reduce((a, b) => a + b, 0) / v.length;
+  const variance = v.reduce((a, t) => a + (t - m) ** 2, 0) / (v.length - 1);
+  return Math.sqrt(variance);
+}
+
+// --- phase splits -------------------------------------------------------------------------------
+// The four phases a solve is split into, in the order a mark ends each one. A mark is the elapsed time
+// at the tap; the last segment always runs to the stop, so three marks give all four phases.
+export const PHASES = ['Cross', 'F2L', 'OLL', 'PLL'] as const;
+export type Phase = (typeof PHASES)[number];
+
+/** Elapsed marks to segment lengths. A mark outside (previous, total) is dropped: a stray double tap
+ *  must not produce a zero-length phase or a negative one. */
+export function splitSegments(marks: number[], total: number): number[] {
+  if (!Number.isFinite(total) || total <= 0) return [];
+  const out: number[] = [];
+  let prev = 0;
+  for (const m of marks) {
+    if (!Number.isFinite(m) || m <= prev || m >= total) continue;
+    out.push(m - prev);
+    prev = m;
+  }
+  if (prev > 0) out.push(total - prev);
+  return out;
+}
+
+/** Names line up with the segment count. Fewer than four segments means the tail was never marked, so
+ *  it is called what it is ("Rest") rather than borrowing the name of a phase it also contains. */
+export function phaseLabels(n: number): string[] {
+  if (n <= 0) return [];
+  const whole = n === PHASES.length;
+  return Array.from({ length: n }, (_, i) =>
+    whole ? PHASES[i] : i === n - 1 ? 'Rest' : (PHASES[i] ?? `Phase ${i + 1}`),
+  );
+}
+
+/** Mean length of each phase over the last `n` solves that carry that many segments. A DNF keeps its
+ *  split in the record but is left out of the average: its segments are real, its time is not. */
+export function phaseMeans(solves: Solve[], n = 12, count = PHASES.length): (number | null)[] {
+  const use = solves.filter((s) => s.pen !== 'DNF' && s.splits?.length).slice(-n);
+  return Array.from({ length: count }, (_, i) => {
+    const v = use.map((s) => s.splits![i]).filter((x): x is number => Number.isFinite(x));
+    return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
   });
 }

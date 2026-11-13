@@ -17,15 +17,19 @@ describe('case diagrams render', () => {
       expect(coloured, c.id).toBeLessThanOrEqual(5);      // corner (<=3) + edge (<=2)
     }
   });
-  it('OLL renders a 21-sticker last-layer view; PLL renders movement arrows, no colour', () => {
+  it('OLL renders a 21-sticker last-layer view; PLL renders the coloured side ring plus arrows', () => {
     for (const c of OLL.slice(0, 5)) {
       expect(fills(render(CaseDiagram, { props: { alg: c.alg, mode: 'oll' } }).body).length).toBe(21);
     }
     for (const c of PLL) {
       const html = render(CaseDiagram, { props: { alg: c.alg, mode: 'pll' } }).body;
       const f = fills(html);
-      expect(f.length, c.id).toBe(9);                       // the 3x3 grid, drawn dark
-      expect([...new Set(f)], c.id).toEqual(['#141821']);
+      // 9 dark top cells, then the 12 side stickers of the layer in their own colours
+      expect(f.length, c.id).toBe(21);
+      expect(f.slice(0, 9), c.id).toEqual(Array(9).fill('#141821'));
+      const ring = f.slice(9);
+      expect(ring.every(x => x !== '#141821' && x !== '#4A5160'), c.id).toBe(true);
+      expect(new Set(ring).size, c.id).toBeGreaterThan(1);  // the colours are what identify the case
       expect((html.match(/stroke="var\(--am\)"/g) ?? []).length, c.id).toBeGreaterThanOrEqual(2); // every PLL moves something
     }
   });

@@ -35,6 +35,25 @@ describe('storage + backup', () => {
     ], cards: {} });
     expect(new Set(d.solves.map(s => s.id)).size).toBe(2);
   });
+  it('keeps a split only if it is a list of positive times, and leaves it off otherwise', () => {
+    const d = normalize({
+      solves: [
+        { id: 'a', ms: 18000, pen: '', scramble: '', event: '333', ts: 1, splits: [2000, 9000, 12000, 6000] },
+        { id: 'b', ms: 18000, pen: '', scramble: '', event: '333', ts: 2, splits: [2000, 'x', 0, -5, 6000] },
+        { id: 'c', ms: 18000, pen: '', scramble: '', event: '333', ts: 3, splits: 'nope' },
+        { id: 'd', ms: 18000, pen: '', scramble: '', event: '333', ts: 4 },
+      ],
+    });
+    expect(d.solves[0].splits).toEqual([2000, 9000, 12000, 6000]);
+    expect(d.solves[1].splits).toEqual([2000, 6000]);      // the junk entries are dropped, not the split
+    expect(d.solves[2].splits).toBeUndefined();
+    expect('splits' in d.solves[3]).toBe(false);
+  });
+  it('split timing is off unless the backup says otherwise', () => {
+    expect(normalize({ solves: [], cards: {} }).settings.splits).toBe(false);
+    expect(normalize({ solves: [], cards: {}, settings: { splits: 'yes' } }).settings.splits).toBe(false);
+    expect(normalize({ solves: [], cards: {}, settings: { splits: true } }).settings.splits).toBe(true);
+  });
   it('clamps settings a hand-edited backup could put out of range', () => {
     const d = normalize({ solves: [], cards: {}, settings: { theme: 'neon', textSize: 400, holdMs: 7, retention: 5, accent: 'red', hidden: null } });
     expect(d.settings.theme).toBe('midnight');

@@ -19,6 +19,7 @@ export const COMMANDS: Command[] = [
   { id: 'history', label: 'Open history', scope: 'solve', def: 'KeyD' },
   { id: 'sessions', label: 'Open sessions', scope: 'solve', def: 'KeyA' },
   { id: 'scramble', label: 'New scramble', scope: 'solve', def: 'KeyS', alt: 'KeyW' },
+  { id: 'split', label: 'Mark a phase split (while solving)', scope: 'solve', def: 'Slash' },
   { id: 'nextCase', label: 'Next case (new scramble)', scope: 'train', def: 'KeyW' },
   { id: 'trainPrev', label: 'Previous case set', scope: 'train', def: 'KeyA' },
   { id: 'trainNext', label: 'Next case set', scope: 'train', def: 'KeyD' },
@@ -48,7 +49,14 @@ export function conflictFor(id: string, code: string, overrides: Record<string, 
 const NOT_ALLOWED = new Set(['ShiftLeft', 'ShiftRight', 'ControlLeft', 'ControlRight', 'AltLeft', 'AltRight', 'MetaLeft', 'MetaRight', 'Tab', 'Enter', 'CapsLock']);
 export const canBind = (code: string) => !NOT_ALLOWED.has(code) && code.length > 0;
 
+// A punctuation key reads as the character it types, not as its DOM name ("Slash" is not a keycap).
+const PUNCT: Record<string, string> = {
+  Slash: '/', Period: '.', Comma: ',', Semicolon: ';', Quote: "'", Backquote: '`',
+  BracketLeft: '[', BracketRight: ']', Backslash: '\\', Minus: '-', Equal: '=',
+};
+
 export function codeLabel(code: string): string {
+  if (PUNCT[code]) return PUNCT[code];
   if (code.startsWith('Key')) return code.slice(3);
   if (code.startsWith('Digit')) return code.slice(5);
   if (code.startsWith('Numpad')) return 'Num ' + code.slice(6);

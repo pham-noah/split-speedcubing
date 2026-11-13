@@ -8,7 +8,7 @@
   import Deltas from '../lib/ui/Deltas.svelte';
   import ShortcutsSide from '../lib/ui/ShortcutsSide.svelte';
   import { ScrambleQueue } from '../lib/core/scramble';
-  import { averageOf, best, effective, formatTime, mean, type Penalty, type Solve } from '../lib/core/stats';
+  import { averageOf, best, effective, formatTime, mean, phaseLabels, phaseMeans, type Penalty, type Solve } from '../lib/core/stats';
 
   const queue = new ScrambleQueue();
   let scramble = $state('Generating scramble…');
@@ -26,6 +26,12 @@
 
   const solves = $derived(store.solves);
   const last = $derived(solves.at(-1));
+  // the last solve's phase split (opt-in; absent on any solve timed with the setting off) and the
+  // per-phase averages it is measured against
+  const split = $derived(last?.splits?.length ? last.splits : []);
+  const phaseAvg = $derived(phaseMeans(solves, 12));
+  // a delta against one solve is always zero: it only means something from the second split solve on
+  const comparable = $derived(solves.filter((x) => x.pen !== 'DNF' && x.splits?.length).length > 1);
   // how the last solve compares with the session average (finished solves only)
   const vsAvg = $derived.by(() => {
     const done = solves.map(effective).filter(Number.isFinite);
@@ -46,8 +52,8 @@
     scramble = 'Generating scramble…';
     scramble = await queue.take();
   }
-  async function finish(r: { ms: number; pen: Penalty }) {
-    store.addSolve(r.ms, scramble, r.pen);
+  async function finish(r: { ms: number; pen: Penalty; splits?: number[] }) {
+    store.addSolve(r.ms, scramble, r.pen, r.splits);
     await newScramble();
   }
   // deleting is undoable for a few seconds, so a stray C does not cost you a solve
@@ -172,6 +178,7 @@
             shown={last ? effective(last) : null}
             cover={store.data.settings.coverOn}
             coverColor={store.data.settings.coverColor}
+            splits={store.data.settings.splits === true}
             onfinish={finish}
           />
         </div>
@@ -200,6 +207,37 @@
               onclick={() => store.setPenalty('DNF')}>DNF</button
             >
             <button class="btn" disabled={!last || store.timerRunning} onclick={removeLast}>Delete</button>
+          </div>
+        {/if}
+        {#if split.length}
+          <div class="card" style="padding:12px 14px" aria-label="Phase splits for the last solve">
+            <div class="row sp" style="margin-bottom:8px">
+              <span class="mu">Phases</span>
+              <span class="mu mono" style="font-size:0.7rem">vs your last 12 splits</span>
+            </div>
+            <div class="phbar" aria-hidden="true">
+              {#each split as ms, i (i)}
+                <span style="flex:{ms};opacity:{1 - i * 0.19}"></span>
+              {/each}
+            </div>
+            <div class="phrow" style="grid-template-columns:repeat({split.length},minmax(0,1fr))">
+              {#each split as ms, i (i)}
+                {@const avg = phaseAvg[i]}
+                {@const d = avg == null ? null : ms - avg}
+                <div>
+                  <div class="ph-l">{phaseLabels(split.length)[i]}</div>
+                  <b class="mono" style="font-size:0.95rem">{formatTime(ms)}</b>
+                  {#if comparable && d != null && Math.abs(d) >= 60}
+                    <div
+                      class="mono"
+                      style="font-size:0.68rem;color:{d < 0 ? 'var(--good)' : 'var(--bad)'}"
+                    >
+                      {d < 0 ? '−' : '+'}{(Math.abs(d) / 1000).toFixed(2)}
+                    </div>
+                  {/if}
+                </div>
+              {/each}
+            </div>
           </div>
         {/if}
         {#if store.shown('solve.stats')}

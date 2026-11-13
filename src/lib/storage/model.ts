@@ -5,13 +5,13 @@ export interface Attempt { ts: number; total: number; recog: number | null; grad
 // algs = extra algorithms the user added (the built-in one is always available); defaultAlg = the one used for training.
 // `alg` is the legacy single-alg field from v0.1, migrated in normalize().
 export interface CardRecord extends Card { algs?: string[]; defaultAlg?: string; alg?: string; attempts: Attempt[] }
-export interface Settings { theme: 'midnight' | 'amoled' | 'contrast'; textSize: number; holdMs: number; inspection: boolean; beeps: boolean; hideTime: boolean; tapStart: boolean; retention: number; keys: Record<string, string>; hidden: Record<string, boolean>; introSeen: boolean; coverOn: boolean; coverColor: string; accent: string; walkAutoplay: boolean; walkSpeed: number; cubeColors: string[]; swapRO: boolean; checkUpdates?: boolean; drillTwoLook?: boolean; lastBackupAt?: number; autoBackup?: boolean; fsrsW?: number[] }
+export interface Settings { theme: 'midnight' | 'amoled' | 'contrast'; textSize: number; holdMs: number; inspection: boolean; beeps: boolean; hideTime: boolean; tapStart: boolean; retention: number; keys: Record<string, string>; hidden: Record<string, boolean>; introSeen: boolean; coverOn: boolean; coverColor: string; accent: string; walkAutoplay: boolean; walkSpeed: number; cubeColors: string[]; swapRO: boolean; checkUpdates?: boolean; drillTwoLook?: boolean; lastBackupAt?: number; autoBackup?: boolean; fsrsW?: number[]; splits?: boolean }
 export interface DrillResult { type: 'cross' | 'bld' | 'oll2' | 'pll2'; ms: number; memo: number | null; ok: boolean; ts: number; info?: string; pen?: '+2' | 'DNF' }
 export interface Session { id: string; name: string }
 export interface CustomCase { id: string; name: string; alg: string }
 export interface AppData { v: 1; solves: Solve[]; cards: Record<string, CardRecord>; settings: Settings; drills: DrillResult[]; sessions: Session[]; session: string; zbll: CustomCase[]; f2lRev?: number }
 
-export const defaultSettings = (): Settings => ({ theme: 'midnight', textSize: 100, holdMs: 300, tapStart: false, inspection: false, beeps: true, hideTime: false, retention: 0.9, keys: {}, hidden: {}, introSeen: false, coverOn: true, coverColor: '', accent: '', walkAutoplay: false, walkSpeed: 900, cubeColors: [], swapRO: false, autoBackup: true });
+export const defaultSettings = (): Settings => ({ theme: 'midnight', textSize: 100, holdMs: 300, tapStart: false, inspection: false, beeps: true, hideTime: false, retention: 0.9, keys: {}, hidden: {}, introSeen: false, coverOn: true, coverColor: '', accent: '', walkAutoplay: false, walkSpeed: 900, cubeColors: [], swapRO: false, autoBackup: true, splits: false });
 export const defaultData = (): AppData => ({ v: 1, solves: [], cards: {}, settings: defaultSettings(), drills: [], sessions: [{ id: 'default', name: 'Session 1' }], session: 'default', zbll: [] });
 
 const PENALTIES = new Set(['', '+2', 'DNF']);
@@ -21,6 +21,13 @@ const HOLD_TIMES = [150, 300, 500];
 
 const finite = (n: unknown): n is number => typeof n === 'number' && Number.isFinite(n);
 const positive = (n: unknown): n is number => finite(n) && n > 0;
+
+/** Phase splits from a backup: positive lengths only, at most one per phase plus a tail. Anything else
+ *  (strings, zeroes, a hand-edited mess) drops the split rather than drawing a broken bar. */
+function splitTimes(raw: unknown): number[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.filter(positive).slice(0, 8);
+}
 
 // A backup file is user-supplied JSON: every field that reaches the screens is checked here, so a
 // corrupt or hand-edited file cannot produce NaN averages, a "bogus" penalty or duplicate keys.
@@ -44,6 +51,7 @@ function cleanSolves(raw: unknown[]): Solve[] {
       event: typeof s.event === 'string' && s.event ? s.event : '333',
       ts: finite(s.ts) ? s.ts : 0,
       ...(typeof s.session === 'string' ? { session: s.session } : {}),
+      ...(splitTimes(s.splits).length ? { splits: splitTimes(s.splits) } : {}),
     });
   }
   return out;
@@ -119,6 +127,7 @@ function cleanSettings(raw: Partial<Settings> | undefined): Settings {
   d.hidden = d.hidden && typeof d.hidden === 'object' ? { ...d.hidden } : {};
   d.checkUpdates = d.checkUpdates === true;
   d.autoBackup = d.autoBackup !== false;
+  d.splits = d.splits === true;
   return d;
 }
 

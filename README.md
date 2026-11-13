@@ -15,16 +15,22 @@ One Svelte 5 + TypeScript codebase, three shells: browser/PWA, Android (Capacito
 
 - **Solve:** hold to start, optional 15 s inspection (warns at 8 and 12 s, +2 at 15, DNF at 17), penalties,
   best/ao5/ao12, sessions with their own history, undoable deletes.
+- **Splits (opt-in):** turn split timing on and a Split pill sits over the running clock; each tap (or `/`)
+  marks the end of a phase, so a solve reads Cross · F2L · OLL · PLL, each against your last twelve, with the
+  breakdown kept on the solve and totalled on History. Every other surface still stops the solve.
 - **Train:** Today (due, new, week averages, weak spots, lapses), then per-set drills with recognition and
   execution timing, attempt grading and FSRS scheduling.
-- **Library:** mastery grid per set. F2L lists its 41 cases once and rotates them across FR/FL/BL/BR; ZBLL lists
-  its 472 filtered by the seven subsets. Several algorithms per case, your default, your own additions
-  (machine-checked), per-algorithm stats.
+- **History:** best, mean, spread, best ao5/ao12/ao50/ao100, a 50-solve chart and every solve — 200 rows at a
+  time, with *Show older* paging back through a session of any length.
+- **Library:** mastery grid per set, each case drawn from its own algorithm — PLL with the twelve side stickers
+  of the layer in their real colours around the arrows. F2L lists its 41 cases once and rotates them across
+  FR/FL/BL/BR; ZBLL lists its 472 filtered by the seven subsets. Several algorithms per case, your default, your
+  own additions (machine-checked), per-algorithm stats.
 - **Drills:** Cross, 2-look OLL, 2-look PLL, BLD memo.
 - **Import:** csTimer, CubeDesk, CSV and plain time lists. Sessions, penalties and scrambles survive; other
   puzzles are skipped with a note, duplicates are skipped, and files over 5 MB are refused instead of parsed on
   the main thread.
-- **Settings:** three themes, text size to 130%, hold time, inspection, recall target, personalised scheduling,
+- **Settings:** three themes, text size to 130%, hold time, inspection, split timing, recall target, personalised scheduling,
   backup export/restore, screen layout.
 - **Keyboard:** 25 named, rebindable commands; arrow keys walk the screen by position. Android Back / Esc closes
   the top-most thing first; on the timer screen it stops and discards the solve that is running, and no other key
@@ -39,11 +45,11 @@ One Svelte 5 + TypeScript codebase, three shells: browser/PWA, Android (Capacito
 ```bash
 npm install
 npm run dev             # http://localhost:5173
-npm test                # 824 tests in 26 files
+npm test                # 832 tests in 26 files
 npm run check           # svelte-check: types
 npm run lint            # eslint
-npm run e2e             # 38 real-browser checks against a build on :4173
-npm run e2e:offline     # 41: the same suite plus the three that need the worker, on :4174
+npm run e2e             # 44 real-browser checks against a build on :4173
+npm run e2e:offline     # 47: the same suite plus the three that need the worker, on :4174
 npm run version:check   # package.json, Cargo.toml, tauri.conf.json, build.gradle and the changelog agree
 ```
 
@@ -150,7 +156,7 @@ src/lib/store.svelte.ts   the single app store (runes)
   they predict held-out cases better; that replay runs in a worker (`fsrs-worker.ts`), falling back to the main
   thread where there is none.
 - **Storage** is IndexedDB behind one interface: settings, sessions and the drill log in one record, and every
-  solve and every case in their own store, so a solve writes one entry and a graded case writes one case. A save
+  solve and every case in their own store, so a solve (its phase split included) writes one entry and a graded case writes one case. A save
   also copies only what changed: at 10 000 solves that is 14 ms instead of 960 ms per save. Older databases
   migrate on read; `normalize()` is the only place a backup file is trusted.
 - **Timer scrambles** are cubing.js random-state scrambles, loaded on demand in a worker, with a random-move
@@ -174,6 +180,8 @@ their own set here.
 - Personalising the schedule is a few seconds of work, not an instant: 3.1 s for 2 512 usable reviews in Chrome.
   It runs off the UI thread, and the worst frame measured during that run was 100 ms, so the timer keeps running
   but a phone will feel it.
+- Phase splits are marked by hand, so a phase is only as accurate as the tap that ended it: they are for
+  finding where the time goes, not for judging a solve.
 - csTimer and CubeDesk are the only importers read from the other app's own code rather than guessed: csTimer is
   covered by a file cstimer.net wrote (`src/lib/core/fixtures/cstimer-export.json`), CubeDesk by its export/import
   source, because cubedesk.io keeps export behind an account.

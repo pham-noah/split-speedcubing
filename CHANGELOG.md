@@ -2,6 +2,26 @@
 
 All notable changes to Split. Format based on [Keep a Changelog](https://keepachangelog.com); versions follow [SemVer](https://semver.org).
 
+## [0.8.0] - 2026-11-13
+
+Phase splits, a deeper read on your history, and PLL diagrams you can recognise from.
+
+### Added
+- **Split timing, off by default.** Settings → Timer turns it on; while the clock runs a Split pill sits
+  above the cover, and each tap (or the `/` key, rebindable) marks the end of a phase — Cross, F2L, OLL and
+  PLL. Tapping anywhere else still stops the solve, so the stop gesture is untouched. The last solve shows
+  its phases as a bar with each phase's delta against your last twelve, History shows the split under any
+  solve that has one, and a Phases card counts where the time actually goes.
+- **History reads past its first page.** Best ao50 and Best ao100 join ao5 and ao12, with the session mean
+  and a spread (standard deviation) beside them, and a *Show older* row pages back through a history the old
+  screen stopped at 200 solves.
+
+### Changed
+- **PLL diagrams carry their colours.** Each case draws the twelve side stickers of the last layer in their
+  real colours around the top face, which is what a cuber reads off a PLL; the arrows stay. OLL and ZBLL
+  thumbnails get the same wider side band.
+- The Settings jump bar clips no chip, and inspection beeps only appear when 15-second inspection is on.
+
 ## [0.7.2] - 2026-11-09
 
 A hardening pass over the timer and the import paths, most of it found by trying to break the app on purpose.

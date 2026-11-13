@@ -35,6 +35,7 @@
     trainPrev: 'Previous case set',
     trainNext: 'Next case set',
     trainHistory: 'Training history',
+    split: 'Mark a phase split',
     tabPrev: 'Previous tab',
     tabNext: 'Next tab',
     goSolve: 'Go to Solve',
@@ -45,7 +46,9 @@
   };
   // The keys that do something here, then the tabs on one line. Sixteen rows of keycaps down the side
   // of every screen is chrome, not help: the tab keys are always the same five numbers.
-  const screenIds = $derived([...new Set([...PAGE[view], 'back'])]);
+  // the split key only exists while split timing is on, so the rail does not promise a dead key
+  const extra = $derived(view === 'solve' && store.data.settings.splits === true ? ['split'] : []);
+  const screenIds = $derived([...new Set([...PAGE[view], ...extra, 'back'])]);
   const tabKeys = $derived(['goTrain', 'goLibrary', 'goSolve', 'goDrills', 'goSettings'].map((id) => codeLabel(store.key(id))).join(' '));
 
   // the rail is fixed on the right, so the page keeps clear of it (desktop only, see app.css)

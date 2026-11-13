@@ -1,0 +1,1 @@
+New, off by default: split timing. While the clock runs a Split pill appears, and each tap marks the end of a phase (Cross, F2L, OLL, PLL). The solve then shows its phases against your last twelve, History keeps the breakdown per solve, and the Library's PLL diagrams now show the coloured side of the layer.

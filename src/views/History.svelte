@@ -1,6 +1,8 @@
 <script lang="ts">
   import { store } from '../lib/store.svelte';
-  import { averageOf, bestAverage, best, effective, formatTime, runningAverage } from '../lib/core/stats';
+  import {
+    averageOf, bestAverage, best, effective, formatTime, mean, phaseLabels, phaseMeans, runningAverage, stdDev,
+  } from '../lib/core/stats';
   import ShortcutsSide from '../lib/ui/ShortcutsSide.svelte';
   const { onBack }: { onBack: () => void } = $props();
 
@@ -13,12 +15,24 @@
     }
   }
   const solves = $derived(store.solves);
-  // The rows below are the last 200 solves, so the deltas only have to cover those plus the 11 before
-  // them that their ao12 windows reach back into. Over the whole session this cost 43 ms at 50 000
-  // solves and 12 ms at 10 000, for numbers no row on screen ever reads.
-  const ROWS = 200,
-    WINDOW = ROWS + 11;
-  const list = $derived([...solves].reverse().slice(0, ROWS));
+  // A page of rows at a time, so a history of 50 000 solves is browsable without ever building 50 000
+  // rows: the deltas only have to cover the rows on screen plus the 11 before them that their ao12
+  // windows reach back into. Over the whole session that cost 43 ms at 50 000 solves, for numbers no
+  // row on screen ever reads.
+  const PAGE = 200;
+  let limit = $state(PAGE);
+  const list = $derived([...solves].reverse().slice(0, limit));
+  // the finished times of this session, and the per-phase means once splits exist
+  const times = $derived(solves.map(effective));
+  const sessionMean = $derived(mean(times.filter(Number.isFinite)));
+  const sd = $derived(stdDev(times));
+  const phaseAvg = $derived(phaseMeans(solves, 12));
+  const splitCount = $derived(solves.filter((s) => s.splits?.length).length);
+  // share of the solve each phase takes, as a percentage of the phases that were measured
+  const phaseTotal = $derived(phaseAvg.reduce<number>((a, b) => a + (b ?? 0), 0));
+  const phasePct = $derived(
+    phaseAvg.map((v) => (v == null || !phaseTotal ? null : Math.round((100 * v) / phaseTotal))),
+  );
   let open = $state<string | null>(null);
   let undone = $state<{ solve: (typeof solves)[number]; index: number } | null>(null);
   let undoT: ReturnType<typeof setTimeout> | undefined;
@@ -48,17 +62,17 @@
   const ok = (x: number | null): x is number => x != null && Number.isFinite(x);
   const fmt = (x: number | null) => (ok(x) ? `${x >= 0 ? '+' : '−'}${(Math.abs(x) / 1000).toFixed(2)}` : '–');
   const col = (x: number | null) => (!ok(x) || x === 0 ? 'var(--mu)' : x < 0 ? 'var(--good)' : 'var(--bad)');
-  const tail = $derived(solves.slice(-WINDOW));
+  const tail = $derived(solves.slice(-(limit + 11)));
   // the same WCA rules as the ao5/ao12 cards, in one pass over the window
-  const times = $derived(tail.map(effective));
-  const a5 = $derived(runningAverage(times, 5));
-  const a12 = $derived(runningAverage(times, 12));
+  const win = $derived(tail.map(effective));
+  const a5 = $derived(runningAverage(win, 5));
+  const a12 = $derived(runningAverage(win, 12));
   const deltas = $derived.by(() => {
     const out = new Map<string, { prev: number | null; a5: number | null; a12: number | null }>();
     tail.forEach((s, i) => {
-      const t = times[i];
+      const t = win[i];
       if (!Number.isFinite(t)) return; // a DNF row shows dashes, not a delta
-      const prevT = i ? times[i - 1] : null;
+      const prevT = i ? win[i - 1] : null;
       const m5 = a5[i],
         m12 = a12[i];
       out.set(s.id, {
@@ -93,6 +107,16 @@
           <b class="mono">{formatTime(best(solves))}</b>
         </div>
         <div class="card">
+          <div class="mu">Mean</div>
+          <b class="mono">{formatTime(sessionMean)}</b>
+        </div>
+        <div class="card">
+          <div class="mu">Spread</div>
+          <b class="mono" style="font-size:1rem">±{formatTime(sd)}</b>
+        </div>
+      </div>
+      <div class="row">
+        <div class="card">
           <div class="mu">Best ao5</div>
           <b class="mono">{formatTime(bestAverage(solves, 5))}</b>
         </div>
@@ -100,7 +124,37 @@
           <div class="mu">Best ao12</div>
           <b class="mono">{formatTime(bestAverage(solves, 12))}</b>
         </div>
+        <div class="card">
+          <div class="mu">Best ao50</div>
+          <b class="mono">{formatTime(bestAverage(solves, 50))}</b>
+        </div>
+        <div class="card">
+          <div class="mu">Best ao100</div>
+          <b class="mono">{formatTime(bestAverage(solves, 100))}</b>
+        </div>
       </div>
+      {#if phaseAvg.some((v) => v != null)}
+        <div class="card">
+          <div class="row sp" style="margin-bottom:8px">
+            <span class="mu">Phases</span>
+            <span class="mu mono" style="font-size:0.7rem">last 12 of {splitCount} split solves</span>
+          </div>
+          <div class="phbar" aria-hidden="true">
+            {#each phaseAvg as ms, i (i)}
+              {#if ms != null}<span style="flex:{ms};opacity:{1 - i * 0.19}"></span>{/if}
+            {/each}
+          </div>
+          <div class="phrow" style="grid-template-columns:repeat({phaseAvg.length},minmax(0,1fr))">
+            {#each phaseAvg as ms, i (i)}
+              <div>
+                <div class="ph-l">{phaseLabels(phaseAvg.length)[i]}</div>
+                <b class="mono" style="font-size:0.95rem">{formatTime(ms)}</b>
+                <div class="mono" style="font-size:0.68rem;color:var(--mu)">{phasePct[i] == null ? '' : `${phasePct[i]}%`}</div>
+              </div>
+            {/each}
+          </div>
+        </div>
+      {/if}
       {#if finite.length > 1}
         <div class="card">
           <div class="row sp">
@@ -144,6 +198,21 @@
             </button>
             {#if open === s.id}
               <div class="mu mono" style="margin:8px 0;word-break:break-word;user-select:text">{s.scramble}</div>
+              {#if s.splits?.length}
+                <div class="phbar" aria-hidden="true" style="margin-bottom:6px">
+                  {#each s.splits as ms, k (k)}
+                    <span style="flex:{ms};opacity:{1 - k * 0.19}"></span>
+                  {/each}
+                </div>
+                <div class="phrow" style="grid-template-columns:repeat({s.splits.length},minmax(0,1fr));margin:0 0 8px">
+                  {#each s.splits as ms, k (k)}
+                    <div>
+                      <div class="ph-l">{phaseLabels(s.splits.length)[k]}</div>
+                      <b class="mono" style="font-size:0.9rem">{formatTime(ms)}</b>
+                    </div>
+                  {/each}
+                </div>
+              {/if}
               <div class="mu">
                 {new Date(s.ts).toLocaleString()} · raw {formatTime(s.ms)} · ao5 {formatTime(
                   averageOf(solves.slice(0, solves.length - i), 5),
@@ -174,6 +243,11 @@
           </div>
         {/each}
       </div>
+      {#if solves.length > list.length}
+        <button class="btn" onclick={() => (limit += PAGE)}>
+          Show {Math.min(PAGE, solves.length - list.length)} older · {list.length} of {solves.length}
+        </button>
+      {/if}
     </div>
     {#if undone}
       {@const u = undone}

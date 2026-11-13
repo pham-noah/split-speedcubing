@@ -260,10 +260,15 @@ class Store {
     return true;
   }
 
-  addSolve(ms: number, scramble: string, pen: Penalty = '') {
+  addSolve(ms: number, scramble: string, pen: Penalty = '', splits?: number[]) {
     // a solve started before the first scramble arrived would otherwise be saved with the placeholder text
     const scr = scramble.startsWith('Generating') ? '' : scramble;
-    this.data.solves.push({ id: uid(), ms, pen, scramble: scr, event: '333', ts: Date.now(), session: this.session.id });
+    // the last segment of a split ends at the stop, so a split is never stored without the time it came from
+    const seg = splits?.length ? splits : undefined;
+    this.data.solves.push({
+      id: uid(), ms, pen, scramble: scr, event: '333', ts: Date.now(), session: this.session.id,
+      ...(seg ? { splits: seg } : {}),
+    });
     this.solvesChanged();
     this.persist();
   }

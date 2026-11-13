@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { averageOf, meanOf, mean, best, bestAverage, formatTime, effective, runningAverage, attemptExec, type Solve } from './stats';
+import {
+  averageOf, meanOf, mean, best, bestAverage, formatTime, effective, runningAverage, attemptExec,
+  stdDev, splitSegments, phaseLabels, phaseMeans, PHASES, type Solve,
+} from './stats';
 const mk = (ms: number, pen: Solve['pen'] = ''): Solve => ({ id: String(Math.random()), ms, pen, scramble: '', event: '333', ts: 0 });
 const list = (...v: (number | [number, Solve['pen']])[]) => v.map(x => (Array.isArray(x) ? mk(x[0], x[1]) : mk(x)));
 
@@ -117,5 +120,49 @@ describe('inspection', () => {
     expect(inspectionText(14900)).toBe('1');
     expect(inspectionText(16000)).toBe('+2');
     expect(inspectionText(18000)).toBe('DNF');
+  });
+});
+
+describe('consistency', () => {
+  it('is the sample standard deviation of the finished times', () => {
+    expect(stdDev([1000, 1000, 1000])).toBe(0);
+    expect(stdDev([900, 1100])).toBeCloseTo(141.42, 1);
+  });
+  it('ignores DNFs and needs two numbers to be about anything', () => {
+    expect(stdDev([1000, Infinity])).toBeNull();
+    expect(stdDev([])).toBeNull();
+  });
+});
+
+describe('phase splits', () => {
+  it('turns marks into segment lengths, the last one running to the stop', () => {
+    expect(splitSegments([2000, 9000, 12000], 18000)).toEqual([2000, 7000, 3000, 6000]);
+  });
+  it('drops a mark that is out of order, on top of the last one, or past the stop', () => {
+    // a double tap (equal), a backwards tap, a tap after the stop, and a NaN
+    expect(splitSegments([3000, 3000, 1000, 20000, NaN], 15000)).toEqual([3000, 12000]);
+    expect(splitSegments([], 15000)).toEqual([]);
+    expect(splitSegments([0], 15000)).toEqual([]);
+  });
+  it('names four segments as the four phases and fewer by what they are', () => {
+    expect(phaseLabels(4)).toEqual(['Cross', 'F2L', 'OLL', 'PLL']);
+    expect(phaseLabels(3)).toEqual(['Cross', 'F2L', 'Rest']);
+    expect(phaseLabels(1)).toEqual(['Rest']);
+    expect(phaseLabels(0)).toEqual([]);
+  });
+  it('averages each phase over the last twelve split solves, skipping DNFs and gaps', () => {
+    const withSplit = (times: number[], pen: Solve['pen'] = ''): Solve => ({ ...mk(10000, pen), splits: times });
+    const solves = [
+      withSplit([1000, 8000, 1000, 0].slice(0, 3)),
+      withSplit([3000, 4000, 2000], 'DNF'),
+      withSplit([2000, 6000, 2000]),
+      mk(10000),                       // no split at all: not part of any phase average
+    ];
+    const [cross, f2l, oll] = phaseMeans(solves, 12, 4);
+    expect(cross).toBeCloseTo(1500, 6);   // 1000 and 2000; the DNF solve is left out
+    expect(f2l).toBeCloseTo(7000, 6);
+    expect(oll).toBeCloseTo(1500, 6);
+    expect(phaseMeans(solves, 12, 4)[3]).toBeNull();  // nothing ever marked a fourth phase
+    expect(PHASES.length).toBe(4);
   });
 });

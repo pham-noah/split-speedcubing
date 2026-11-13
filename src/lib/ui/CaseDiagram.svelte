@@ -12,7 +12,9 @@
   const fill = (c: number) => (mode === 'oll' ? (c === 0 ? COL[0] : GRAY) : COL[c]);
 
   // last-layer view geometry
-  const C = 28, G = 2, S = 8, O = 14;
+  // S is the side-sticker band: wider than a hairline, because on PLL that band is the case (the top
+  // face is uniform there, so the ring is the only colour that tells one case from another).
+  const C = 28, G = 2, S = 11, O = 16;
   const pos = (i: number) => O + S + G + i * (C + G);
   const LL = O * 2 + S * 2 + G * 2 + 3 * C + 2 * G;
 
@@ -118,7 +120,7 @@
   });
   const label = $derived(
     mode === 'oll' ? `Top view, oriented stickers: ${v.top.flat().filter(c => c === 0).length} of 9 on top`
-    : mode === 'pll' ? 'Top view: arrows show which square each piece moves to'
+    : mode === 'pll' ? 'Top view: the coloured ring is the side of the last layer, and the arrows show which square each piece moves to'
     : 'Unfolded top, front and right faces showing the corner and edge pair to solve'
   );
 </script>
@@ -144,6 +146,12 @@
           <rect x={pos(k)} y={pos(r)} width={C} height={C} rx="4" fill="#141821" stroke="#2A2F3A" stroke-width="1" />
         {/each}
       {/each}
+      <!-- The ring of side stickers, in their real colours. A PLL case is read from this band: which
+           corner is where, and which edge has two of the same colour next to it. -->
+      {#each v.back as c, k (k)}<rect x={pos(k)} y={O} width={C} height={S} rx="3" fill={COL[c]} />{/each}
+      {#each v.front as c, k (k)}<rect x={pos(k)} y={pos(2) + C + G} width={C} height={S} rx="3" fill={COL[c]} />{/each}
+      {#each v.left as c, k (k)}<rect x={O} y={pos(k)} width={S} height={C} rx="3" fill={COL[c]} />{/each}
+      {#each v.right as c, k (k)}<rect x={pos(2) + C + G} y={pos(k)} width={S} height={C} rx="3" fill={COL[c]} />{/each}
       {#each pllArrows as a (a.key)}
         <path d={a.d} fill="none" stroke="var(--am)" stroke-width="2" stroke-linecap="round"
           marker-end="url(#pll-arrow)" marker-start={a.both ? 'url(#pll-arrow)' : undefined} />

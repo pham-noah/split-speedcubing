@@ -154,14 +154,16 @@
         onchange={(e) => store.update({ inspection: e.currentTarget.checked })}
       /></label
     >
-    <label class="row sp card"
-      ><span>Inspection beeps (8 s and 12 s)</span><input
-        type="checkbox"
-        style="width:24px;min-height:24px;flex:none"
-        checked={s.beeps}
-        onchange={(e) => store.update({ beeps: e.currentTarget.checked })}
-      /></label
-    >
+    {#if s.inspection}
+      <label class="row sp card"
+        ><span>Inspection beeps (8 s and 12 s)</span><input
+          type="checkbox"
+          style="width:24px;min-height:24px;flex:none"
+          checked={s.beeps}
+          onchange={(e) => store.update({ beeps: e.currentTarget.checked })}
+        /></label
+      >
+    {/if}
     <label class="row sp card"
       ><span>Hide time while solving</span><input
         type="checkbox"
@@ -170,6 +172,23 @@
         onchange={(e) => store.update({ hideTime: e.currentTarget.checked })}
       /></label
     >
+    <label class="row sp card"
+      ><span>Split timing<span class="mu" style="display:block;font-size:.78rem;font-weight:500"
+          >Cross · F2L · OLL · PLL, marked while the clock runs</span
+        ></span><input
+        type="checkbox"
+        style="width:24px;min-height:24px;flex:none"
+        checked={s.splits === true}
+        onchange={(e) => store.update({ splits: e.currentTarget.checked })}
+      /></label
+    >
+    {#if s.splits}
+      <div class="mu" style="font-size:.8rem">
+        A <b>Split</b> pill appears over the timer while it runs; tap it (or press
+        <b class="mono">{store.key('split') === 'Slash' ? '/' : store.key('split')}</b>) to end a phase. Tapping
+        anywhere else still stops the clock.
+      </div>
+    {/if}
     <label class="row sp card"
       ><span>Full-screen colour while holding / solving</span><input
         type="checkbox"

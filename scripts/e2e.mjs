@@ -117,6 +117,44 @@ await clickText(page, 'Retry this scramble'); await sleep(500);
 const retried = await waitForScramble(4000);
 check('retry this scramble loads that solve\'s scramble', norm(storedScr).length > 0 && retried.join(' ') === norm(storedScr), `(${retried.length} moves)`);
 
+// --- phase splits (opt-in): a second surface that marks a phase instead of stopping the clock
+await clickText(page, 'Settings', 'nav[aria-label="Main"] button'); await sleep(400);
+await clickText(page, 'Split timing'); await sleep(200);
+check('split timing can be switched on', await page.evaluate(() =>
+  [...document.querySelectorAll('label')].some(l => /Split timing/.test(l.textContent) && l.querySelector('input').checked)));
+await clickText(page, 'Solve', 'nav[aria-label="Main"] button'); await sleep(300);
+await hold(450); await sleep(150);
+const pillShown = !!(await page.$('.split-press'));
+check('a split pill appears once the clock runs', pillShown);
+if (pillShown) {
+  const box = await (await page.$('.split-press')).boundingBox();
+  const tapPill = async () => { await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await page.mouse.down(); await page.mouse.up(); await sleep(200); };
+  await sleep(150); await tapPill();
+  await sleep(200); await tapPill();
+  const count = await page.evaluate(() => document.querySelector('.split-press')?.textContent ?? '');
+  check('tapping the pill marks a phase without stopping the clock', /2\/3/.test(count) && /Tap to stop/.test(await page.evaluate(() => document.querySelector('.big').textContent)), norm(count));
+}
+await tap(); await sleep(400);
+const splitCard = await page.evaluate(() => {
+  const c = [...document.querySelectorAll('main .card')].find(x => /Phases/.test(x.textContent));
+  return c ? c.textContent.replace(/\s+/g, ' ').trim() : '';
+});
+check('the last solve shows its phases', /Cross/.test(splitCard) && /F2L/.test(splitCard) && /Rest/.test(splitCard), splitCard.slice(0, 80));
+check('the phase bar is drawn', await page.evaluate(() => (document.querySelectorAll('.phbar > span').length ?? 0) >= 2));
+// and it survives the reload, through normalize(), which validates every field of a stored solve
+await sleep(600); await page.reload({ waitUntil: 'networkidle0' }); await sleep(800);
+await page.keyboard.press('KeyD'); await sleep(400);
+await page.evaluate(() => document.querySelector('main .card button.row')?.click()); await sleep(400);
+const reloaded = await page.evaluate(() => {
+  const c = [...document.querySelectorAll('main .card')].find(x => x.querySelector('[aria-expanded=true]'));
+  return c ? c.textContent.replace(/\s+/g, ' ') : '';
+});
+check('a phase split is saved and read back', /Cross|CROSS/.test(reloaded), reloaded.slice(0, 80));
+await page.keyboard.press('Escape'); await sleep(300);
+await clickText(page, 'Settings', 'nav[aria-label="Main"] button'); await sleep(300);
+await clickText(page, 'Split timing'); await sleep(200);   // leave it off, as shipped
+await clickText(page, 'Solve', 'nav[aria-label="Main"] button'); await sleep(300);
+
 // --- training flow
 await clickText(page, 'Train', 'nav[aria-label="Main"] button'); await sleep(300);
 check('Train opens on the Today screen', /Due for review/.test(await text()));

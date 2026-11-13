@@ -3,15 +3,17 @@
   import { store } from '../store.svelte';
   import { nav } from '../nav.svelte';
   import { codeLabel } from '../core/shortcuts';
-  import { formatTime, type Penalty } from '../core/stats';
+  import { formatTime, splitSegments, PHASES, type Penalty } from '../core/stats';
   import { inspectionPenalty, inspectionText } from '../core/inspection';
   import { readableInk } from './color';
 
   type St = 'idle' | 'insp' | 'hold' | 'ready' | 'run';
-  const { twoPress = false, markLabel = 'Tap when recognized', disabled = false, holdMs = 300, tapStart = false, hideTime = false, inspection = false, beeps = true, shown = null, cover = false, coverColor = '', onfinish, onRunning }: {
+  const { twoPress = false, markLabel = 'Tap when recognized', disabled = false, holdMs = 300, tapStart = false, hideTime = false, inspection = false, beeps = true, shown = null, cover = false, coverColor = '', splits = false, onfinish, onRunning, onSplit }: {
     twoPress?: boolean; markLabel?: string; disabled?: boolean; holdMs?: number; tapStart?: boolean; hideTime?: boolean;
     inspection?: boolean; beeps?: boolean; shown?: number | null; cover?: boolean; coverColor?: string;
-    onfinish: (r: { ms: number; recog: number | null; pen: Penalty }) => void;
+    /** opt-in phase splits: while the clock runs, a press on the split zone marks a phase instead of stopping */
+    splits?: boolean; onSplit?: (marked: number) => void;
+    onfinish: (r: { ms: number; recog: number | null; pen: Penalty; splits?: number[] }) => void;
     onRunning?: (running: boolean) => void;
   } = $props();
 
@@ -23,6 +25,10 @@
   /** a press this soon after the start is a fumble, not a solve: dropped rather than saved as a Best */
   const MIN_SOLVE_MS = 300;
   let tooShort = $state(false);
+  /** elapsed times at each phase mark, in ms from the start; the last segment runs to the stop */
+  let marks = $state<number[]>([]);
+  /** a mark this soon after the last one is a double tap, not a phase ending */
+  const MIN_MARK_GAP = 120;
   let coverOpen = $state(false);   // the colour has grown out of the button to fill the screen
   let stopped = $state<number | null>(null); // finished time, shown highlighted on the cover before it shrinks back
   let bigEl: HTMLButtonElement | undefined;
@@ -118,6 +124,17 @@
     wake = null;
   }
 
+  /** Mark the end of a phase without stopping the clock. Opt-in: with splits off, the split zone is not
+   *  rendered and this can never fire. */
+  function mark() {
+    if (!splits || st !== 'run') return;
+    if (marks.length >= PHASES.length - 1) return;   // three marks already separate the four phases
+    const t = performance.now() - t0;
+    if (t - (marks.at(-1) ?? 0) < MIN_MARK_GAP) return;
+    marks = [...marks, t];
+    onSplit?.(marks.length);
+  }
+
   function down() {
     if (disabled) return;
     if (st === 'run') {
@@ -138,7 +155,9 @@
       }
       closeCoverSoon(ms);
       letSleep();
-      onfinish({ ms, recog, pen: pendingPen });
+      const seg = splits ? splitSegments(marks, ms) : [];
+      marks = [];
+      onfinish({ ms, recog, pen: pendingPen, ...(seg.length ? { splits: seg } : {}) });
       pendingPen = '';
       return;
     }
@@ -154,7 +173,7 @@
         // no hold: the press itself starts the solve
         const pen = inspActive ? inspectionPenalty(performance.now() - tI) : '';
         endInspection();
-        st = 'run'; marked = false; recog = null; t0 = performance.now(); now = 0; pendingPen = pen; keepAwake();
+        st = 'run'; marked = false; recog = null; marks = []; t0 = performance.now(); now = 0; pendingPen = pen; keepAwake();
         cancelAnimationFrame(raf); raf = requestAnimationFrame(loop);
         return;
       }
@@ -167,7 +186,7 @@
     if (st === 'ready') {
       const pen = inspActive ? inspectionPenalty(performance.now() - tI) : '';
       endInspection();
-      st = 'run'; marked = false; recog = null; t0 = performance.now(); now = 0;
+      st = 'run'; marked = false; recog = null; marks = []; t0 = performance.now(); now = 0;
       pendingPen = pen; keepAwake();
       cancelAnimationFrame(raf); raf = requestAnimationFrame(loop);
     } else if (st === 'hold') {
@@ -176,7 +195,7 @@
       coverOpen = false; // let go before the timer was ready: the colour goes back down
     }
   }
-  function cancel() { clearTimeout(holdTimer); cancelAnimationFrame(raf); endInspection(); st = 'idle'; clearTimeout(flashT); coverOpen = false; stopped = null; tooShort = false; letSleep(); }
+  function cancel() { clearTimeout(holdTimer); cancelAnimationFrame(raf); endInspection(); st = 'idle'; marks = []; clearTimeout(flashT); coverOpen = false; stopped = null; tooShort = false; letSleep(); }
 
   // Esc / Android Back cancels the timer instead of leaving the screen, including a solve in progress
   $effect(() => { if (inspActive || st === 'hold' || st === 'ready' || st === 'run') return nav.onBack(() => { cancel(); return true; }); });
@@ -200,10 +219,19 @@
 <svelte:window
   onkeydown={(e) => {
     if (typing(e)) return;
+    if (splits && st === 'run' && store.is(e, 'split')) {
+      e.preventDefault(); e.stopPropagation(); if (!e.repeat) mark(); return;
+    }
     if (store.is(e, 'timer')) { e.preventDefault(); e.stopPropagation(); if (!e.repeat) down(); }
   }}
   onkeyup={(e) => { if (store.is(e, 'timer')) up(); }}
-  onpointerdown={(e) => { if (e.button !== 0) return; const t = e.target as HTMLElement; if (st === 'run' ? !t.closest('nav') : !!t.closest('.big')) down(); }}
+  onpointerdown={(e) => {
+    if (e.button !== 0) return;
+    const t = e.target as HTMLElement;
+    // the split pill is the one surface that does not stop the clock: its own click marks the phase
+    if (st === 'run' && splits && t.closest('.split-press')) return;
+    if (st === 'run' ? !t.closest('nav') : !!t.closest('.big')) down();
+  }}
   onpointerup={up}
   onpointercancel={up}
 />
@@ -230,7 +258,16 @@
     {/if}
   </div>
 {/if}
-<div class="sr" aria-live="polite">{st === 'run' ? 'Timer running' : st === 'ready' ? 'Ready, release to start' : st === 'hold' ? 'Hold' : inspActive ? 'Inspection' : tooShort ? 'Too short, not saved' : shown != null ? `Time ${formatTime(shown)}` : ''}</div>
+<div class="sr" aria-live="polite">{st === 'run' ? (splits && marks.length ? `Timer running, ${marks.length} of ${PHASES.length - 1} phases marked` : 'Timer running') : st === 'ready' ? 'Ready, release to start' : st === 'hold' ? 'Hold' : inspActive ? 'Inspection' : tooShort ? 'Too short, not saved' : shown != null ? `Time ${formatTime(shown)}` : ''}</div>
+{#if splits && st === 'run'}
+  <!-- Above the cover (z-index 42): a full-screen flood is exactly where a phase mark has to be findable.
+       Tapping it marks a phase; every other surface still stops the clock. -->
+  <button class="split-press" type="button" onclick={() => mark()}
+    aria-label="Mark a phase split, {marks.length} of {PHASES.length - 1} marked">
+    <span>Split</span><span class="mono sp-n">{marks.length}/{PHASES.length - 1}</span>
+    <span class="mono sp-k">{codeLabel(store.key('split'))}</span>
+  </button>
+{/if}
 <button
   class="big"
   bind:this={bigEl}
@@ -238,3 +275,45 @@
   style="--hold:{holdMs}ms"
   {disabled}
   aria-label="{label}. Keyboard: hold {codeLabel(store.key('timer'))}">{label}</button>
+
+<style>
+  /* Only present while the clock runs and splits are on. Dark and translucent so it stays legible on
+     every cover colour (blue, gold, green, red, purple), and above the flood so it can be found at all. */
+  .split-press {
+    position: fixed;
+    left: 50%;
+    bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    z-index: 42;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 17px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.26);
+    background: rgba(10, 12, 16, 0.66);
+    color: #fff;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: transform 0.12s ease;
+  }
+  .split-press:active {
+    transform: translateX(-50%) scale(0.95);
+  }
+  .sp-n {
+    font-size: 0.78rem;
+    opacity: 0.8;
+  }
+  .sp-k {
+    font-size: 0.72rem;
+    opacity: 0.62;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 6px;
+    padding: 1px 5px;
+  }
+</style>

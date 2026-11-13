@@ -1461,3 +1461,46 @@ nav > button.on svg {
     }
   }
 }
+
+/* Phase split bar: one bar divided by the marks, each segment fading slightly so the order reads
+   without a legend. Labels sit under it in the same columns. */
+.phbar {
+  display: flex;
+  height: 9px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--line);
+  gap: 1px;
+}
+.phbar > span {
+  display: block;
+  min-width: 2px;
+  background: var(--bl);
+}
+.phrow {
+  display: grid;
+  gap: 8px;
+  margin-top: 9px;
+}
+.phrow > div {
+  min-width: 0;
+}
+.ph-l {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--mu);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* A mouse has no swipe: on a wide window the section chips wrap onto a second line instead of
+   running off the right edge with the last section invisible and nothing saying it scrolls. */
+@media (min-width: 900px) {
+  .secnav {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}

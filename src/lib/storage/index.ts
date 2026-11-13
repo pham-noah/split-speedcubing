@@ -26,7 +26,8 @@ type Meta = Omit<AppData, 'solves' | 'cards'>;
 type StoredCard = CardRecord & { id: string };
 
 /** One cheap line per solve: enough to spot what changed without rewriting the whole history. */
-const sig = (s: Solve) => `${s.ms}|${s.pen}|${s.ts}|${s.event}|${s.session ?? ''}|${s.scramble}`;
+const sig = (s: Solve) =>
+  `${s.ms}|${s.pen}|${s.ts}|${s.event}|${s.session ?? ''}|${s.scramble}|${s.splits?.join(',') ?? ''}`;
 /** Solves are stored by id, so their order has to come back from their times, not from the store. */
 const byTime = (a: Solve, b: Solve) => a.ts - b.ts || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
 
