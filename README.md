@@ -186,7 +186,10 @@ their own set here.
   It runs off the UI thread, and the worst frame measured during that run was 100 ms, so the timer keeps running
   but a phone will feel it.
 - Phase splits are marked by hand, so a phase is only as accurate as the tap that ended it: they are for
-  finding where the time goes, not for judging a solve.
+  finding where the time goes, not for judging a solve. And every way of marking costs you the hand that does
+  it — a tap, a volume key or `/` are the same price, because both hands are on the cube. Keeping both hands on
+  it means a separate input: the split command is rebindable, so a Bluetooth foot switch or a second keyboard on
+  the floor works today, and is why no phone-specific input is offered for it.
 - csTimer and CubeDesk are the only importers read from the other app's own code rather than guessed: csTimer is
   covered by a file cstimer.net wrote (`src/lib/core/fixtures/cstimer-export.json`), CubeDesk by its export/import
   source, because cubedesk.io keeps export behind an account. The csTimer export is written the same way, from
