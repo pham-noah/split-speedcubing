@@ -29,7 +29,9 @@
   // the last solve's phase split (opt-in; absent on any solve timed with the setting off) and the
   // per-phase averages it is measured against
   const split = $derived(last?.splits?.length ? last.splits : []);
-  const phaseAvg = $derived(phaseMeans(solves, 12));
+  // compared against solves split the same way: a two-mark solve is Cross · F2L · Rest, and its
+  // "Rest" must not land in the OLL average of a four-phase solve
+  const phaseAvg = $derived(phaseMeans(solves, 12, split.length));
   // a delta against one solve is always zero: it only means something from the second split solve on
   const comparable = $derived(solves.filter((x) => x.pen !== 'DNF' && x.splits?.length).length > 1);
   // how the last solve compares with the session average (finished solves only)

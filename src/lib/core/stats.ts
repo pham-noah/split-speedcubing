@@ -130,10 +130,12 @@ export function phaseLabels(n: number): string[] {
   );
 }
 
-/** Mean length of each phase over the last `n` solves that carry that many segments. A DNF keeps its
- *  split in the record but is left out of the average: its segments are real, its time is not. */
-export function phaseMeans(solves: Solve[], n = 12, count = PHASES.length): (number | null)[] {
-  const use = solves.filter((s) => s.pen !== 'DNF' && s.splits?.length).slice(-n);
+/** Mean length of each phase over the last `n` solves split into exactly `count` segments. Only solves
+ *  split the same way are mixed: with two marks the third segment is "Rest", and averaging that into OLL
+ *  would quietly compare a phase with a phase plus everything after it. A DNF keeps its split in the
+ *  record but is left out of the average: its segments are real, its time is not. */
+export function phaseMeans(solves: Solve[], n = 12, count: number = PHASES.length): (number | null)[] {
+  const use = solves.filter((s) => s.pen !== 'DNF' && s.splits?.length === count).slice(-n);
   return Array.from({ length: count }, (_, i) => {
     const v = use.map((s) => s.splits![i]).filter((x): x is number => Number.isFinite(x));
     return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;

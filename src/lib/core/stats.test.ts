@@ -153,16 +153,19 @@ describe('phase splits', () => {
   it('averages each phase over the last twelve split solves, skipping DNFs and gaps', () => {
     const withSplit = (times: number[], pen: Solve['pen'] = ''): Solve => ({ ...mk(10000, pen), splits: times });
     const solves = [
-      withSplit([1000, 8000, 1000, 0].slice(0, 3)),
-      withSplit([3000, 4000, 2000], 'DNF'),
-      withSplit([2000, 6000, 2000]),
+      withSplit([1000, 8000, 1000, 500]),
+      withSplit([3000, 4000, 2000, 900], 'DNF'),
+      withSplit([2000, 6000, 2000, 1000]),
       mk(10000),                       // no split at all: not part of any phase average
     ];
-    const [cross, f2l, oll] = phaseMeans(solves, 12, 4);
+    const [cross, f2l, oll, pll] = phaseMeans(solves, 12, 4);
     expect(cross).toBeCloseTo(1500, 6);   // 1000 and 2000; the DNF solve is left out
     expect(f2l).toBeCloseTo(7000, 6);
     expect(oll).toBeCloseTo(1500, 6);
-    expect(phaseMeans(solves, 12, 4)[3]).toBeNull();  // nothing ever marked a fourth phase
+    expect(pll).toBeCloseTo(750, 6);
+    // a solve split into three is not mixed into the four-phase means: its tail is "Rest", not OLL
+    const twoMark = { ...mk(9000), splits: [2000, 7000] };
+    expect(phaseMeans([...solves, twoMark], 12, 4)[1]).toBeCloseTo(7000, 6);
     expect(PHASES.length).toBe(4);
   });
 });

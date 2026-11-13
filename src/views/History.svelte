@@ -26,8 +26,8 @@
   const times = $derived(solves.map(effective));
   const sessionMean = $derived(mean(times.filter(Number.isFinite)));
   const sd = $derived(stdDev(times));
-  const phaseAvg = $derived(phaseMeans(solves, 12));
-  const splitCount = $derived(solves.filter((s) => s.splits?.length).length);
+  const phaseAvg = $derived(phaseMeans(solves, 12, 4));
+  const splitCount = $derived(solves.filter((s) => s.splits?.length === 4).length);
   // share of the solve each phase takes, as a percentage of the phases that were measured
   const phaseTotal = $derived(phaseAvg.reduce<number>((a, b) => a + (b ?? 0), 0));
   const phasePct = $derived(

@@ -16,6 +16,10 @@ Phase splits, a deeper read on your history, and PLL diagrams you can recognise 
   and a spread (standard deviation) beside them, and a *Show older* row pages back through a history the old
   screen stopped at 200 solves.
 
+### Fixed
+- A phase is only averaged against solves split the same way: with two marks the third segment is *Rest*, and
+  counting that into OLL compared a phase with a phase plus everything after it.
+
 ### Changed
 - **PLL diagrams carry their colours.** Each case draws the twelve side stickers of the last layer in their
   real colours around the top face, which is what a cuber reads off a PLL; the arrows stay. OLL and ZBLL

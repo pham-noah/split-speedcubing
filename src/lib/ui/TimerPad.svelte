@@ -8,11 +8,11 @@
   import { readableInk } from './color';
 
   type St = 'idle' | 'insp' | 'hold' | 'ready' | 'run';
-  const { twoPress = false, markLabel = 'Tap when recognized', disabled = false, holdMs = 300, tapStart = false, hideTime = false, inspection = false, beeps = true, shown = null, cover = false, coverColor = '', splits = false, onfinish, onRunning, onSplit }: {
+  const { twoPress = false, markLabel = 'Tap when recognized', disabled = false, holdMs = 300, tapStart = false, hideTime = false, inspection = false, beeps = true, shown = null, cover = false, coverColor = '', splits = false, onfinish, onRunning }: {
     twoPress?: boolean; markLabel?: string; disabled?: boolean; holdMs?: number; tapStart?: boolean; hideTime?: boolean;
     inspection?: boolean; beeps?: boolean; shown?: number | null; cover?: boolean; coverColor?: string;
     /** opt-in phase splits: while the clock runs, a press on the split zone marks a phase instead of stopping */
-    splits?: boolean; onSplit?: (marked: number) => void;
+    splits?: boolean;
     onfinish: (r: { ms: number; recog: number | null; pen: Penalty; splits?: number[] }) => void;
     onRunning?: (running: boolean) => void;
   } = $props();
@@ -132,7 +132,6 @@
     const t = performance.now() - t0;
     if (t - (marks.at(-1) ?? 0) < MIN_MARK_GAP) return;
     marks = [...marks, t];
-    onSplit?.(marks.length);
   }
 
   function down() {
