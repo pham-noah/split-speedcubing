@@ -26,4 +26,4 @@ Everything here matches the app as built. Check each item against Play Console's
 ## Release
 - Upload an **Android App Bundle (.aab)** built in release mode and signed with your upload key (see `docs/RELEASING.md`).
 - New personal developer accounts have had to run a closed test with a minimum number of testers for a minimum number of days before production. Check Google's current requirement.
-- `versionCode` must increase with every upload (currently 2, in `android/app/build.gradle`).
+- `versionCode` must increase with every upload (currently 11, in `android/app/build.gradle`).

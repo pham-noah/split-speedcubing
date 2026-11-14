@@ -8,7 +8,7 @@
   import Deltas from '../lib/ui/Deltas.svelte';
   import ShortcutsSide from '../lib/ui/ShortcutsSide.svelte';
   import { ScrambleQueue } from '../lib/core/scramble';
-  import { averageOf, best, effective, formatTime, mean, phaseLabels, phaseMeans, type Penalty, type Solve } from '../lib/core/stats';
+  import { averageOf, best, effective, formatTime, mean, phaseLabels, phaseMeans, worstPhase, type Penalty, type Solve } from '../lib/core/stats';
 
   // The puzzle comes from the session: every session times exactly one, so switching the event switches
   // sessions and the history, the averages and the scrambles all follow it.
@@ -44,15 +44,8 @@
   const phaseAvg = $derived(phaseMeans(solves, 12, split.length));
   // a delta against one solve is always zero: it only means something from the second split solve on
   const comparable = $derived(solves.filter((x) => x.pen !== 'DNF' && x.splits?.length).length > 1);
-  /** where the time went: the biggest phase of this solve, and the set that trains it */
-  const worst = $derived.by(() => {
-    if (!split.length) return null;
-    const total = split.reduce((a, b) => a + b, 0) || 1;
-    let at = 0;
-    split.forEach((v, i) => { if (v > split[at]) at = i; });
-    const label = phaseLabels(split.length)[at];
-    return { label, share: Math.round((100 * split[at]) / total), trainable: label === 'Cross' || label === 'F2L' || label === 'OLL' || label === 'PLL' };
-  });
+  /** where the time went: the biggest phase of this solve that a trainer can take (never a Rest tail) */
+  const worst = $derived(worstPhase(split));
   function drill(label: string) {
     if (label === 'Cross') { nav.drillMode = 'cross'; nav.go('drills'); return; }
     if (label === 'F2L' || label === 'OLL' || label === 'PLL') { nav.trainSet = label; nav.go('train'); }
@@ -273,10 +266,8 @@
             {#if worst}
               <div class="row sp" style="margin-top:10px;gap:10px">
                 <span class="mu" style="font-size:0.78rem">{worst.label} is {worst.share}% of this solve</span>
-                {#if worst.trainable}
-                  <button class="btn" style="flex:none;min-height:32px;padding:0 12px;font-size:0.82rem"
-                    onclick={() => drill(worst.label)}>Drill {worst.label}</button>
-                {/if}
+                <button class="btn" style="flex:none;min-height:32px;padding:0 12px;font-size:0.82rem"
+                  onclick={() => drill(worst.label)}>Drill {worst.label}</button>
               </div>
             {/if}
           </div>

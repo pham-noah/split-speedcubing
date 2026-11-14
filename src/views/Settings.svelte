@@ -187,7 +187,7 @@
     >
     <label class="row sp card"
       ><span>Split timing<span class="mu" style="display:block;font-size:.78rem;font-weight:500"
-          >Cross · F2L · OLL · PLL, marked while the clock runs</span
+          >Cross · F2L · OLL · PLL, marked while the clock runs · 3x3 only</span
         ></span><input
         type="checkbox"
         style="width:24px;min-height:24px;flex:none"
@@ -338,7 +338,6 @@
   <section class="col" aria-labelledby="bk-h">
     <h2 id="bk-h" style="margin:0;font-size:1.15rem">Your data</h2>
     <div class="mu">Everything is stored only on this device. Make a backup before switching phones.</div>
-    <div class="mu" style="color:{backupAge.nudge ? 'var(--am)' : 'var(--mu2)'}">{backupAge.text}</div>
     {#if store.durable.persisted !== null}
       <div class="mu" style="color:{store.durable.persisted ? 'var(--mu2)' : 'var(--am)'}">
         {#if store.durable.persisted}
@@ -352,10 +351,30 @@
         {#if store.durable.usage != null}({formatBytes(store.durable.usage)} used){/if}
       </div>
     {/if}
-    <div class="row">
-      {#if platform.caps.saveFile}<button class="btn" onclick={download}>Export backup</button>{/if}
+    <!-- three blocks, not one row: five children in a single .row squeezed the explanation below to one
+         word per line at a phone width. Each block owns its own line of explanation; nothing shares a row
+         with a button that can wrap. -->
+    {#if platform.caps.saveFile}
+      <div class="card col" style="gap:6px">
+        <div class="row sp">
+          <span style="font-weight:700">Move your solves to csTimer</span>
+          <button class="btn" style="flex:none;white-space:nowrap" onclick={exportCsTimer}>Export for csTimer</button>
+        </div>
+        <div class="mu">Sessions and times only — drills, case progress and settings stay in Split.</div>
+      </div>
+    {/if}
+    <div class="card col" style="gap:6px">
+      <div class="row sp">
+        <span style="font-weight:700">Backup</span>
+        {#if platform.caps.saveFile}
+          <button class="btn" style="flex:none;white-space:nowrap" onclick={download}>Export backup</button>
+        {/if}
+      </div>
+      <div class="mu" style="color:{backupAge.nudge ? 'var(--am)' : 'var(--mu2)'}">{backupAge.text}</div>
+    </div>
+    <div class="card col" style="gap:6px">
       {#if platform.caps.saveFile}
-        <label class="row sp" style="min-height:44px"
+        <label class="row sp"
           ><span>Keep a safety copy</span><input
             type="checkbox"
             style="width:24px;min-height:24px;flex:none"
@@ -369,9 +388,6 @@
         </div>
       {/if}
       <button class="btn" onclick={restore}>Restore backup</button>
-      {#if platform.caps.saveFile}
-        <button class="btn" onclick={exportCsTimer}>Export for csTimer</button>
-      {/if}
     </div>
     {#if platform.caps.fullscreen}
       <button class="btn" onclick={toggleFull}>{full ? 'Leave fullscreen' : 'Fullscreen'}<span class="pc-only"> (F11)</span></button>

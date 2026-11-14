@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   averageOf, meanOf, mean, best, bestAverage, formatTime, effective, runningAverage, attemptExec,
-  stdDev, splitSegments, phaseLabels, phaseMeans, PHASES, type Solve,
+  stdDev, splitSegments, phaseLabels, phaseMeans, worstPhase, PHASES, type Solve,
 } from './stats';
 const mk = (ms: number, pen: Solve['pen'] = ''): Solve => ({ id: String(Math.random()), ms, pen, scramble: '', event: '333', ts: 0 });
 const list = (...v: (number | [number, Solve['pen']])[]) => v.map(x => (Array.isArray(x) ? mk(x[0], x[1]) : mk(x)));
@@ -167,5 +167,16 @@ describe('phase splits', () => {
     const twoMark = { ...mk(9000), splits: [2000, 7000] };
     expect(phaseMeans([...solves, twoMark], 12, 4)[1]).toBeCloseTo(7000, 6);
     expect(PHASES.length).toBe(4);
+  });
+  it('names the largest phase a trainer can take, never a Rest tail', () => {
+    // two marks: Cross · Rest. Rest is the bigger segment here, and it has no trainer to offer.
+    expect(worstPhase([4000, 16000])).toEqual({ label: 'Cross', share: 20 });
+    // three marks: only Cross and F2L were marked, so the Rest tail is passed over even when it wins
+    expect(worstPhase([2000, 9000, 12000])).toEqual({ label: 'F2L', share: 39 });
+    // all four marked: unchanged — the biggest phase is the answer
+    expect(worstPhase([2000, 7000, 3000, 6000])).toEqual({ label: 'F2L', share: 39 });
+    // one segment is all Rest (no valid mark), and nothing is a share of nothing
+    expect(worstPhase([15000])).toBeNull();
+    expect(worstPhase([])).toBeNull();
   });
 });

@@ -141,3 +141,18 @@ export function phaseMeans(solves: Solve[], n = 12, count: number = PHASES.lengt
     return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
   });
 }
+
+/** The phase that took the largest share of a solve, and the one a trainer can be offered for. Only a
+ *  phase that was actually marked counts: with two marks the tail is "Rest", and naming Rest left the
+ *  screen with a phase to name but nothing to train — so the largest marked trainable phase is named
+ *  instead. One segment (no valid mark) is all Rest, so there is nothing to name. */
+export function worstPhase(splits: number[]): { label: string; share: number } | null {
+  const total = splits.reduce((a, b) => a + b, 0);
+  if (!(total > 0)) return null;
+  const labels = phaseLabels(splits.length);
+  let at = -1;
+  splits.forEach((v, i) => {
+    if ((PHASES as readonly string[]).includes(labels[i]) && (at < 0 || v > splits[at])) at = i;
+  });
+  return at < 0 ? null : { label: labels[at], share: Math.round((100 * splits[at]) / total) };
+}

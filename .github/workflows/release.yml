@@ -22,6 +22,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: Work out the release title
+        id: ver
+        env:
+          TAG: ${{ github.event.inputs.tag || github.ref_name }}
+        # the release is titled by version, not by tag: "Split 0.9.0", never "Split v0.9.0"
+        run: echo "v=${TAG#v}" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -38,7 +44,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tagName: ${{ github.event.inputs.tag || github.ref_name }}
-          releaseName: Split ${{ github.event.inputs.tag || github.ref_name }}
+          releaseName: Split ${{ steps.ver.outputs.v }}
           releaseDraft: true
           prerelease: false
 
@@ -109,5 +115,5 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release view "${{ github.ref_name }}" >/dev/null 2>&1 || gh release create "${{ github.ref_name }}" --draft --title "Split ${{ github.ref_name }}"
+          gh release view "${{ github.ref_name }}" >/dev/null 2>&1 || gh release create "${{ github.ref_name }}" --draft --title "Split ${GITHUB_REF_NAME#v}"
           gh release upload "${{ github.ref_name }}" Split-*.apk --clobber

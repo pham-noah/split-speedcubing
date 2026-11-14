@@ -2,7 +2,7 @@
 
 All notable changes to Split. Format based on [Keep a Changelog](https://keepachangelog.com); versions follow [SemVer](https://semver.org).
 
-## [0.9.0] - 2026-11-13
+## [0.9.0] - 2026-11-14
 
 A 2x2, a split you can correct, a way out to csTimer, and the trainer on the other end of a phase.
 
@@ -13,7 +13,8 @@ A 2x2, a split you can correct, a way out to csTimer, and the trainer on the oth
   walkthrough is not drawn over a 2x2 scramble. A csTimer import now keeps its 2x2 sessions as 2x2.
 - **The trainer on the other end of a split.** The phase that took the largest share of a solve is named
   under its bar, with one button into training it: Cross opens the cross drill, F2L / OLL / PLL open that
-  set's session with a case already picked.
+  set's session, due cases first. With fewer than three marks the tail is *Rest*, which trains nothing, so
+  the largest marked phase is named instead.
 - **Export for csTimer**, in Settings → Data, in the file shape cstimer.net writes (numbered sessions,
   `[penalty, ms]` rows, a `properties` block that names them and gives 2x2 its `222so` scrambler). Verified
   against csTimer's own storage and import source, and read back in the suite through Split's importer.
