@@ -1,0 +1,677 @@
+{
+  "base": "http://localhost:5173/",
+  "shots": [
+    "c02-c03-c05-c06-c07-solve-390",
+    "c04-setup-row-390",
+    "c24-worst-390-130",
+    "c06-c07-solve-130-390",
+    "c02-c03-c05-c06-c07-solve-360",
+    "c04-setup-row-360",
+    "c24-worst-360-130",
+    "c06-c07-solve-130-360",
+    "c00-theme-contrast-390",
+    "c13-pill-contrast-390",
+    "c00-theme-amoled-390",
+    "c08-short-360-130",
+    "c09-c15-c20-fresh-390",
+    "c17-settings-arrival-390",
+    "c18-settings-confirm-390",
+    "c09-c15-c20-fresh-360",
+    "c12-pill-0-marks-390",
+    "c12-pill-1-marks-390",
+    "c12-pill-3-marks-390",
+    "c14-all-marked-390",
+    "c20-c21-toast-mid-solve-390",
+    "c10-train-answer-390",
+    "c10-train-answer-360",
+    "c11-drills-penalty-390",
+    "c11-drills-penalty-360",
+    "c19-intro-slide-1-390",
+    "c19-intro-slide-2-390",
+    "c19-intro-slide-3-390",
+    "c19-intro-slide-4-390",
+    "c19-intro-slide-4-360-130"
+  ],
+  "log": {
+    "sizes": {
+      "390@100": {
+        "doc": 844,
+        "view": 844,
+        "navTop": 785,
+        "statsBottom": 754,
+        "statsH": 34,
+        "phaseStripH": 75,
+        "lowestCardBottom": 754,
+        "clearance": 31,
+        "scrH": 43,
+        "stack": [
+          {
+            "tag": "row sp",
+            "h": 36
+          },
+          {
+            "tag": "scr",
+            "h": 43
+          },
+          {
+            "tag": "setup-row",
+            "h": 50
+          },
+          {
+            "tag": "card cube-panel",
+            "h": 0
+          },
+          {
+            "tag": "timer-slot",
+            "h": 222
+          },
+          {
+            "tag": "row pens",
+            "h": 36
+          },
+          {
+            "tag": "card phases-card",
+            "h": 75
+          },
+          {
+            "tag": "card stats-dock stats-bar",
+            "h": 34
+          }
+        ]
+      },
+      "390@130": {
+        "doc": 844,
+        "view": 844,
+        "navTop": 785,
+        "statsBottom": 754,
+        "statsH": 39,
+        "phaseStripH": 83,
+        "lowestCardBottom": 754,
+        "clearance": 31,
+        "scrH": 55,
+        "stack": [
+          {
+            "tag": "row sp",
+            "h": 37
+          },
+          {
+            "tag": "scr",
+            "h": 55
+          },
+          {
+            "tag": "setup-row",
+            "h": 50
+          },
+          {
+            "tag": "card cube-panel",
+            "h": 0
+          },
+          {
+            "tag": "timer-slot",
+            "h": 231
+          },
+          {
+            "tag": "row pens",
+            "h": 36
+          },
+          {
+            "tag": "card phases-card",
+            "h": 83
+          },
+          {
+            "tag": "card stats-dock stats-bar",
+            "h": 39
+          }
+        ]
+      },
+      "360@100": {
+        "doc": 640,
+        "view": 640,
+        "navTop": 581,
+        "statsBottom": 550,
+        "statsH": 34,
+        "phaseStripH": 75,
+        "lowestCardBottom": 550,
+        "clearance": 31,
+        "scrH": 43,
+        "stack": [
+          {
+            "tag": "row sp",
+            "h": 36
+          },
+          {
+            "tag": "scr",
+            "h": 43
+          },
+          {
+            "tag": "setup-row",
+            "h": 50
+          },
+          {
+            "tag": "card cube-panel",
+            "h": 0
+          },
+          {
+            "tag": "timer-slot",
+            "h": 168
+          },
+          {
+            "tag": "row pens",
+            "h": 36
+          },
+          {
+            "tag": "card phases-card",
+            "h": 75
+          },
+          {
+            "tag": "card stats-dock stats-bar",
+            "h": 34
+          }
+        ]
+      },
+      "360@130": {
+        "doc": 640,
+        "view": 640,
+        "navTop": 581,
+        "statsBottom": 563,
+        "statsH": 39,
+        "phaseStripH": 83,
+        "lowestCardBottom": 563,
+        "clearance": 18,
+        "scrH": 83,
+        "stack": [
+          {
+            "tag": "row sp",
+            "h": 37
+          },
+          {
+            "tag": "scr",
+            "h": 83
+          },
+          {
+            "tag": "setup-row",
+            "h": 50
+          },
+          {
+            "tag": "card cube-panel",
+            "h": 0
+          },
+          {
+            "tag": "timer-slot",
+            "h": 171
+          },
+          {
+            "tag": "row pens",
+            "h": 36
+          },
+          {
+            "tag": "card phases-card",
+            "h": 83
+          },
+          {
+            "tag": "card stats-dock stats-bar",
+            "h": 39
+          }
+        ]
+      }
+    },
+    "states": {
+      "theme-contrast": {
+        "doc": 844,
+        "view": 844,
+        "navTop": 785,
+        "statsBottom": 754,
+        "statsH": 34,
+        "phaseStripH": 75,
+        "lowestCardBottom": 754,
+        "clearance": 31,
+        "scrH": 43,
+        "stack": [
+          {
+            "tag": "row sp",
+            "h": 36
+          },
+          {
+            "tag": "scr",
+            "h": 43
+          },
+          {
+            "tag": "setup-row",
+            "h": 50
+          },
+          {
+            "tag": "card cube-panel",
+            "h": 0
+          },
+          {
+            "tag": "timer-slot",
+            "h": 222
+          },
+          {
+            "tag": "row pens",
+            "h": 36
+          },
+          {
+            "tag": "card phases-card",
+            "h": 75
+          },
+          {
+            "tag": "card stats-dock stats-bar",
+            "h": 34
+          }
+        ],
+        "tokens": "--pill=rgba(10, 12, 16, 0.66) | --pill-edge=rgba(255, 255, 255, 0.26) | --on-pill=#fff | --line=#fff | --card=#000"
+      },
+      "pill-contrast": {
+        "label": "Next: F2L",
+        "filled": "rgb(255, 255, 255)",
+        "empty": "rgb(255, 255, 255)"
+      },
+      "theme-amoled": {
+        "doc": 844,
+        "view": 844,
+        "navTop": 785,
+        "statsBottom": 754,
+        "statsH": 34,
+        "phaseStripH": 75,
+        "lowestCardBottom": 754,
+        "clearance": 31,
+        "scrH": 43,
+        "stack": [
+          {
+            "tag": "row sp",
+            "h": 36
+          },
+          {
+            "tag": "scr",
+            "h": 43
+          },
+          {
+            "tag": "setup-row",
+            "h": 50
+          },
+          {
+            "tag": "card cube-panel",
+            "h": 0
+          },
+          {
+            "tag": "timer-slot",
+            "h": 222
+          },
+          {
+            "tag": "row pens",
+            "h": 36
+          },
+          {
+            "tag": "card phases-card",
+            "h": 75
+          },
+          {
+            "tag": "card stats-dock stats-bar",
+            "h": 34
+          }
+        ],
+        "tokens": "--pill=rgba(10, 12, 16, 0.66) | --pill-edge=rgba(255, 255, 255, 0.26) | --on-pill=#fff | --line=#22262e | --card=#0b0b0d"
+      },
+      "c08": {
+        "doc": 640,
+        "view": 640,
+        "navTop": 581,
+        "statsBottom": 550,
+        "statsH": 39,
+        "phaseStripH": 83,
+        "lowestCardBottom": 550,
+        "clearance": 31,
+        "scrH": 55,
+        "stack": [
+          {
+            "tag": "row sp",
+            "h": 37
+          },
+          {
+            "tag": "scr",
+            "h": 55
+          },
+          {
+            "tag": "setup-row",
+            "h": 50
+          },
+          {
+            "tag": "card cube-panel",
+            "h": 0
+          },
+          {
+            "tag": "timer-slot",
+            "h": 171
+          },
+          {
+            "tag": "row pens",
+            "h": 36
+          },
+          {
+            "tag": "card phases-card",
+            "h": 83
+          },
+          {
+            "tag": "card stats-dock stats-bar",
+            "h": 39
+          }
+        ]
+      },
+      "fresh-390": {
+        "doc": 844,
+        "view": 844,
+        "navTop": 785,
+        "statsBottom": null,
+        "statsH": null,
+        "phaseStripH": null,
+        "lowestCardBottom": 754,
+        "clearance": 31,
+        "scrH": 43,
+        "stack": [
+          {
+            "tag": "row sp",
+            "h": 36
+          },
+          {
+            "tag": "scr",
+            "h": 43
+          },
+          {
+            "tag": "setup-row",
+            "h": 50
+          },
+          {
+            "tag": "card cube-panel",
+            "h": 0
+          },
+          {
+            "tag": "timer-slot",
+            "h": 180
+          },
+          {
+            "tag": "empty",
+            "h": 77
+          },
+          {
+            "tag": "row pens",
+            "h": 36
+          },
+          {
+            "tag": "card split-nudge",
+            "h": 64
+          }
+        ],
+        "pensOpacity": [
+          {
+            "disabled": true,
+            "opacity": "0.45"
+          },
+          {
+            "disabled": true,
+            "opacity": "0.45"
+          },
+          {
+            "disabled": true,
+            "opacity": "0.45"
+          }
+        ]
+      },
+      "fresh-360": {
+        "doc": 640,
+        "view": 640,
+        "navTop": 581,
+        "statsBottom": null,
+        "statsH": null,
+        "phaseStripH": null,
+        "lowestCardBottom": 550,
+        "clearance": 31,
+        "scrH": 43,
+        "stack": [
+          {
+            "tag": "row sp",
+            "h": 36
+          },
+          {
+            "tag": "scr",
+            "h": 43
+          },
+          {
+            "tag": "setup-row",
+            "h": 50
+          },
+          {
+            "tag": "card cube-panel",
+            "h": 0
+          },
+          {
+            "tag": "timer-slot",
+            "h": 130
+          },
+          {
+            "tag": "empty",
+            "h": 77
+          },
+          {
+            "tag": "row pens",
+            "h": 36
+          },
+          {
+            "tag": "card split-nudge",
+            "h": 64
+          }
+        ],
+        "pensOpacity": [
+          {
+            "disabled": true,
+            "opacity": "0.45"
+          },
+          {
+            "disabled": true,
+            "opacity": "0.45"
+          },
+          {
+            "disabled": true,
+            "opacity": "0.45"
+          }
+        ]
+      },
+      "pill-0-marks": {
+        "x": 52,
+        "w": 212,
+        "label": "Next: Cross",
+        "count": "0/3",
+        "on": 0,
+        "pressDisabled": false,
+        "undoDisabled": true,
+        "undoOpacity": "0.35",
+        "sr": "Timer running, split timing on.",
+        "dockW": 286
+      },
+      "pill-1-marks": {
+        "x": 52,
+        "w": 212,
+        "label": "Next: F2L",
+        "count": "1/3",
+        "on": 1,
+        "pressDisabled": false,
+        "undoDisabled": false,
+        "undoOpacity": "1",
+        "sr": "Marked Cross. Next: F2L.",
+        "dockW": 286
+      },
+      "pill-2-marks": {
+        "x": 52,
+        "w": 212,
+        "label": "Next: OLL",
+        "count": "2/3",
+        "on": 2,
+        "pressDisabled": false,
+        "undoDisabled": false,
+        "undoOpacity": "1",
+        "sr": "Marked F2L. Next: OLL.",
+        "dockW": 286
+      },
+      "pill-3-marks": {
+        "x": 52,
+        "w": 212,
+        "label": "All marked",
+        "count": "3/3",
+        "on": 3,
+        "pressDisabled": true,
+        "undoDisabled": false,
+        "undoOpacity": "1",
+        "sr": "All phases marked.",
+        "dockW": 286
+      },
+      "train-390": {
+        "name": "E-perm",
+        "times": "recog 0.75 · exec 0.91",
+        "alg": "y x' R U' R' D R U R' D' R U R",
+        "diagram": true,
+        "bottom": 532,
+        "navTop": 785,
+        "aboveFold": true
+      },
+      "train-360": {
+        "name": "Aa-perm",
+        "times": "recog 0.73 · exec 0.91",
+        "alg": "x R' U R' D2 R U' R' D2 R2 x'",
+        "diagram": true,
+        "bottom": 460,
+        "navTop": 589,
+        "aboveFold": true
+      },
+      "drills-390": {
+        "count": 1,
+        "inAside": 0,
+        "bottom": 473,
+        "navTop": 785,
+        "visible": true
+      },
+      "drills-360": {
+        "count": 1,
+        "inAside": 0,
+        "bottom": 424,
+        "navTop": 581,
+        "visible": true
+      },
+      "introPrimary": [
+        {
+          "x": 227,
+          "y": 658,
+          "w": 143,
+          "label": "Next",
+          "step": "Step 1 of 4"
+        },
+        {
+          "x": 227,
+          "y": 658,
+          "w": 143,
+          "label": "Next",
+          "step": "Step 2 of 4"
+        },
+        {
+          "x": 227,
+          "y": 658,
+          "w": 143,
+          "label": "Next",
+          "step": "Step 3 of 4"
+        },
+        {
+          "x": 227,
+          "y": 658,
+          "w": 143,
+          "label": "Get started",
+          "step": "Step 4 of 4"
+        }
+      ],
+      "introPrimary130": [
+        {
+          "x": 210,
+          "y": 556,
+          "label": "Next"
+        },
+        {
+          "x": 210,
+          "y": 556,
+          "label": "Next"
+        },
+        {
+          "x": 210,
+          "y": 556,
+          "label": "Next"
+        },
+        {
+          "x": 210,
+          "y": 556,
+          "label": "Get started"
+        }
+      ]
+    },
+    "checks": {
+      "nudgeDeepLink": {
+        "view": "Settings",
+        "focused": "split-toggle",
+        "splitsOn": true,
+        "cardShown": true,
+        "timerHeadingY": 50,
+        "toggleY": 400
+      },
+      "settingsBackToSolve": "Solve",
+      "nudgeHiddenAfterSeen": true,
+      "nudgeStillHiddenAfterReload": true,
+      "pillXEqual": true,
+      "pillXs": [
+        52,
+        52,
+        52,
+        52
+      ],
+      "undoAnnounce": {
+        "before": "Marked F2L. Next: OLL.",
+        "after": "Marked Cross. Next: F2L.",
+        "labelAfter": "Next: F2L"
+      },
+      "navOpacityMidSolve": [
+        {
+          "label": "Train",
+          "current": null,
+          "opacity": "0.45"
+        },
+        {
+          "label": "Library",
+          "current": null,
+          "opacity": "0.45"
+        },
+        {
+          "label": "Solve",
+          "current": "page",
+          "opacity": "1"
+        },
+        {
+          "label": "Drills",
+          "current": null,
+          "opacity": "0.45"
+        },
+        {
+          "label": "Settings",
+          "current": null,
+          "opacity": "0.45"
+        }
+      ],
+      "toast": {
+        "text": "Stop the timer first",
+        "view": "Solve"
+      },
+      "toastGone": true,
+      "introPrimaryFixed": true,
+      "introKeys": [
+        "ArrowLeft"
+      ],
+      "introArrowLeft": "Step 3 of 4",
+      "introTabFromPrimaryOnSlide1": "Skip",
+      "introPrimaryFixed130": true
+    }
+  }
+}

@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Split 0.9.0 — mockup sheet</title>
+<link rel="stylesheet" href="harness.css">
+</head>
+<body>
+<h1 id="t"></h1>
+<p class="sub" id="s"></p>
+<div class="grid" id="grid"></div>
+<script>
+const SHEETS = {
+  u1: {
+    title: 'U1 — the timer screen fits again',
+    sub: 'Solve, <b>post-solve, split timing on</b>. Left = the 0.9.0 build, right = the proposed layout. Every frame is the app\'s real <b>src/app.css</b> at 1× device pixels; the numbers under each phone are measured in that frame after layout, not estimated.',
+    cols: 2,
+    frames: [
+      { v: 'u1-before-390', w: 390, h: 844, cap: 'BEFORE · 390×844 · shipped 0.9.0' },
+      { v: 'u1-after-390', w: 390, h: 844, cap: 'AFTER · 390×844 · proposed' },
+      { v: 'u1-before-360', w: 360, h: 640, cap: 'BEFORE · 360×640 · shipped 0.9.0' },
+      { v: 'u1-after-360', w: 360, h: 640, cap: 'AFTER · 360×640 · proposed' },
+    ],
+  },
+  'u1-130': {
+    title: 'U1 — the same screen at 130 % text',
+    sub: 'Text size 130 %, which is the accessibility setting the app ships. The strip is one layout at every text size and every width — no separate "compact mode" to keep in sync — because the phase times, the drill and the stats bar all read at 130 % on a 360 px-wide phone.',
+    cols: 2,
+    frames: [
+      { v: 'u1-before-360', w: 360, h: 640, t: 130, cap: 'BEFORE · 360×640 · 130 %' },
+      { v: 'u1-after-360', w: 360, h: 640, t: 130, cap: 'AFTER · 360×640 · 130 %' },
+      { v: 'u1-before-390', w: 390, h: 844, t: 130, cap: 'BEFORE · 390×844 · 130 %' },
+      { v: 'u1-after-390', w: 390, h: 844, t: 130, cap: 'AFTER · 390×844 · 130 %' },
+    ],
+  },
+  u2: {
+    title: 'U2 — the trainer\'s answer sheet reaches the phone',
+    sub: 'Train session and Drills, <b>after an attempt</b>, at 390×844. The aside that holds the diagram, the algorithm and the penalty row is <b>display:none below 1100 px</b>, so on the shipped phone build none of it exists. After: the result line becomes an answer card in the flow, and Drills gets its +2 / DNF / Delete row back.',
+    cols: 2,
+    frames: [
+      { v: 'u2-train-before', w: 390, h: 844, cap: 'BEFORE · Train after an attempt · case name only' },
+      { v: 'u2-train-after', w: 390, h: 844, cap: 'AFTER · Train · diagram, name, recog/exec, algorithm' },
+      { v: 'u2-drills-before', w: 390, h: 844, cap: 'BEFORE · Drills after a drill · no penalty row at all' },
+      { v: 'u2-drills-after', w: 390, h: 844, cap: 'AFTER · Drills · +2 / DNF / Delete in the flow' },
+      { v: 'u2-train-dnf', w: 390, h: 844, cap: 'AFTER · Train · after a DNF (answer still shown)' },
+      { v: 'u2-train-after', w: 390, h: 844, t: 130, cap: 'AFTER · Train · 130 % text' },
+    ],
+  },
+  u3: {
+    title: 'U3 — say which phase is being marked, and stop moving the target',
+    sub: 'Clock running, split timing on. Crop of the bottom 300 px (the pill sits over the colour flood). <b>Shipped</b>: an unlabelled <b>Split 0/3</b>, and <b>Undo appears on the first mark, shifting the pill 42 px left</b>. <b>A</b> and <b>B</b> both keep one fixed footprint at every mark count and keep Undo present but disabled.',
+    cols: 3,
+    frames: [
+      { v: 'u3-old-0', w: 390, h: 844, crop: 300, small: true, cap: 'SHIPPED · 0 marks' },
+      { v: 'u3-a-0', w: 390, h: 844, crop: 300, small: true, cap: 'A · 0 marks · all four names' },
+      { v: 'u3-b-0', w: 390, h: 844, crop: 300, small: true, cap: 'B · 0 marks · rail + next phase' },
+      { v: 'u3-old-1', w: 390, h: 844, crop: 300, small: true, cap: 'SHIPPED · 1 mark · pill jumps left' },
+      { v: 'u3-a-1', w: 390, h: 844, crop: 300, small: true, cap: 'A · 1 mark · Cross done' },
+      { v: 'u3-b-1', w: 390, h: 844, crop: 300, small: true, cap: 'B · 1 mark · next F2L' },
+      { v: 'u3-old-3', w: 390, h: 844, crop: 300, small: true, cap: 'SHIPPED · 3 marks · unlabelled' },
+      { v: 'u3-a-3', w: 390, h: 844, crop: 300, small: true, cap: 'A · 3 marks · PLL running' },
+      { v: 'u3-b-3', w: 390, h: 844, crop: 300, small: true, cap: 'B · 3 marks · stop to finish' },
+    ],
+  },
+  u4: {
+    title: 'U4 — let people find the 0.9.0 features',
+    sub: 'Three small placements, all on screens that already exist. Fresh install at 390×844 (left pair), the new intro slide, and the Settings → Timer confirmation that replaces the paragraph which only appears after the toggle is found.',
+    cols: 2,
+    frames: [
+      { v: 'u1-first-run-before', w: 390, h: 844, cap: 'BEFORE · fresh install · no mention of splits' },
+      { v: 'u1-first-run-after', w: 390, h: 844, cap: 'AFTER · one line + Turn on, in the stats dock slot' },
+      { v: 'u4-intro', w: 390, h: 844, cap: 'AFTER · intro, slide 3 of 4' },
+      { v: 'u4-settings', w: 390, h: 844, cap: 'AFTER · Settings → Timer, toggle found and explained' },
+    ],
+  },
+  u5: {
+    title: 'U5 — no silent refusals',
+    sub: 'Left pair: fresh install, where <b>+2 / DNF / Delete</b> look live but every one is <code>disabled</code>. Right pair: the clock running, where the four tabs are <code>aria-disabled</code> but computed at <b>opacity 1</b>, and a tap on Train does nothing and says nothing.',
+    cols: 2,
+    frames: [
+      { v: 'u5-fresh-before', w: 390, h: 844, cap: 'BEFORE · fresh install · penalties look live' },
+      { v: 'u5-fresh-after', w: 390, h: 844, cap: 'AFTER · disabled at 45 %, no press scale' },
+      { v: 'u5-run-before', w: 390, h: 844, cap: 'BEFORE · running · tabs look live, tap is silent' },
+      { v: 'u5-run-after', w: 390, h: 844, cap: 'AFTER · tabs dim, one line says why' },
+    ],
+  },
+};
+
+const v = new URLSearchParams(location.search).get('v') || 'u1';
+const rowParam = new URLSearchParams(location.search).get('row');
+const S = SHEETS[v];
+// one row per PNG keeps each capture small enough to shoot at 2x without downscaling
+if (rowParam != null) {
+  const r = Number(rowParam);
+  S.frames = S.frames.slice(r * S.cols, r * S.cols + S.cols);
+}
+document.getElementById('t').textContent = S.title;
+document.getElementById('s').innerHTML = S.sub;
+const grid = document.getElementById('grid');
+grid.style.display = 'grid';
+grid.style.gridTemplateColumns = `repeat(${S.cols}, max-content)`;
+
+const meta = S.frames.map(() => null);
+
+function finalize() {
+  // frames whose content has no page (the split-pill crops) report where the pill sits instead,
+  // and how far it moves between mark counts in the same column
+  if (!S.frames.every((f, i) => meta[i])) return;
+  S.frames.forEach((f, i) => {
+    if (!meta[i].dock) return;
+    const col = i % S.cols;
+    const group = S.frames.map((_, k) => (k % S.cols === col ? meta[k] : null)).filter(m => m && m.dock);
+    if (group.length < 2) return;
+    const lefts = group.map(m => m.dock.left);
+    const widths = group.map(m => m.dock.width);
+    const dx = Math.round(Math.max(...lefts) - Math.min(...lefts));
+    const dw = Math.round(Math.max(...widths) - Math.min(...widths));
+    const span = document.querySelectorAll('figcaption')[i].querySelector('[data-m]');
+    span.innerHTML += '<br>' + (dx === 0 && dw === 0
+      ? '<span class="ok">identical footprint at every mark count</span>'
+      : `<span class="no">pill moves ${dx} px and resizes ${dw} px between mark counts</span>`);
+  });
+}
+
+S.frames.forEach((f, i) => {
+  const q = new URLSearchParams({ v: f.v, t: f.t || 100 });
+  const fig = document.createElement('figure');
+  const box = document.createElement('div');
+  box.className = f.crop ? 'frame crop' : 'frame';
+  box.style.width = f.w + 'px';
+  if (f.crop) box.style.height = f.crop + 'px';
+  const fr = document.createElement('iframe');
+  fr.width = f.w; fr.height = f.h;
+  fr.loading = 'eager';
+  fr.src = `frame.html?${q}`;
+  if (f.crop) fr.style.marginTop = (f.crop - f.h) + 'px';
+  box.appendChild(fr);
+  const cap = document.createElement('figcaption');
+  cap.innerHTML = `<b>${f.cap}</b><span data-m>measuring…</span>`;
+  if (f.small) { cap.style.fontSize = '10.5px'; }
+  fig.append(box, cap);
+  grid.appendChild(fig);
+
+  fr.addEventListener('load', () => {
+    const measure = () => {
+      const d = fr.contentDocument;
+      if (!d || !d.body || !d.body.children.length) return setTimeout(measure, 120);
+      const main = d.querySelector('main.page');
+      const dock = d.querySelector('.split-dock');
+      const nav = d.querySelector('nav[aria-label=Main]');
+      const out = cap.querySelector('[data-m]');
+      const vw = d.documentElement.clientWidth;
+      if (dock && !main) {
+        const r = dock.getBoundingClientRect();
+        meta[i] = { dock: { left: Math.round(r.left), width: Math.round(r.width), height: Math.round(r.height) } };
+        out.innerHTML = `<br>pill <b>${Math.round(r.width)}×${Math.round(r.height)}</b>, left edge x=<b>${Math.round(r.left)}</b> of ${vw}`;
+      } else if (main && nav) {
+        const kids = [...main.querySelectorAll('.split > .col > *')].filter(e => e.getBoundingClientRect().height > 0);
+        const out2 = cap.querySelector('[data-m]');
+        if (!kids.length) { meta[i] = { bottom: 0 }; out2.textContent = ''; return; }
+        const bottom = Math.round(Math.max(...kids.map(e => e.getBoundingClientRect().bottom)));
+        const navTop = Math.round(nav.getBoundingClientRect().top);
+        const mid = d.querySelector('nav .mid button');
+        const midTop = mid ? Math.round(mid.getBoundingClientRect().top) : navTop;
+        const doc = d.documentElement.scrollHeight;
+        const vh = d.documentElement.clientHeight;
+        meta[i] = { bottom };
+        out.innerHTML = `<br>content ends <b>${bottom}</b> · Solve button top <b>${midTop}</b> · tab bar <b>${navTop}</b> · document <b>${doc}/${vh}</b><br>` +
+          (bottom <= midTop
+            ? `<span class="ok">clears the tab bar by ${navTop - bottom} px</span>`
+            : `<span class="no">${bottom - navTop} px of it is behind the tab bar</span>`);
+      } else {
+        meta[i] = { bottom: 0 };
+        out.textContent = '';
+      }
+      finalize();
+    };
+    measure();
+    fr.contentWindow.addEventListener('load', measure);
+  });
+});
+</script>
+</body>
+</html>

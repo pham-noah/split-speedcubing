@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Split 0.9.0 mockup frame</title>
+<link rel="stylesheet" href="../../../../src/app.css">
+<style>
+/* frames are phones: no desktop scrollbar shaving 15 px off the 360 layout */
+html { scrollbar-width: none; }
+html::-webkit-scrollbar { width: 0; height: 0; }
+/* content-visibility:auto makes offscreen cards report a 96 px placeholder, which would corrupt every
+   measurement in a 640 px-tall frame; a phone frame is small enough to lay out fully. */
+.card { content-visibility: visible !important; contain-intrinsic-size: auto !important; }
+/* .page has an entrance animation (page-in) whose first keyframe is a translate; a frame that is never
+   painted would stay parked on it, and a transform on an ancestor re-anchors position:fixed to it. */
+.page { animation: none !important; }
+/* The split pill as shipped in 0.9.0 (verbatim from TimerPad.svelte's scoped <style>), so the
+   BEFORE frames show the real 151x50 pill and the real 42 px jump. */
+.split-dock.old {
+  position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%); z-index: 42; display: flex; align-items: center; gap: 8px;
+}
+.old .split-press {
+  display: inline-flex; align-items: center; gap: 9px; padding: 11px 17px;
+  border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.26);
+  background: rgba(10, 12, 16, 0.66); color: #fff; font: inherit;
+  font-size: 0.9rem; font-weight: 800; letter-spacing: 0.02em; cursor: pointer;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.old .split-undo {
+  font: inherit; font-size: 0.82rem; font-weight: 800; padding: 11px 14px;
+  border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.26);
+  background: rgba(10, 12, 16, 0.66); color: #fff; cursor: pointer;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.old .sp-n { font-size: 0.78rem; opacity: 0.8; font-family: 'JetBrains Mono', monospace; }
+.old .sp-k {
+  font-size: 0.72rem; opacity: 0.62; font-family: 'JetBrains Mono', monospace;
+  border: 1px solid rgba(255, 255, 255, 0.28); border-radius: 6px; padding: 1px 5px;
+}
+</style>
+<!-- The proposed CSS is off by default so the BEFORE frames render from app.css alone.
+     The renderer switches it on for the AFTER variants. -->
+<style id="proposed" media="not all">
+/* ============================================================================
+   PROPOSED COMPONENT CSS — the exact rules the spec asks the implementer to add.
+   Everything else on these frames comes from src/app.css unchanged.
+   ========================================================================= */
+
+/* --- U1 · Solve fits ------------------------------------------------------ */
+/* .page.fill already subtracts the tab bar from its min-height, so the 74 px bottom padding that other
+   pages need for the fixed bar only opens a 73 px dead band here. 32 px clears the round Solve button's
+   15 px overhang with 16 px to spare, and lets the stack use the room it has. */
+@media (max-width: 1099px) {
+  .page.solve { padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px)); }
+}
+.col.solve-col { gap: 9px; }
+.setup-row { display: flex; align-items: stretch; gap: 8px; }
+.setup-row .seg { flex: 0 0 7.6rem; }
+.setup-row .seg button { flex: 1 1 0; min-height: 40px; padding: 0 6px; }
+.setup-row .new-scramble { flex: 1 1 auto; min-height: 50px; }
+.timer-slot { position: relative; }
+@media (max-height: 700px) {
+  .timer-slot { gap: 4px; }
+  /* 23vh is 147 px on a 640-tall phone; 19vh keeps the disc a 121 px target and buys 26 px, which is
+     what a three-line scramble costs at 130 % text. */
+  .big { width: min(168px, 19vh); height: min(168px, 19vh); min-width: 116px; min-height: 116px; }
+}
+.vs-avg {
+  position: absolute; top: -4px; right: 0;
+  font: 800 0.76rem/1 'JetBrains Mono', monospace;
+  padding: 4px 8px; border-radius: 999px;
+  background: var(--card); border: 1px solid var(--line);
+}
+.vs-avg.good { color: var(--good); }
+.vs-avg.bad { color: var(--bad); }
+
+/* --- U1 · the phase strip: one row, the bar, and the drill that follows from it --------- */
+.phases-card { padding: 8px 12px 9px; }
+.phases-card .phbar { height: 6px; border-radius: 3px; }
+.pc-row { display: flex; align-items: stretch; gap: 8px; margin-top: 6px; }
+.pc-row .phrow { flex: 1 1 auto; margin: 0; gap: 6px; }
+.phases-card .ph-l { font-size: 0.58rem; letter-spacing: 0.06em; line-height: 1.3; }
+.phases-card .ph-t { display: block; font-size: 0.8rem; font-weight: 800; line-height: 1.25; white-space: nowrap; }
+.phases-card .ph-t.worst { color: var(--am); }
+.phases-card .ph-d { display: block; font-size: 0.58rem; font-weight: 700; line-height: 1.25; white-space: nowrap; }
+.pc-drill {
+  flex: none; width: auto; min-width: 88px; min-height: 44px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+  padding: 0 10px; border-radius: 10px;
+}
+.pc-drill b { font-size: 0.72rem; font-weight: 800; white-space: nowrap; }
+.pc-drill span { font: 700 0.6rem/1.2 'JetBrains Mono', monospace; color: var(--mu); }
+
+/* three stats side by side in one bar instead of three bordered cards (66 px -> 36 px) */
+.stats-bar {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  padding: 7px 0; gap: 0;
+}
+.stats-bar > div {
+  display: flex; align-items: baseline; justify-content: center; gap: 5px;
+  min-width: 0; padding: 0 6px;
+}
+.stats-bar > div + div { border-left: 1px solid var(--line); }
+.stats-bar .mu { font-size: 0.64rem; }
+.stats-bar b { font-size: 0.92rem; line-height: 1.2; white-space: nowrap; }
+
+/* --- U2 · answer card ---------------------------------------------------- */
+.answer-card {
+  display: grid; grid-template-columns: 64px minmax(0, 1fr);
+  gap: 2px 10px; align-items: start;
+  padding: 10px 12px;
+}
+.answer-card .ac-diagram { grid-row: span 2; }
+.answer-card .ac-name { font-weight: 800; font-size: 0.95rem; line-height: 1.3; }
+.answer-card .ac-times { font: 600 0.74rem/1.45 'JetBrains Mono', monospace; color: var(--mu); }
+.answer-card .ac-alg {
+  grid-column: 1 / -1; margin-top: 8px;
+  font: 600 0.82rem/1.45 'JetBrains Mono', monospace; color: var(--tx);
+  word-break: break-word; user-select: text; -webkit-user-select: text;
+}
+
+/* --- U3 · split dock v2 ------------------------------------------------- */
+.split-dock {
+  position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%); z-index: 42;
+  display: flex; align-items: center; gap: 16px;
+}
+.split-press {
+  display: inline-flex; align-items: center; gap: 9px;
+  width: 212px; height: 52px; padding: 0 12px;
+  border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.26);
+  background: rgba(10, 12, 16, 0.66); color: #fff;
+  font: inherit; font-size: 0.86rem; font-weight: 800; letter-spacing: 0.02em;
+  cursor: pointer; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  transition: transform 0.12s ease;
+}
+.sp-rail { display: flex; gap: 2px; flex: none; }
+.sp-rail i {
+  display: block; width: 11px; height: 6px; border-radius: 3px;
+  background: rgba(255, 255, 255, 0.26);
+}
+.sp-rail i.on { background: #fff; }
+.sp-label { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sp-n { font: 800 0.74rem/1 'JetBrains Mono', monospace; opacity: 0.8; flex: none; }
+.split-undo {
+  width: 58px; height: 52px; flex: none;
+  border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.26);
+  background: rgba(10, 12, 16, 0.66); color: #fff;
+  font: inherit; font-size: 0.82rem; font-weight: 800;
+  cursor: pointer; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.split-undo[disabled] { opacity: 0.35; cursor: default; }
+.split-press:active, .split-undo:active { transform: scale(0.95); }
+
+/* option A — labelled pill, all four names */
+.split-press.opt-a { width: 236px; gap: 3px; font-size: 0.72rem; justify-content: center; }
+.opt-a .sp-word { opacity: 0.5; }
+.opt-a .sp-word.now { opacity: 1; font-weight: 800; }
+.opt-a .sp-word.done { opacity: 0.85; }
+.opt-a .sp-sep { opacity: 0.4; font-weight: 600; }
+.opt-a .sp-n { margin-left: 6px; }
+
+/* --- U4 · discovery ----------------------------------------------------- */
+.split-nudge { display: flex; align-items: center; gap: 10px; padding: 9px 12px; }
+.split-nudge .sn-txt { flex: 1 1 auto; min-width: 0; font-size: 0.74rem; line-height: 1.35; color: var(--mu); }
+.split-nudge .sn-txt b { color: var(--tx); font-weight: 800; }
+.split-nudge .btn { flex: none; min-height: 38px; padding: 0 12px; font-size: 0.82rem; }
+
+/* --- U5 · blocked + toast ---------------------------------------------- */
+button[disabled],
+button[aria-disabled='true'],
+[role='button'][aria-disabled='true'] { opacity: 0.45; cursor: not-allowed; }
+button[disabled]:active,
+button[aria-disabled='true']:active { transform: none !important; filter: none !important; }
+/* the current tab stays live even while the clock runs (Solve sits inside .mid) */
+nav[aria-label='Main'] .on[aria-disabled='true'] { opacity: 1; cursor: pointer; }
+.toast {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: calc(66px + env(safe-area-inset-bottom, 0px));
+  z-index: 60; white-space: nowrap;
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 9px 14px; font-size: 0.82rem; font-weight: 700; color: var(--tx);
+  box-shadow: 0 10px 30px -12px #000;
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const qs = new URLSearchParams(location.search);
+const V = qs.get('v') || 'u1-after';
+// BEFORE variants must render from src/app.css alone; everything else turns the proposed rules on.
+if (/after|u3-[ab]-|u4-|dnf/.test(V)) document.getElementById('proposed').media = 'all';
+const T = Number(qs.get('t') || 100);
+if (T !== 100) document.documentElement.style.fontSize = T + '%';
+
+const SCR = "R U' D L U' L' F R' L2 D F2 R2 B2 U' R2 D2 B2 D B2 F' L'";
+const scr = (s = SCR) => `<div class="scr" aria-label="Scramble">${s.split(/\s+/).map(t => `<span>${t}</span>`).join(' ')}</div>`;
+const icon = (n, size = 22) => {
+  const paths = {
+    train: `<circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="3.4"/>`,
+    library: [3.5, 10, 16.5].map(y => [3.5, 10, 16.5].map(x => `<rect x="${x}" y="${y}" width="4" height="4" rx="1.1"/>`).join('')).join(''),
+    drills: `<circle cx="12" cy="13.5" r="6.8"/><path d="M12 10.5v3.4l2.2 1.4"/><path d="M9.4 3h5.2"/><path d="M12 3v3"/>`,
+    settings: `<path d="M4 7h9M18.5 7H20M4 12h3.5M12.5 12H20M4 17h9M18.5 17H20"/><circle cx="15.7" cy="7" r="2.1"/><circle cx="9.7" cy="12" r="2.1"/><circle cx="15.7" cy="17" r="2.1"/>`,
+  };
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[n]}</svg>`;
+};
+const nav = (active = 'solve', blocked = false) => {
+  const d = blocked ? ' aria-disabled="true"' : '';
+  const t = (v, name, label) => `<button class="${v === active ? 'on' : ''}"${v === active && blocked ? ' aria-disabled="true"' : blocked && v !== 'solve' ? d : ''}>${icon(name)}<span class="nav-label">${label}</span></button>`;
+  return `<nav aria-label="Main">
+    <div class="brand" aria-hidden="true"><b>Split</b><span>0.9.0</span></div>
+    ${t('train', 'train', 'Train')}
+    ${t('lib', 'library', 'Library')}
+    <div class="mid"><button class="${active === 'solve' ? 'on' : ''}"${blocked ? ' aria-disabled="true"' : ''}>Solve</button></div>
+    ${t('drills', 'drills', 'Drills')}
+    ${t('set', 'settings', 'Settings')}
+  </nav>`;
+};
+const chipRow = (disabledHistory = false, count = 12) => `<div class="row sp">
+  <button class="chip">3x3 · <span class="chip-name">Session 1</span> ▾</button>
+  <button class="btn history-btn"${disabledHistory ? ' disabled' : ''}>History · ${count}</button>
+</div>`;
+const pens = (disabled = false) => `<div class="row pens" style="justify-content:center">
+  <button class="btn"${disabled ? ' disabled' : ''}>+2</button>
+  <button class="btn"${disabled ? ' disabled' : ''}>DNF</button>
+  <button class="btn"${disabled ? ' disabled' : ''}>Delete</button>
+</div>`;
+const pad = (state = 'idle', time = '18.42') => {
+  const label = { idle: 'Hold to start', run: 'Tap to stop', hold: 'Keep holding', ready: 'Release!' }[state];
+  const st = state === 'run' ? ` data-s="run"` : '';
+  const shown = state === 'run' || state === 'idle' ? `<div class="time mono done" aria-hidden="true">${time}</div>` : '';
+  return `${shown}<button class="big"${st}>${label}</button>`;
+};
+
+/* ---------- current markup (BEFORE) ---------- */
+const phasesBefore = () => `<div class="card" style="padding:12px 14px" aria-label="Phase splits for the last solve">
+  <div class="row sp" style="margin-bottom:8px">
+    <span class="mu">Phases</span><span class="mu mono" style="font-size:0.7rem">vs your last 12 splits</span>
+  </div>
+  <div class="phbar" aria-hidden="true">
+    <span style="flex:1320;opacity:1"></span><span style="flex:400;opacity:0.81"></span>
+    <span style="flex:400;opacity:0.62"></span><span style="flex:530;opacity:0.43"></span>
+  </div>
+  <div class="phrow" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+    <div><div class="ph-l">Cross</div><b class="mono" style="font-size:0.95rem">1.32</b><div class="mono" style="font-size:0.68rem;color:var(--bad)">+0.12</div></div>
+    <div><div class="ph-l">F2L</div><b class="mono" style="font-size:0.95rem">0.40</b><div class="mono" style="font-size:0.68rem;color:var(--good)">−0.06</div></div>
+    <div><div class="ph-l">OLL</div><b class="mono" style="font-size:0.95rem">0.40</b><div class="mono" style="font-size:0.68rem;color:var(--good)">−0.04</div></div>
+    <div><div class="ph-l">PLL</div><b class="mono" style="font-size:0.95rem">0.53</b><div class="mono" style="font-size:0.68rem;color:var(--bad)">+0.02</div></div>
+  </div>
+  <div class="row sp" style="margin-top:10px;gap:10px">
+    <span class="mu" style="font-size:0.78rem">Cross is 50% of this solve</span>
+    <button class="btn" style="flex:none;min-height:32px;padding:0 12px;font-size:0.82rem">Drill Cross</button>
+  </div>
+</div>`;
+const statsBefore = (empty = false) => `<div class="row stats-dock">
+  <div class="card"><div class="mu">Best</div><b class="mono num">${empty ? '–' : '12.40'}</b></div>
+  <div class="card"><div class="mu">ao5</div><b class="mono num">${empty ? '–' : '14.26'}</b></div>
+  <div class="card"><div class="mu">ao12</div><b class="mono num">${empty ? '–' : '15.08'}</b></div>
+</div>`;
+
+function solveBefore(o = {}) {
+  const { split = true, noSolves = false, disabledAll = false } = o;
+  return `<main class="page wide solve fill">
+  <h1 class="sr">Solve</h1>
+  <div class="split"><div class="col" style="gap:12px">
+    ${chipRow(disabledAll, noSolves ? 0 : 12)}
+    <div class="seg" role="group" aria-label="Puzzle" style="align-self:flex-start;width:9.5rem">
+      <button class="on" aria-pressed="true">3x3</button><button>2x2</button>
+    </div>
+    ${scr()}
+    <button class="btn" style="align-self:center;min-height:40px">New scramble</button>
+    ${noSolves ? '' : `<div class="mu mono" style="text-align:center;color:var(--bad)">+0.68 vs average</div>`}
+    <div class="timer-slot">${pad('idle')}</div>
+    ${noSolves ? `<div class="empty"><b>Ready for your first solve</b><span class="empty-how">Hold the big button until it says Release, then let go to start. Tap anywhere to stop.</span></div>` : ''}
+    ${pens(disabledAll || noSolves)}
+    ${split ? phasesBefore() : ''}
+    ${statsBefore(noSolves)}
+  </div></div>
+  ${nav('solve', disabledAll)}
+</main>`;
+}
+
+/* ---------- proposed markup (AFTER) ---------- */
+const phasesAfter = () => `<div class="card phases-card" aria-label="Phase splits for the last solve">
+  <div class="phbar" aria-hidden="true">
+    <span style="flex:1320;opacity:1"></span><span style="flex:400;opacity:0.81"></span>
+    <span style="flex:400;opacity:0.62"></span><span style="flex:530;opacity:0.43"></span>
+  </div>
+  <div class="pc-row">
+    <div class="phrow" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+      <div><div class="ph-l">Cross</div><b class="ph-t mono worst">1.32</b><span class="ph-d mono" style="color:var(--bad)">+0.12</span></div>
+      <div><div class="ph-l">F2L</div><b class="ph-t mono">0.40</b><span class="ph-d mono" style="color:var(--good)">−0.06</span></div>
+      <div><div class="ph-l">OLL</div><b class="ph-t mono">0.40</b><span class="ph-d mono" style="color:var(--good)">−0.04</span></div>
+      <div><div class="ph-l">PLL</div><b class="ph-t mono">0.53</b><span class="ph-d mono" style="color:var(--bad)">+0.02</span></div>
+    </div>
+    <button class="btn pc-drill" aria-label="Cross is 50% of this solve. Drill Cross."><b>Drill Cross</b><span>50%</span></button>
+  </div>
+</div>`;
+const statsAfter = (empty = false) => `<div class="card stats-dock stats-bar" role="group" aria-label="Session statistics">
+  <div><span class="mu">Best</span><b class="mono num">${empty ? '–' : '12.40'}</b></div>
+  <div><span class="mu">ao5</span><b class="mono num">${empty ? '–' : '14.26'}</b></div>
+  <div><span class="mu">ao12</span><b class="mono num">${empty ? '–' : '15.08'}</b></div>
+</div>`;
+
+function solveAfter(o = {}) {
+  const { split = true, compact = false, noSolves = false, nudge = false, penDim = false, toast = false } = o;
+  return `<main class="page wide solve fill">
+  <h1 class="sr">Solve</h1>
+  <div class="split"><div class="col solve-col">
+    ${chipRow(penDim && !noSolves, noSolves ? 0 : 12)}
+    ${scr()}
+    <div class="setup-row">
+      <div class="seg" role="group" aria-label="Puzzle">
+        <button class="on" aria-pressed="true">3x3</button><button>2x2</button>
+      </div>
+      <button class="btn new-scramble">New scramble</button>
+    </div>
+    <div class="timer-slot">
+      ${noSolves ? '' : `<span class="vs-avg bad" aria-label="Compared with your session average">+0.68</span>`}
+      ${pad('idle')}
+    </div>
+    ${noSolves ? `<div class="empty" style="padding:0"><b>Ready for your first solve</b><span class="empty-how">Hold until it says Release, let go to start, tap to stop.</span></div>` : ''}
+    ${pens(penDim || noSolves)}
+    ${split ? phasesAfter(compact) : ''}
+    ${nudge ? `<div class="card split-nudge">
+      <span class="sn-txt"><b>Want the phase breakdown?</b><br>Cross · F2L · OLL · PLL, marked mid-solve.</span>
+      <button class="btn">Turn on</button>
+    </div>` : statsAfter(noSolves)}
+  </div></div>
+  ${toast ? `<div class="toast" role="status">Stop the timer first</div>` : ''}
+  ${nav('solve', false)}
+</main>`;
+}
+
+/* ---------- trainer ---------- */
+const PLL_DIAGRAM = (size = 64) => `<svg class="ac-diagram" width="${size}" height="${size}" viewBox="0 0 156 156" role="img" aria-label="Aa-perm, top view">
+  ${[0,1,2].map(r => [0,1,2].map(k => `<rect x="${27+k*30}" y="${27+r*30}" width="28" height="28" rx="4" fill="#141821" stroke="#2A2F3A"/>`).join('')).join('')}
+  <rect x="27" y="16" width="28" height="11" rx="2" fill="#D64545"/><rect x="57" y="16" width="28" height="11" rx="2" fill="#D64545"/><rect x="87" y="16" width="28" height="11" rx="2" fill="#3FA34D"/>
+  <rect x="27" y="117" width="28" height="11" rx="2" fill="#3FA34D"/><rect x="57" y="117" width="28" height="11" rx="2" fill="#F08A24"/><rect x="87" y="117" width="28" height="11" rx="2" fill="#F08A24"/>
+  <rect x="16" y="27" width="11" height="28" rx="2" fill="#3C6FD8"/><rect x="16" y="57" width="11" height="28" rx="2" fill="#3C6FD8"/><rect x="16" y="87" width="11" height="28" rx="2" fill="#D64545"/>
+  <rect x="117" y="27" width="11" height="28" rx="2" fill="#F08A24"/><rect x="117" y="57" width="11" height="28" rx="2" fill="#3C6FD8"/><rect x="117" y="87" width="11" height="28" rx="2" fill="#3C6FD8"/>
+  <path d="M 41 41 Q 30 78 41 115" fill="none" stroke="var(--am)" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 115 41 Q 126 78 115 115" fill="none" stroke="var(--am)" stroke-width="2" stroke-linecap="round"/>
+</svg>`;
+
+function trainAfter(o = {}) {
+  const { answer = true, dnf = false } = o;
+  return `<main class="page wide fill">
+  <div class="split"><div class="col" style="gap:12px">
+    <div class="row sp">
+      <div class="mu" style="font-weight:800;color:var(--tx)">Recognition · PLL</div>
+      <button class="btn">End session</button>
+    </div>
+    <div class="mu">Recognition first, then execution · 0 due · 20 new · 1 done · best 1.86</div>
+    <div class="card" style="padding:12px;display:flex;align-items:center;gap:10px">
+      <span class="mono" style="font-size:0.86rem;line-height:1.5">U' x R2 D2 R U R' D2 R U' R x'</span>
+    </div>
+    <div class="timer-slot">${pad('idle', '2.36')}</div>
+    ${answer ? `<div class="card answer-card" aria-label="The case you just did">
+      ${PLL_DIAGRAM(64)}
+      <div><div class="ac-name">Aa-perm</div><div class="ac-times">recog 0.50 · exec 1.86</div></div>
+      <div class="ac-alg">x R' U R' D2 R U' R' D2 R2 x'</div>
+    </div>` : `<div class="mu" style="text-align:center">Last <b class="mono" style="color:var(--tx)">${dnf ? 'DNF' : '2.36'}</b> · recog <b class="mono" style="color:var(--tx)">0.50</b> · exec <b class="mono" style="color:var(--tx)">1.86</b> · Aa-perm</div>`}
+    ${pens()}
+    <button class="btn">Skip case</button>
+  </div></div>
+  ${nav('train')}
+</main>`;
+}
+
+function drillsAfter(o = {}) {
+  const { pen = true } = o;
+  return `<main class="page wide fill">
+  <div class="split"><div class="col" style="gap:12px">
+    <h1>Drills</h1>
+    <div class="seg" role="group" aria-label="Drill type">
+      <button class="on" aria-pressed="true">Cross</button><button>2-look OLL</button><button>2-look PLL</button><button>BLD</button>
+    </div>
+    <div class="mu">Cross colour <span style="display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;background:#3C6FD8;border:1px solid #0006"></span> <b style="color:#3C6FD8">Blue</b></div>
+    ${scr("R U R' U' F' U' F R U' R'")}
+    <div class="time mono">4.61</div>
+    ${pen ? `<div class="row" role="group" aria-label="Penalty and delete" style="gap:8px">
+      <button class="btn" style="flex:1">+2</button><button class="btn" style="flex:1">DNF</button><button class="btn" style="flex:1">Delete</button>
+    </div>` : ''}
+    <div class="row stats-dock">
+      <div class="card"><div class="mu">Last 10 average</div><b class="mono">5.12</b></div>
+      <div class="card"><div class="mu">Drills done</div><b class="mono">14</b></div>
+    </div>
+  </div></div>
+  ${nav('drills')}
+</main>`;
+}
+function drillsBefore() {
+  return `<main class="page wide fill">
+  <div class="split"><div class="col" style="gap:12px">
+    <h1>Drills</h1>
+    <div class="seg" role="group" aria-label="Drill type">
+      <button class="on" aria-pressed="true">Cross</button><button>2-look OLL</button><button>2-look PLL</button><button>BLD</button>
+    </div>
+    <div class="mu">Cross colour <span style="display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;background:#3C6FD8;border:1px solid #0006"></span> <b style="color:#3C6FD8">Blue</b></div>
+    ${scr("R U R' U' F' U' F R U' R'")}
+    <div class="time mono">4.61</div>
+    <div class="row stats-dock">
+      <div class="card"><div class="mu">Last 10 average</div><b class="mono">5.12</b></div>
+      <div class="card"><div class="mu">Drills done</div><b class="mono">14</b></div>
+    </div>
+  </div></div>
+  ${nav('drills')}
+</main>`;
+}
+
+/* ---------- run state (cover flood) ---------- */
+function runState(o = {}) {
+  const { marks = 0, opt = 'b', undo = 'auto', extra = '', blocked = true, toast = '' } = o;
+  const dots = [0, 1, 2].map(i => `<i class="${i < marks ? 'on' : ''}"></i>`).join('');
+  const next = ['Cross', 'F2L', 'OLL', 'PLL'][Math.min(marks, 3)];
+  const label = marks >= 3 ? 'All marked' : `Next: ${next}`;
+  const words = ['Cross', 'F2L', 'OLL', 'PLL'].map((w, i) =>
+    `<span class="sp-word ${i < marks ? 'done' : i === marks ? 'now' : ''}">${w}</span>`).join('<span class="sp-sep">›</span>');
+  const showUndo = undo === 'always' || (undo === 'auto' && marks > 0);
+  let press, dockCls = '';
+  if (opt === 'a') press = `<button class="split-press opt-a"><span>${words}</span><span class="sp-n">${marks}/3</span></button>`;
+  else if (opt === 'old') {
+    dockCls = ' old';
+    press = `<button class="split-press"><span>Split</span><span class="sp-n">${marks}/3</span><span class="sp-k">/</span></button>`;
+  } else press = `<button class="split-press"><span class="sp-rail">${dots}</span><span class="sp-label">${label}</span><span class="sp-n">${marks}/3</span></button>`;
+  return `<div class="cover on" style="--cx:195px;--cy:430px;--cover:#5aa9ff"></div>
+  <div class="cover-stage on" style="color:#06121F"><div class="cover-time mono">9.41</div></div>
+  <div class="split-dock${dockCls}">${press}${showUndo ? `<button class="split-undo"${marks || opt === 'old' ? '' : ' disabled'}>Undo</button>` : ''}</div>
+  ${toast ? `<div class="toast" role="status">${toast}</div>` : ''}
+  ${extra}
+  ${nav('solve', blocked)}`;
+}
+
+/* ---------- intro slide + settings ---------- */
+function introSlide() {
+  return `<div class="overlay" role="dialog" aria-modal="true" style="position:fixed">
+    <div class="sheet">
+      <div style="font-size:.9rem;font-weight:700;color:var(--mu)">Step 3 of 4</div>
+      <h2 id="intro-title">Split a solve into phases</h2>
+      <p>Turn on split timing, then tap <b>Split</b> once per phase while the clock runs: Cross, F2L, OLL, PLL. Afterwards Split names your worst phase and offers a drill for it.</p>
+      <div class="phbar" aria-hidden="true" style="margin:14px 0 6px;height:10px">
+        <span style="flex:9;opacity:1"></span><span style="flex:14;opacity:.81"></span>
+        <span style="flex:4;opacity:.62"></span><span style="flex:5;opacity:.43"></span>
+      </div>
+      <div class="row" style="gap:6px;margin-bottom:6px">
+        ${['Cross', 'F2L', 'OLL', 'PLL'].map((w, i) => `<span class="mu" style="flex:${[9, 14, 4, 5][i]};font-size:.62rem;letter-spacing:.06em;text-transform:uppercase">${w}</span>`).join('')}
+      </div>
+      <div class="dots" aria-hidden="true"><i></i><i></i><i class="on"></i><i></i></div>
+      <div class="row" style="gap:8px;min-height:44px">
+        <button class="btn" style="flex:1">Back</button>
+        <button class="btn" style="flex:1">Skip</button>
+        <button class="btn p" style="flex:2">Next</button>
+      </div>
+    </div>
+  </div>`;
+}
+function settingsSplit() {
+  return `<main class="page" style="padding-bottom:80px">
+    <h1>Settings</h1>
+    <nav class="secnav" aria-label="Settings sections">
+      <button class="on">Appearance</button><button>Timer</button><button>Colours</button><button>Walk…</button>
+    </nav>
+    <section class="col" aria-labelledby="tm-h">
+      <h2 id="tm-h" style="font-size:1.1rem;margin:0">Timer</h2>
+      <label class="row sp card"><span>Hide time while solving</span><input type="checkbox" style="width:24px;min-height:24px;flex:none"></label>
+      <label class="row sp card" data-flash="1"><span>Split timing<span class="mu" style="display:block;font-size:.78rem;font-weight:500">Cross · F2L · OLL · PLL, marked while the clock runs · 3x3 only</span></span><input type="checkbox" checked style="width:24px;min-height:24px;flex:none"></label>
+      <div class="card col" style="gap:8px;border-color:var(--am)">
+        <div style="font-size:.86rem;font-weight:700">Split timing is on</div>
+        <div class="mu" style="font-size:.78rem">Tap Split (or <b class="mono">/</b>) once per phase while the clock runs. 3 marks, 4 phases.</div>
+        <button class="btn p" style="align-self:flex-start;min-height:40px">Try it on the timer</button>
+      </div>
+      <label class="row sp card"><span>Full-screen colour while holding / solving</span><input type="checkbox" checked style="width:24px;min-height:24px;flex:none"></label>
+    </section>
+  </main>${nav('set')}`;
+}
+
+const RENDER = {
+  'u1-before-390': () => solveBefore({}),
+  'u1-after-390': () => solveAfter({}),
+  'u1-before-360': () => solveBefore({}),
+  'u1-after-360': () => solveAfter({}),
+  'u1-after-360-compact': () => solveAfter({ compact: true }),
+  'u1-first-run-before': () => solveBefore({ split: false, noSolves: true }),
+  'u1-first-run-after': () => solveAfter({ split: false, noSolves: true, nudge: true }),
+  'u2-train-before': () => trainAfter({ answer: false }),
+  'u2-train-after': () => trainAfter({ answer: true }),
+  'u2-train-dnf': () => trainAfter({ answer: true, dnf: true }),
+  'u2-drills-before': () => drillsBefore(),
+  'u2-drills-after': () => drillsAfter({ pen: true }),
+  'u3-a-0': () => runState({ marks: 0, opt: 'a', undo: 'always' }),
+  'u3-a-1': () => runState({ marks: 1, opt: 'a', undo: 'always' }),
+  'u3-a-3': () => runState({ marks: 3, opt: 'a', undo: 'always' }),
+  'u3-b-0': () => runState({ marks: 0, opt: 'b', undo: 'always' }),
+  'u3-b-1': () => runState({ marks: 1, opt: 'b', undo: 'always' }),
+  'u3-b-3': () => runState({ marks: 3, opt: 'b', undo: 'always' }),
+  'u3-old-0': () => runState({ marks: 0, opt: 'old', undo: 'auto' }),
+  'u3-old-1': () => runState({ marks: 1, opt: 'old', undo: 'auto' }),
+  'u3-old-3': () => runState({ marks: 3, opt: 'old', undo: 'auto' }),
+  'u5-fresh-before': () => solveBefore({ split: false, noSolves: true, disabledAll: false }),
+  'u5-fresh-after': () => solveAfter({ split: false, noSolves: true, penDim: true }),
+  'u5-run-before': () => runState({ marks: 0, opt: 'old', undo: 'auto', blocked: false }),
+  'u5-run-after': () => runState({ marks: 1, opt: 'b', undo: 'always', blocked: true, toast: 'Stop the timer first' }),
+  'u4-intro': () => introSlide(),
+  'u4-settings': () => settingsSplit(),
+};
+document.getElementById('root').innerHTML = (RENDER[V] || (() => 'unknown variant ' + V))();
+</script>
+</body>
+</html>
