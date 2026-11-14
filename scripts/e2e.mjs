@@ -56,7 +56,15 @@ const waitGone = async (sel, ms = 8000) => {
 check('the web shell is the one that loaded', await page.evaluate(() => document.documentElement.dataset.platform === 'web'));
 check('splash is removed', await waitGone('#splash'));
 check('intro dialog shows', await page.evaluate(() => !!document.querySelector('[role=dialog]')));
-await clickText(page, 'Next'); await clickText(page, 'Next'); await clickText(page, 'Get started'); await sleep(200);
+// Walk the intro to its last slide instead of hard-coding how many there are: a fourth slide was
+// added in 0.9.0 and a fixed pair of Next clicks left this check unable to find the primary.
+for (let n = 0; n < 8; n++) {
+  const label = await page.evaluate(() => [...document.querySelectorAll('.intro-foot .btn')].at(-1)?.textContent.trim() ?? '');
+  if (label.startsWith('Get started')) break;
+  await clickText(page, 'Next');
+  await sleep(120);
+}
+await clickText(page, 'Get started'); await sleep(200);
 check('intro can be completed', await page.evaluate(() => !document.querySelector('[role=dialog]')));
 check('timer button present', !!(await page.$('.big')));
 
@@ -143,18 +151,24 @@ if (pillShown) {
   await tapPill(); await tapPill();   // three marks again: Cross, F2L, OLL, then the stop ends PLL
 }
 await tap(); await sleep(400);
+// the Phases card lost its visible title in 0.9.0 (the header row went to fit the phone screen) but keeps
+// its aria-label, so it is selected by class rather than by a word that is no longer drawn
 const splitCard = await page.evaluate(() => {
-  const c = [...document.querySelectorAll('main .card')].find(x => /Phases/.test(x.textContent));
+  const c = document.querySelector('main .phases-card');
   return c ? c.textContent.replace(/\s+/g, ' ').trim() : '';
 });
 check('the last solve shows its phases', /Cross/.test(splitCard) && /F2L/.test(splitCard) && /PLL/.test(splitCard), splitCard.slice(0, 80));
 check('the phase bar is drawn', await page.evaluate(() => (document.querySelectorAll('.phbar > span').length ?? 0) >= 2));
-// the phase that took the longest is one tap away from the set that trains it
-const drill = await page.evaluate(() => [...document.querySelectorAll('button')].find(b => /^Drill /.test(b.textContent.trim()))?.textContent.trim() ?? '');
-check('the phase card offers the matching trainer set', /^Drill (Cross|F2L|OLL|PLL)$/.test(drill), drill);
+// the phase that took the longest is one tap away from the set that trains it; the button carries its
+// share beside the label ("Drill F2L 52%"), so the set is read from the <b>, not from the whole label
+const drill = await page.evaluate(() => {
+  const b = [...document.querySelectorAll('button')].find(x => /^Drill /.test(x.textContent.trim()));
+  return b ? { set: b.querySelector('b')?.textContent.trim().replace('Drill ', '') ?? '', text: b.textContent.replace(/\s+/g, ' ').trim() } : null;
+});
+check('the phase card offers the matching trainer set', !!drill && /^(Cross|F2L|OLL|PLL)$/.test(drill.set) && /^Drill (Cross|F2L|OLL|PLL)\s*\d+%$/.test(drill.text), drill?.text ?? 'no drill button');
 if (drill) {
-  const wantSet = drill.replace('Drill ', '');
-  await clickText(page, drill); await sleep(700);
+  const wantSet = drill.set;
+  await clickText(page, `Drill ${wantSet}`); await sleep(700);
   const trained = await text();
   check('that link opens a session on that set', new RegExp(`Recognition · ${wantSet}`).test(trained) || new RegExp(`Execution · ${wantSet}`).test(trained), wantSet);
   await clickText(page, 'Solve', 'nav[aria-label="Main"] button'); await sleep(400);
@@ -196,8 +210,12 @@ check('Train opens on the Today screen', /Due for review/.test(await text()));
 await clickText(page, 'Start session'); await sleep(400);
 check('trainer shows a case scramble', (await tokens()).length > 3);
 await hold(450); await sleep(900); await tap(); await sleep(1100); await tap(); await sleep(400);
-const res = await text();
-check('trainer reveals the attempt afterwards', /Last/.test(res) && /recog/.test(res));
+// the attempt now reads as a labelled card (case name, recog/exec, algorithm) instead of a "Last" row
+const answer = await page.evaluate(() => {
+  const c = document.querySelector('.answer-card');
+  return c ? { label: c.getAttribute('aria-label'), text: c.textContent.replace(/\s+/g, ' ').trim() } : null;
+});
+check('trainer reveals the attempt afterwards', !!answer && /recog/.test(answer.text) && /exec/.test(answer.text), answer?.text ?? 'no answer card');
 check('case diagram is drawn', await page.evaluate(() => {
   const svg = document.querySelector('svg[role=img]');
   return !!svg && svg.querySelectorAll('rect').length >= 9 && svg.querySelectorAll('path').length >= 1;

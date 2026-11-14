@@ -5,6 +5,8 @@ All notable changes to Split. Format based on [Keep a Changelog](https://keepach
 ## [0.9.0] - 2026-11-14
 
 A 2x2, a split you can correct, a way out to csTimer, and the trainer on the other end of a phase.
+Then a pass over the phone layout: with split timing on the Solve screen fits again, the trainer shows its
+answer where you can read it, and the Split pill says which phase it marks.
 
 ### Added
 - **2x2.** A puzzle switch on the timer: 3x3 or 2x2. A session belongs to one puzzle, so each keeps its
@@ -23,10 +25,25 @@ A 2x2, a split you can correct, a way out to csTimer, and the trainer on the oth
 - **A mistimed phase mark can be corrected.** While the clock runs an Undo sits beside the Split pill and
   takes the last mark back; in History, a solve's split can be cleared (and that undone). Before, one bad
   tap shaped that solve's phases and the averages that read them for good.
+- **The Solve screen fits a phone with splits on.** At 390×844 and 360×640, at normal and extra-large
+  text, the phase times, the session stats and the stop button stay on one screen instead of running under
+  the tab bar. The phases became a single row with the largest phase called out, and the stats a single bar.
+- **The trainer shows its answer on a phone.** The case name, the recognition and execution times and the
+  algorithm sit under the timer instead of in a side panel that only appeared on a window 1100 px wide, and
+  the Drills screen gets its +2 / DNF / Delete row back.
+- **The Split pill says what it marks** — *Next: F2L 1/3* — and keeps its width whether or not Undo is
+  showing, so it no longer slides 42 px sideways as you take a mark. Each mark is announced to a screen
+  reader.
+- **A control that cannot be pressed looks that way.** The tabs you cannot leave a running solve for,
+  History's actions with nothing selected, and +2 / DNF / Delete before a solve is finished are dimmed, and
+  a tap that does nothing now says why in one line above the tab bar.
+- **Split timing is findable.** On a fresh install the Solve screen offers it once, the switch it opens
+  lands on the checkbox itself, and the intro has a slide for it.
 
 ### Changed
 - A session now records which puzzle it times, so the Sessions screen names each one's event and a new
   session inherits the one you are timing.
+- The intro is four slides, with a Back button, and its footer no longer moves between slides.
 
 ## [0.8.0] - 2026-11-13
 
