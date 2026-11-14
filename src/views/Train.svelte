@@ -412,9 +412,7 @@
           <span class="mu"
             >{drill ? 'One algorithm, execution only' : 'Recognition first, then execution'} · {drill
               ? ''
-              : `${due} due · ${fresh} new`}{#if sessionStats.n}
-              · {sessionStats.n} done{/if}{#if sessionStats.best != null}
-              · best {formatTime(sessionStats.best)}{/if}</span
+              : `${due} due · ${fresh} new`}{#if sessionStats.n}{' · '}{sessionStats.n} done{/if}{#if sessionStats.best != null}{' · '}best {formatTime(sessionStats.best)}{/if}</span
           ><span class="mu">{current ? mastery(cards[current.id]) : ''}</span>
         </div>
 

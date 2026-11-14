@@ -133,6 +133,9 @@ describe('whole app in a simulated browser', () => {
     window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space', bubbles: true })); await tick(); await wait(60); flushSync();
     // the case you just trained is revealed by name, next to its diagram
     expect(document.body.textContent).toContain('You just did');
+    // counters keep their separator spaced: a bare "·" on the line after {#if} renders as "new· 1 done"
+    expect(document.body.textContent).toContain(' new · 1 done');
+    expect(document.body.textContent).toMatch(/ · best \d/);
     await audit('train session');
     press('Escape'); await tick(); await wait();
     expect(document.querySelector('h1')!.textContent).toContain('Today');

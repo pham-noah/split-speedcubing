@@ -411,8 +411,7 @@
         {#if training && tCase}
           <div class="row sp">
             <span class="chip"
-              >Library · {tCase.name}{#if tCase.nick}
-                · {tCase.nick}{/if}</span
+              >Library · {tCase.name}{#if tCase.nick}{' · '}{tCase.nick}{/if}</span
             >
             <button class="btn" onclick={endTraining}>End</button>
           </div>
@@ -574,8 +573,7 @@
           />
           {#if list.length}
             <div class="mu">
-              {mastered} mastered · {learning} learning · {list.length - mastered - learning} new{#if dueNow}
-                · {dueNow} due now{/if}
+              {mastered} mastered · {learning} learning · {list.length - mastered - learning} new{#if dueNow}{' · '}{dueNow} due now{/if}
             </div>
             <div class="grid">
               {#each shownList as c (c.id)}
@@ -633,8 +631,7 @@
                     Next review {dueLabel(
                       card,
                       store.now,
-                    )}{#if recall(card, store.now, store.data.settings.retention, store.data.settings.fsrsW) != null}
-                      · recall ≈ {Math.round(
+                    )}{#if recall(card, store.now, store.data.settings.retention, store.data.settings.fsrsW) != null}{' · '}recall ≈ {Math.round(
                         recall(card, store.now, store.data.settings.retention, store.data.settings.fsrsW)! * 100,
                       )}%{/if}
                   </div>
