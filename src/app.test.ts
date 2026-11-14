@@ -42,9 +42,24 @@ describe('whole app in a simulated browser', () => {
     expect(dlg.textContent).toContain('Welcome to Split');
     expect((q(NAV)!.parentElement as any).inert).toBe(true);   // background is inert while the intro is open (jsdom exposes it as a property)
     await audit('intro');
+    // Back is on every slide (disabled on the first), so the footer never re-flows and Next never moves
+    expect((byText('Back') as HTMLButtonElement).disabled).toBe(true);
     byText('Next')!.click(); await tick();
     expect(q('[role=dialog]')!.textContent).toContain('Time solves');
     byText('Next')!.click(); await tick();
+    expect(q('[role=dialog]')!.textContent).toContain('Split a solve into phases');
+    byText('Next')!.click(); await tick();
+    expect(q('[role=dialog]')!.textContent).toContain('Make it yours');
+    expect((byText('Back') as HTMLButtonElement).disabled).toBe(false);
+    // ArrowLeft is Back (C19), and Back itself walks the slides without leaving the dialog
+    press('ArrowLeft'); await tick();
+    expect(q('[role=dialog]')!.textContent).toContain('Split a solve into phases');
+    byText('Back')!.click(); await tick();
+    expect(q('[role=dialog]')!.textContent).toContain('Time solves');
+    byText('Next')!.click(); await tick();
+    byText('Next')!.click(); await tick();
+    expect(q('[role=dialog]')!.textContent).toContain('Make it yours');
+    await audit('intro last slide');
     byText('Get started')!.click(); await tick(); await wait();
     expect(q('[role=dialog]')).toBeNull();
     expect((q(NAV)!.parentElement as any).inert).toBe(false);

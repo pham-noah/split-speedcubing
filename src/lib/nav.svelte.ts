@@ -10,6 +10,14 @@ class Nav {
   hintActive = $state(false); // the Library is waiting for a case code: other keys must stay out of it
   /** set the Solve screen asked the trainer to open (the weakest phase of a split); consumed by Train */
   trainSet = $state<'PLL' | 'OLL' | 'F2L' | 'ZBLL' | null>(null);
+  /** a Settings section to land on (and the split switch to focus) when Settings opens; consumed there */
+  settingsFocus = $state<string | null>(null);
+  /** the one refusal line in the app ("Stop the timer first"). It lives here, not in a screen, because
+   *  the control that refuses and the toast that explains it are not always in the same component. */
+  toast = $state('');
+  refuse(msg: string) {
+    this.toast = msg;
+  }
   private trail: View[] = [];
   private handlers: Handler[] = [];
 

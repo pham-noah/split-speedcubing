@@ -5,14 +5,14 @@ export interface Attempt { ts: number; total: number; recog: number | null; grad
 // algs = extra algorithms the user added (the built-in one is always available); defaultAlg = the one used for training.
 // `alg` is the legacy single-alg field from v0.1, migrated in normalize().
 export interface CardRecord extends Card { algs?: string[]; defaultAlg?: string; alg?: string; attempts: Attempt[] }
-export interface Settings { theme: 'midnight' | 'amoled' | 'contrast'; textSize: number; holdMs: number; inspection: boolean; beeps: boolean; hideTime: boolean; tapStart: boolean; retention: number; keys: Record<string, string>; hidden: Record<string, boolean>; introSeen: boolean; coverOn: boolean; coverColor: string; accent: string; walkAutoplay: boolean; walkSpeed: number; cubeColors: string[]; swapRO: boolean; checkUpdates?: boolean; drillTwoLook?: boolean; lastBackupAt?: number; autoBackup?: boolean; fsrsW?: number[]; splits?: boolean }
+export interface Settings { theme: 'midnight' | 'amoled' | 'contrast'; textSize: number; holdMs: number; inspection: boolean; beeps: boolean; hideTime: boolean; tapStart: boolean; retention: number; keys: Record<string, string>; hidden: Record<string, boolean>; introSeen: boolean; coverOn: boolean; coverColor: string; accent: string; walkAutoplay: boolean; walkSpeed: number; cubeColors: string[]; swapRO: boolean; checkUpdates?: boolean; drillTwoLook?: boolean; lastBackupAt?: number; autoBackup?: boolean; fsrsW?: number[]; splits?: boolean; splitNudgeSeen?: boolean }
 export interface DrillResult { type: 'cross' | 'bld' | 'oll2' | 'pll2'; ms: number; memo: number | null; ok: boolean; ts: number; info?: string; pen?: '+2' | 'DNF' }
 /** A session times one puzzle. Older backups have no event: they are 3x3, which is all there was. */
 export interface Session { id: string; name: string; event?: '333' | '222' }
 export interface CustomCase { id: string; name: string; alg: string }
 export interface AppData { v: 1; solves: Solve[]; cards: Record<string, CardRecord>; settings: Settings; drills: DrillResult[]; sessions: Session[]; session: string; zbll: CustomCase[]; f2lRev?: number }
 
-export const defaultSettings = (): Settings => ({ theme: 'midnight', textSize: 100, holdMs: 300, tapStart: false, inspection: false, beeps: true, hideTime: false, retention: 0.9, keys: {}, hidden: {}, introSeen: false, coverOn: true, coverColor: '', accent: '', walkAutoplay: false, walkSpeed: 900, cubeColors: [], swapRO: false, autoBackup: true, splits: false });
+export const defaultSettings = (): Settings => ({ theme: 'midnight', textSize: 100, holdMs: 300, tapStart: false, inspection: false, beeps: true, hideTime: false, retention: 0.9, keys: {}, hidden: {}, introSeen: false, coverOn: true, coverColor: '', accent: '', walkAutoplay: false, walkSpeed: 900, cubeColors: [], swapRO: false, autoBackup: true, splits: false, splitNudgeSeen: false });
 export const defaultData = (): AppData => ({ v: 1, solves: [], cards: {}, settings: defaultSettings(), drills: [], sessions: [{ id: 'default', name: 'Session 1' }], session: 'default', zbll: [] });
 
 const PENALTIES = new Set(['', '+2', 'DNF']);
@@ -133,6 +133,8 @@ function cleanSettings(raw: Partial<Settings> | undefined): Settings {
   d.checkUpdates = d.checkUpdates === true;
   d.autoBackup = d.autoBackup !== false;
   d.splits = d.splits === true;
+  // optional so a 0.9.0 backup without it still imports; normalised so a hand-edited "yes" is not truthy
+  d.splitNudgeSeen = d.splitNudgeSeen === true;
   return d;
 }
 

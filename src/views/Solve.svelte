@@ -60,6 +60,12 @@
     return t - avg;
   });
   let history = $state(false);
+  /** The first-run nudge's one tap: turn the feature on, then show where the switch lives. */
+  function enableSplits() {
+    store.update({ splits: true, splitNudgeSeen: true });
+    nav.settingsFocus = 'tm-h';
+    nav.go('set');
+  }
   let walkIndex = $state(0);
   let undone = $state<{ solve: Solve; index: number } | null>(null);
   let undoT: ReturnType<typeof setTimeout> | undefined;
@@ -132,7 +138,7 @@
   <main class="page wide solve fill">
     <h1 class="sr">Solve</h1>
     <div class="split">
-      <div class="col" style="gap:12px">
+      <div class="col solve-col">
         <div class="row sp">
           <button
             class="chip"
@@ -143,14 +149,11 @@
             aria-label="Sessions. Current: {store.session.name}">{EVENT_NAME[event]} ·
             <span class="chip-name">{store.session.name}</span> ▾</button
           >
-          <button class="btn history-btn" disabled={store.timerRunning} onclick={() => (history = true)}>History · {solves.length}</button>
-        </div>
-        <div class="seg" role="group" aria-label="Puzzle" style="align-self:flex-start;width:9.5rem">
-          {#each ['333', '222'] as e (e)}
-            <button class:on={event === e} aria-pressed={event === e} onclick={() => store.setEvent(e as '333' | '222')}
-              >{EVENT_NAME[e]}</button
-            >
-          {/each}
+          <button class="btn history-btn" aria-disabled={store.timerRunning}
+            onclick={() => {
+              if (store.timerRunning) nav.refuse('Stop the timer first');
+              else history = true;
+            }}>History · {solves.length}</button>
         </div>
         {#if store.shown('solve.scramble')}
           <div class="scr" aria-label="Scramble" aria-live="polite">
@@ -158,8 +161,19 @@
               {#each scrTokens as t, idx (idx)}<span class:now={idx === walkIndex} style="--i:{idx}">{t}</span>{' '}{/each}
             {/key}
           </div>
-          <button class="btn" style="align-self:center;min-height:40px" onclick={newScramble}>New scramble</button>
         {/if}
+        <div class="setup-row">
+          <div class="seg" role="group" aria-label="Puzzle">
+            {#each ['333', '222'] as e (e)}
+              <button class:on={event === e} aria-pressed={event === e} onclick={() => store.setEvent(e as '333' | '222')}
+                >{EVENT_NAME[e]}</button
+              >
+            {/each}
+          </div>
+          {#if store.shown('solve.scramble')}
+            <button class="btn new-scramble" onclick={newScramble}>New scramble</button>
+          {/if}
+        </div>
         {#if event === '333' && store.shown('solve.cube') && !store.cubeHidden && scramble.includes(' ') && !scramble.startsWith('Generating')}
           <div class="card cube-panel" style="display:flex;justify-content:center">
             <ScrambleWalk
@@ -184,16 +198,17 @@
             <button class="btn" onclick={undoDelete}>Undo</button>
           </div>
         {/if}
-        {#if vsAvg != null}
-          <div
-            class="mu mono"
-            style="text-align:center;color:{vsAvg < 0 ? 'var(--good)' : 'var(--bad)'}"
-            aria-label="Compared with your session average"
-          >
-            {vsAvg < 0 ? '−' : '+'}{(Math.abs(vsAvg) / 1000).toFixed(2)} vs average
-          </div>
-        {/if}
         <div class="timer-slot">
+          {#if vsAvg != null}
+            <span
+              class="vs-avg"
+              class:good={vsAvg < 0}
+              class:bad={vsAvg >= 0}
+              aria-label="Compared with your session average"
+            >
+              {vsAvg < 0 ? '−' : '+'}{(Math.abs(vsAvg) / 1000).toFixed(2)}
+            </span>
+          {/if}
           <TimerPad
             holdMs={store.data.settings.holdMs}
             tapStart={store.data.settings.tapStart}
@@ -208,10 +223,9 @@
           />
         </div>
         {#if !solves.length}
-          <div class="empty">
+          <div class="empty" style="padding:0">
             <b>Ready for your first solve</b><span class="empty-how"
-              >Hold the big button<span class="pc-only"> (or {store.key('timer') === 'Space' ? 'the spacebar' : 'your timer key'})</span> until
-              it says Release, then let go to start. Tap anywhere to stop.</span
+              >Hold until it says Release, let go to start, tap to stop.</span
             >
           </div>
         {/if}
@@ -235,55 +249,52 @@
           </div>
         {/if}
         {#if split.length}
-          <div class="card" style="padding:12px 14px" aria-label="Phase splits for the last solve">
-            <div class="row sp" style="margin-bottom:8px">
-              <span class="mu">Phases</span>
-              <span class="mu mono" style="font-size:0.7rem">vs your last 12 splits</span>
-            </div>
+          <div class="card phases-card" aria-label="Phase splits for the last solve">
             <div class="phbar" aria-hidden="true">
-              {#each split as ms, i (i)}
-                <span style="flex:{ms};opacity:{1 - i * 0.19}"></span>
-              {/each}
+              {#each split as ms, i (i)}<span style="flex:{ms};opacity:{1 - i * 0.19}"></span>{/each}
             </div>
-            <div class="phrow" style="grid-template-columns:repeat({split.length},minmax(0,1fr))">
-              {#each split as ms, i (i)}
-                {@const avg = phaseAvg[i]}
-                {@const d = avg == null ? null : ms - avg}
-                <div>
-                  <div class="ph-l">{phaseLabels(split.length)[i]}</div>
-                  <b class="mono" style="font-size:0.95rem">{formatTime(ms)}</b>
-                  {#if comparable && d != null && Math.abs(d) >= 60}
-                    <div
-                      class="mono"
-                      style="font-size:0.68rem;color:{d < 0 ? 'var(--good)' : 'var(--bad)'}"
-                    >
-                      {d < 0 ? '−' : '+'}{(Math.abs(d) / 1000).toFixed(2)}
-                    </div>
-                  {/if}
-                </div>
-              {/each}
-            </div>
-            {#if worst}
-              <div class="row sp" style="margin-top:10px;gap:10px">
-                <span class="mu" style="font-size:0.78rem">{worst.label} is {worst.share}% of this solve</span>
-                <button class="btn" style="flex:none;min-height:32px;padding:0 12px;font-size:0.82rem"
-                  onclick={() => drill(worst.label)}>Drill {worst.label}</button>
+            <div class="pc-row">
+              <div class="phrow" style="grid-template-columns:repeat({split.length},minmax(0,1fr))">
+                {#each split as ms, i (i)}
+                  {@const avg = phaseAvg[i]}
+                  {@const d = avg == null ? null : ms - avg}
+                  <div>
+                    <div class="ph-l">{phaseLabels(split.length)[i]}</div>
+                    <b class="ph-t mono" class:worst={worst?.label === phaseLabels(split.length)[i]}>{formatTime(ms)}</b>
+                    {#if comparable && d != null && Math.abs(d) >= 60}
+                      <span class="ph-d mono" style="color:{d < 0 ? 'var(--good)' : 'var(--bad)'}">
+                        {d < 0 ? '−' : '+'}{(Math.abs(d) / 1000).toFixed(2)}
+                      </span>
+                    {/if}
+                  </div>
+                {/each}
               </div>
-            {/if}
+              {#if worst}
+                <button class="btn pc-drill" onclick={() => drill(worst.label)}
+                  aria-label="{worst.label} is {worst.share}% of this solve. Drill {worst.label}.">
+                  <b>Drill {worst.label}</b><span>{worst.share}%</span>
+                </button>
+              {/if}
+            </div>
           </div>
         {/if}
-        {#if store.shown('solve.stats')}
-          <div class="row stats-dock">
-            <div class="card">
-              <div class="mu">Best</div>
+        {#if !store.data.settings.splits && !solves.length && !store.data.settings.splitNudgeSeen}
+          <div class="card split-nudge">
+            <span class="sn-txt"><b>Want the phase breakdown?</b><br />Cross · F2L · OLL · PLL, marked mid-solve.</span>
+            <button class="btn" aria-label="Turn on split timing" onclick={enableSplits}>Turn on</button>
+          </div>
+        {:else if store.shown('solve.stats')}
+          <div class="card stats-dock stats-bar" role="group" aria-label="Session statistics">
+            <div>
+              <span class="mu">Best</span>
               {#key formatTime(best(solves))}<b class="mono num">{formatTime(best(solves))}</b>{/key}
             </div>
-            <div class="card">
-              <div class="mu">ao5</div>
+            <div>
+              <span class="mu">ao5</span>
               {#key formatTime(averageOf(solves, 5))}<b class="mono num">{formatTime(averageOf(solves, 5))}</b>{/key}
             </div>
-            <div class="card">
-              <div class="mu">ao12</div>
+            <div>
+              <span class="mu">ao12</span>
               {#key formatTime(averageOf(solves, 12))}<b class="mono num">{formatTime(averageOf(solves, 12))}</b>{/key}
             </div>
           </div>

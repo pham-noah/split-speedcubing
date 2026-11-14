@@ -263,21 +263,25 @@
     {/if}
   </div>
 {/if}
-<div class="sr" aria-live="polite">{st === 'run' ? (splits && marks.length ? `Timer running, ${marks.length} of ${PHASES.length - 1} phases marked` : 'Timer running') : st === 'ready' ? 'Ready, release to start' : st === 'hold' ? 'Hold' : inspActive ? 'Inspection' : tooShort ? 'Too short, not saved' : shown != null ? `Time ${formatTime(shown)}` : ''}</div>
+<div class="sr" aria-live="polite" aria-atomic="true">{st === 'run' ? (splits && marks.length ? (marks.length >= PHASES.length - 1 ? 'All phases marked.' : `Marked ${PHASES[marks.length - 1]}. Next: ${PHASES[marks.length]}.`) : (splits ? 'Timer running, split timing on.' : 'Timer running')) : st === 'ready' ? 'Ready, release to start' : st === 'hold' ? 'Hold' : inspActive ? 'Inspection' : tooShort ? 'Too short, not saved' : shown != null ? `Time ${formatTime(shown)}` : ''}</div>
 {#if splits && st === 'run'}
   <!-- Above the cover (z-index 42): a full-screen flood is exactly where a phase mark has to be findable.
-       Tapping it marks a phase; every other surface still stops the clock. -->
+       Tapping it marks a phase; every other surface still stops the clock. The pill names the phase the
+       mark will END, and its width is fixed at every mark count so nothing moves while you solve. -->
   <div class="split-dock">
     <button class="split-press" type="button" onclick={() => mark()}
-      aria-label="Mark a phase split, {marks.length} of {PHASES.length - 1} marked">
-      <span>Split</span><span class="mono sp-n">{marks.length}/{PHASES.length - 1}</span>
-      <span class="mono sp-k">{codeLabel(store.key('split'))}</span>
+      disabled={marks.length >= PHASES.length - 1}
+      aria-label={marks.length >= PHASES.length - 1
+        ? 'All phases marked'
+        : `Mark the end of ${PHASES[marks.length]}. ${marks.length} of ${PHASES.length - 1} marks.`}>
+      <span class="sp-rail" aria-hidden="true">
+        <i class:on={marks.length >= 1}></i><i class:on={marks.length >= 2}></i><i class:on={marks.length >= 3}></i>
+      </span>
+      <span class="sp-label">{marks.length >= PHASES.length - 1 ? 'All marked' : `Next: ${PHASES[marks.length]}`}</span>
+      <span class="sp-n">{marks.length}/{PHASES.length - 1}</span>
     </button>
-    {#if marks.length}
-      <button class="split-undo" type="button" onclick={() => unmark()} aria-label="Undo the last phase mark">
-        Undo
-      </button>
-    {/if}
+    <button class="split-undo" type="button" onclick={() => unmark()}
+      disabled={!marks.length} aria-label="Undo the last phase mark">Undo</button>
   </div>
 {/if}
 <button
@@ -290,7 +294,9 @@
 
 <style>
   /* Only present while the clock runs and splits are on. Dark and translucent so it stays legible on
-     every cover colour (blue, gold, green, red, purple), and above the flood so it can be found at all. */
+     every cover colour (blue, gold, green, red, purple), and above the flood so it can be found at all.
+     The pill is a fixed 212 px at every mark count: the dock is 286 px wide in all four states, centred,
+     so nothing shifts when Undo appears or the label changes. */
   .split-dock {
     position: fixed;
     left: 50%;
@@ -299,19 +305,21 @@
     z-index: 42;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 16px;
   }
   .split-press {
     display: inline-flex;
     align-items: center;
     gap: 9px;
-    padding: 11px 17px;
+    width: 212px;
+    height: 52px;
+    padding: 0 12px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.26);
-    background: rgba(10, 12, 16, 0.66);
-    color: #fff;
+    border: 1px solid var(--pill-edge);
+    background: var(--pill);
+    color: var(--on-pill);
     font: inherit;
-    font-size: 0.9rem;
+    font-size: 0.86rem;
     font-weight: 800;
     letter-spacing: 0.02em;
     cursor: pointer;
@@ -319,34 +327,78 @@
     -webkit-backdrop-filter: blur(6px);
     transition: transform 0.12s ease;
   }
-  .split-press:active {
-    transform: scale(0.95);
+  /* three dashes: the phase marks already made, then the ones still to come */
+  .sp-rail {
+    display: flex;
+    gap: 2px;
+    flex: none;
+  }
+  .sp-rail i {
+    display: block;
+    width: 11px;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--pill-rail);
+  }
+  .sp-rail i.on {
+    background: var(--pill-rail-on);
+  }
+  .sp-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sp-n {
+    font:
+      800 0.74rem/1 'JetBrains Mono',
+      monospace;
+    opacity: 0.8;
+    flex: none;
   }
   .split-undo {
+    width: 58px;
+    height: 52px;
+    flex: none;
+    border-radius: 999px;
+    border: 1px solid var(--pill-edge);
+    background: var(--pill);
+    color: var(--on-pill);
     font: inherit;
     font-size: 0.82rem;
     font-weight: 800;
-    padding: 11px 14px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.26);
-    background: rgba(10, 12, 16, 0.66);
-    color: #fff;
     cursor: pointer;
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
+    transition: transform 0.12s ease;
   }
-  .split-undo:active {
+  .split-press:active:not(:disabled),
+  .split-undo:active:not(:disabled) {
     transform: scale(0.95);
   }
-  .sp-n {
-    font-size: 0.78rem;
-    opacity: 0.8;
+  .split-press:disabled {
+    cursor: default;
+    /* the one exception to the app's dim: a solver finishing a solve still has to read "All marked" */
+    opacity: 1;
   }
-  .sp-k {
-    font-size: 0.72rem;
-    opacity: 0.62;
-    border: 1px solid rgba(255, 255, 255, 0.28);
-    border-radius: 6px;
-    padding: 1px 5px;
+  .split-undo:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+  .split-press:focus-visible,
+  .split-undo:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .split-press,
+    .split-undo {
+      transition: none;
+    }
+    .split-press:active:not(:disabled),
+    .split-undo:active:not(:disabled) {
+      transform: none;
+    }
   }
 </style>

@@ -456,12 +456,21 @@
             onfinish={finish}
           />
           {#if result}
-            <div class="mu" style="text-align:center">
-              Last <b class="mono" style="color:var(--tx)">{formatTime(result.ms)}</b>{#if result.recog != null}
-                · recog <b class="mono" style="color:var(--tx)">{formatTime(result.recog)}</b> · exec
-                <b class="mono" style="color:var(--tx)">{formatTime(result.ms - result.recog)}</b>{/if}
-              · {current.name}{#if current.nick}
-                ({current.nick}){/if}
+            <div class="card answer-card" aria-label="The case you just did">
+              {#if current.set === 'F2L'}
+                <div class="ac-diagram"><CaseCube {alg} slotId={current.slot} size={64} /></div>
+              {:else}
+                <div class="ac-diagram">
+                  <CaseDiagram {alg} mode={current.set === 'OLL' ? 'oll' : 'pll'} size={64} slot={current.slot} />
+                </div>
+              {/if}
+              <div>
+                <div class="ac-name">{current.name}{#if current.nick} ({current.nick}){/if}</div>
+                <div class="ac-times">
+                  {#if result.recog != null}recog {formatTime(result.recog)} · exec {formatTime(result.ms - result.recog)}{:else}{formatTime(result.ms)}{/if}
+                </div>
+              </div>
+              {#if alg}<div class="ac-alg">{alg}</div>{/if}
             </div>
           {:else}
             <div class="mu" style="text-align:center">

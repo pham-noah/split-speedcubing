@@ -22,6 +22,13 @@
   --learn: #2b4a73;
   --good: #59d98a;
   --bad: #ff6b6b;
+  /* the split pill and its Undo sit over the timer's cover flood: one dark translucent surface, one
+     edge, and a rail whose filled and empty dashes both stay legible on every cover colour */
+  --pill: rgba(10, 12, 16, 0.66);
+  --pill-edge: rgba(255, 255, 255, 0.26);
+  --pill-rail: rgba(255, 255, 255, 0.26);
+  --pill-rail-on: #fff;
+  --on-pill: #fff;
   color-scheme: dark;
 }
 :root[data-theme='amoled'] {
@@ -237,6 +244,26 @@ summary:active,
 nav .mid button.on:active {
   filter: brightness(1.08);
 }
+/* One "cannot act" treatment. `.btn` sets `color: inherit`, which beats the browser's grey, so a
+   disabled control used to look exactly like a live one. The dim is never the only signal: the same
+   controls carry `disabled` (skipped, announced unavailable) or `aria-disabled` (still focusable, and
+   still able to answer with the toast). */
+button[disabled],
+button[aria-disabled='true'],
+[role='button'][aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+button[disabled]:active,
+button[aria-disabled='true']:active {
+  transform: none !important;
+  filter: none !important;
+}
+/* the tab you are on keeps looking live while the clock runs: it is where you already are */
+nav[aria-label='Main'] .on[aria-disabled='true'] {
+  opacity: 1;
+  cursor: pointer;
+}
 .btn.p {
   background: var(--am);
   color: var(--on-am);
@@ -315,11 +342,59 @@ a:focus-visible,
   align-items: center;
   gap: 8px;
   margin-block: auto;
+  position: relative;   /* the vs-average pill hangs off the top-right corner instead of taking a row */
+}
+/* "vs average" as a pill on the timer's shoulder: right-anchored, so it grows leftwards and never
+   pushes the disc, and the sentence it used to spell out lives in the accessible name. */
+.vs-avg {
+  position: absolute;
+  top: -4px;
+  right: 0;
+  font: 800 0.76rem/1 'JetBrains Mono', monospace;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--card);
+  border: 1px solid var(--line);
+}
+.vs-avg.good {
+  color: var(--good);
+}
+.vs-avg.bad {
+  color: var(--bad);
 }
 /* with the timer centred in the space above it, the stat row takes the space below, so the screen stops
    ending in a dead zone above the tab bar — which needs the column between them to actually be tall */
 .stats-dock {
   margin-top: auto;
+}
+/* The Solve stats as one bar instead of three cards. A separate class on purpose: `.stats-dock` is also
+   on Drills, where the same three-card shape has to stay. `.card.stats-bar`, not `.stats-bar`: the
+   phone block's `.card { padding: 12px }` comes later in this file and would otherwise win. */
+.card.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 7px 0;
+  gap: 0;
+  margin-top: auto;
+}
+.stats-bar > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
+  padding: 0 6px;
+}
+.stats-bar > div + div {
+  border-left: 1px solid var(--line);
+}
+.stats-bar .mu {
+  font-size: 0.64rem;
+}
+.stats-bar b {
+  font-size: 0.92rem;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 @media (max-width: 1099px) {
   .page.fill {
@@ -332,6 +407,36 @@ a:focus-visible,
     flex: 1;
     min-height: 0;
   }
+}
+/* `.page.fill` already subtracts the tab bar from the height, so the 74/104 px bottom pad on top of it
+   is a dead band the content cannot reach into. 32 px still clears the round Solve button's 15 px
+   overhang with room to spare. */
+@media (max-width: 1099px) {
+  .page.solve {
+    padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+  }
+}
+/* the Solve stack is measured in single pixels of leftover height: 9 px between rows, not 12 */
+.col.solve-col {
+  gap: 9px;
+}
+/* puzzle segment and New scramble share one row: the segment is the target, the button is the action */
+.setup-row {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+.setup-row .seg {
+  flex: 0 0 7.6rem;
+}
+.setup-row .seg button {
+  flex: 1 1 0;
+  min-height: 40px;
+  padding: 0 6px;
+}
+.setup-row .new-scramble {
+  flex: 1 1 auto;
+  min-height: 50px;
 }
 .chart {
   width: 100%;
@@ -1165,6 +1270,21 @@ nav[aria-label='Main'] > .brand {
   }
 }
 
+/* A short phone (640 tall, and any landscape phone) gives the disc less than the scramble wants back:
+   23vh of 640 is 147 px. 19vh is 121 px with a 116 px floor — still the biggest thing on the screen.
+   Declared after the phone block above on purpose: same specificity, so later wins. */
+@media (max-height: 700px) {
+  .timer-slot {
+    gap: 4px;
+  }
+  .big {
+    width: min(168px, 19vh);
+    height: min(168px, 19vh);
+    min-width: 116px;
+    min-height: 116px;
+  }
+}
+
 /* phones: three newest attempt rows, and the 3D walkthrough stays a desktop tool (the notation is still shown) */
 @media (max-width: 899px) {
   .deltas .drows .drow:nth-child(n + 4) {
@@ -1494,6 +1614,137 @@ nav > button.on svg {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* The phases card was three rows (header, bar, footer) and 148 px tall, which is what pushed the strip
+   under the tab bar at 360. Same information, one 75 px strip: a thinner bar, the four phases in one
+   row with the drill button at the right, and nothing above the bar. */
+.phases-card {
+  padding: 8px 12px 9px;
+}
+.phases-card .phbar {
+  height: 6px;
+  border-radius: 3px;
+}
+.pc-row {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  margin-top: 6px;
+}
+.pc-row .phrow {
+  flex: 1 1 auto;
+  margin: 0;
+  gap: 6px;
+}
+.phases-card .ph-l {
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  line-height: 1.3;
+}
+.phases-card .ph-t {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 800;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+.phases-card .ph-t.worst {
+  color: var(--am);
+}
+.phases-card .ph-d {
+  display: block;
+  font-size: 0.58rem;
+  font-weight: 700;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+/* width: auto + min-width, not a fixed 88 px: at 130 % a fixed width wraps the label to three lines and
+   the whole strip grows to 89 px. Letting the label take what it needs keeps it on two. */
+.pc-drill {
+  flex: none;
+  width: auto;
+  min-width: 88px;
+  min-height: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  padding: 0 10px;
+  border-radius: 10px;
+}
+.pc-drill b {
+  font-size: 0.72rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.pc-drill span {
+  font:
+    700 0.6rem/1.2 'JetBrains Mono',
+    monospace;
+  color: var(--mu);
+}
+
+/* The trainer's answer. Below 1100 px the aside that held the diagram and the algorithm is
+   `display: none`, so on every phone the case you just did was a grey line of numbers. */
+.answer-card {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 2px 10px;
+  align-items: start;
+  padding: 10px 12px;
+}
+.answer-card .ac-diagram {
+  grid-row: span 2;
+}
+.answer-card .ac-name {
+  font-weight: 800;
+  font-size: 0.95rem;
+  line-height: 1.3;
+}
+.answer-card .ac-times {
+  font:
+    600 0.74rem/1.45 'JetBrains Mono',
+    monospace;
+  color: var(--mu);
+}
+.answer-card .ac-alg {
+  grid-column: 1 / -1;
+  margin-top: 8px;
+  font:
+    600 0.82rem/1.45 'JetBrains Mono',
+    monospace;
+  color: var(--tx);
+  word-break: break-word;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* First run: the one place split timing is offered. It takes the stats slot (there are no stats yet),
+   says what it is in two lines, and its own tap turns it on and shows where the switch lives. */
+.split-nudge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+}
+.split-nudge .sn-txt {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.74rem;
+  line-height: 1.35;
+  color: var(--mu);
+}
+.split-nudge .sn-txt b {
+  color: var(--tx);
+  font-weight: 800;
+}
+.split-nudge .btn {
+  flex: none;
+  min-height: 44px;
+  padding: 0 12px;
+  font-size: 0.82rem;
 }
 
 /* A mouse has no swipe: on a wide window the section chips wrap onto a second line instead of

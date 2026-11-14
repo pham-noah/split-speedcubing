@@ -54,6 +54,14 @@ describe('storage + backup', () => {
     expect(normalize({ solves: [], cards: {}, settings: { splits: 'yes' } }).settings.splits).toBe(false);
     expect(normalize({ solves: [], cards: {}, settings: { splits: true } }).settings.splits).toBe(true);
   });
+  // the nudge is a one-time offer: absent in an old backup means "not seen", and a hand-edited string
+  // must not count as seen (or as unseen, if someone writes "false")
+  it('reports the split nudge as not seen unless the backup says exactly true', () => {
+    expect(normalize({ solves: [], cards: {} }).settings.splitNudgeSeen).toBe(false);
+    expect(normalize({ solves: [], cards: {}, settings: { splitNudgeSeen: 'yes' } }).settings.splitNudgeSeen).toBe(false);
+    expect(normalize({ solves: [], cards: {}, settings: { splitNudgeSeen: 1 } }).settings.splitNudgeSeen).toBe(false);
+    expect(normalize({ solves: [], cards: {}, settings: { splitNudgeSeen: true } }).settings.splitNudgeSeen).toBe(true);
+  });
   it('clamps settings a hand-edited backup could put out of range', () => {
     const d = normalize({ solves: [], cards: {}, settings: { theme: 'neon', textSize: 400, holdMs: 7, retention: 5, accent: 'red', hidden: null } });
     expect(d.settings.theme).toBe('midnight');

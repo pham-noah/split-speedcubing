@@ -3,6 +3,7 @@
   import { nav, type View } from './lib/nav.svelte';
   import Intro from './lib/ui/Intro.svelte';
   import NavIcon from './lib/ui/NavIcon.svelte';
+  import Toast from './lib/ui/Toast.svelte';
   import { platform } from '$platform';
 
   // Screens load on demand, so the first paint only carries the one you are looking at.
@@ -100,9 +101,15 @@
   const GO: Record<string, View> = { goSolve: 'solve', goTrain: 'train', goLibrary: 'lib', goDrills: 'drills', goSettings: 'set' };
   const ORDER: View[] = ['train', 'lib', 'solve', 'drills', 'set']; // the order the tabs sit in
   const cycle = (step: number) => nav.go(ORDER[(ORDER.indexOf(nav.view) + step + ORDER.length) % ORDER.length]);
-  /** a tap on a tab must not throw away a running solve: the keys are blocked for the same reason */
+  /** a tap on a tab must not throw away a running solve: the keys are blocked for the same reason, and
+   *  a refusal says so instead of doing nothing. The tab you are already on stays live and silent. */
   const go = (v: View) => {
-    if (!store.timerRunning) nav.go(v);
+    if (nav.view === v) return;
+    if (store.timerRunning) {
+      nav.refuse('Stop the timer first');
+      return;
+    }
+    nav.go(v);
   };
 
   type Dir = 'up' | 'down' | 'left' | 'right';
@@ -281,6 +288,9 @@
       >
     </nav>
   </div>
+
+  <!-- above the nav (z 60) and above the split dock (42): the reason a control refused to act -->
+  {#if nav.toast}<Toast msg={nav.toast} onDone={() => (nav.toast = '')} />{/if}
 
   {#if !store.data.settings.introSeen}
     <Intro onDone={() => store.update({ introSeen: true })} />

@@ -78,9 +78,12 @@
   }
   const manual = (fn: () => void) => () => { touchedAt = Date.now(); fn(); };
   // arrows drive the walkthrough itself while it is on screen (the shell's arrow navigation stands down,
-  // because this listener runs in the capture phase and stops the event)
+  // because this listener runs in the capture phase and stops the event). A modal owns the keyboard:
+  // this listener is on the window, so it is the one thing `inert` cannot silence — while the intro is
+  // up, arrows belong to it (ArrowLeft is Back), not to a cube behind it.
   function onKey(e: KeyboardEvent) {
     if (/INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement).tagName)) return;
+    if (document.querySelector('[aria-modal="true"]')) return;
     if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
     e.preventDefault(); e.stopPropagation();
     touchedAt = Date.now();

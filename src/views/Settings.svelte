@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { store } from '../lib/store.svelte';
+  import { nav } from '../lib/nav.svelte';
   import { toCsTimer } from '../lib/core/exporters';
   import ShortcutsPanel from '../lib/ui/ShortcutsPanel.svelte';
   import { DEFAULT_CUBE_COLORS } from '../lib/ui/cube-colors';
@@ -9,6 +11,18 @@
   import { formatBytes } from '../lib/storage/durability';
   const s = $derived(store.data.settings);
   const colours = () => (s.cubeColors && s.cubeColors.length === 6 ? s.cubeColors : DEFAULT_CUBE_COLORS);
+  // A deep link into this page (the Solve nudge asks for the Timer section): land the heading at the
+  // top and put the split switch under the focus ring, so Space toggles it straight away. The rAF is
+  // required — .card is content-visibility:auto, so the section has no height until it is laid out.
+  onMount(() => {
+    const id = nav.settingsFocus;
+    if (!id) return;
+    nav.settingsFocus = null;
+    requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView({ block: 'start' });
+      document.getElementById('split-toggle')?.focus({ preventScroll: true });
+    });
+  });
   let msg = $state('');
   let full = $state(false);
   async function toggleFull() {
@@ -190,16 +204,20 @@
           >Cross · F2L · OLL · PLL, marked while the clock runs · 3x3 only</span
         ></span><input
         type="checkbox"
+        id="split-toggle"
         style="width:24px;min-height:24px;flex:none"
         checked={s.splits === true}
         onchange={(e) => store.update({ splits: e.currentTarget.checked })}
       /></label
     >
     {#if s.splits}
-      <div class="mu" style="font-size:.8rem">
-        A <b>Split</b> pill appears over the timer while it runs; tap it (or press
-        <b class="mono">{store.key('split') === 'Slash' ? '/' : store.key('split')}</b>) to end a phase. Tapping
-        anywhere else still stops the clock.
+      <div class="card" style="border-color:var(--am);display:flex;flex-direction:column;gap:8px;align-items:flex-start">
+        <b style="font-size:.92rem">Split timing is on</b>
+        <span class="mu" style="font-size:.8rem;line-height:1.45">
+          Tap Split (or <b class="mono" style="color:var(--tx)">{store.key('split') === 'Slash' ? '/' : store.key('split')}</b>)
+          once per phase while the clock runs. 3 marks = 4 phases.
+        </span>
+        <button class="btn" style="min-height:44px" onclick={() => nav.go('solve')}>Try it on the timer</button>
       </div>
     {/if}
     <label class="row sp card"

@@ -271,6 +271,10 @@
         />
       {/if}
 
+      {#if results.length}
+        <PenaltyRow pen={results.at(-1)?.pen ?? ''} onpen={togglePen} ondelete={dropDrill} />
+      {/if}
+
       <div class="row stats-dock">
         <div class="card">
           <div class="mu">Last 10 average</div>
@@ -297,9 +301,6 @@
       <ShortcutsSide view="drills" />
     </div>
     <aside class="side" aria-label="Drill attempts">
-      {#if results.length}
-        <PenaltyRow pen={results.at(-1)?.pen ?? ''} onpen={togglePen} ondelete={dropDrill} />
-      {/if}
       <Deltas times={results.map(exec).filter(Number.isFinite)} title="Recent {MODES.find((m) => m.id === mode)?.label} attempts" />
       <ShortcutsSide view="drills" inline />
     </aside>
