@@ -2,6 +2,52 @@
 
 All notable changes to Split. Format based on [Keep a Changelog](https://keepachangelog.com); versions follow [SemVer](https://semver.org).
 
+## [0.10.0] - 2026-11-24
+
+A split you no longer have to aim at, and two passes over the screens that were guessing about themselves.
+
+### Changed
+- **The stop gesture marks the phase.** With split timing on there is no pill to find mid-solve: the tap that
+  would stop the clock ends the phase you are in, Cross then F2L then OLL, and the tap after PLL stops the solve.
+  The pad says `Tap to end F2L` while you solve, so there is nothing new to learn; the split key still works.
+  Which press means what is one pure function (`runningPress`), so recognition, the 120 ms floor between marks
+  and the final stop are unit-tested instead of argued about.
+- **Split timing is explained before it is used.** The Solve screen's offer stays until a solve actually carries
+  splits, and once it is switched on it says what the four taps are instead of leaving you to find out mid-solve.
+
+### Fixed
+- **A split is visible without opening its row.** History draws each solve's phases as a ribbon under its time,
+  the colour key is two sample deltas (a phone never saw the paragraph it replaced), and the chart names its
+  mean, its fastest and its slowest.
+- **Four of five phone tabs were icon-only** — the labels were clipped to a 1 px box. The rail is no longer 250 px
+  of permanent chrome either: it closes with `x`, opens with `?`, and remembers which you chose.
+- **A control that cannot work is no longer offered.** "Show the cube" and its two Settings switches appeared
+  below 900 px where the 3D panel is `display:none`, Best / ao5 / ao12 vanished along with the split offer they
+  shared a card with, and Optimise from my history is disabled until there is history to learn from.
+- **The drill's cross colour was a lottery presented as a setting.** It is a picker now, remembered.
+- **Settings stops lying about where it is.** The section chips jump instantly and settle (a smooth scroll never
+  moved at all — `content-visibility:auto` cancels an animation aimed at a subtree it has not laid out), keep
+  their highlight pinned to the chip you pressed, and the bar is no longer see-through under a fade.
+- **A tall panel opens on screen.** The Library case panel was revealed with a guard that only tested its top
+  edge, so a 620 px panel opened 206 px visible; the reveal now checks both edges, twice, because the algorithm
+  list mounts a frame late.
+- **Nothing dead ends.** A Library filter that keeps nothing says why and offers a way back; the Train hero names
+  which of its three states it is in, so "0 due" no longer leads while 21 new sit beside it.
+- **Rows and labels that fit.** Progress rows keep their counts on one line (46 px → 28 px), the delta chip says
+  `vs avg` instead of relying on a sign, six key hints got back the space Svelte had trimmed out of them
+  (`Train this case(Enter)`), and the Spread card no longer prints `±–` with nothing timed.
+- **The desktop pass.** Nine things the 1440×900 screens got wrong: a `vs avg` pill anchored to the column rather
+  than the number, a second header line above History's own header, `−0.00` for two solves a hundredth apart, a
+  borderless Clear beside a bordered Rename, About pointing at the profile instead of the repo, and a History
+  legend that repeated the column names. Deltas are formatted by one `formatDelta()` in core now.
+
+### Under the hood
+- CI runs `lint`, `unit`, `e2e` and `android-debug` as four parallel jobs (4:39 → 2:16 on the same commit; the
+  wall clock is the slowest job, not the sum), and a second push cancels the run it superseded.
+- The browser checks wait for a lazy route instead of throwing at it, and a failing run leaves a screenshot for CI
+  to upload rather than being re-run blind.
+- 847 tests in 28 files.
+
 ## [0.9.1] - 2026-11-24
 
 An update that used to be a link is now an install.
