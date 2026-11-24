@@ -9,7 +9,7 @@ export const platform: Platform = {
   // The store build declares no INTERNET permission, so a fetch to api.github.com fails there and a
   // check would only report a network fault the user cannot fix. The GitHub build is built with
   // --mode android-github: it declares the permission, and only that build offers the check.
-  caps: { backButton: true, saveFile: true, fileDialogs: false, openLinks: true, updateCheck: __GITHUB_BUILD__, fullscreen: false },
+  caps: { backButton: true, saveFile: true, fileDialogs: false, openLinks: true, updateCheck: __GITHUB_BUILD__, fullscreen: false, installApk: __GITHUB_BUILD__ },
   shell() {
     markShell('android');
     // the same build also opens in a browser while developing

@@ -30,4 +30,7 @@
     </application>
 
     <!-- Permissions -->
+    <!-- an update downloaded from our own releases page is installed by the app, which is the only reason an
+         app needs this: the user still has to allow it, and the sheet comes from the system, not from us -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 </manifest>

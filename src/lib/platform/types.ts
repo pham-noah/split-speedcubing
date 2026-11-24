@@ -8,6 +8,9 @@ export interface Caps {
   updateCheck: boolean;
   /** the shell owns a real window, so "fullscreen" means something */
   fullscreen: boolean;
+  /** the shell can download a release APK and hand it to the system installer: Android only, and only in the
+   *  build that can reach the feed in the first place */
+  installApk: boolean;
 }
 
 export interface Platform {

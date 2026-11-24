@@ -8,6 +8,7 @@
   import ImportPanel from '../lib/ui/ImportPanel.svelte';
   import { platform } from '$platform';
   import { issuesUrl, issueUrl, look, type Check } from '../lib/core/update';
+  import { installUpdate } from '../lib/core/install';
   import { formatBytes } from '../lib/storage/durability';
   const s = $derived(store.data.settings);
   const colours = () => (s.cubeColors && s.cubeColors.length === 6 ? s.cubeColors : DEFAULT_CUBE_COLORS);
@@ -100,6 +101,23 @@
     updateBusy = true;
     update = await look(__APP_VERSION__, platform.kind);
     updateBusy = false;
+  }
+  let installBusy = $state(false);
+  let installNote = $state('');
+  async function installNow() {
+    if (update?.kind !== 'found' || installBusy) return;
+    installBusy = true;
+    installNote = 'Downloading…';
+    const out = await installUpdate(update.release, (f) => {
+      installNote = `Downloading… ${Math.round(f * 100)}%`;
+    });
+    installBusy = false;
+    installNote =
+      out.kind === 'installing'
+        ? 'Android is asking whether to install. Say yes and the app restarts on the new version.'
+        : out.kind === 'needs-permission'
+          ? 'Allow Split to install unknown apps in the screen that just opened, then press this again.'
+          : `The download did not finish. ${out.why}`;
   }
   function undoRestore() {
     if (!store.undoRestore()) return;
@@ -480,10 +498,17 @@
         {#if update?.kind === 'found'}
           <div class="mu" role="status" aria-live="polite">
             Version {update.release.version} is available.
-            {#if platform.caps.openLinks}<a class="link" href={update.release.page} target="_blank" rel="noopener noreferrer"
+            {#if platform.caps.installApk}
+              <button class="btn" onclick={installNow} disabled={installBusy}>
+                {installBusy ? 'Downloading…' : 'Download and install'}
+              </button>
+            {:else if platform.caps.openLinks}<a class="link" href={update.release.page} target="_blank" rel="noopener noreferrer"
                 >Open the release page</a
               >{:else}Download it from {update.release.page}{/if}
           </div>
+          {#if installNote}
+            <div class="mu" role="status" aria-live="polite">{installNote}</div>
+          {/if}
         {:else if update?.kind === 'current'}
           <div class="mu" role="status" aria-live="polite">Split {__APP_VERSION__} is the latest version.</div>
         {:else if update?.kind === 'unavailable'}
@@ -495,7 +520,9 @@
           <div class="mu" role="status" aria-live="polite">Could not reach GitHub. Try again later.</div>
         {/if}
         <div class="mu">
-          The check asks github.com for the newest release and sends no device id. Installing the update is left to you or to your store.
+          The check asks github.com for the newest release and sends no device id. {platform.caps.installApk
+            ? 'The download comes from the same release page, and Android asks before it installs anything.'
+            : 'Installing the update is left to you or to your store.'}
         </div>
       {/if}
     {/if}

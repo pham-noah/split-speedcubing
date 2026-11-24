@@ -32,6 +32,12 @@ describe('platform adapters', () => {
     await expect(web.toggleFullscreen()).resolves.toBe(false);
   });
 
+  it('only the Android build that can reach the feed can install what it finds', () => {
+    expect(android.caps.installApk).toBe(false); // the store build: no INTERNET, so nothing to install
+    expect(web.caps.installApk).toBe(false);
+    expect(desktop.caps.installApk).toBe(false);
+  });
+
   it('every shell can save a file', () => {
     for (const p of [web, android, desktop]) expect(p.caps.saveFile).toBe(true);
   });

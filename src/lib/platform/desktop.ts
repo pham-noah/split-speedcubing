@@ -5,7 +5,7 @@ import { markShell, pickFileViaInput, saveFileViaAnchor } from './dom';
 
 export const platform: Platform = {
   kind: 'desktop',
-  caps: { backButton: false, saveFile: true, fileDialogs: false, openLinks: true, updateCheck: true, fullscreen: true },
+  caps: { backButton: false, saveFile: true, fileDialogs: false, openLinks: true, updateCheck: true, fullscreen: true, installApk: false },
   shell() {
     markShell('desktop');
   },

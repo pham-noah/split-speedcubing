@@ -6,7 +6,7 @@ const forceSW = import.meta.env.VITE_SW === '1';
 
 export const platform: Platform = {
   kind: 'web',
-  caps: { backButton: false, saveFile: true, fileDialogs: false, openLinks: true, updateCheck: false, fullscreen: false },
+  caps: { backButton: false, saveFile: true, fileDialogs: false, openLinks: true, updateCheck: false, fullscreen: false, installApk: false },
   shell() {
     markShell('web');
     if (!('serviceWorker' in navigator) || !location.protocol.startsWith('http')) return;
