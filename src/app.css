@@ -349,7 +349,10 @@ a:focus-visible,
 .vs-avg {
   position: absolute;
   top: -4px;
-  right: 0;
+  /* right:0 measured the column, not the disc: on a 1440 screen the pill sat 230px away from the number
+     it annotates. Anchor to the disc instead (half of its 180px width + 8). */
+  left: calc(50% + 98px);
+  white-space: nowrap;
   font: 800 0.76rem/1 'JetBrains Mono', monospace;
   padding: 4px 8px;
   border-radius: 999px;
@@ -1545,7 +1548,9 @@ nav[aria-label='Main'] > .brand {
    it stays reachable without competing with Retry and Penalty for the eye */
 .btn.quiet {
   background: none;
-  border-color: transparent;
+  /* border-color stays: in Sessions it sits beside Rename and in History beside Retry/Penalty, and a
+     borderless one read as a stray word rather than the second half of a pair. The dim ink is enough. */
+  border-color: var(--line);
   color: var(--mu);
 }
 .btn.quiet:hover {

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { store } from '../store.svelte';
   import ShortcutsSide from './ShortcutsSide.svelte';
-  import { formatTime, attemptExec, runningAverage, mean } from '../core/stats';
+  import { formatDelta, formatTime, attemptExec, runningAverage, mean } from '../core/stats';
 
   // Training history: the attempts made while training, not solve times. One case, or all of them.
   const { caseId = null, onBack }: { caseId?: string | null; onBack: () => void } = $props();
@@ -76,7 +76,7 @@
   });
   const weekMax = $derived(Math.max(1, ...weekly));
 
-  const fmt = (x: number | null) => (x == null ? '–' : `${x >= 0 ? '+' : '−'}${(Math.abs(x) / 1000).toFixed(2)}`);
+  const fmt = (x: number | null) => formatDelta(x);
   const col = (x: number | null) => (x == null ? 'var(--mu)' : x < 0 ? 'var(--good)' : 'var(--bad)');
 </script>
 

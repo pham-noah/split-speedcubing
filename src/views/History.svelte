@@ -1,7 +1,7 @@
 <script lang="ts">
   import { store } from '../lib/store.svelte';
   import {
-    averageOf, bestAverage, best, effective, formatTime, mean, phaseLabels, phaseMeans, runningAverage, stdDev,
+    averageOf, bestAverage, best, effective, formatDelta, formatTime, mean, phaseLabels, phaseMeans, runningAverage, stdDev,
   } from '../lib/core/stats';
   import ShortcutsSide from '../lib/ui/ShortcutsSide.svelte';
   const { onBack }: { onBack: () => void } = $props();
@@ -73,7 +73,7 @@
 
   // the same deltas as the side panel: against the previous solve, the running ao5 and ao12
   const ok = (x: number | null): x is number => x != null && Number.isFinite(x);
-  const fmt = (x: number | null) => (ok(x) ? `${x >= 0 ? '+' : '−'}${(Math.abs(x) / 1000).toFixed(2)}` : '–');
+  const fmt = (x: number | null) => (ok(x) ? formatDelta(x) : '–');
   const col = (x: number | null) => (!ok(x) || x === 0 ? 'var(--mu)' : x < 0 ? 'var(--good)' : 'var(--bad)');
   const tail = $derived(solves.slice(-(limit + 11)));
   // the same WCA rules as the ao5/ao12 cards, in one pass over the window
@@ -125,7 +125,8 @@
         </div>
         <div class="card">
           <div class="mu">Spread</div>
-          <b class="mono" style="font-size:1rem">±{formatTime(sd)}</b>
+          <!-- ± prints only when there is a spread: with no solves the card read "±–" -->
+          <b class="mono" style="font-size:1rem">{solves.length ? `±${formatTime(sd)}` : formatTime(sd)}</b>
         </div>
       </div>
       <div class="row">
@@ -204,10 +205,11 @@
         <span class="hdelta">ao12</span>
       </div>
       <!-- The legend used to be a paragraph in the aside, which is display:none under 1100px: on a phone
-           the colours had no key at all. Two sample deltas say it faster than the sentence did. -->
-      <div class="row sp mono legend">
-        <span>vs previous · ao5 · ao12</span>
-        <span><b style="color:var(--good)">−0.42</b> faster · <b style="color:var(--bad)">+0.42</b> slower</span>
+           the colours had no key at all. Two sample deltas say it faster than the sentence did — and the
+           words "vs previous · ao5 · ao12" are gone: they repeated the column header directly above. -->
+      <div class="row legend" style="justify-content:flex-end">
+        <!-- flex:none, because .row > * is flex:1 and a stretched span ignores justify-content -->
+        <span style="flex:none"><b style="color:var(--good)">−0.42</b> faster · <b style="color:var(--bad)">+0.42</b> slower</span>
       </div>
       <div style="display:flex;flex-direction:column;gap:8px">
         {#each list as s, i (s.id)}

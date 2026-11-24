@@ -20,6 +20,16 @@ export function formatTime(ms: number | null | undefined): string {
   return s.toFixed(2);
 }
 
+// A signed hundredths delta, "+0.42" / "−0.42". The sign is decided on the *rounded* value, so a
+// difference of a fraction of a hundredth prints "0.00" instead of the "−0.00" four call sites used to
+// build by hand from Math.abs.
+export function formatDelta(ms: number | null | undefined): string {
+  if (ms == null || !Number.isFinite(ms)) return '–';
+  const cs = Math.round(ms / 10);
+  const body = (Math.abs(cs) / 100).toFixed(2);
+  return cs === 0 ? body : `${cs > 0 ? '+' : '−'}${body}`;
+}
+
 export const best = (solves: Solve[]): number | null => {
   // a loop, not Math.min(...array): spreading 130 000 solves throws RangeError
   let b = Infinity;

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { formatTime, runningAverage } from '../core/stats';
+  import { formatDelta, formatTime, runningAverage } from '../core/stats';
 
   // Last attempts with three deltas each: against the previous attempt, the running ao5 and the running ao12.
   // Faster than the reference is green, slower is red. The averages follow WCA rules (averageOf), so
@@ -7,7 +7,7 @@
   const { times, rows = 5, title = 'Recent attempts' }: { times: number[]; rows?: number; title?: string } = $props();
 
   const ok = (x: number | null): x is number => x != null && Number.isFinite(x);
-  const fmt = (x: number | null) => (ok(x) ? `${x >= 0 ? '+' : '−'}${(Math.abs(x) / 1000).toFixed(2)}` : '–');
+  const fmt = (x: number | null) => (ok(x) ? formatDelta(x) : '–');
   const col = (x: number | null) => (!ok(x) || x === 0 ? 'var(--mu)' : x < 0 ? 'var(--good)' : 'var(--bad)');
   const cellStyle = (x: number | null) => `flex:1;text-align:right;color:${col(x)}`;
   const list = $derived.by(() => {
@@ -30,10 +30,12 @@
 
 <div class="deltas">
   <div class="mu">{title}</div>
-  <div class="mu" style="margin-top:2px">
-    ao5 <b class="mono" style="color:var(--tx)">{formatTime(ao5)}</b> · ao12 <b class="mono" style="color:var(--tx)">{formatTime(ao12)}</b>
-  </div>
   {#if list.length}
+    <!-- "session" says these are the running averages, not the per-row deltas in the columns below:
+         the same two words twice in a row read as a mistake -->
+    <div class="mu" style="margin-top:2px">
+      session ao5 <b class="mono" style="color:var(--tx)">{formatTime(ao5)}</b> · ao12 <b class="mono" style="color:var(--tx)">{formatTime(ao12)}</b>
+    </div>
     <!-- a real table for screen readers: rows are grouped, so each one is read as time / prev / ao5 / ao12 -->
     <div role="table" aria-label={title}>
       <div role="rowgroup">

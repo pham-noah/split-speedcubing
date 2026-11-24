@@ -123,10 +123,12 @@ describe('ZBLL data', () => {
       seen.set(k, c.name);
     }
     expect(dupes).toEqual([]);
-  });
+    // pure CPU over every ZBLL case (a cube simulation each): fine alone, but it crosses vitest's 5s
+    // default while the rest of the suite runs beside it, which fails the gate for no reason
+  }, 30_000);
   it('every bundled alternative solves the case it ships with', () => {
     for (const c of ZBLL) for (const a of c.alts ?? []) expect(solvesCase(c.alg, a, false), `${c.id} ${a}`).toBe(true);
-  });
+  }, 30_000);
 });
 
 import { solvesCase, validateAlg, moveCount } from './alg';

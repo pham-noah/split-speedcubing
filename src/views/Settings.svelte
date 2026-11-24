@@ -551,9 +551,9 @@
       <div class="mu">
         Built by Noah Pham. Source, releases and issues: <a
           class="link"
-          href="https://github.com/pham-noah"
+          href="https://github.com/pham-noah/split-speedcubing"
           target="_blank"
-          rel="noopener noreferrer">github.com/pham-noah</a
+          rel="noopener noreferrer">github.com/pham-noah/split-speedcubing</a
         >
       </div>
       <div class="row">

@@ -9,7 +9,7 @@
   import ShortcutsSide from '../lib/ui/ShortcutsSide.svelte';
   import { media } from '../lib/ui/screen.svelte';
   import { ScrambleQueue } from '../lib/core/scramble';
-  import { averageOf, best, effective, formatTime, mean, phaseLabels, phaseMeans, worstPhase, type Penalty, type Solve } from '../lib/core/stats';
+  import { averageOf, best, effective, formatDelta, formatTime, mean, phaseLabels, phaseMeans, worstPhase, type Penalty, type Solve } from '../lib/core/stats';
 
   // The puzzle comes from the session: every session times exactly one, so switching the event switches
   // sessions and the history, the averages and the scrambles all follow it.
@@ -211,7 +211,7 @@
             >
               <!-- the sign alone says better or worse but not against what -->
               <span class="mu" style="font-size:.62rem;letter-spacing:.04em">vs avg</span>
-              {vsAvg < 0 ? '−' : '+'}{(Math.abs(vsAvg) / 1000).toFixed(2)}
+              {formatDelta(vsAvg)}
             </span>
           {/if}
           <TimerPad
@@ -268,7 +268,7 @@
                     <b class="ph-t mono" class:worst={worst?.label === phaseLabels(split.length)[i]}>{formatTime(ms)}</b>
                     {#if comparable && d != null && Math.abs(d) >= 60}
                       <span class="ph-d mono" style="color:{d < 0 ? 'var(--good)' : 'var(--bad)'}">
-                        {d < 0 ? '−' : '+'}{(Math.abs(d) / 1000).toFixed(2)}
+                        {formatDelta(d)}
                       </span>
                     {/if}
                   </div>
@@ -283,10 +283,21 @@
             </div>
           </div>
         {/if}
-        {#if !store.data.settings.splits && !solves.length && !store.data.settings.splitNudgeSeen}
+        <!-- The nudge disappeared the moment the session had one solve in it, so a user with any history
+             never learned split timing existed. It now stays until a solve actually carries splits, and it
+             explains the taps once splits are already on — that screen used to show nothing at all about the
+             four taps that were waiting. -->
+        {#if event === '333' && !solves.some((s) => s.splits?.length) && (store.data.settings.splits || (!solves.length && !store.data.settings.splitNudgeSeen))}
           <div class="card split-nudge">
-            <span class="sn-txt"><b>Want the phase breakdown?</b><br />Cross · F2L · OLL · PLL, one tap each.</span>
-            <button class="btn" aria-label="Turn on split timing" onclick={enableSplits}>Turn on</button>
+            {#if store.data.settings.splits}
+              <span class="sn-txt"
+                ><b>Phase timing is on.</b><br />One tap each: CROSS → F2L → OLL → PLL, then once more to
+                stop.</span
+              >
+            {:else}
+              <span class="sn-txt"><b>Want the phase breakdown?</b><br />Cross · F2L · OLL · PLL, one tap each.</span>
+              <button class="btn" aria-label="Turn on split timing" onclick={enableSplits}>Turn on</button>
+            {/if}
           </div>
         {/if}
         <!-- Best/ao5/ao12 is the standing readout of the session, not a stand-in for the split card: it
