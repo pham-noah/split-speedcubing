@@ -29,7 +29,7 @@ await shot('1-solve');                                    // timer, stats, last 
 await clickText(phone, 'History'); await sleep(600); await shot('2-history');
 await clickText(phone, 'Back'); await sleep(300);
 await tab(phone, 'Train'); await shot('3-today');
-await clickText(phone, 'Start session'); await sleep(500);
+await phone.click('main .big-cta'); await sleep(600);
 await press(phone, 450); await sleep(800); await tapDown(phone); await sleep(1300); await tapDown(phone); await sleep(500);
 await shot('4-trainer');                                  // case revealed with diagram and grading
 await phone.keyboard.press('Digit3'); await sleep(300); await phone.keyboard.press('Escape'); await sleep(300);
@@ -42,7 +42,7 @@ await shot('6-f2l');
 
 // ---- desktop (for the README), 1280x800
 const desk = await fresh({ width: 1280, height: 800, deviceScaleFactor: 1 });
-await tab(desk, 'Train'); await clickText(desk, 'Start session'); await sleep(500);
+await tab(desk, 'Train'); await desk.click('main .big-cta'); await sleep(600);
 await press(desk, 450); await sleep(800); await tapDown(desk); await sleep(1300); await tapDown(desk); await sleep(500);
 mkdirSync('docs', { recursive: true });
 await desk.screenshot({ path: 'docs/desktop-trainer.png' }); console.log('wrote desktop');

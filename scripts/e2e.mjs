@@ -126,30 +126,36 @@ await clickText(page, 'Retry this scramble'); await sleep(500);
 const retried = await waitForScramble(4000);
 check('retry this scramble loads that solve\'s scramble', norm(storedScr).length > 0 && retried.join(' ') === norm(storedScr), `(${retried.length} moves)`);
 
-// --- phase splits (opt-in): a second surface that marks a phase instead of stopping the clock
+// --- phase splits (opt-in): the tap that would stop the clock ends the phase you are in
 await clickText(page, 'Settings', 'nav[aria-label="Main"] button'); await sleep(400);
 await clickText(page, 'Split timing'); await sleep(200);
 check('split timing can be switched on', await page.evaluate(() =>
   [...document.querySelectorAll('label')].some(l => /Split timing/.test(l.textContent) && l.querySelector('input').checked)));
 await clickText(page, 'Solve', 'nav[aria-label="Main"] button'); await sleep(300);
 await hold(450); await sleep(150);
-const pillShown = !!(await page.$('.split-press'));
-check('a split pill appears once the clock runs', pillShown);
-if (pillShown) {
-  const box = await (await page.$('.split-press')).boundingBox();
-  const tapAt = async (b) => { await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2); await page.mouse.down(); await page.mouse.up(); await sleep(220); };
-  const tapPill = () => tapAt(box);
-  await sleep(150); await tapPill();
-  await sleep(200); await tapPill();
-  const count = await page.evaluate(() => document.querySelector('.split-press')?.textContent ?? '');
-  check('tapping the pill marks a phase without stopping the clock', /2\/3/.test(count) && /Tap to stop/.test(await page.evaluate(() => document.querySelector('.big').textContent)), norm(count));
-  // a mark on the wrong phase is undoable while the clock runs
-  const undoBox = await (await page.$('.split-undo'))?.boundingBox();
-  if (undoBox) { await tapAt(undoBox); await sleep(250); }
-  const afterUndo = await page.evaluate(() => document.querySelector('.split-press')?.textContent ?? '');
-  check('undo takes the last mark back', /1\/3/.test(afterUndo), norm(afterUndo));
-  await tapPill(); await tapPill();   // three marks again: Cross, F2L, OLL, then the stop ends PLL
+// since 0.10.0 there is no pill to aim at: the pad says which phase the next tap ends, and the dock
+// only reports where you are
+const padText = () => page.evaluate(() => document.querySelector('.big')?.textContent ?? '');
+const padState = () => page.evaluate(() => document.querySelector('.big')?.dataset.s ?? '');
+check('a split dock appears once the clock runs', !!(await page.$('.split-dock')));
+check('the pad names the phase the next tap ends', /Tap to end Cross/i.test(await padText()), norm(await padText()));
+await tap(); await sleep(220);
+check('a tap marks the phase without stopping the clock',
+  /Tap to end F2L/i.test(await padText()) && (await padState()) === 'run', `${norm(await padText())} · ${await padState()}`);
+check('the dock marks the phase you just ended', await page.evaluate(() =>
+  document.querySelectorAll('.sp-ph.done').length === 1 && document.querySelectorAll('.sp-ph.now').length === 1));
+// a mark on the wrong phase is undoable while the clock runs
+const undoBox = await (await page.$('.split-undo'))?.boundingBox();
+if (undoBox) {
+  await page.mouse.move(undoBox.x + undoBox.width / 2, undoBox.y + undoBox.height / 2);
+  await page.mouse.down(); await page.mouse.up(); await sleep(250);
 }
+check('undo takes the last mark back', /Tap to end Cross/i.test(await padText()) && (await padState()) === 'run', norm(await padText()));
+await tap(); await sleep(220);   // Cross
+await tap(); await sleep(220);   // F2L
+await tap(); await sleep(220);   // OLL
+check('after three marks the pad offers the stop', /Tap to stop/i.test(await padText()), norm(await padText()));
+
 await tap(); await sleep(400);
 // the Phases card lost its visible title in 0.9.0 (the header row went to fit the phone screen) but keeps
 // its aria-label, so it is selected by class rather than by a word that is no longer drawn
@@ -168,9 +174,17 @@ const drill = await page.evaluate(() => {
 check('the phase card offers the matching trainer set', !!drill && /^(Cross|F2L|OLL|PLL)$/.test(drill.set) && /^Drill (Cross|F2L|OLL|PLL)\s*\d+%$/.test(drill.text), drill?.text ?? 'no drill button');
 if (drill) {
   const wantSet = drill.set;
-  await clickText(page, `Drill ${wantSet}`); await sleep(700);
-  const trained = await text();
-  check('that link opens a session on that set', new RegExp(`Recognition · ${wantSet}`).test(trained) || new RegExp(`Execution · ${wantSet}`).test(trained), wantSet);
+  await clickText(page, `Drill ${wantSet}`); await sleep(800);
+  if (wantSet === 'Cross') {
+    // Cross has its own drill rather than a set session, so the card routes to Drills and pre-picks cross
+    check('that link opens the cross drill', await page.evaluate(() => {
+      const h = document.querySelector('main h1')?.textContent.trim() ?? '';
+      return /^Drills/.test(h) && /cross/i.test(document.querySelector('main')?.textContent ?? '');
+    }), wantSet);
+  } else {
+    const trained = await text();
+    check('that link opens a session on that set', new RegExp(`Recognition . ${wantSet}`).test(trained) || new RegExp(`Execution . ${wantSet}`).test(trained), wantSet);
+  }
   await clickText(page, 'Solve', 'nav[aria-label="Main"] button'); await sleep(400);
 }
 // and it survives the reload, through normalize(), which validates every field of a stored solve
@@ -206,8 +220,12 @@ check('switching back leaves the 3x3 history exactly as it was', await page.eval
 
 // --- training flow
 await clickText(page, 'Train', 'nav[aria-label="Main"] button'); await sleep(300);
-check('Train opens on the Today screen', /Due for review/.test(await text()));
-await clickText(page, 'Start session'); await sleep(400);
+// the hero answers "what can I do right now" and its label changes with the due count, so Today is
+// identified by its heading and its call to action rather than by one of the three labels
+const onToday = () => page.evaluate(() =>
+  /^Today/.test(document.querySelector('main h1')?.textContent.trim() ?? '') && !!document.querySelector('main .big-cta'));
+check('Train opens on the Today screen', await onToday());
+await page.click('main .big-cta'); await sleep(500);
 check('trainer shows a case scramble', (await tokens()).length > 3);
 await hold(450); await sleep(900); await tap(); await sleep(1100); await tap(); await sleep(400);
 // the attempt now reads as a labelled card (case name, recog/exec, algorithm) instead of a "Last" row
@@ -223,7 +241,7 @@ check('case diagram is drawn', await page.evaluate(() => {
 await page.keyboard.press('KeyW'); await sleep(300);
 check('the next-case key moves to a new case', !/· recog/.test(await page.evaluate(() => document.querySelector('main').textContent)));
 await page.keyboard.press('Escape'); await sleep(300);
-check('Back returns to Today', /Due for review/.test(await text()));
+check('Back returns to Today', await onToday());
 
 // --- the F2L library: 41 cases once, a group filter, and the four slots inside the case
 await clickText(page, 'Library', 'nav[aria-label="Main"] button'); await sleep(400);
@@ -267,7 +285,7 @@ await clickText(page, 'Solve', 'nav[aria-label="Main"] button'); await sleep(300
 // --- Settings: About credits the author and links the source
 await clickText(page, 'Settings', 'nav[aria-label="Main"] button'); await sleep(400);
 check('About names the author and links GitHub', await page.evaluate(() => {
-  const a = [...document.querySelectorAll('a[href]')].find(x => x.getAttribute('href') === 'https://github.com/pham-noah');
+  const a = [...document.querySelectorAll('a[href]')].find(x => x.getAttribute('href') === 'https://github.com/pham-noah/split-speedcubing');
   const about = document.body.textContent.includes('Built by Noah Pham');
   return !!a && about && a.getAttribute('target') === '_blank';
 }));

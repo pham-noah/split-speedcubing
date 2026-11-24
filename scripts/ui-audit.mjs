@@ -50,7 +50,7 @@ for (const [w, h, isMobile, tag] of [[1280, 950, false, 'desktop'], [360, 800, t
   // Train: start a session
   await tab('Train');
   for (let i = 0; i < 3; i++) {           // the first click after a tab switch can land before the screen mounts
-    await p.evaluate(() => [...document.querySelectorAll('button')].find(x => x.textContent.trim() === 'Start session')?.click());
+    await p.evaluate(() => document.querySelector('main .big-cta')?.click());
     await new Promise(r => setTimeout(r, 500));
     if (await p.evaluate(() => document.body.textContent.includes('End session'))) break;
   }
