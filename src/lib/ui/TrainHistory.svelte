@@ -127,6 +127,12 @@
       <span style="flex:1;text-align:right">ao5</span>
       <span style="flex:1;text-align:right">ao12</span>
     </div>
+    <!-- the same key as the session history: two sample deltas instead of a sentence in the aside, which a
+         phone does not show at all -->
+    <div class="row sp mono legend">
+      <span>vs previous · ao5 · ao12</span>
+      <span><b style="color:var(--good)">−0.42</b> faster · <b style="color:var(--bad)">+0.42</b> slower</span>
+    </div>
     <div style="display:flex;flex-direction:column;gap:8px">
       {#each all as r (r.caseId + r.ts)}
         {@const d = deltas.get(r.caseId + r.ts)}
@@ -141,7 +147,6 @@
     </div>
   </div>
   <aside class="side" aria-label="About these numbers">
-    <div class="mu">Every finished attempt, newest first: execution time, then how it compares with your previous attempt on that case, that case's ao5 and ao12. Green is faster, red is slower.</div>
     <ShortcutsSide view="train" inline />
   </aside></div>
 </main>

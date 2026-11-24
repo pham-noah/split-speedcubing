@@ -269,12 +269,16 @@
 {#if hist}
   <TrainHistory onBack={() => (hist = false)} />
 {:else if !started}
-  <main class="page">
-    <div>
-      <div class="mu">{today}</div>
-      <h1>Today</h1>
+  <main class="page today">
+    <!-- date, title and History on one line: the button was a full-width row of its own, which is 40px of
+         a desktop page spent on "History" -->
+    <div class="row sp t-head">
+      <div>
+        <div class="mu">{today}</div>
+        <h1>Today</h1>
+      </div>
+      <button class="btn" style="flex:none" onclick={() => (hist = true)}>History</button>
     </div>
-    <button class="btn" style="flex:none" onclick={() => (hist = true)}>History</button>
     <div class="seg" role="group" aria-label="Case set">
       {#each SET_NAMES as s (s)}<button
           class:on={set === s}
@@ -305,6 +309,8 @@
         <button class="btn" style="align-self:flex-start" onclick={dismissSummary}>Done</button>
       </div>
     {/if}
+    <div class="t-grid">
+      <div class="t-main">
     <div class="card hero">
       <div class="mu">Due for review</div>
       <div class="row" style="align-items:baseline;gap:8px;flex:none">
@@ -358,6 +364,8 @@
       </div>
     </div>
 
+      </div>
+      <div class="t-side">
     <div class="card" aria-label="Progress by set">
       <div class="mu">Progress</div>
       <div class="col" style="gap:6px;margin-top:8px">
@@ -367,7 +375,12 @@
               >{p.set}{#if p.set === 'F2L'}
                 <span class="mu pc-only"> · 4 slots</span>{/if}</span
             >
-            <span class="mu mono">{p.mastered} mastered · {p.learning} learning · {p.fresh} new</span>
+            <!-- zero counts are noise on a one-line row: "0 mastered · 0 learning · 21 new" says 21 new -->
+            <span class="mu mono prow-n">{[
+                p.mastered && `${p.mastered} mastered`,
+                p.learning && `${p.learning} learning`,
+                `${p.fresh} new`,
+              ].filter(Boolean).join(' · ')}</span>
           </div>
           <div style="height:6px;border-radius:3px;background:#2A303B;overflow:hidden">
             <div style="height:100%;width:{((p.mastered / p.total) * 100).toFixed(1)}%;background:var(--good)"></div>
@@ -394,6 +407,8 @@
           >{/each}
       </div>
     {/if}
+      </div>
+    </div>
     <ShortcutsSide view="train" />
   </main>
 {:else}

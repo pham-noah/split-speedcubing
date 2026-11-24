@@ -120,6 +120,19 @@ export function splitSegments(marks: number[], total: number): number[] {
   return out;
 }
 
+/** What the next press does while the clock runs.
+ *
+ *  Split timing turns the stop gesture itself into the phase walk: the press that would have stopped the
+ *  clock ends the phase it lands in, and the press after the last mark stops. One gesture, no second key
+ *  and no second target — which is the whole point, because a split timer that asks for a different
+ *  input costs a hand that is on the cube.
+ */
+export function runningPress(p: { splits: boolean; marks: number; twoPress?: boolean; marked?: boolean }): 'recog' | 'mark' | 'stop' {
+  if (p.twoPress && !p.marked) return 'recog';
+  if (p.splits && p.marks < PHASES.length - 1) return 'mark';
+  return 'stop';
+}
+
 /** Names line up with the segment count. Fewer than four segments means the tail was never marked, so
  *  it is called what it is ("Rest") rather than borrowing the name of a phase it also contains. */
 export function phaseLabels(n: number): string[] {

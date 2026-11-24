@@ -8,6 +8,7 @@
   import ShortcutsSide from '../lib/ui/ShortcutsSide.svelte';
   import ScrambleWalk from '../lib/ui/ScrambleWalk.svelte';
   import { hoverEnter, hoverLeave } from '../lib/ui/hover';
+  import { media } from '../lib/ui/screen.svelte';
   import Deltas from '../lib/ui/Deltas.svelte';
   import PenaltyRow from '../lib/ui/PenaltyRow.svelte';
   import type { DrillResult } from '../lib/storage/model';
@@ -31,7 +32,10 @@
   let walkIndex = $state(0);
   const queue = new ScrambleQueue();
   let scramble = $state('Generating scramble…');
+  // the cross you actually solve: pinned from Settings, or rolled per scramble when nothing is pinned
+  const pinned = $derived(store.data.settings.drillCross ?? '');
   let color = $state('White');
+  const cubeOk = media('(min-width:900px)');   // the 3D panel is desktop-only (app.css), so is its button
   let look = $state<TwoLook | null>(null);
   let twoLook = $state(store.data.settings.drillTwoLook ?? true); // F: two looks or one
   let pending = $state<{ ms: number; memo: number | null } | null>(null);
@@ -62,8 +66,13 @@
     }
     look = null;
     scramble = 'Generating scramble…';
-    color = COLORS[Math.floor(Math.random() * COLORS.length)];
+    color = pinned || COLORS[Math.floor(Math.random() * COLORS.length)];
     scramble = await queue.take();
+  }
+  /** Pinning a colour is a choice about the next scramble, so it takes effect now instead of on the next. */
+  function setCross(c: string) {
+    store.update({ drillCross: c });
+    if (mode === 'cross') nextScramble();
   }
   function setMode(m: Mode) {
     mode = m;
@@ -180,18 +189,37 @@
             onpointerleave={hoverLeave}>{m.label}</button
           >{/each}
       </div>
-      {#if mode === 'cross'}<div class="mu">
-          Cross colour <span
-            style="display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;background:{colorHex(
-              color,
-            )};border:1px solid #0006"
-          ></span> <b style="color:{colorHex(color)}">{colorName(color)}</b>
-        </div>{/if}
+      {#if mode === 'cross'}
+        <!-- This read "Cross colour ▪ Red" in muted grey, exactly like the readouts around it, so the one
+             number that decides what the drill is about could not be set. It is a control now: pick the
+             cross you solve and every scramble starts there; Random keeps the old lottery for anyone who
+             wants it. Names on a wide screen, the swatch alone on a phone. -->
+        <div class="mu csw-lab">Cross colour</div>
+        <div class="row csw-row" role="group" aria-label="Cross colour">
+          <button class="btn csw" class:on={!pinned} aria-pressed={!pinned}
+            aria-label="Random cross colour — this scramble's is {colorName(color)}"
+            title="Random cross colour"
+            style="--sw:{colorHex(color)}" onclick={() => setCross('')}
+            ><i></i><span class="pc-only">Random</span></button
+          >
+          {#each COLORS as c (c)}
+            <button
+              class="btn csw"
+              class:on={pinned === c}
+              aria-pressed={pinned === c}
+              aria-label="Cross colour {colorName(c)}"
+              title="Cross colour {colorName(c)}"
+              style="--sw:{colorHex(c)}"
+              onclick={() => setCross(c)}><i></i><span class="pc-only">{colorName(c)}</span></button
+            >
+          {/each}
+        </div>
+      {/if}
 
       <div class="scr mono">
         {#each scrTokens as t, idx (idx)}<span class:now={idx === walkIndex}>{t}</span>{' '}{/each}
       </div>
-      {#if !store.cubeHidden && scramble.includes(' ') && !scramble.startsWith('Generating')}
+      {#if cubeOk.on && !store.cubeHidden && scramble.includes(' ') && !scramble.startsWith('Generating')}
         <div class="cube-panel" style="display:flex;justify-content:center">
           <ScrambleWalk
             alg={scramble}
@@ -202,7 +230,7 @@
             onClose={() => (store.cubeHidden = true)}
           />
         </div>
-      {:else}
+      {:else if cubeOk.on}
         <button
           class="btn"
           style="align-self:center;min-height:0;padding:6px 12px;font-size:.8rem"
@@ -298,7 +326,6 @@
           </div>
         {/if}
       </div>
-      <ShortcutsSide view="drills" />
     </div>
     <aside class="side" aria-label="Drill attempts">
       <Deltas times={results.map(exec).filter(Number.isFinite)} title="Recent {MODES.find((m) => m.id === mode)?.label} attempts" />

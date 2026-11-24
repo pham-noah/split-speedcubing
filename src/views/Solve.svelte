@@ -7,6 +7,7 @@
   import ScrambleWalk from '../lib/ui/ScrambleWalk.svelte';
   import Deltas from '../lib/ui/Deltas.svelte';
   import ShortcutsSide from '../lib/ui/ShortcutsSide.svelte';
+  import { media } from '../lib/ui/screen.svelte';
   import { ScrambleQueue } from '../lib/core/scramble';
   import { averageOf, best, effective, formatTime, mean, phaseLabels, phaseMeans, worstPhase, type Penalty, type Solve } from '../lib/core/stats';
 
@@ -62,9 +63,9 @@
   let history = $state(false);
   /** The first-run nudge's one tap: turn the feature on, then show where the switch lives. */
   function enableSplits() {
+    // turn it on and stay on the timer: the pad is where the thing you just switched on happens, and the
+    // gesture is the stop tap, so there is nothing left to read in Settings before trying it
     store.update({ splits: true, splitNudgeSeen: true });
-    nav.settingsFocus = 'tm-h';
-    nav.go('set');
   }
   let walkIndex = $state(0);
   let undone = $state<{ solve: Solve; index: number } | null>(null);
@@ -118,6 +119,9 @@
     m.addEventListener('change', on);
     return () => m.removeEventListener('change', on);
   });
+  // app.css makes the 3D cube a desktop tool (display:none under 900px), so the control that brings it
+  // back must not be offered where it cannot work
+  const cubeOk = media('(min-width:900px)');
 
   // Back closes history / sessions first
   $effect(() => {
@@ -185,7 +189,7 @@
               onClose={() => (store.cubeHidden = true)}
             />
           </div>
-        {:else if event === '333'}
+        {:else if event === '333' && cubeOk.on}
           <button
             class="btn"
             style="align-self:center;min-height:0;padding:6px 12px;font-size:.8rem"
@@ -280,10 +284,15 @@
         {/if}
         {#if !store.data.settings.splits && !solves.length && !store.data.settings.splitNudgeSeen}
           <div class="card split-nudge">
-            <span class="sn-txt"><b>Want the phase breakdown?</b><br />Cross · F2L · OLL · PLL, marked mid-solve.</span>
+            <span class="sn-txt"><b>Want the phase breakdown?</b><br />Cross · F2L · OLL · PLL, one tap each.</span>
             <button class="btn" aria-label="Turn on split timing" onclick={enableSplits}>Turn on</button>
           </div>
-        {:else if store.shown('solve.stats')}
+        {/if}
+        <!-- Best/ao5/ao12 is the standing readout of the session, not a stand-in for the split card: it
+             was inside the else of the nudge, so the first split solve removed the session stats from the
+             screen — and on a phone the aside that repeats them is display:none, leaving the numbers gone
+             for good. Both cards now render on their own terms. -->
+        {#if store.shown('solve.stats')}
           <div class="card stats-dock stats-bar" role="group" aria-label="Session statistics">
             <div>
               <span class="mu">Best</span>

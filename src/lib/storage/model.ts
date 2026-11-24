@@ -5,7 +5,7 @@ export interface Attempt { ts: number; total: number; recog: number | null; grad
 // algs = extra algorithms the user added (the built-in one is always available); defaultAlg = the one used for training.
 // `alg` is the legacy single-alg field from v0.1, migrated in normalize().
 export interface CardRecord extends Card { algs?: string[]; defaultAlg?: string; alg?: string; attempts: Attempt[] }
-export interface Settings { theme: 'midnight' | 'amoled' | 'contrast'; textSize: number; holdMs: number; inspection: boolean; beeps: boolean; hideTime: boolean; tapStart: boolean; retention: number; keys: Record<string, string>; hidden: Record<string, boolean>; introSeen: boolean; coverOn: boolean; coverColor: string; accent: string; walkAutoplay: boolean; walkSpeed: number; cubeColors: string[]; swapRO: boolean; checkUpdates?: boolean; drillTwoLook?: boolean; lastBackupAt?: number; autoBackup?: boolean; fsrsW?: number[]; splits?: boolean; splitNudgeSeen?: boolean }
+export interface Settings { theme: 'midnight' | 'amoled' | 'contrast'; textSize: number; holdMs: number; inspection: boolean; beeps: boolean; hideTime: boolean; tapStart: boolean; retention: number; keys: Record<string, string>; hidden: Record<string, boolean>; introSeen: boolean; coverOn: boolean; coverColor: string; accent: string; walkAutoplay: boolean; walkSpeed: number; cubeColors: string[]; swapRO: boolean; checkUpdates?: boolean; drillTwoLook?: boolean; lastBackupAt?: number; autoBackup?: boolean; fsrsW?: number[]; splits?: boolean; splitNudgeSeen?: boolean; drillCross?: string; railHidden?: boolean }
 export interface DrillResult { type: 'cross' | 'bld' | 'oll2' | 'pll2'; ms: number; memo: number | null; ok: boolean; ts: number; info?: string; pen?: '+2' | 'DNF' }
 /** A session times one puzzle. Older backups have no event: they are 3x3, which is all there was. */
 export interface Session { id: string; name: string; event?: '333' | '222' }
@@ -135,6 +135,11 @@ function cleanSettings(raw: Partial<Settings> | undefined): Settings {
   d.splits = d.splits === true;
   // optional so a 0.9.0 backup without it still imports; normalised so a hand-edited "yes" is not truthy
   d.splitNudgeSeen = d.splitNudgeSeen === true;
+  // a pinned drill cross, or '' for the per-scramble roll. Only the six faces are legal: anything else
+  // (an old backup, a hand-edited file) falls back to Random rather than drawing an invisible colour
+  d.drillCross = d.drillCross === 'White' || d.drillCross === 'Yellow' || d.drillCross === 'Green'
+    || d.drillCross === 'Blue' || d.drillCross === 'Red' || d.drillCross === 'Orange' ? d.drillCross : '';
+  d.railHidden = d.railHidden === true;
   return d;
 }
 

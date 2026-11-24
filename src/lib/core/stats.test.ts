@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   averageOf, meanOf, mean, best, bestAverage, formatTime, effective, runningAverage, attemptExec,
-  stdDev, splitSegments, phaseLabels, phaseMeans, worstPhase, PHASES, type Solve,
+  stdDev, splitSegments, phaseLabels, phaseMeans, worstPhase, PHASES, runningPress, type Solve,
 } from './stats';
 const mk = (ms: number, pen: Solve['pen'] = ''): Solve => ({ id: String(Math.random()), ms, pen, scramble: '', event: '333', ts: 0 });
 const list = (...v: (number | [number, Solve['pen']])[]) => v.map(x => (Array.isArray(x) ? mk(x[0], x[1]) : mk(x)));
@@ -167,6 +167,24 @@ describe('phase splits', () => {
     const twoMark = { ...mk(9000), splits: [2000, 7000] };
     expect(phaseMeans([...solves, twoMark], 12, 4)[1]).toBeCloseTo(7000, 6);
     expect(PHASES.length).toBe(4);
+  });
+  it('walks the phases on the stop gesture: the press that would stop, marks instead', () => {
+    const p = (o: Partial<{ splits: boolean; marks: number; twoPress: boolean; marked: boolean }> = {}) =>
+      runningPress({ splits: false, marks: 0, twoPress: false, marked: false, ...o });
+    // a plain solve stops on the first press, as it always did
+    expect(p()).toBe('stop');
+    expect(p({ marks: 9 })).toBe('stop');
+    // splits on, nothing marked: the stop press ends Cross — the gesture is the same one the timer takes
+    expect(p({ splits: true })).toBe('mark');
+    expect(p({ splits: true, marks: 1 })).toBe('mark');
+    // four phases, three marks: the fourth press is the stop
+    expect(p({ splits: true, marks: 3 })).toBe('stop');
+    expect(p({ splits: true, marks: 4 })).toBe('stop');
+    // inspection's recognition press is spent before any phase mark, or the start would eat a phase
+    expect(p({ splits: true, twoPress: true })).toBe('recog');
+    expect(p({ splits: true, twoPress: true, marked: true })).toBe('mark');
+    // two-press recognition with splits off keeps its own second press to stop on
+    expect(p({ twoPress: true, marked: true })).toBe('stop');
   });
   it('names the largest phase a trainer can take, never a Rest tail', () => {
     // two marks: Cross · Rest. Rest is the bigger segment here, and it has no trainer to offer.

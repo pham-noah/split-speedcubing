@@ -114,8 +114,10 @@ describe('whole app in a simulated browser', () => {
     for (let i = 0; i < 40 && !byText('Start session'); i++) { await wait(25); flushSync(); }
     const text = document.body.textContent!;
     for (const set of ['PLL', 'OLL', 'F2L']) expect(text).toContain(set);
-    expect(text).toContain('mastered');
-    expect(text).toContain('new');
+    // each set's row carries its counts; a set nobody has started reads "<n> new", with the zero parts left
+    // out — the row is one line in a narrow column and "0 mastered · 0 learning" is noise
+    expect(text).toMatch(/\d+ new/);
+    expect(text).not.toContain('0 mastered');
   });
 
   it('Train: Start session shows a scramble; Back returns to Today', async () => {

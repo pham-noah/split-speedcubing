@@ -47,12 +47,16 @@
   }
 
   // progress chart of the last 50 solves (DNFs are skipped)
+  const W = 320,
+    H = 110;
   const pts = $derived(solves.slice(-50).map(effective));
   const finite = $derived(pts.filter(Number.isFinite));
   const lo = $derived(finite.length ? Math.min(...finite) : 0);
   const hi = $derived(finite.length ? Math.max(...finite) : 1);
-  const W = 320,
-    H = 110;
+  // the dashed reference line: a line that only says "up and down" has no scale, and the mean is the one
+  // value a solver actually measures a spike against
+  const ptsMean = $derived(finite.length ? mean(finite) : null);
+  const meanY = $derived(ptsMean == null ? null : H - 8 - ((ptsMean - lo) / Math.max(1, hi - lo)) * (H - 16));
   // The first drawn point has to be an M, not whatever index it sits at: a DNF in the first slot used
   // to emit "L…" as the opening command, and an SVG path starting with L is invalid — the whole chart
   // painted nothing.
@@ -167,16 +171,20 @@
       {#if finite.length > 1}
         <div class="card">
           <div class="row sp">
-            <div class="mu">Last {pts.length} solves (lower is faster)</div>
-            <div class="mu mono" style="font-size:.74rem">slow {formatTime(hi)} · fast {formatTime(lo)}</div>
+            <div class="mu">Last {pts.length} solves · dashed = mean</div>
+            <div class="mu mono" style="font-size:.74rem">{formatTime(ptsMean)}</div>
           </div>
           <svg
             class="chart"
             viewBox="0 0 {W} {H}"
             preserveAspectRatio="none"
             role="img"
-            aria-label="Line chart of your last {pts.length} solve times, from {formatTime(hi)} slowest to {formatTime(lo)} fastest"
+            aria-label="Line chart of your last {pts.length} solve times, from {formatTime(hi)} slowest to {formatTime(lo)} fastest, mean {formatTime(ptsMean)}"
           >
+            {#if meanY != null}
+              <line x1="0" x2={W} y1={meanY} y2={meanY} stroke="var(--mu)" stroke-width="1"
+                stroke-dasharray="4 4" opacity="0.55" />
+            {/if}
             <path d={path} fill="none" stroke="var(--bl)" stroke-width="2" stroke-linejoin="round" />
           </svg>
         </div>
@@ -189,12 +197,18 @@
         <span class="hdelta">ao5</span>
         <span class="hdelta">ao12</span>
       </div>
+      <!-- The legend used to be a paragraph in the aside, which is display:none under 1100px: on a phone
+           the colours had no key at all. Two sample deltas say it faster than the sentence did. -->
+      <div class="row sp mono legend">
+        <span>vs previous · ao5 · ao12</span>
+        <span><b style="color:var(--good)">−0.42</b> faster · <b style="color:var(--bad)">+0.42</b> slower</span>
+      </div>
       <div style="display:flex;flex-direction:column;gap:8px">
         {#each list as s, i (s.id)}
           {@const d = deltas.get(s.id)}
           <div class="card row-in hrow-card" style="--i:{Math.min(i, 10)}">
             <button
-              class="row sp"
+              class="row sp hrow-line"
               style="width:100%;background:none;border:0;padding:0;text-align:left"
               onclick={() => (open = open === s.id ? null : s.id)}
               aria-expanded={open === s.id}
@@ -204,6 +218,14 @@
               <span class="mono" style="flex:1;text-align:right;font-size:.78rem;color:{col(d?.prev ?? null)}">{fmt(d?.prev ?? null)}</span>
               <span class="mono" style="flex:1;text-align:right;font-size:.78rem;color:{col(d?.a5 ?? null)}">{fmt(d?.a5 ?? null)}</span>
               <span class="mono" style="flex:1;text-align:right;font-size:.78rem;color:{col(d?.a12 ?? null)}">{fmt(d?.a12 ?? null)}</span>
+              {#if s.splits?.length}
+                <!-- The split was invisible until the row was opened, and a scan down the list is exactly
+                     the moment you want it. Same widths and same fade as the phase bars above, so the
+                     ribbon reads as the same object at a smaller size. -->
+                <span class="row-split" aria-hidden="true">
+                  {#each s.splits as ms, k (k)}<i style="flex:{ms};opacity:{1 - k * 0.19}"></i>{/each}
+                </span>
+              {/if}
             </button>
             {#if open === s.id}
               <div class="mu mono" style="margin:8px 0;word-break:break-word;user-select:text">{s.scramble}</div>
@@ -240,7 +262,7 @@
                   <button class="btn" onclick={() => clearSplit(s.id, s.splits!)}>Clear split</button>
                 {/if}
                 <button
-                  class="btn"
+                  class="btn quiet"
                   onclick={() => {
                     const index = store.data.solves.findIndex((x) => x.id === s.id);
                     store.deleteSolve(s.id);
@@ -289,9 +311,6 @@
       </div>
     {/if}
     <aside class="side" aria-label="About these numbers">
-      <div class="mu">
-        Each row: the time, then how it compares with the previous solve, your ao5 and your ao12. Green is faster, red is slower.
-      </div>
       <ShortcutsSide view="history" inline />
     </aside>
   </div>

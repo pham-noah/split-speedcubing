@@ -540,16 +540,20 @@ a:focus-visible,
   position: sticky;
   top: 0;
   z-index: 5;
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  scrollbar-width: none;
   background: var(--bg);
   padding: 8px 0;
   margin: -8px 0 0;
   border-bottom: 1px solid var(--line);
 }
-.secnav::-webkit-scrollbar {
+/* the chips themselves, inside the sticky bar: this is the scroller, so the fade mask can live here
+   without making the bar behind it see-through */
+.secnav-row {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.secnav-row::-webkit-scrollbar {
   display: none;
 }
 .secnav button {
@@ -566,6 +570,21 @@ a:focus-visible,
 }
 .secnav button:active {
   transform: scale(0.96);
+}
+@media (max-width: 899px) {
+  /* A scroller with no scrollbar and no cue: "Walkthrough" was cut mid-word on a phone and nothing on the
+     screen said the row moved sideways. The fade is the cue; the extra right padding lets the last chip
+     scroll clear of it instead of sitting under it forever. Snap so a flick lands on a chip, not between. */
+  .secnav-row {
+    scroll-snap-type: x proximity;
+    scroll-padding-inline-start: 12px;
+    padding-right: 28px;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  }
+  .secnav-row button {
+    scroll-snap-align: start;
+  }
 }
 h2[id] {
   scroll-margin-top: 56px;
@@ -739,6 +758,40 @@ nav[aria-label='Main'] .mid button.on {
   background: var(--am);
   color: var(--on-am);
 }
+/* Labels, on the bar itself. They were clipped to a 1 x 1 box under 900px, so four of the five tabs were
+   an icon and nothing else — the one part of the app a thumb had to guess at. Stacked icon over label,
+   five slots of 78px on a 390px phone, and the bar becomes readable in one glance instead of five. */
+@media (max-width: 899px) {
+  nav[aria-label='Main'] > button {
+    position: relative;
+    flex-direction: column;
+    gap: 3px;
+    min-height: 56px;
+    padding: 7px 2px 6px;
+  }
+  .nav-label {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1;
+  }
+  /* the due badge rides the icon's shoulder instead of claiming a third row */
+  nav[aria-label='Main'] > button .badge {
+    position: absolute;
+    top: 3px;
+    left: 50%;
+    margin: 0 0 0 4px;
+    min-width: 15px;
+    padding: 0 4px;
+    font-size: 0.6rem;
+    line-height: 15px;
+  }
+}
 input,
 textarea {
   width: 100%;
@@ -838,6 +891,12 @@ textarea {
 .rail {
   display: none;
 }
+/* The way out of it, and the way back: same corner, same size, so putting the rail away is one click and
+   never a hunt. Hidden wherever the rail itself is hidden. */
+.rail-open,
+.rail-close {
+  display: none;
+}
 @media (min-width: 1100px) {
   body.has-rail {
     padding-right: 250px;
@@ -856,6 +915,46 @@ textarea {
     background: var(--bg);
     z-index: 10;
     overflow: auto;
+  }
+  .rail-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    margin: -4px -4px -4px 0;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: none;
+    color: var(--mu);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .rail-close:hover {
+    color: var(--tx);
+    border-color: var(--mu);
+  }
+  .rail-open {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 10;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--mu);
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .rail-open:hover {
+    color: var(--tx);
+    border-color: var(--mu);
   }
 }
 .dots {
@@ -1383,6 +1482,81 @@ nav[aria-label='Main'] > .brand {
 .hrow-card:hover {
   background: var(--card);
 }
+/* the row's phase ribbon: it hangs inside the row's own bottom padding, on the border line, so it reads
+   as part of the row and not as another number column */
+.hrow-line {
+  position: relative;
+}
+/* the phase ribbon hangs off the row's bottom edge under the TIME cell: full row width it read as a row
+   divider, and at a hairline under the digits it read as a text underline — so it is a short, chunky bar
+   with real gaps between phases */
+.row-split {
+  display: flex;
+  gap: 2px;
+  position: absolute;
+  left: 52px;
+  width: 96px;
+  bottom: -2px;
+  height: 4px;
+  border-radius: 2px;
+  overflow: hidden;
+  opacity: 0.9;
+  pointer-events: none;
+}
+.row-split i {
+  display: block;
+  height: 100%;
+  background: var(--bl);
+}
+/* the key for the three delta columns, sitting under their headers instead of in the aside (which a
+   phone never sees) */
+.legend {
+  font-size: 0.68rem;
+  gap: 10px;
+  padding: 0 12px;
+  margin-top: -6px;
+  flex-wrap: wrap;
+}
+/* a destructive action that should not look like its neighbours: same hit area, no card, muted ink —
+   it stays reachable without competing with Retry and Penalty for the eye */
+.btn.quiet {
+  background: none;
+  border-color: transparent;
+  color: var(--mu);
+}
+.btn.quiet:hover {
+  color: var(--bad);
+  border-color: var(--bad);
+}
+/* a cross-colour chip: the swatch is the label on a phone, the name appears with room for it */
+.csw-lab {
+  font-size: 0.72rem;
+  margin-bottom: -2px;
+}
+.csw-row {
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.btn.csw {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 10px;
+  min-width: 44px;
+  min-height: 44px;
+}
+.btn.csw > i {
+  display: block;
+  width: 15px;
+  height: 15px;
+  flex: none;
+  border-radius: 4px;
+  border: 1px solid #0006;
+  background: var(--sw);
+}
+.btn.csw.on {
+  border-color: var(--tx);
+}
 
 /* a progress row stacks its counts under the set name when the screen is narrow */
 @media (max-width: 899px) {
@@ -1750,8 +1924,42 @@ nav > button.on svg {
 /* A mouse has no swipe: on a wide window the section chips wrap onto a second line instead of
    running off the right edge with the last section invisible and nothing saying it scrolls. */
 @media (min-width: 900px) {
-  .secnav {
+  .secnav-row {
     flex-wrap: wrap;
     overflow-x: visible;
   }
 }
+
+/* ---- Train · Today, on a wide screen ------------------------------------------------------------
+   The column was 644px wide at 1440px, so a 200px hero held the number 0 while two thirds of the window
+   sat empty. What you do next goes left, at the width a table needs; what you have done goes right. */
+.t-head {
+  align-items: flex-end;
+  gap: 12px;
+}
+/* the counts stay on the row's own line: in the narrow right-hand column "· 57 new" used to wrap and
+   leave "new" hanging under the bar */
+.prow-n {
+  font-size: 0.74rem;
+  white-space: nowrap;
+}
+.t-grid,
+.t-main,
+.t-side {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+@media (min-width: 1100px) {
+  .page.today {
+    max-width: 1010px;
+  }
+  .t-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 336px);
+    gap: 14px;
+    align-items: start;
+  }
+}
+

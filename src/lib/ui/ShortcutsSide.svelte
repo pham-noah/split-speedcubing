@@ -35,7 +35,7 @@
     trainPrev: 'Previous case set',
     trainNext: 'Next case set',
     trainHistory: 'Training history',
-    split: 'Mark a phase split',
+    split: 'End a phase (same key as the timer)',
     tabPrev: 'Previous tab',
     tabNext: 'Next tab',
     goSolve: 'Go to Solve',
@@ -51,21 +51,36 @@
   const screenIds = $derived([...new Set([...PAGE[view], ...extra, 'back'])]);
   const tabKeys = $derived(['goTrain', 'goLibrary', 'goSolve', 'goDrills', 'goSettings'].map((id) => codeLabel(store.key(id))).join(' '));
 
-  // the rail is fixed on the right, so the page keeps clear of it (desktop only, see app.css)
+  // the rail is fixed on the right, so the page keeps clear of it (desktop only, see app.css). It is a
+  // help panel, not part of the app: it can be put away, and the choice is remembered. A 250 px strip
+  // that cannot be dismissed is the one piece of chrome on this screen the user has no say over.
+  const railOn = $derived(!inline && store.data.settings.railHidden !== true);
   $effect(() => {
     if (inline) return; // in a page column there is no fixed rail to make room for
-    document.body.classList.add('has-rail');
+    document.body.classList.toggle('has-rail', railOn);
     return () => document.body.classList.remove('has-rail');
   });
 </script>
 
-<svelte:element this={inline ? 'div' : 'aside'} class={inline ? '' : 'rail'} aria-label="Keyboard shortcuts on this screen">
-  <div class="mu">Shortcuts on this screen</div>
-  <div class="col" style="gap:2px">
-    {#each screenIds as id (id)}
-      <div class="row sp" style="padding:3px 0"><span class="mu">{SHORT[id]}</span><kbd class="kbd">{codeLabel(store.key(id))}</kbd></div>
-    {/each}
-  </div>
-  <div class="row sp" style="padding:3px 0"><span class="mu">Tabs</span><kbd class="kbd">{tabKeys}</kbd></div>
-  <div class="mu">Arrow keys move between the buttons. Every key is rebindable in Settings.</div>
-</svelte:element>
+{#if !inline && !railOn}
+  <!-- the rail's own corner, so putting it away never hides where to bring it back -->
+  <button class="rail-open" type="button" onclick={() => store.update({ railHidden: false })}
+    aria-label="Show the keyboard shortcuts" title="Keyboard shortcuts (?)">?</button>
+{:else}
+  <svelte:element this={inline ? 'div' : 'aside'} class={inline ? '' : 'rail'} aria-label="Keyboard shortcuts on this screen">
+    <div class="row sp">
+      <div class="mu">Shortcuts on this screen</div>
+      {#if !inline}
+        <button class="rail-close" type="button" onclick={() => store.update({ railHidden: true })}
+          aria-label="Hide the keyboard shortcuts" title="Hide">×</button>
+      {/if}
+    </div>
+    <div class="col" style="gap:2px">
+      {#each screenIds as id (id)}
+        <div class="row sp" style="padding:3px 0"><span class="mu">{SHORT[id]}</span><kbd class="kbd">{codeLabel(store.key(id))}</kbd></div>
+      {/each}
+    </div>
+    <div class="row sp" style="padding:3px 0"><span class="mu">Tabs</span><kbd class="kbd">{tabKeys}</kbd></div>
+    <div class="mu">Arrow keys move between the buttons. Every key is rebindable in Settings.</div>
+  </svelte:element>
+{/if}

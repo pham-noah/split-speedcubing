@@ -3,7 +3,7 @@
   import { store } from '../store.svelte';
   import { nav } from '../nav.svelte';
   import { codeLabel } from '../core/shortcuts';
-  import { formatTime, splitSegments, PHASES, type Penalty } from '../core/stats';
+  import { formatTime, splitSegments, runningPress, PHASES, type Penalty } from '../core/stats';
   import { inspectionPenalty, inspectionText } from '../core/inspection';
   import { readableInk } from './color';
 
@@ -69,10 +69,13 @@
     flashT = setTimeout(() => { coverOpen = false; stopped = null; }, 900);
   }
 
+  /** what the next press will do, so the pad can say it instead of the user having to know */
+  const next = $derived(runningPress({ splits, marks: marks.length, twoPress, marked }));
   const label = $derived(
     st === 'hold' ? 'Keep holding' : st === 'ready' ? 'Release!' :
-    st === 'run' ? (twoPress && !marked ? markLabel : 'Tap to stop') :
-    inspActive ? (tapStart ? 'Tap to start' : 'Hold to start') : inspection ? 'Tap to start inspection' : (tapStart ? 'Tap to start' : 'Hold to start')
+    st === 'run'
+      ? (next === 'recog' ? markLabel : next === 'mark' ? `Tap to end ${PHASES[marks.length]}` : 'Tap to stop')
+      : inspActive ? (tapStart ? 'Tap to start' : 'Hold to start') : inspection ? 'Tap to start inspection' : (tapStart ? 'Tap to start' : 'Hold to start')
   );
   const shownText = $derived(
     st === 'run' ? (hideTime ? 'Solving…' : formatTime(now)) :
@@ -125,13 +128,15 @@
   }
 
   /** Mark the end of a phase without stopping the clock. Opt-in: with splits off, the split zone is not
-   *  rendered and this can never fire. */
-  function mark() {
-    if (!splits || st !== 'run') return;
-    if (marks.length >= PHASES.length - 1) return;   // three marks already separate the four phases
+   *  rendered and this can never fire. Returns whether the mark landed, so a press that is too soon after
+   *  the last one can be told apart from one that counted. */
+  function mark(): boolean {
+    if (!splits || st !== 'run') return false;
+    if (marks.length >= PHASES.length - 1) return false;   // three marks already separate the four phases
     const t = performance.now() - t0;
-    if (t - (marks.at(-1) ?? 0) < MIN_MARK_GAP) return;
+    if (t - (marks.at(-1) ?? 0) < MIN_MARK_GAP) return false;
     marks = [...marks, t];
+    return true;
   }
 
   /** a mark that landed on the wrong phase is data, not fate: take the last one back */
@@ -143,7 +148,11 @@
   function down() {
     if (disabled) return;
     if (st === 'run') {
-      if (twoPress && !marked) { recog = performance.now() - t0; marked = true; return; }
+      // one gesture for the whole solve: with split timing on, the press that used to stop ends the phase
+      // it lands in, and only the press after the last mark stops
+      const act = runningPress({ splits, marks: marks.length, twoPress, marked });
+      if (act === 'recog') { recog = performance.now() - t0; marked = true; return; }
+      if (act === 'mark') { mark(); return; }
       const ms = performance.now() - t0;
       cancelAnimationFrame(raf);
       st = 'idle';
@@ -233,8 +242,9 @@
   onpointerdown={(e) => {
     if (e.button !== 0) return;
     const t = e.target as HTMLElement;
-    // the split pill is the one surface that does not stop the clock: its own click marks the phase
-    if (st === 'run' && splits && t.closest('.split-dock')) return;
+    // Undo is the one surface that takes back a mark instead of making one: everything else, the phase
+    // track included, is the press that walks the phases
+    if (st === 'run' && splits && t.closest('.split-undo')) return;
     if (st === 'run' ? !t.closest('nav') : !!t.closest('.big')) down();
   }}
   onpointerup={up}
@@ -265,21 +275,16 @@
 {/if}
 <div class="sr" aria-live="polite" aria-atomic="true">{st === 'run' ? (splits && marks.length ? (marks.length >= PHASES.length - 1 ? 'All phases marked.' : `Marked ${PHASES[marks.length - 1]}. Next: ${PHASES[marks.length]}.`) : (splits ? 'Timer running, split timing on.' : 'Timer running')) : st === 'ready' ? 'Ready, release to start' : st === 'hold' ? 'Hold' : inspActive ? 'Inspection' : tooShort ? 'Too short, not saved' : shown != null ? `Time ${formatTime(shown)}` : ''}</div>
 {#if splits && st === 'run'}
-  <!-- Above the cover (z-index 42): a full-screen flood is exactly where a phase mark has to be findable.
-       Tapping it marks a phase; every other surface still stops the clock. The pill names the phase the
-       mark will END, and its width is fixed at every mark count so nothing moves while you solve. -->
+  <!-- Above the cover (z-index 42): a full-screen flood is exactly where the phase has to be findable.
+       The track is a readout, not a second stop button — the press that ends a phase IS the press that
+       stops the clock, so nothing here has to be aimed at. Four names, the one being timed lit; the
+       marked ones keep their ink so a glance says how far the solve has come. -->
   <div class="split-dock">
-    <button class="split-press" type="button" onclick={() => mark()}
-      disabled={marks.length >= PHASES.length - 1}
-      aria-label={marks.length >= PHASES.length - 1
-        ? 'All phases marked'
-        : `Mark the end of ${PHASES[marks.length]}. ${marks.length} of ${PHASES.length - 1} marks.`}>
-      <span class="sp-rail" aria-hidden="true">
-        <i class:on={marks.length >= 1}></i><i class:on={marks.length >= 2}></i><i class:on={marks.length >= 3}></i>
-      </span>
-      <span class="sp-label">{marks.length >= PHASES.length - 1 ? 'All marked' : `Next: ${PHASES[marks.length]}`}</span>
-      <span class="sp-n">{marks.length}/{PHASES.length - 1}</span>
-    </button>
+    <div class="sp-track" aria-hidden="true">
+      {#each PHASES as p, i (p)}
+        <span class="sp-ph" class:done={marks.length > i} class:now={marks.length === i}>{p}</span>
+      {/each}
+    </div>
     <button class="split-undo" type="button" onclick={() => unmark()}
       disabled={!marks.length} aria-label="Undo the last phase mark">Undo</button>
   </div>
@@ -295,8 +300,8 @@
 <style>
   /* Only present while the clock runs and splits are on. Dark and translucent so it stays legible on
      every cover colour (blue, gold, green, red, purple), and above the flood so it can be found at all.
-     The pill is a fixed 212 px at every mark count: the dock is 286 px wide in all four states, centred,
-     so nothing shifts when Undo appears or the label changes. */
+     The track is a fixed 236 px and the dock 310 px in every state, so nothing shifts when Undo enables
+     itself or a phase lights up. */
   .split-dock {
     position: fixed;
     left: 50%;
@@ -305,57 +310,48 @@
     z-index: 42;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
   }
-  .split-press {
-    display: inline-flex;
+  .sp-track {
+    display: flex;
     align-items: center;
-    gap: 9px;
-    width: 212px;
+    justify-content: space-between;
+    gap: 2px;
+    width: 236px;
     height: 52px;
-    padding: 0 12px;
+    padding: 0 8px;
     border-radius: 999px;
     border: 1px solid var(--pill-edge);
     background: var(--pill);
-    color: var(--on-pill);
-    font: inherit;
-    font-size: 0.86rem;
-    font-weight: 800;
-    letter-spacing: 0.02em;
-    cursor: pointer;
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
-    transition: transform 0.12s ease;
   }
-  /* three dashes: the phase marks already made, then the ones still to come */
-  .sp-rail {
-    display: flex;
-    gap: 2px;
-    flex: none;
-  }
-  .sp-rail i {
-    display: block;
-    width: 11px;
-    height: 6px;
-    border-radius: 3px;
-    background: var(--pill-rail);
-  }
-  .sp-rail i.on {
-    background: var(--pill-rail-on);
-  }
-  .sp-label {
-    flex: 1 1 auto;
+  /* three states, no legend: dim = still to come, outlined = the phase being timed, solid = done */
+  .sp-ph {
+    flex: 1 1 0;
     min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .sp-n {
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
     font:
-      800 0.74rem/1 'JetBrains Mono',
-      monospace;
-    opacity: 0.8;
-    flex: none;
+      800 0.62rem/1 ui-sans-serif,
+      system-ui;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--pill-rail);
+    transition:
+      color 0.12s ease,
+      background-color 0.12s ease;
+  }
+  .sp-ph.done {
+    color: var(--on-pill);
+    background: rgba(255, 255, 255, 0.14);
+  }
+  .sp-ph.now {
+    color: #1a1200;
+    background: var(--am);
   }
   .split-undo {
     width: 58px;
@@ -373,32 +369,26 @@
     -webkit-backdrop-filter: blur(6px);
     transition: transform 0.12s ease;
   }
-  .split-press:active:not(:disabled),
   .split-undo:active:not(:disabled) {
     transform: scale(0.95);
-  }
-  .split-press:disabled {
-    cursor: default;
-    /* the one exception to the app's dim: a solver finishing a solve still has to read "All marked" */
-    opacity: 1;
   }
   .split-undo:disabled {
     opacity: 0.35;
     cursor: default;
   }
-  .split-press:focus-visible,
   .split-undo:focus-visible {
     outline: 3px solid #fff;
     outline-offset: 3px;
   }
   @media (prefers-reduced-motion: reduce) {
-    .split-press,
     .split-undo {
       transition: none;
     }
-    .split-press:active:not(:disabled),
     .split-undo:active:not(:disabled) {
       transform: none;
+    }
+    .sp-ph {
+      transition: none;
     }
   }
 </style>

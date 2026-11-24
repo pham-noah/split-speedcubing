@@ -6,6 +6,7 @@
   import ShortcutsPanel from '../lib/ui/ShortcutsPanel.svelte';
   import { DEFAULT_CUBE_COLORS } from '../lib/ui/cube-colors';
   import ImportPanel from '../lib/ui/ImportPanel.svelte';
+  import { media } from '../lib/ui/screen.svelte';
   import { platform } from '$platform';
   import { issuesUrl, issueUrl, look, type Check } from '../lib/core/update';
   import { formatBytes } from '../lib/storage/durability';
@@ -45,10 +46,11 @@
     fsrsMsg = r.applied ? `Done. ${r.reason}` : r.reason;
   }
 
-  const PANELS: [string, string][] = [
+  /** [id, label, desktopOnly] — desktopOnly rows are the ones whose target app.css hides under 900px. */
+  const PANELS: [string, string, boolean?][] = [
     ['solve.scramble', 'Solve: scramble'],
-    ['solve.cube', 'Solve: the scramble cube'],
-    ['train.cube', 'Train: the scramble cube'],
+    ['solve.cube', 'Solve: the scramble cube', true],
+    ['train.cube', 'Train: the scramble cube', true],
     ['solve.penalties', 'Solve: +2, DNF and Delete buttons'],
     ['solve.stats', 'Solve: best, ao5 and ao12'],
     ['solve.recent', 'Solve: last five solves'],
@@ -56,6 +58,10 @@
     ['home.stats', 'Train home: recognition and execution averages'],
     ['home.drills', 'Train home: quick drills'],
   ];
+  // The 3D cube is a desktop tool: app.css sets display:none under 900px. Offering its switch on a phone
+  // promised a panel that could not appear on that phone at all.
+  const cubeOk = media('(min-width:900px)');
+  const panelRows = $derived(PANELS.filter(([, , wide]) => !wide || cubeOk.on));
 
   // how long since the last backup, with a nudge once there is something to lose
   const backupAge = $derived.by(() => {
@@ -131,6 +137,10 @@
   <h1>Settings</h1>
 
   <nav class="secnav" aria-label="Settings sections">
+    <!-- the chips scroll inside their own row: the fade that says "there is more" is a mask, and a mask on
+         the sticky bar itself would also make its background transparent, letting rows scroll into view
+         through it -->
+    <div class="secnav-row">
     {#each [['ap-h', 'Appearance'], ['tm-h', 'Timer'], ['cube-h', 'Colours'], ['walk-h', 'Walkthrough'], ['tr-h', 'Training'], ['fs-h', 'Scheduling'], ['pn-h', 'Layout'], ['bk-h', 'Data'], ['ab-h', 'About']] as [id, label] (id)}
       <button
         onclick={() => {
@@ -140,6 +150,7 @@
         }}>{label}</button
       >
     {/each}
+    </div>
   </nav>
 
   <section class="col" aria-labelledby="ap-h">
@@ -234,8 +245,12 @@
       <div class="card" style="border-color:var(--am);display:flex;flex-direction:column;gap:8px;align-items:flex-start">
         <b style="font-size:.92rem">Split timing is on</b>
         <span class="mu" style="font-size:.8rem;line-height:1.45">
-          Tap Split (or <b class="mono" style="color:var(--tx)">{store.key('split') === 'Slash' ? '/' : store.key('split')}</b>)
-          once per phase while the clock runs. 3 marks = 4 phases.
+          A tap on the timer ends the phase you are in — the same tap that would stop the clock. After
+          OLL, that tap stops the solve.
+        </span>
+        <span class="mu" style="font-size:.78rem;line-height:1.4">
+          Prefer a key? <b class="mono" style="color:var(--tx)">{store.key('split') === 'Slash' ? '/' : store.key('split')}</b>
+          ends a phase without touching the timer.
         </span>
         <button class="btn" style="min-height:44px" onclick={() => nav.go('solve')}>Try it on the timer</button>
       </div>
@@ -358,7 +373,7 @@
   <section class="card col" aria-labelledby="pn-h">
     <h2 id="pn-h" style="margin:0;font-size:1.15rem">Screen layout</h2>
     <div class="mu">Hide anything you do not need.</div>
-    {#each PANELS as [id, label] (id)}
+    {#each panelRows as [id, label] (id)}
       <label class="row sp" style="min-height:44px"
         ><span>{label}</span><input
           type="checkbox"
