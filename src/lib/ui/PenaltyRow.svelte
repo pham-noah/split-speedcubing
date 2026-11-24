@@ -12,12 +12,12 @@
 
 <div class="row" role="group" aria-label="Penalty and delete" style="gap:8px">
   <button class="btn" class:on={pen === '+2'} aria-pressed={pen === '+2'} style="flex:1" onclick={() => onpen(pen === '+2' ? '' : '+2')}>
-    +2<span class="pc-only"> ({codeLabel(store.key('plus2'))})</span>
+    +2<span class="pc-only">{' ('}{codeLabel(store.key('plus2'))}{')'}</span>
   </button>
   <button class="btn" class:on={pen === 'DNF'} aria-pressed={pen === 'DNF'} style="flex:1" onclick={() => onpen(pen === 'DNF' ? '' : 'DNF')}>
-    DNF<span class="pc-only"> ({codeLabel(store.key('dnf'))})</span>
+    DNF<span class="pc-only">{' ('}{codeLabel(store.key('dnf'))}{')'}</span>
   </button>
   <button class="btn" style="flex:1" onclick={ondelete}>
-    Delete<span class="pc-only"> ({codeLabel(store.key('deleteLast'))})</span>
+    Delete<span class="pc-only">{' ('}{codeLabel(store.key('deleteLast'))}{')'}</span>
   </button>
 </div>

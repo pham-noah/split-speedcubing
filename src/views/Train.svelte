@@ -50,6 +50,32 @@
   const cards = $derived(store.cardsFor(set));
   const due = $derived(list.filter((c) => cards[c.id].seen && cards[c.id].due <= store.now).length);
   const fresh = $derived(list.filter((c) => !cards[c.id].seen).length);
+  /** the hero answers "what can I do right now": due work first, then unseen cases, then practice */
+  const hero = $derived.by(() => {
+    if (due > 0)
+      return {
+        label: 'Due for review',
+        n: due,
+        unit: due === 1 ? 'case' : 'cases',
+        sub: fresh ? `plus ${fresh} new case${fresh === 1 ? '' : 's'} available` : '',
+        cta: 'Start review',
+      };
+    if (fresh > 0)
+      return {
+        label: 'Nothing due',
+        n: fresh,
+        unit: fresh === 1 ? 'new case' : 'new cases',
+        sub: 'waiting to be learned',
+        cta: `Learn ${fresh} new`,
+      };
+    return {
+      label: 'All caught up',
+      n: list.length,
+      unit: list.length === 1 ? 'case' : 'cases',
+      sub: 'everything here has been reviewed',
+      cta: 'Practise anyway',
+    };
+  });
 
   // averages over the last 7 days, across every set
   const week = $derived.by(() => {
@@ -312,13 +338,15 @@
     <div class="t-grid">
       <div class="t-main">
     <div class="card hero">
-      <div class="mu">Due for review</div>
+      <!-- the biggest number on the page is what you can actually do next: with nothing due, leading
+           with "0" while 21 new cases sit beside it reads as an empty app -->
+      <div class="mu">{hero.label}</div>
       <div class="row" style="align-items:baseline;gap:8px;flex:none">
-        <span class="n mono" style="flex:none">{due}</span><span class="mu" style="flex:none">case{due === 1 ? '' : 's'}</span>
+        <span class="n mono" style="flex:none">{hero.n}</span><span class="mu" style="flex:none">{hero.unit}</span>
       </div>
       {#if list.length}
-        <div class="mu">plus {fresh} new case{fresh === 1 ? '' : 's'} available</div>
-        <button class="btn p big-cta" onclick={() => start()}>Start session</button>
+        <div class="mu">{hero.sub}</div>
+        <button class="btn p big-cta" onclick={() => start()}>{hero.cta}</button>
       {:else}
         <div class="empty" style="padding:10px 0 0">
           <b>No {set} cases yet</b>Open the Library, ZBLL tab, and import your own algorithm list to train them.
@@ -500,7 +528,7 @@
             onclick={() => {
               lastId = current?.id ?? null;
               next();
-            }}>{drill ? 'Next case' : 'Skip case'}<span class="pc-only"> ({codeLabel(store.key('nextCase'))})</span></button
+            }}>{drill ? 'Next case' : 'Skip case'}<span class="pc-only">{' ('}{codeLabel(store.key('nextCase'))}{')'}</span></button
           >
         {:else}
           <div class="card empty">

@@ -1517,6 +1517,30 @@ nav[aria-label='Main'] > .brand {
   margin-top: -6px;
   flex-wrap: wrap;
 }
+/* under 560px the key costs two lines between the header and the first row and repeats the sign
+   already printed on every value */
+@media (max-width: 560px) {
+  .legend {
+    display: none;
+  }
+}
+/* the chip of the section you are looking at */
+.secnav button.on {
+  background: var(--am);
+  border-color: var(--am);
+  color: var(--on-am);
+}
+/* opening a case scrolls the panel to the top: leave the header a margin to breathe */
+#case-panel {
+  scroll-margin-top: 16px;
+}
+/* a filter that keeps nothing: say what happened and offer the way back */
+.grid-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
 /* a destructive action that should not look like its neighbours: same hit area, no card, muted ink —
    it stays reachable without competing with Retry and Penalty for the eye */
 .btn.quiet {
@@ -1558,13 +1582,12 @@ nav[aria-label='Main'] > .brand {
   border-color: var(--tx);
 }
 
-/* a progress row stacks its counts under the set name when the screen is narrow */
-@media (max-width: 899px) {
-  .prow {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-  }
+/* a progress row keeps its counts on the same line until they genuinely do not fit: the old
+   max-width:899px rule stacked "PLL / 21 new" on a 390px phone, where the row is 321px wide and both
+   halves total 70px. flex-wrap does the same job and only when the row is actually tight. */
+.prow {
+  flex-wrap: wrap;
+  row-gap: 2px;
 }
 
 /* ---- motion ------------------------------------------------------------------------------------
@@ -1942,6 +1965,7 @@ nav > button.on svg {
 .prow-n {
   font-size: 0.74rem;
   white-space: nowrap;
+  margin-left: auto;   /* if the row does have to wrap, the counts stay right-aligned, not ragged left */
 }
 .t-grid,
 .t-main,

@@ -120,10 +120,11 @@ describe('whole app in a simulated browser', () => {
     expect(text).not.toContain('0 mastered');
   });
 
-  it('Train: Start session shows a scramble; Back returns to Today', async () => {
+  it('Train: the hero CTA shows a scramble; Back returns to Today', async () => {
     byText('Train', q(NAV)!)!.click(); await tick();
-    for (let i = 0; i < 40 && !byText('Start session'); i++) { await wait(25); flushSync(); }
-    byText('Start session')!.click(); await tick(); await wait(30); flushSync();
+    for (let i = 0; i < 40 && !q('.big-cta'); i++) { await wait(25); flushSync(); }
+    // the label follows the state ("Learn 21 new" / "Start review"): the class is the stable handle
+    q('.big-cta')!.click(); await tick(); await wait(30); flushSync();
     expect(q('.scr')!.textContent!.trim().length).toBeGreaterThan(3);
     expect(document.body.textContent).toContain('Press once when you recognise');
     // one full attempt: hold to start, press to mark recognition, press to stop
@@ -173,7 +174,51 @@ describe('whole app in a simulated browser', () => {
     expect(row.textContent!.trim()).toBe('Y');
   });
 
+  // a chip that scrolls with behavior:'smooth' does nothing at all in this app: .card is
+  // content-visibility:auto, so the animation targets an estimated offset and is cancelled when the real
+  // layout lands. Instant scrolling is the only one that works, and the chip has to say it is current.
+  it('Settings: a section chip jumps to its heading and marks itself', async () => {
+    byText('Settings', q(NAV)!)!.click(); await tick();
+    for (let i = 0; i < 40 && !document.querySelector('.secnav-row button'); i++) { await wait(25); flushSync(); }
+    const proto = Element.prototype as unknown as { scrollIntoView: (o?: unknown) => void };
+    const orig = proto.scrollIntoView;
+    const calls: [string, unknown][] = [];
+    proto.scrollIntoView = function (this: Element, o?: unknown) { calls.push([this.id, o]); };
+    try {
+      const chip = document.querySelector<HTMLButtonElement>('.secnav-row button[data-id="bk-h"]')!;
+      chip.click(); await tick();
+      // the jump is settled twice after the click (rAF + 90ms), so wait out both before restoring the stub
+      await new Promise((r) => setTimeout(r, 180));
+      expect(calls.length).toBeGreaterThan(0);
+      expect(calls[0][0]).toBe('bk-h');
+      for (const [id, opts] of calls) {
+        expect(id).toBe('bk-h');
+        expect(opts).toEqual({ block: 'start' });   // no behaviour key: 'smooth' never moves this page
+      }
+      expect(chip.getAttribute('aria-current')).toBe('true');
+      expect(chip.className).toContain('on');
+    } finally {
+      proto.scrollIntoView = orig;
+    }
+  });
+
+  it('Library: a filter that keeps nothing says so and offers a way back', async () => {
+    byText('Library', q(NAV)!)!.click(); await tick();
+    for (let i = 0; i < 40 && !document.querySelector('.grid .cell'); i++) { await wait(25); flushSync(); }
+    const due = [...document.querySelectorAll<HTMLButtonElement>('button')].find(b => b.textContent!.trim() === 'Due')!;
+    due.click(); await tick(); await wait(40); flushSync();
+    expect(document.querySelectorAll('.grid .cell').length).toBe(0);
+    expect(document.body.textContent).toMatch(/Nothing is due/);
+    const back = [...document.querySelectorAll<HTMLButtonElement>('button')].find(b => b.textContent!.trim() === 'Show every case')!;
+    expect(back).toBeTruthy();
+    back.click(); await tick(); await wait(40); flushSync();
+    expect(document.querySelectorAll('.grid .cell').length).toBeGreaterThan(0);
+    // a counter that names only what is there: "0 mastered" was printed next to 21 new cases
+    expect(document.body.textContent).not.toMatch(/0 mastered|0 learning/);
+  });
+
   it('theme and text size apply to the document', async () => {
+    byText('Settings', q(NAV)!)!.click(); await tick(); await wait(25); flushSync();
     byText('AMOLED')!.click(); await tick();
     expect(document.documentElement.dataset.theme).toBe('amoled');
     byText('Extra large')!.click(); await tick();

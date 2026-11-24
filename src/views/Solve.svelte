@@ -208,8 +208,9 @@
               class="vs-avg"
               class:good={vsAvg < 0}
               class:bad={vsAvg >= 0}
-              aria-label="Compared with your session average"
             >
+              <!-- the sign alone says better or worse but not against what -->
+              <span class="mu" style="font-size:.62rem;letter-spacing:.04em">vs avg</span>
               {vsAvg < 0 ? '−' : '+'}{(Math.abs(vsAvg) / 1000).toFixed(2)}
             </span>
           {/if}

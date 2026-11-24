@@ -172,7 +172,7 @@
         <div class="card">
           <div class="row sp">
             <div class="mu">Last {pts.length} solves · dashed = mean</div>
-            <div class="mu mono" style="font-size:.74rem">{formatTime(ptsMean)}</div>
+            <div class="mu mono" style="font-size:.74rem">mean {formatTime(ptsMean)}</div>
           </div>
           <svg
             class="chart"
@@ -187,9 +187,15 @@
             {/if}
             <path d={path} fill="none" stroke="var(--bl)" stroke-width="2" stroke-linejoin="round" />
           </svg>
+          <!-- the line is scaled to its own min and max, so a steep climb and a flat run draw the same
+               slope: name the two ends, or the chart says nothing about size -->
+          <div class="row sp mono mu" style="font-size:.72rem;margin-top:6px">
+            <span>{formatTime(lo)} fastest</span>
+            <span>{formatTime(hi)} slowest</span>
+          </div>
         </div>
       {/if}
-      {#if !list.length}<div class="card mu">No solves yet. Time one on the Solve tab.</div>{/if}
+      {#if !list.length}<div class="card mu">No solves yet. Time one on the Solve tab.</div>{:else}
       <div class="row mono mu hrow">
         <span class="hnum">#</span>
         <span class="htime">time</span>
@@ -277,6 +283,7 @@
           </div>
         {/each}
       </div>
+      {/if}
       {#if solves.length > list.length}
         <button class="btn" onclick={() => (limit += PAGE)}>
           Show {Math.min(PAGE, solves.length - list.length)} older · {list.length} of {solves.length}

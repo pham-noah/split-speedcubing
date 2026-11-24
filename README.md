@@ -15,11 +15,12 @@ One Svelte 5 + TypeScript codebase, three shells: browser/PWA, Android (Capacito
 
 - **Solve:** hold to start, optional 15 s inspection (warns at 8 and 12 s, +2 at 15, DNF at 17), penalties,
   best/ao5/ao12, sessions with their own history, undoable deletes.
-- **Splits (opt-in):** turn split timing on and a Split pill sits over the running clock; each tap (or `/`)
-  marks the end of a phase, so a solve reads Cross · F2L · OLL · PLL, each against your last twelve, with the
-  breakdown kept on the solve and totalled on History. A mark on the wrong phase is undoable while the clock
-  runs and clearable from History, and the phase that took the longest is one button from the set that trains
-  it. Every other surface still stops the solve.
+- **Splits (opt-in):** turn split timing on and the tap that would stop the clock ends the phase instead, so
+  a solve reads Cross · F2L · OLL · PLL, each against your last twelve, with the breakdown kept on the solve
+  and totalled on History. After OLL that same tap stops the solve; the phase key (`/` by default) does the
+  same from the keyboard. A mark on the wrong phase is undoable while the clock runs and clearable from
+  History, and the phase that took the longest is one button from the set that trains it. Every other surface
+  still stops the solve.
 - **2x2:** a puzzle switch on the timer. Each puzzle has its own sessions, scrambles (random-state) and
   history, so 2x2 averages never mix with 3x3 ones.
 - **Train:** Today (due, new, week averages, weak spots, lapses), then per-set drills with recognition and
@@ -50,7 +51,7 @@ One Svelte 5 + TypeScript codebase, three shells: browser/PWA, Android (Capacito
 ```bash
 npm install
 npm run dev             # http://localhost:5173
-npm test                # 836 tests in 27 files
+npm test                # 847 tests in 28 files
 npm run check           # svelte-check: types
 npm run lint            # eslint
 npm run e2e             # 52 real-browser checks against a build on :4173

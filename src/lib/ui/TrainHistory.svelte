@@ -118,8 +118,8 @@
           {/each}
         </div>
       </div>
-    {/if}
 
+    <!-- the column header and the colour key only explain rows that exist -->
     <div class="row mono mu" style="font-size:.72rem;padding:0 2px">
       <span style="flex:none;width:96px">case</span>
       <span style="flex:none;width:68px">exec</span>
@@ -145,6 +145,7 @@
         </div>
       {/each}
     </div>
+    {/if}
   </div>
   <aside class="side" aria-label="About these numbers">
     <ShortcutsSide view="train" inline />

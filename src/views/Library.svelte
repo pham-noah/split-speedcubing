@@ -119,13 +119,21 @@
     draft = '';
     error = '';
     confirmReset = false;
-    // the case panel sits under the grid: bring it into view instead of making you scroll
-    requestAnimationFrame(() => {
+    // The panel sits under the grid and is taller than the fold, so "partly visible" is not in view. Check
+    // twice: the panel's own content (algorithms, stats) mounts a frame after the click, so the first pass can
+    // still measure a short panel that fits. Instant, never smooth — .card and .cell are content-visibility:auto
+    // and a smooth scroll to a subtree that is not laid out yet is cancelled before it moves.
+    const reveal = () => {
       const el = document.getElementById('case-panel');
       if (!el) return;
       const r = el.getBoundingClientRect();
-      if (r.top > window.innerHeight - 120 || r.bottom < 0) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+      if (r.top >= 8 && r.bottom <= window.innerHeight) return;
+      // ?. because scrollIntoView is missing in some embeddings (jsdom, a few WebViews): a missing jump must
+      // not be an exception
+      el.scrollIntoView?.({ block: 'start' });
+    };
+    requestAnimationFrame(reveal);
+    setTimeout(reveal, 90);
   }
   function add() {
     if (!sel) return;
@@ -189,6 +197,31 @@
       const k = store.card(c.id);
       return k.seen && k.due <= store.now;
     }).length,
+  );
+  // only name what is actually there: "0 mastered" is noise, and Train already drops empty segments
+  const counter = $derived(
+    [
+      mastered && `${mastered} mastered`,
+      learning && `${learning} learning`,
+      list.length - mastered - learning && `${list.length - mastered - learning} new`,
+      dueNow && `${dueNow} due now`,
+    ]
+      .filter(Boolean)
+      .join(' · '),
+  );
+  // what an empty grid means, in the user's terms, rather than a blank strip under the filters
+  const emptyMsg = $derived(
+    q.trim()
+      ? `No case here matches “${q.trim()}”.`
+      : show === 'due'
+        ? 'Nothing is due. Every case in this set is either new or was reviewed recently.'
+        : show === 'mastered'
+          ? 'No case in this set is mastered yet.'
+          : show === 'learning'
+            ? 'Nothing is in progress here yet. Open a case and learn it.'
+            : show === 'new'
+              ? 'Every case in this set has been seen already.'
+              : 'No cases in this set.',
   );
   const codesRaw = $derived(
     makeHints(
@@ -572,9 +605,7 @@
             class="search"
           />
           {#if list.length}
-            <div class="mu">
-              {mastered} mastered · {learning} learning · {list.length - mastered - learning} new{#if dueNow}{' · '}{dueNow} due now{/if}
-            </div>
+            <div class="mu">{counter}</div>
             <div class="grid">
               {#each shownList as c (c.id)}
                 {@const m = mastery(store.card(c.id))}
@@ -596,6 +627,17 @@
                     >{/if}
                 </button>
               {/each}
+            </div>
+          {:else}
+            <!-- a filter that keeps nothing used to leave a blank strip under the filter row, with the
+                 counter gone and no way back except spotting "All" -->
+            <div class="card grid-empty" role="status">
+              <div class="mu">{emptyMsg}</div>
+              {#if q}
+                <button class="btn" onclick={() => (q = '')}>Clear search</button>
+              {:else}
+                <button class="btn" onclick={() => (show = 'all')}>Show every case</button>
+              {/if}
             </div>
           {/if}
 
@@ -680,7 +722,7 @@
               />
               {#if error}<div role="alert" style="color:#FF8A80;font-weight:700">{error}</div>{/if}
               <button class="btn" onclick={add}>Add algorithm</button>
-              <button class="btn p" onclick={trainCase}>Train this case<span class="pc-only"> (Enter)</span></button>
+              <button class="btn p" onclick={trainCase}>Train this case<span class="pc-only">{' (Enter)'}</span></button>
               {#if !confirmReset}
                 <button class="btn" style="font-size:.85rem;opacity:.85" onclick={() => (confirmReset = true)}
                   >Reset progress on this case</button

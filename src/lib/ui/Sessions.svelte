@@ -45,7 +45,7 @@
           </button>
           <div class="row">
             <button class="btn" onclick={() => { editing = s.id; editName = s.name; }}>Rename</button>
-            <button class="btn" onclick={() => { store.deleteSession(s.id); deleted = s.name; }}>{store.data.sessions.length > 1 ? 'Delete' : 'Clear'}</button>
+            <button class="btn quiet" onclick={() => { store.deleteSession(s.id); deleted = s.name; }}>{store.data.sessions.length > 1 ? 'Delete' : 'Clear'}</button>
           </div>
         {/if}
       </div>

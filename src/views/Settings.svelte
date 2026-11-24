@@ -12,17 +12,94 @@
   import { formatBytes } from '../lib/storage/durability';
   const s = $derived(store.data.settings);
   const colours = () => (s.cubeColors && s.cubeColors.length === 6 ? s.cubeColors : DEFAULT_CUBE_COLORS);
+  /** [id, label] of the section headings, in document order — the chips and the scroll-spy share this list */
+  const SECTIONS: [string, string][] = [
+    ['ap-h', 'Appearance'],
+    ['tm-h', 'Timer'],
+    ['cube-h', 'Colours'],
+    ['walk-h', 'Walkthrough'],
+    ['tr-h', 'Training'],
+    ['fs-h', 'Scheduling'],
+    ['pn-h', 'Layout'],
+    ['bk-h', 'Data'],
+    ['ab-h', 'About'],
+  ];
+  let active = $state('ap-h');
+  let pinned = $state<string | null>(null);
+  let secRow = $state<HTMLElement | null>(null);
+  // Never scroll with behavior:'smooth' in this app: .card is content-visibility:auto, so a smooth
+  // scroll animates to an estimated offset that the real layout then cancels and the page never moves.
+  // Instant, and settled twice — a section that has never been laid out reports an estimated offset, so
+  // the first jump can stop short of its real position.
+  function goTo(id: string) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    pinned = id;
+    active = id;
+    el.scrollIntoView?.({ block: 'start' });
+    requestAnimationFrame(() => el.scrollIntoView?.({ block: 'start' }));
+    setTimeout(() => el.scrollIntoView?.({ block: 'start' }), 90);
+  }
+  // keep the current chip visible in a row that is wider than the phone
+  $effect(() => {
+    const cur = active;
+    const row = secRow;
+    if (!row) return;
+    const chip = [...row.querySelectorAll('button')].find((b) => b.dataset.id === cur);
+    if (!chip) return;
+    const want = chip.offsetLeft - (row.clientWidth - chip.offsetWidth) / 2;
+    row.scrollLeft = Math.max(0, Math.min(row.scrollWidth - row.clientWidth, want));
+  });
   // A deep link into this page (the Solve nudge asks for the Timer section): land the heading at the
   // top and put the split switch under the focus ring, so Space toggles it straight away. The rAF is
   // required — .card is content-visibility:auto, so the section has no height until it is laid out.
   onMount(() => {
     const id = nav.settingsFocus;
-    if (!id) return;
-    nav.settingsFocus = null;
-    requestAnimationFrame(() => {
-      document.getElementById(id)?.scrollIntoView({ block: 'start' });
-      document.getElementById('split-toggle')?.focus({ preventScroll: true });
-    });
+    if (id) {
+      nav.settingsFocus = null;
+      requestAnimationFrame(() => {
+        document.getElementById(id)?.scrollIntoView({ block: 'start' });
+        document.getElementById('split-toggle')?.focus({ preventScroll: true });
+      });
+    }
+    // Which section sits under the sticky bar. A scroll listener, not an IntersectionObserver: a
+    // content-visibility:auto section that has never been laid out reports no intersection at all,
+    // so the observer would never mark anything past the first screen.
+    let raf = 0;
+    const pick = () => {
+      raf = 0;
+      if (pinned) return;   // the chip you pressed stays current until you scroll yourself
+      let cur = SECTIONS[0][0];
+      for (const [sid] of SECTIONS) {
+        const el = document.getElementById(sid);
+        if (el && el.getBoundingClientRect().top <= 96) cur = sid;
+      }
+      const doc = document.documentElement;
+      if (window.scrollY + window.innerHeight >= doc.scrollHeight - 4) cur = SECTIONS[SECTIONS.length - 1][0];
+      active = cur;
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(pick);
+    };
+    // a real gesture hands control back to the scroll position
+    const unpin = () => {
+      pinned = null;
+      onScroll();
+    };
+    pick();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    window.addEventListener('wheel', unpin, { passive: true });
+    window.addEventListener('touchstart', unpin, { passive: true });
+    window.addEventListener('keydown', unpin);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      window.removeEventListener('wheel', unpin);
+      window.removeEventListener('touchstart', unpin);
+      window.removeEventListener('keydown', unpin);
+      if (raf) cancelAnimationFrame(raf);
+    };
   });
   let msg = $state('');
   let full = $state(false);
@@ -140,14 +217,13 @@
     <!-- the chips scroll inside their own row: the fade that says "there is more" is a mask, and a mask on
          the sticky bar itself would also make its background transparent, letting rows scroll into view
          through it -->
-    <div class="secnav-row">
-    {#each [['ap-h', 'Appearance'], ['tm-h', 'Timer'], ['cube-h', 'Colours'], ['walk-h', 'Walkthrough'], ['tr-h', 'Training'], ['fs-h', 'Scheduling'], ['pn-h', 'Layout'], ['bk-h', 'Data'], ['ab-h', 'About']] as [id, label] (id)}
+    <div class="secnav-row" bind:this={secRow}>
+    {#each SECTIONS as [id, label] (id)}
       <button
-        onclick={() => {
-          const el = document.getElementById(id);
-          const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-          el?.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' });
-        }}>{label}</button
+        data-id={id}
+        class:on={active === id}
+        aria-current={active === id ? 'true' : undefined}
+        onclick={() => goTo(id)}>{label}</button
       >
     {/each}
     </div>
@@ -355,7 +431,9 @@
       (about {store.fsrsMinPoints}+ needed).
     </div>
     <div class="row">
-      <button class="btn p" disabled={fsrsBusy} onclick={personalise}
+      <!-- greyed out until there is enough history to learn from: a button that can only fail is worse
+           than one that says not yet -->
+      <button class="btn p" disabled={fsrsBusy || store.fsrsPoints < store.fsrsMinPoints} onclick={personalise}
         >{fsrsBusy ? `Working… ${Math.round(fsrsProgress * 100)}%` : 'Optimise from my history'}</button
       >
       {#if s.fsrsW}<button
@@ -443,7 +521,7 @@
       <button class="btn" onclick={restore}>Restore backup</button>
     </div>
     {#if platform.caps.fullscreen}
-      <button class="btn" onclick={toggleFull}>{full ? 'Leave fullscreen' : 'Fullscreen'}<span class="pc-only"> (F11)</span></button>
+      <button class="btn" onclick={toggleFull}>{full ? 'Leave fullscreen' : 'Fullscreen'}<span class="pc-only">{' (F11)'}</span></button>
     {/if}
     <button class="btn" onclick={() => store.update({ introSeen: false })}>Show the intro again</button>
     <button
