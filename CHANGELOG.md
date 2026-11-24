@@ -2,6 +2,17 @@
 
 All notable changes to Split. Format based on [Keep a Changelog](https://keepachangelog.com); versions follow [SemVer](https://semver.org).
 
+## [0.9.1] - 2026-11-24
+
+An update that used to be a link is now an install.
+
+### Changed
+- **Settings can install the update it finds.** The GitHub build downloads the release APK, checks it against
+  the size GitHub reported, and hands it to Android's installer, instead of opening a page to find the file
+  yourself. The first time, Android asks whether Split may install apps; Split says so before it starts
+  downloading rather than after, and leaves Settings usable either way.
+- The Play build keeps the link. It has no network permission, so there is nothing for it to download.
+
 ## [0.9.0] - 2026-11-14
 
 A 2x2, a split you can correct, a way out to csTimer, and the trainer on the other end of a phase.

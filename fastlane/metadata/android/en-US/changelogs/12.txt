@@ -1,0 +1,1 @@
+Settings can now install the update it finds: it downloads the release APK, checks the size against the release and opens Android's installer, instead of sending you to a web page.
