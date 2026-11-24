@@ -1,5 +1,9 @@
 import { registerPlugin } from '@capacitor/core';
+import type { InstallOutcome } from './types';
 import type { Release } from '../core/update';
+
+// Only android.ts imports this file, so the web and desktop bundles never contain Capacitor at all:
+// CI asserts that dist-desktop/assets has no trace of it.
 
 /**
  * The part of an update a web page cannot do: put the APK on the phone and open the install sheet.
@@ -21,14 +25,8 @@ interface ApkInstallerPlugin {
 
 const ApkInstaller = registerPlugin<ApkInstallerPlugin>('ApkInstaller');
 
-export type Outcome =
-  | { kind: 'installing' }
-  /** the file is on the phone; Android wants the one-time "install unknown apps" toggle first */
-  | { kind: 'needs-permission' }
-  | { kind: 'failed'; why: string };
-
 /** Download the release APK and open the system installer. Resolves when the installer is on screen. */
-export async function installUpdate(release: Release, onProgress?: (fraction: number) => void): Promise<Outcome> {
+export async function installUpdate(release: Release, onProgress?: (fraction: number) => void): Promise<InstallOutcome> {
   let handle: { remove: () => Promise<void> } | undefined;
   try {
     // ask before downloading: a 5 MB wait that ends at a permission wall is a worse first run than the wall itself

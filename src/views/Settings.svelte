@@ -8,7 +8,6 @@
   import ImportPanel from '../lib/ui/ImportPanel.svelte';
   import { platform } from '$platform';
   import { issuesUrl, issueUrl, look, type Check } from '../lib/core/update';
-  import { installUpdate } from '../lib/platform/install';
   import { formatBytes } from '../lib/storage/durability';
   const s = $derived(store.data.settings);
   const colours = () => (s.cubeColors && s.cubeColors.length === 6 ? s.cubeColors : DEFAULT_CUBE_COLORS);
@@ -108,7 +107,10 @@
     if (update?.kind !== 'found' || installBusy) return;
     installBusy = true;
     installNote = 'Downloading…';
-    const out = await installUpdate(update.release, (f) => {
+    // the platform that can install provides this; the ones that cannot never show the button
+    const run = platform.installUpdate;
+    if (!run) return;
+    const out = await run(update.release, (f) => {
       installNote = `Downloading… ${Math.round(f * 100)}%`;
     });
     installBusy = false;

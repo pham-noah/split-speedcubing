@@ -3,6 +3,7 @@ import { Browser } from '@capacitor/browser';
 import type { Platform } from './types';
 import { markShell, pickFileViaInput, saveFileViaAnchor } from './dom';
 import { nav } from '../nav.svelte';
+import { installUpdate } from './install';
 
 export const platform: Platform = {
   kind: 'android',
@@ -34,4 +35,5 @@ export const platform: Platform = {
   },
   saveFile: saveFileViaAnchor,
   pickFile: pickFileViaInput,
+  installUpdate,
 };
