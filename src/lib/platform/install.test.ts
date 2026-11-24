@@ -6,19 +6,19 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
  * must not leave a listener behind.
  */
 const { plugin, listeners, removed } = vi.hoisted(() => {
-  const listeners: ((p: { received: number; total: number }) => void)[] = [];
-  const removed = vi.fn(async () => {});
-  const plugin = {
+  const seen: ((p: { received: number; total: number }) => void)[] = [];
+  const off = vi.fn(async () => {});
+  const fake = {
     status: vi.fn(async () => ({ allowed: true })),
     download: vi.fn(async () => ({ path: '/data/user/0/app/files/updates/Split.apk', bytes: 5_000_000 })),
     install: vi.fn(async () => {}),
     openSettings: vi.fn(async () => {}),
     addListener: vi.fn(async (_e: string, cb: (p: { received: number; total: number }) => void) => {
-      listeners.push(cb);
-      return { remove: removed };
+      seen.push(cb);
+      return { remove: off };
     }),
   };
-  return { plugin, listeners, removed };
+  return { plugin: fake, listeners: seen, removed: off };
 });
 
 vi.mock('@capacitor/core', () => ({ registerPlugin: () => plugin }));

@@ -8,7 +8,7 @@
   import ImportPanel from '../lib/ui/ImportPanel.svelte';
   import { platform } from '$platform';
   import { issuesUrl, issueUrl, look, type Check } from '../lib/core/update';
-  import { installUpdate } from '../lib/core/install';
+  import { installUpdate } from '../lib/platform/install';
   import { formatBytes } from '../lib/storage/durability';
   const s = $derived(store.data.settings);
   const colours = () => (s.cubeColors && s.cubeColors.length === 6 ? s.cubeColors : DEFAULT_CUBE_COLORS);

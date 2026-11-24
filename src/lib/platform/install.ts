@@ -1,5 +1,5 @@
 import { registerPlugin } from '@capacitor/core';
-import type { Release } from './update';
+import type { Release } from '../core/update';
 
 /**
  * The part of an update a web page cannot do: put the APK on the phone and open the install sheet.
