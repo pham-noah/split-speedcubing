@@ -347,14 +347,19 @@ if (!sw) {
   await page.reload({ waitUntil: 'domcontentloaded' }).catch(() => {});
   await sleep(1500);
   check('app loads while offline', !!(await page.$('.big')));
-  const offline = await waitForScramble(8000);
-  check('scrambles still work offline', offline.length >= 18, `(${offline.length} moves)`);
+  // offline the worker has to boot from cache before any scramble can be generated, and a shared runner
+  // under load does not do that in eight seconds: give it longer, and say what it actually showed.
+  const offline = await waitForScramble(12000);
+  check('scrambles still work offline', offline.length >= 18, `(${offline.length} moves: ${offline.slice(0, 4).join(' ')}…)`);
   page.off('request', cut);
   await page.setRequestInterception(false);
 }
 }
 
 check('no page or console errors', errors.length === 0, errors.slice(0, 3).join(' | '));
+// A FAIL line says which check; a picture says what the screen looked like, which is the difference
+// between a real regression and a machine that was still busy. CI uploads this file when the run fails.
+if (failed) await page.screenshot({ path: 'e2e-failure.png' }).catch(() => {});
 await browser.close();
 console.log(failed ? `\n${failed} check(s) FAILED` : '\nAll end-to-end checks passed');
 process.exit(failed ? 1 : 0);

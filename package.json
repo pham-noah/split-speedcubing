@@ -8,6 +8,7 @@
     "build": "vite build --mode web",
     "preview": "vite preview --outDir dist-web --host 127.0.0.1",
     "test": "vitest run",
+    "gate": "node scripts/gate.mjs",
     "e2e:offline": "node scripts/e2e-offline.mjs",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "lint": "eslint .",

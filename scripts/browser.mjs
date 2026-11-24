@@ -17,8 +17,23 @@ export async function launch() {
 }
 export const BASE = process.env.BASE_URL ?? 'http://localhost:4173/';
 export const sleep = ms => new Promise(r => setTimeout(r, ms));
-export const clickText = (page, text, sel = 'button, label') =>
-  page.evaluate((t, s) => { const el = [...document.querySelectorAll(s)].find(b => b.textContent.trim().startsWith(t)); if (!el) throw new Error('no element: ' + t); el.click(); }, text, sel);
+// Clicking a thing the app has not drawn yet is a race, not a finding: a route is a lazy chunk, and a
+// fixed sleep in the caller is a guess at how long the machine takes. Wait for the element instead,
+// and only then report it missing.
+export const clickText = async (page, text, sel = 'button, label', ms = 5000) => {
+  const until = Date.now() + ms;
+  for (;;) {
+    const ok = await page.evaluate((t, s) => {
+      const el = [...document.querySelectorAll(s)].find(b => b.textContent.trim().startsWith(t));
+      if (!el) return false;
+      el.click();
+      return true;
+    }, text, sel);
+    if (ok) return;
+    if (Date.now() > until) throw new Error('no element: ' + text);
+    await sleep(100);
+  }
+};
 export async function seedData(page, json) {
   // schema v2: settings and cards in kv['app'], each solve its own record in 'solves'
   await page.evaluate(async j => new Promise((res, rej) => {
